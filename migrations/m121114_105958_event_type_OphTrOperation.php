@@ -266,6 +266,7 @@ class m121114_105958_event_type_OphTrOperation extends CDbMigration
 				'paediatric' => "tinyint(1) unsigned NOT NULL DEFAULT '0'",
 				'anaesthetist' => "tinyint(1) unsigned NOT NULL DEFAULT '0'",
 				'general_anaesthetic' => "tinyint(1) unsigned NOT NULL DEFAULT '0'",
+				'last_generate_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
 				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
 				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
 				'created_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
