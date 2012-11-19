@@ -17,25 +17,15 @@
  */
 
 /**
- * This is the model class for table "ophtroperation_operation_sequence".
+ * This is the model class for table "ophtroperation_operation_sequence_interval".
  *
  * The followings are the available columns in table:
  * @property integer $id
- * @property integer $theatre_id
- * @property date $start_date
- * @property time $start_time
- * @property time $end_time
- * @property date $end_date
- * @property integer $theatre_id
- *
- * The followings are the available model relations:
- *
- * @property Site $site
- * @property Theatre $theatre
+ * @property string $name
  *
  */
 
-class OphTrOperation_Operation_Sequence extends BaseActiveRecord
+class OphTrOperation_Operation_Sequence_Interval extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -51,7 +41,7 @@ class OphTrOperation_Operation_Sequence extends BaseActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ophtroperation_operation_sequence';
+		return 'ophtroperation_operation_sequence_interval';
 	}
 
 	/**
@@ -62,17 +52,6 @@ class OphTrOperation_Operation_Sequence extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('theatre_id, start_date, start_time, end_time, interval_id', 'required'),
-			array('theatre_id', 'length', 'max'=>10),
-			array('end_date, week_selection, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id', 'safe'),
-			array('start_date', 'date', 'format'=>'yyyy-MM-dd'),
-			array('start_time', 'date', 'format'=>array('H:mm', 'H:mm:ss')),
-			array('end_time', 'date', 'format'=>array('H:mm', 'H:mm:ss')),
-			array('end_date', 'checkDates'),
-			array('end_time', 'checkTimes'),
-			// The following rule is used by search().
-			// Please remove those attributes that should not be searched.
-			array('id, theatre_id, start_date, start_time, end_time, end_date, consultant, paediatric, anaesthetist, interval_id, weekday, week_selection, firm_id, site_id', 'safe', 'on'=>'search'),
 		);
 	}
 	
@@ -84,11 +63,6 @@ class OphTrOperation_Operation_Sequence extends BaseActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'theatre' => array(self::BELONGS_TO, 'Theatre', 'theatre_id'),
-			'firmAssignment' => array(self::HAS_ONE, 'SequenceFirmAssignment', 'sequence_id'),
-			'firm' => array(self::HAS_ONE, 'Firm', 'firm_id', 'through' => 'firmAssignment'),
-			'sessions' => array(self::HAS_MANY, 'Session', 'sequence_id'),
-			'interval' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Sequence_Interval', 'interval_id'),
 		);
 	}
 
@@ -119,25 +93,4 @@ class OphTrOperation_Operation_Sequence extends BaseActiveRecord
 				'criteria' => $criteria,
 			));
 	}
-
-	public function checkDates() {
-		if (!empty($this->end_date)) {
-			$start = strtotime($this->start_date);
-			$end = strtotime($this->end_date);
-
-			if ($end < $start) {
-				$this->addError('end_date', 'End date must be after the start date.');
-			}
-		}
-	}
-
-	public function checkTimes() {
-		$start = strtotime($this->start_time);
-		$end = strtotime($this->end_time);
-
-		if ($end <= $start) {
-			$this->addError('end_time', 'End time must be after the start time.');
-		}
-	}
 }
-?>
