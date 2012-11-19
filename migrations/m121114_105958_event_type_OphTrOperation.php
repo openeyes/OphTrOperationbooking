@@ -229,6 +229,21 @@ class m121114_105958_event_type_OphTrOperation extends CDbMigration
 				'CONSTRAINT `ophtroperation_operation_ward_thi_fk` FOREIGN KEY (`theatre_id`) REFERENCES `ophtroperation_operation_theatre` (`id`)',
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 
+		$this->createTable('ophtroperation_operation_sequence_interval', array(
+				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
+				'name' => 'varchar(32) COLLATE utf8_bin NOT NULL',
+				'display_order' => 'int(10) unsigned NOT NULL DEFAULT 0',
+				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'created_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'created_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'PRIMARY KEY (`id`)',
+				'KEY `ophtroperation_operation_sequencei_lmui_fk` (`last_modified_user_id`)',
+				'KEY `ophtroperation_operation_sequencei_cui_fk` (`created_user_id`)',
+				'CONSTRAINT `ophtroperation_operation_sequencei_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
+				'CONSTRAINT `ophtroperation_operation_sequencei_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
+			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
+
 		$this->createTable('ophtroperation_operation_sequence', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
 				'firm_id' => 'int(10) unsigned NULL',
@@ -237,7 +252,7 @@ class m121114_105958_event_type_OphTrOperation extends CDbMigration
 				'start_time' => 'time NOT NULL',
 				'end_time' => 'time NOT NULL',
 				'end_date' => 'date DEFAULT NULL',
-				'repeat_interval' => 'tinyint(1) unsigned NOT NULL',
+				'interval_id' => 'int(10) unsigned NOT NULL',
 				'weekday' => 'tinyint(1) DEFAULT NULL',
 				'week_selection' => 'tinyint(1) DEFAULT NULL',
 				'consultant' => "tinyint(1) unsigned NOT NULL DEFAULT '1'",
@@ -251,10 +266,12 @@ class m121114_105958_event_type_OphTrOperation extends CDbMigration
 				'PRIMARY KEY (`id`)',
 				'KEY `ophtroperation_operation_sequence_firm_id_fk` (`firm_id`)',
 				'KEY `ophtroperation_operation_sequence_theatre_id_fk` (`theatre_id`)',
+				'KEY `ophtroperation_operation_sequence_interval_id_fk` (`interval_id`)',
 				'KEY `ophtroperation_operation_sequence_lmui_fk` (`last_modified_user_id`)',
 				'KEY `ophtroperation_operation_sequence_cui_fk` (`created_user_id`)',
 				'CONSTRAINT `ophtroperation_operation_sequence_firm_id_fk` FOREIGN KEY (`firm_id`) REFERENCES `firm` (`id`)',
 				'CONSTRAINT `ophtroperation_operation_sequence_theatre_id_fk` FOREIGN KEY (`theatre_id`) REFERENCES `ophtroperation_operation_theatre` (`id`)',
+				'CONSTRAINT `ophtroperation_operation_sequence_interval_id_fk` FOREIGN KEY (`interval_id`) REFERENCES `ophtroperation_operation_sequence_interval` (`id`)',
 				'CONSTRAINT `ophtroperation_operation_sequence_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `ophtroperation_operation_sequence_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
@@ -460,6 +477,7 @@ class m121114_105958_event_type_OphTrOperation extends CDbMigration
 		$this->dropTable('ophtroperation_operation_erod');
 		$this->dropTable('ophtroperation_operation_session');
 		$this->dropTable('ophtroperation_operation_sequence');
+		$this->dropTable('ophtroperation_operation_sequence_interval');
 		$this->dropTable('ophtroperation_operation_ward');
 		$this->dropTable('ophtroperation_operation_theatre');
 		$this->dropTable('ophtroperation_operation_date_letter_sent');
