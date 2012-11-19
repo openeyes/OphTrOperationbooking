@@ -32,7 +32,7 @@
 	<?php echo $form->radioButtons($element, 'anaesthetic_type_id', 'anaesthetic_type')?>
 	<?php echo $form->radioBoolean($element, 'overnight_stay')?>
 	<?php echo $form->dropDownList($element, 'site_id', CHtml::listData(Site::model()->findAll(array('order'=> 'short_name asc')),'id','short_name'))?>
-	<?php echo $form->radioButtons($element, 'priority_id', 'et_ophtroperation_procedure_priority')?>
+	<?php echo $form->radioButtons($element, 'priority_id', 'ophtroperation_operation_priority')?>
 	<?php echo $form->datePicker($element, 'decision_date', array('maxDate' => 'today'), array('style'=>'width: 110px;'))?>
 	<?php echo $form->textArea($element, 'comments', array('rows' => 4, 'cols' => 50))?>
 </div>

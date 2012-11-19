@@ -39,7 +39,7 @@
 	 * @property User $user
 	 * @property User $usermodified
 	 * @property Eye $eye
-	 * @property OphTrOperation_Operation_Operations $procedures
+	 * @property OphTrOperation_Operation_Procedures $procedures
 	 * @property AnaestheticType $anaesthetic_type
 	 * @property Site $site
 	 * @property Element_OphTrOperation_Operation_Priority $priority
@@ -47,6 +47,21 @@
 
 	class Element_OphTrOperation_Operation extends BaseEventTypeElement
 	{
+		const LETTER_INVITE = 0;
+		const LETTER_REMINDER_1 = 1;
+		const LETTER_REMINDER_2 = 2;
+		const LETTER_GP = 3;
+		const LETTER_REMOVAL = 4;
+
+		// these reflect an actual status, relating to actions required rather than letters sent
+		const STATUS_WHITE = 0; // no action required.	the default status.
+		const STATUS_PURPLE = 1; // no invitation letter has been sent
+		const STATUS_GREEN1 = 2; // it's two weeks since an invitation letter was sent with no further letters going out
+		const STATUS_GREEN2 = 3; // it's two weeks since 1st reminder was sent with no further letters going out
+		const STATUS_ORANGE = 4; // it's two weeks since 2nd reminder was sent with no further letters going out
+		const STATUS_RED = 5; // it's one week since gp letter was sent and they're still on the list
+		const STATUS_NOTWAITING = null;
+
 		public $service;
 
 		/**
@@ -96,10 +111,13 @@
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 			'eye' => array(self::BELONGS_TO, 'Eye', 'eye_id'),
-			'procedures' => array(self::HAS_MANY, 'OphTrOperation_Operation_Operations', 'element_id'),
+			'procedures' => array(self::HAS_MANY, 'OphTrOperation_Operation_Procedures', 'element_id'),
 			'anaesthetic_type' => array(self::BELONGS_TO, 'AnaestheticType', 'anaesthetic_type_id'),
 			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
 			'priority' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Priority', 'priority_id'),
+			'status' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Status', 'status_id'),
+			'erod' => array(self::HAS_ONE, 'OphTrOperation_Operation_EROD', 'element_id'),
+			'date_letter_sent' => array(self::HAS_ONE, 'OphTrOperation_Operation_Date_Letter_Sent', 'element_id', 'order' => 'date_letter_sent.id DESC'),
 		);
 	}
 
@@ -111,15 +129,15 @@
 		return array(
 			'id' => 'ID',
 			'event_id' => 'Event',
-'eye_id' => 'Eyes',
-'procedures' => 'Operations',
-'consultant_required' => 'Consultant required',
-'anaesthetic_type_id' => 'Anaesthetic type',
-'overnight_stay' => 'Post operative stay',
-'site_id' => 'Site',
-'priority_id' => 'Priority',
-'decision_date' => 'Decision date',
-'comments' => 'Add comments',
+			'eye_id' => 'Eyes',
+			'procedures' => 'Operations',
+			'consultant_required' => 'Consultant required',
+			'anaesthetic_type_id' => 'Anaesthetic type',
+			'overnight_stay' => 'Post operative stay',
+			'site_id' => 'Site',
+			'priority_id' => 'Priority',
+			'decision_date' => 'Decision date',
+			'comments' => 'Add comments',
 		);
 	}
 
@@ -137,15 +155,15 @@
 		$criteria->compare('id', $this->id, true);
 		$criteria->compare('event_id', $this->event_id, true);
 
-$criteria->compare('eye_id', $this->eye_id);
-$criteria->compare('procedures', $this->procedures);
-$criteria->compare('consultant_required', $this->consultant_required);
-$criteria->compare('anaesthetic_type_id', $this->anaesthetic_type_id);
-$criteria->compare('overnight_stay', $this->overnight_stay);
-$criteria->compare('site_id', $this->site_id);
-$criteria->compare('priority_id', $this->priority_id);
-$criteria->compare('decision_date', $this->decision_date);
-$criteria->compare('comments', $this->comments);
+		$criteria->compare('eye_id', $this->eye_id);
+		$criteria->compare('procedures', $this->procedures);
+		$criteria->compare('consultant_required', $this->consultant_required);
+		$criteria->compare('anaesthetic_type_id', $this->anaesthetic_type_id);
+		$criteria->compare('overnight_stay', $this->overnight_stay);
+		$criteria->compare('site_id', $this->site_id);
+		$criteria->compare('priority_id', $this->priority_id);
+		$criteria->compare('decision_date', $this->decision_date);
+		$criteria->compare('comments', $this->comments);
 		
 		return new CActiveDataProvider(get_class($this), array(
 				'criteria' => $criteria,
@@ -155,16 +173,14 @@ $criteria->compare('comments', $this->comments);
 	/**
 	 * Set default values for forms on create
 	 */
-	public function setDefaultOptions()
-	{
-		if (Yii::app()->getController()->getAction()->id == 'create') {
-			$this->eye_id = 1;
-			$this->anaesthetic_type_id = 1;
-			$this->site_id = 1;
-			$this->priority_id = 1;
+	public function setDefaultOptions() {
+		$patient_id = (int) $_REQUEST['patient_id'];
+		$firm = Yii::app()->getController()->firm;
+		$episode = Episode::getCurrentEpisodeByFirm($patient_id, $firm);
+		if($episode && $episode->diagnosis) {
+			$this->eye_id = $episode->eye_id;
 		}
 	}
-
 
 	public function getproc_defaults() {
 		$ids = array();
@@ -176,22 +192,31 @@ $criteria->compare('comments', $this->comments);
 
 	protected function beforeSave()
 	{
+		$anaesthetistRequired = array(
+			'LAC','LAS','GA'
+		);
+		$this->anaesthetist_required = in_array($this->anaesthetic_type->name, $anaesthetistRequired);
+
+		if (!$this->status_id) {
+			$this->status_id = 1;
+		}
+
 		return parent::beforeSave();
 	}
 
 	protected function afterSave()
 	{
-		if (!empty($_POST['MultiSelect_procedures'])) {
+		if (!empty($_POST['Procedures'])) {
 
 			$existing_ids = array();
 
-			foreach (OphTrOperation_Operation_Operations::model()->findAll('element_id = :elementId', array(':elementId' => $this->id)) as $item) {
+			foreach (OphTrOperation_Operation_Procedures::model()->findAll('element_id = :elementId', array(':elementId' => $this->id)) as $item) {
 				$existing_ids[] = $item->proc_id;
 			}
 
-			foreach ($_POST['MultiSelect_procedures'] as $id) {
+			foreach ($_POST['Procedures'] as $id) {
 				if (!in_array($id,$existing_ids)) {
-					$item = new OphTrOperation_Operation_Operations;
+					$item = new OphTrOperation_Operation_Procedures;
 					$item->element_id = $this->id;
 					$item->proc_id = $id;
 
@@ -202,8 +227,8 @@ $criteria->compare('comments', $this->comments);
 			}
 
 			foreach ($existing_ids as $id) {
-				if (!in_array($id,$_POST['MultiSelect_procedures'])) {
-					$item = OphTrOperation_Operation_Operations::model()->find('element_id = :elementId and proc_id = :lookupfieldId',array(':elementId' => $this->id, ':lookupfieldId' => $id));
+				if (!in_array($id,$_POST['Procedures'])) {
+					$item = OphTrOperation_Operation_Procedures::model()->find('element_id = :elementId and proc_id = :lookupfieldId',array(':elementId' => $this->id, ':lookupfieldId' => $id));
 					if (!$item->delete()) {
 						throw new Exception('Unable to delete MultiSelect item: '.print_r($item->getErrors(),true));
 					}
@@ -217,6 +242,161 @@ $criteria->compare('comments', $this->comments);
 	protected function beforeValidate()
 	{
 		return parent::beforeValidate();
+	}
+
+	protected function afterValidate() {
+		if (!empty($_POST['Element_OphTrOperation_Operation']) && empty($_POST['Procedures'])) {
+			$this->addError('procedures', 'At least one procedure must be entered');
+		}
+
+		return parent::afterValidate();
+	}
+
+	public function getLetterType() {
+		$letterTypes = ElementOperation::getLetterOptions();
+		$letterType = ($this->getDueLetter() !== null && isset($letterTypes[$this->getDueLetter()])) ? $letterTypes[$this->getDueLetter()] : false;
+		$has_gp = ($this->getDueLetter() != ElementOperation::LETTER_GP || ($this->event->episode->patient->practice && $this->event->episode->patient->practice->address));
+		$patient = $this->event->episode->patient;
+		$has_address = (bool) $patient->correspondAddress;
+
+		if ($letterType == false && $this->getLastLetter() == ElementOperation::LETTER_GP) {
+			$letterType = 'Refer to GP';
+		}
+	}
+
+	public function getLastLetter()
+	{
+		if (!$this->date_letter_sent) {
+			return null;
+		}
+		if (
+			!is_null($this->date_letter_sent->date_invitation_letter_sent) and
+			$this->date_letter_sent->date_invitation_letter_sent and	// an invitation letter has been sent
+			is_null($this->date_letter_sent->date_1st_reminder_letter_sent) and // but no 1st reminder
+			is_null($this->date_letter_sent->date_2nd_reminder_letter_sent) and // no 2nd reminder
+			is_null($this->date_letter_sent->date_gp_letter_sent) // no gp letter
+		) {
+			return self::LETTER_INVITE;
+		}
+		if (
+			$this->date_letter_sent->date_invitation_letter_sent and	// an invitation letter has been sent
+			$this->date_letter_sent->date_1st_reminder_letter_sent and // and a 1st reminder
+			is_null($this->date_letter_sent->date_2nd_reminder_letter_sent) and // but no 2nd reminder
+			is_null($this->date_letter_sent->date_gp_letter_sent) // no gp letter
+		) {
+			return self::LETTER_REMINDER_1;
+		}
+		if (
+			$this->date_letter_sent->date_invitation_letter_sent and	// an invitation letter has been sent
+			$this->date_letter_sent->date_1st_reminder_letter_sent and // and a 1st reminder
+			$this->date_letter_sent->date_2nd_reminder_letter_sent and // and a 2nd reminder
+			is_null($this->date_letter_sent->date_gp_letter_sent) // no gp letter
+		) {
+			return self::LETTER_REMINDER_2;
+		}
+		if (
+			$this->date_letter_sent->date_invitation_letter_sent and	// an invitation letter has been sent
+			$this->date_letter_sent->date_1st_reminder_letter_sent and // and a 1st reminder
+			$this->date_letter_sent->date_2nd_reminder_letter_sent and // and a 2nd reminder
+			$this->date_letter_sent->date_gp_letter_sent // and a gp letter
+		) {
+			return self::LETTER_GP;
+		}
+		return null;
+	}
+
+	public function getNextLetter()
+	{
+		if (is_null($this->getLastLetter())) {
+			return self::LETTER_INVITE;
+		} else {
+			$lastletter = $this->getLastLetter();
+			if ($lastletter == self::LETTER_INVITE) {
+				return self::LETTER_REMINDER_1;
+			} elseif ($lastletter == self::LETTER_REMINDER_1) {
+				return self::LETTER_REMINDER_2;
+			} elseif ($lastletter == self::LETTER_REMINDER_2) {
+				return self::LETTER_GP;
+			} elseif ($lastletter == self::LETTER_GP) {
+				return self::LETTER_REMOVAL;
+			}
+		}
+	}
+
+	public function getDueLetter()
+	{
+		$lastletter = $this->getLastLetter();
+		if (!$this->getWaitingListStatus()) { // if getwaitingliststatus returns null, we're white
+			return $lastletter; // no new letter is due, so we should print the last one
+		}
+		if ($this->getWaitingListStatus() == self::STATUS_PURPLE) {
+			return self::LETTER_INVITE;
+		} elseif ($this->getWaitingListStatus() == self::STATUS_GREEN1) {
+			return self::LETTER_REMINDER_1;
+		} elseif ($this->getWaitingListStatus() == self::STATUS_GREEN2) {
+			return self::LETTER_REMINDER_2;
+		} elseif ($this->getWaitingListStatus() == self::STATUS_ORANGE) {
+			return self::LETTER_GP;
+		} elseif ($this->getWaitingListStatus() == self::STATUS_RED) {
+			return null; // possibly this should return the gp letter, though it's already been sent?
+		} else {
+			return null; // possibly this should return $lastletter ?
+		}
+	}
+
+	/**
+	 * Returns the letter status for an operation.
+	 *
+	 * Checks to see if it's an operation to be scheduled or an operation to be rescheduled. If it's the former it bases its calculation
+	 *	 on the operation creation date. If it's the latter it bases it on the most recent cancelled_booking creation date.
+		 *
+	 * return int
+	 */
+	public function getWaitingListStatus()
+	{
+		if (is_null($this->getLastLetter())) {
+			return self::STATUS_PURPLE; // no invitation letter has been sent
+		} elseif (
+			is_null($this->date_letter_sent->date_invitation_letter_sent) and
+			is_null($this->date_letter_sent->date_1st_reminder_letter_sent) and
+			is_null($this->date_letter_sent->date_2nd_reminder_letter_sent) and
+			is_null($this->date_letter_sent->date_gp_letter_sent)
+		) {
+			return self::STATUS_PURPLE; // no invitation letter has been sent
+		}
+
+		$now = new DateTime(); $now->setTime(0,0,0); // $two_weeks_ago = $now->modify('-14 days');
+		$now = new DateTime(); $now->setTime(0,0,0); // $one_week_ago = $now->modify('-7 days');
+
+		// if the last letter was the invitation and it was sent over two weeks ago from now:
+		$date_sent = new DateTime($this->date_letter_sent->date_invitation_letter_sent); $date_sent->setTime(0,0,0);
+		if ( ($this->getLastLetter() == self::LETTER_INVITE) and ($now->getTimestamp() - $date_sent->getTimestamp() > 1209600) ) {
+			return self::STATUS_GREEN1;
+		}
+
+		// if the last letter was the 1st reminder and it was sent over two weeks ago from now:
+		$date_sent = new DateTime($this->date_letter_sent->date_1st_reminder_letter_sent); $date_sent->setTime(0,0,0);
+		if ( ($this->getLastLetter() == self::LETTER_REMINDER_1) and ($now->getTimestamp() - $date_sent->getTimestamp() > 1209600) ) {
+			return self::STATUS_GREEN2;
+		}
+
+		// if the last letter was the 2nd reminder and it was sent over two weeks ago from now:
+		$date_sent = new DateTime($this->date_letter_sent->date_2nd_reminder_letter_sent); $date_sent->setTime(0,0,0);
+		if ( ($this->getLastLetter() == self::LETTER_REMINDER_2) and ($now->getTimestamp() - $date_sent->getTimestamp() > 1209600) ) {
+			return self::STATUS_ORANGE;
+		}
+		// if the last letter was the gp letter and it was sent over one week ago from now:
+		$date_sent = new DateTime($this->date_letter_sent->date_gp_letter_sent); $date_sent->setTime(0,0,0);
+		if ( ($this->getLastLetter() == self::LETTER_GP) and ($now->getTimestamp() - $date_sent->getTimestamp() > 604800) ) {
+			return self::STATUS_RED;
+		}
+		return null;
+	}
+
+	public function getWaitingListLetterStatus()
+	{
+		echo var_export($this->date_letter_sent,true);
+		Yii::app()->end();
 	}
 }
 ?>

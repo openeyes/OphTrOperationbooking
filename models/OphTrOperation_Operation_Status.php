@@ -17,7 +17,7 @@
  */
 
 /**
- * This is the model class for table "ophtroperation_scheduleope_schedule_options".
+ * This is the model class for table "et_ophtroperation_operation_status".
  *
  * The followings are the available columns in table:
  * @property string $id
@@ -25,14 +25,9 @@
  *
  * The followings are the available model relations:
  *
- * @property ElementType $element_type
- * @property EventType $eventType
- * @property Event $event
- * @property User $user
- * @property User $usermodified
  */
 
-class OphTrOperation_ScheduleOperation_Options extends BaseActiveRecord
+class OphTrOperation_Operation_Status extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -48,7 +43,7 @@ class OphTrOperation_ScheduleOperation_Options extends BaseActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ophtroperation_scheduleope_schedule_options';
+		return 'ophtroperation_operation_status';
 	}
 
 	/**
@@ -75,9 +70,6 @@ class OphTrOperation_ScheduleOperation_Options extends BaseActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'element_type' => array(self::HAS_ONE, 'ElementType', 'id','on' => "element_type.class_name='".get_class($this)."'"),
-			'eventType' => array(self::BELONGS_TO, 'EventType', 'event_type_id'),
-			'event' => array(self::BELONGS_TO, 'Event', 'event_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 		);
@@ -111,28 +103,6 @@ class OphTrOperation_ScheduleOperation_Options extends BaseActiveRecord
 		return new CActiveDataProvider(get_class($this), array(
 				'criteria' => $criteria,
 			));
-	}
-
-	/**
-	 * Set default values for forms on create
-	 */
-	public function setDefaultOptions()
-	{
-	}
-
-	protected function beforeSave()
-	{
-		return parent::beforeSave();
-	}
-
-	protected function afterSave()
-	{
-		return parent::afterSave();
-	}
-
-	protected function beforeValidate()
-	{
-		return parent::beforeValidate();
 	}
 }
 ?>

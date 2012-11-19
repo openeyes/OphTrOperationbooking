@@ -118,7 +118,7 @@
 	</ul>
 <?php }*/ ?>
 
-<?php if ($element->status == $element::STATUS_CANCELLED && !empty($element->cancellation)) {
+<?php if ($element->status->name == 'Cancelled' && $this->cancellation_date) {
 	$co = $element->cancellation;
 ?>
 <h3 class="subsection">Cancellation details</h3>
@@ -145,13 +145,13 @@
 	</div>
 <?php }?>
 
-<?php if ($element->status != $element::STATUS_CANCELLED && $this->event->editable) { ?>
+<?php if ($element->status->name != 'Cancelled' && $this->event->editable) { ?>
 <!-- editable -->
 <div style="margin-top:40px; text-align:center;">
 	<?php
 	if (empty($element->booking)) {
 	// The operation hasn't been booked yet
-	if($letterType) {
+	if ($element->letterType) {
 		if($has_gp && $has_address) {
 	?>
 	<button type="submit" class="classy blue venti" value="submit" id="btn_print-invitation-letter"><span class="button-span button-span-blue">Print <?php echo $letterType ?> letter</span></button>

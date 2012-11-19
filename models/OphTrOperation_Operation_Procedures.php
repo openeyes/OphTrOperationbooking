@@ -27,7 +27,7 @@
  * The followings are the available model relations:
  *
  * @property Element_OphTrOperation_Operation $element
- * @property Operation $proc
+ * @property Procedure $proc
  * @property User $user
  * @property User $usermodified 
  */
@@ -76,7 +76,7 @@ class OphTrOperation_Operation_Procedures extends BaseActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'element' => array(self::BELONGS_TO, 'Element_OphTrOperation_Operation', 'element_id'),
-			'procedure' => array(self::BELONGS_TO, 'Operation', 'proc_id'),
+			'procedure' => array(self::BELONGS_TO, 'Procedure', 'proc_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 		);

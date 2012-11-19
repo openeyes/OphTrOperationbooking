@@ -23,5 +23,5 @@
 	data-element-display-order="<?php echo $element->elementType->display_order?>">
 	<h4 class="elementTypeName"><?php  echo $element->elementType->name; ?></h4>
 
-	<?php echo $form->radioButtons($element, 'schedule_options_id', 'et_ophtroperation_scheduleope_schedule_options')?>
+	<?php echo $form->radioButtons($element, 'schedule_options_id', 'ophtroperation_scheduleope_schedule_options')?>
 </div>
