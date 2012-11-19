@@ -154,12 +154,12 @@
 	if ($element->letterType) {
 		if($has_gp && $has_address) {
 	?>
-	<button type="submit" class="classy blue venti" value="submit" id="btn_print-invitation-letter"><span class="button-span button-span-blue">Print <?php echo $letterType ?> letter</span></button>
+	<button type="submit" class="classy blue venti" value="submit" id="btn_print-invitation-letter"><span class="button-span button-span-blue">Print <?php echo $element->letterType ?> letter</span></button>
 	<?php } else {
 		// Patient has no GP defined or doesn't have an address ?>
-	<button type="submit" class="classy disabled venti" value="submit" disabled="disabled"><span class="button-span">Print <?php echo $letterType ?> letter</span></button>
+	<button type="submit" class="classy disabled venti" value="submit" disabled="disabled"><span class="button-span">Print <?php echo $element->letterType ?> letter</span></button>
 	<?php } } ?>
-	<button type="submit" class="classy green venti" value="submit" id="btn_schedule-now"><span class="button-span button-span-green">Schedule now</span></button>
+	<button type="submit" class="classy green venti" value="submit" id="btn_schedule-now"><a href="<?php echo Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/default/schedule/'.$element->event_id)?>"><span class="button-span button-span-green">Schedule now</span></a></button>
 	<?php } else { // The operation has been booked ?>
 	<?php if($has_address) { ?>
 	<button type="submit" class="classy blue venti" value="submit" id="btn_print-letter"><span class="button-span">Print letter</span></button>

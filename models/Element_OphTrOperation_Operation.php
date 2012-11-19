@@ -252,14 +252,25 @@
 		return parent::afterValidate();
 	}
 
+	public static function getLetterOptions()
+	{
+		return array(
+			'' => 'Any',
+			self::LETTER_INVITE => 'Invitation',
+			self::LETTER_REMINDER_1 => '1st Reminder',
+			self::LETTER_REMINDER_2 => '2nd Reminder',
+			self::LETTER_GP => 'Refer to GP'
+		);
+	}
+
 	public function getLetterType() {
-		$letterTypes = ElementOperation::getLetterOptions();
+		$letterTypes = $this->getLetterOptions();
 		$letterType = ($this->getDueLetter() !== null && isset($letterTypes[$this->getDueLetter()])) ? $letterTypes[$this->getDueLetter()] : false;
-		$has_gp = ($this->getDueLetter() != ElementOperation::LETTER_GP || ($this->event->episode->patient->practice && $this->event->episode->patient->practice->address));
+		$has_gp = ($this->getDueLetter() != self::LETTER_GP || ($this->event->episode->patient->practice && $this->event->episode->patient->practice->address));
 		$patient = $this->event->episode->patient;
 		$has_address = (bool) $patient->correspondAddress;
 
-		if ($letterType == false && $this->getLastLetter() == ElementOperation::LETTER_GP) {
+		if ($letterType == false && $this->getLastLetter() == self::LETTER_GP) {
 			$letterType = 'Refer to GP';
 		}
 	}
@@ -397,6 +408,105 @@
 	{
 		echo var_export($this->date_letter_sent,true);
 		Yii::app()->end();
+	}
+
+	public function getMinDate() {
+		$date = strtotime($this->event->datetime);
+
+		if ($this->schedule_timeframe->schedule_options_id != 1) {
+			$interval = str_replace('After ', '+', $this->getScheduleText());
+			$date = strtotime($interval, $date);
+		}
+
+		return $date;
+	}
+
+	public function getSchedule_timeframe() {
+		return Element_OphTrOperation_ScheduleOperation::model()->find('event_id=?',array($this->event_id));
+	}
+
+	public function getSessions($emergency = false)
+	{
+		$minDate = $this->getMinDate();
+		$thisMonth = mktime(0, 0, 0, date('m'), 1, date('Y'));
+		if ($minDate < $thisMonth) {
+			$minDate = $thisMonth;
+		}
+
+		$monthStart = empty($_GET['date']) ? date('Y-m-01', $minDate) : $_GET['date'];
+
+		if (!$emergency) {
+			$firmId = empty($_GET['firm']) ? $this->event->episode->firm_id : $_GET['firm'];
+		} else {
+			$firmId = null;
+		}
+
+		$sessions = OphTrOperation_Operation_Session::get($monthStart, $minDate, $firmId);
+
+		$results = array();
+		foreach ($sessions as $session) {
+			$date = $session['date'];
+			$weekday = date('N', strtotime($date));
+			$text = $this->getWeekdayText($weekday);
+
+			$sessionTime = explode(':', $session['session_duration']);
+			$session['duration'] = ($sessionTime[0] * 60) + $sessionTime[1];
+			$session['time_available'] = $session['duration'] - $session['bookings_duration'];
+			unset($session['session_duration'], $session['date']);
+
+			$results[$text][$date]['sessions'][] = $session;
+		}
+
+		foreach ($results as $weekday => $dates) {
+			$timestamp = strtotime($monthStart);
+			$firstWeekday = strtotime(date('Y-m-t', $timestamp - (60 * 60 * 24)));
+			$dateList = array_keys($dates);
+			while (date('N', strtotime($dateList[0])) != date('N', $firstWeekday)) {
+				$firstWeekday -= 60 * 60 * 24;
+			}
+
+			for ($weekCounter = 1; $weekCounter < 8; $weekCounter++) {
+				$addDays = ($weekCounter - 1) * 7;
+				$selectedDay = date('Y-m-d', mktime(0, 0, 0, date('m', $firstWeekday), date('d', $firstWeekday) + $addDays, date('Y', $firstWeekday)));
+				if (in_array($selectedDay, $dateList)) {
+					foreach ($dates[$selectedDay] as $sessions) {
+						$totalSessions = count($sessions);
+						$status = $totalSessions;
+
+						$open = $full = 0;
+
+						foreach ($sessions as $session) {
+							if ($session['time_available'] >= $this->total_duration) {
+								$open++;
+							} else {
+								$full++;
+							}
+						}
+						if ($full == $totalSessions) {
+							$status = 'full';
+						} elseif ($full > 0 && $open > 0) {
+							$status = 'limited';
+						} elseif ($open == $totalSessions) {
+							$status = 'available';
+						}
+					}
+				} else {
+					$status = 'closed';
+				}
+				$results[$weekday][$selectedDay]['status'] = $status;
+			}
+		}
+
+		foreach ($results as $weekday => &$dates) {
+			$dateSort = array();
+			foreach ($dates as $date => $info) {
+				$dateSort[] = $date;
+			}
+
+			array_multisort($dateSort, SORT_ASC, $dates);
+		}
+
+		return $results;
 	}
 }
 ?>

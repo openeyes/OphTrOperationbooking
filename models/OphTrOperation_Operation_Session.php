@@ -121,5 +121,62 @@ class OphTrOperation_Operation_Session extends BaseActiveRecord
 				'criteria' => $criteria,
 			));
 	}
+
+	public static function get($monthStart, $minDate, $firmId) {
+		if ($firmId !== null) {
+			$firm = Firm::model()->findByPk($firmId);
+			if (empty($firm)) {
+				throw new Exception('Firm id is invalid.');
+			}
+		}
+		if (substr($minDate,0,8) == substr($monthStart,0,8)) {
+			$startDate = $minDate;
+		} else {
+			$startDate = $monthStart;
+		}
+		$monthEnd = substr($monthStart,0,8) . date('t', strtotime($monthStart));
+
+		if ($firmId === null) {
+			$firmSql = 's.firm_id IS NULL';
+		} else {
+			$firmSql = "s.firm_id = $firmId";
+		}
+
+		$sessions = Yii::app()->db->createCommand()
+			->select("s.*, TIMEDIFF(s.end_time, s.start_time) AS session_duration, COUNT(a.id) AS bookings, SUM(o.total_duration) AS bookings_duration")
+			->from("ophtroperation_operation_session s")
+			->join("ophtroperation_operation_theatre t","s.theatre_id = t.id")
+			->leftJoin("ophtroperation_operation_booking a","s.id = a.session_id")
+			->leftJoin("et_ophtroperation_operation o","a.element_id = o.id")
+			->leftJoin("event e","o.event_id = e.id")
+			->where("s.status != 0 AND s.date BETWEEN CAST('$startDate' AS DATE) AND CAST('$monthEnd' AS DATE) AND $firmSql")
+			->group("s.id")
+			->order("WEEKDAY(DATE) ASC")
+			->queryAll();
+
+print_r($sessions); exit;
+
+/*
+		$sql = "
+			SELECT s.*, TIMEDIFF(s.end_time, s.start_time) AS session_duration,
+				COUNT(a.id) AS bookings,
+				SUM(o.total_duration) AS bookings_duration
+			FROM `session` `s`
+			JOIN `theatre` `t` ON s.theatre_id = t.id
+			LEFT JOIN `session_firm_assignment` `f` ON s.id = f.session_id
+			LEFT JOIN `booking` `a` ON s.id = a.session_id
+			LEFT JOIN `element_operation` `o` ON a.element_operation_id = o.id
+			LEFT JOIN `event` `e` ON `o`.event_id = `e`.id
+			WHERE s.status != " . Session::STATUS_UNAVAILABLE . " AND
+				s.date BETWEEN CAST('$startDate' AS DATE) AND
+				CAST('$monthEnd' AS DATE) AND $firmSql
+			GROUP BY s.id
+			ORDER BY WEEKDAY(DATE) ASC
+		";
+		$sessions = Yii::app()->db->createCommand($sql)->query();
+
+		return $sessions;
+*/
+	}
 }
 ?>
