@@ -244,6 +244,13 @@ class m121114_105958_event_type_OphTrOperation extends CDbMigration
 				'CONSTRAINT `ophtroperation_operation_sequencei_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 
+		$this->insert('ophtroperation_operation_sequence_interval',array('id'=>1,'name'=>'Once'));
+		$this->insert('ophtroperation_operation_sequence_interval',array('id'=>2,'name'=>'1 week'));
+		$this->insert('ophtroperation_operation_sequence_interval',array('id'=>3,'name'=>'2 weeks'));
+		$this->insert('ophtroperation_operation_sequence_interval',array('id'=>4,'name'=>'3 weeks'));
+		$this->insert('ophtroperation_operation_sequence_interval',array('id'=>5,'name'=>'4 weeks'));
+		$this->insert('ophtroperation_operation_sequence_interval',array('id'=>6,'name'=>'Monthly'));
+
 		$this->createTable('ophtroperation_operation_sequence', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
 				'firm_id' => 'int(10) unsigned NULL',
