@@ -93,7 +93,7 @@ $this->header();
 				'success': function(data) {
 					$('#details').html(data);
 					if ($('#theatres').length > 0) {
-						$('#theatres').remove();
+						$('#theatres').html('');
 					}
 					if ($('#bookings').length > 0) {
 						$('#bookings').remove();
