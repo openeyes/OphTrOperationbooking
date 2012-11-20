@@ -118,22 +118,19 @@
 	</ul>
 <?php }*/ ?>
 
-<?php if ($element->status->name == 'Cancelled' && $this->cancellation_date) {
-	$co = $element->cancellation;
-?>
-<h3 class="subsection">Cancellation details</h3>
-	<div class="eventHighlight">
-		<h4>Cancelled on <?php echo $co->NHSDate('cancelled_date') . ' by user ' . $co->user->username . ' for reason: ' . $co->cancelledReason->text; ?>
-		</h4>
-	</div>
+<?php if ($element->status->name == 'Cancelled' && $element->cancellation_date) {?>
+	<h3 class="subsection">Cancellation details</h3>
+		<div class="eventHighlight">
+			<h4>Cancelled on <?php echo $element->NHSDate('cancellation_date') . ' by user ' . $co->user->username . ' for reason: ' . $co->cancelledReason->text; ?>
+			</h4>
+		</div>
 
-<?php if ($co->cancellation_comment) {?>
-	<h4>Cancellation comments</h4>
-	<div class="eventHighlight comments">
-		<h4><?php echo str_replace("\n","<br/>",$co->cancellation_comment)?></h4>
-	</div>
-<?php } ?>
-
+	<?php if ($co->cancellation_comment) {?>
+		<h4>Cancellation comments</h4>
+		<div class="eventHighlight comments">
+			<h4><?php echo str_replace("\n","<br/>",$co->cancellation_comment)?></h4>
+		</div>
+	<?php } ?>
 <?php } ?>
 
 <?php if ($element->erod) {?>

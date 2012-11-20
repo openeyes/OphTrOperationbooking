@@ -141,6 +141,7 @@ class m121114_105958_event_type_OphTrOperation extends CDbMigration
 				'status_id' => 'int(10) unsigned NOT NULL',
 				'anaesthetist_required' => "tinyint(1) unsigned DEFAULT '0'",
 				'cancellation_date' => 'datetime DEFAULT NULL',
+				'cancellation_user_id' => 'int(10) unsigned NULL',
 				'cancellation_reason_id' => 'int(10) unsigned NULL',
 				'cancellation_comment' => 'varchar(200) COLLATE utf8_bin NOT NULL',
 				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
@@ -157,6 +158,7 @@ class m121114_105958_event_type_OphTrOperation extends CDbMigration
 				'KEY `et_ophtroperation_operation_priority_fk` (`priority_id`)',
 				'KEY `et_ophtroperation_operation_cancellation_reason_id_fk` (`cancellation_reason_id`)',
 				'KEY `et_ophtroperation_operation_status_id_fk` (`status_id`)',
+				'KEY `et_ophtroperation_operation_cancellation_user_id_fk` (`cancellation_user_id`)',
 				'CONSTRAINT `et_ophtroperation_operation_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `et_ophtroperation_operation_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `et_ophtroperation_operation_ev_fk` FOREIGN KEY (`event_id`) REFERENCES `event` (`id`)',
@@ -166,6 +168,7 @@ class m121114_105958_event_type_OphTrOperation extends CDbMigration
 				'CONSTRAINT `et_ophtroperation_operation_priority_fk` FOREIGN KEY (`priority_id`) REFERENCES `ophtroperation_operation_priority` (`id`)',
 				'CONSTRAINT `et_ophtroperation_operation_cancellation_reason_id_fk` FOREIGN KEY (`cancellation_reason_id`) REFERENCES `ophtroperation_operation_cancellation_reason` (`id`)',
 				'CONSTRAINT `et_ophtroperation_operation_status_is_fk` FOREIGN KEY (`status_id`) REFERENCES `ophtroperation_operation_status` (`id`)',
+				'CONSTRAINT `et_ophtroperation_operation_cancellation_user_id_fk` FOREIGN KEY (`cancellation_user_id`) REFERENCES `user` (`id`)',
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 
 		$this->createTable('ophtroperation_operation_date_letter_sent', array(
