@@ -24,7 +24,7 @@ if (!$reschedule) {
 }
 
 ?>
-	<h4>Other operations in this session: <?php echo abs($session->available) . " min {$session->minuteStatus}"; ?></h4>
+	<h4>Other operations in this session: <?php echo abs($session->availableMinutes) . " min {$session->minuteStatus}"; ?></h4>
 
 	<div class="theatre-sessions">
 	<table id="appointment_list">

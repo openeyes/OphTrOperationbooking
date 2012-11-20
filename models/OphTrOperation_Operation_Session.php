@@ -170,13 +170,13 @@ class OphTrOperation_Operation_Session extends BaseActiveRecord
 			->join("ophtroperation_operation_booking","ophtroperation_operation_booking.element_id = o.id")
 			->where("ophtroperation_operation_booking.session_id = :sessionId",array(':sessionId' => $this->id))
 			->queryAll() as $operation) {
-			$total += $operation->total_duration;
+			$total += $operation['total_duration'];
 		}
 
 		return $total;
 	}
 
-	public function getAvailable() {
+	public function getAvailableMinutes() {
 		return $this->duration - $this->bookedminutes;
 	}
 

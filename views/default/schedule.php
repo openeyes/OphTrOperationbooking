@@ -75,6 +75,9 @@ $this->header();
 			</div> <!-- details -->
 		</div> <!--session_dates -->
 	</div> <!-- calendar -->
+
+	<div id="theatres"></div>
+	<div id="sessionDetails"></div>
 </div> <!-- operation -->
 </div> <!-- #schedule -->
 
@@ -109,7 +112,7 @@ $this->header();
 				'success': function(data) {
 					$('#details').html(data);
 					if ($('#theatres').length > 0) {
-						$('#theatres').remove();
+						$('#theatres').html('');
 					}
 					if ($('#bookings').length > 0) {
 						$('#bookings').remove();
@@ -130,11 +133,7 @@ $this->header();
 				'type': 'GET',
 				'data': {'operation': operation, 'month': month, 'day': day, 'firm': '<?php echo empty($firm->id) ? 'EMG' : $firm->id ?>', 'reschedule': 0},
 				'success': function(data) {
-					if ($('#theatres').length == 0) {
-						$('#operation').append(data);
-					} else {
-						$('#theatres').replaceWith(data);
-					}
+					$('#theatres').html(data);
 					if ($('#bookings').length > 0) {
 						$('#bookings').remove();
 					}
