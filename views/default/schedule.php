@@ -165,7 +165,7 @@ $this->header();
 
 	function showTheatreList(operation, month, day, session) {
 		$.ajax({
-			'url': '<?php echo Yii::app()->createUrl('booking/list'); ?>',
+			'url': '<?php echo Yii::app()->createUrl('/'.$event->eventType->class_name.'/default/bookinglist')?>',
 			'type': 'GET',
 			'data': {
 				'operation': operation,

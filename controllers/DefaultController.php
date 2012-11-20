@@ -70,7 +70,7 @@ class DefaultController extends BaseEventTypeController {
 		if (!@$_GET['day']) throw new Exception('Day is required');
 
 		$firmId = empty($_GET['firm']) ? 'EMG' : $_GET['firm'];
-		$reschedule = (empty($_REQUEST['reschedule']) || $_REQUEST['reschedule'] == 0);
+		$reschedule = !(empty($_REQUEST['reschedule']) || $_REQUEST['reschedule'] == 0);
 
 		$operation->getMinDate();
 
@@ -79,5 +79,23 @@ class DefaultController extends BaseEventTypeController {
 		$theatres = $operation->getTheatres($date, $firmId);
 
 		$this->renderPartial('_theatre_times', array('operation'=>$operation, 'date'=>$date, 'theatres'=>$theatres, 'reschedule' => $reschedule), false, true);
+	}
+
+	public function actionBookingList() {
+		if (!$operation = Element_OphTrOperation_Operation::model()->findByPk(@$_GET['operation'])) {
+			throw new Exception('Operation id is invalid.');
+		}
+		if (!$session = OphTrOperation_Operation_Session::model()->findByPk(@$_GET['session'])) {
+			throw new Exception('Session id is invalid.');
+		}
+
+		$criteria = new CDbCriteria;
+		$criteria->compare('session_id', $session->id);
+		$criteria->order = 'display_order ASC';
+		$bookings = Booking::model()->findAll($criteria);
+
+		$reschedule = !(empty($_REQUEST['reschedule']) || $_REQUEST['reschedule'] == 0);
+
+		$this->renderPartial('_bookinglist', array('operation'=>$operation, 'session'=>$session, 'bookings'=>$bookings, 'reschedule'=>$reschedule), false, true);
 	}
 }

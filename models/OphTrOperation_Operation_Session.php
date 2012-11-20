@@ -156,5 +156,32 @@ class OphTrOperation_Operation_Session extends BaseActiveRecord
 
 		return $sessions;
 	}
+
+	public function getDuration() {
+		return (mktime(substr($this->end_time,0,2),substr($this->end_time,3,2),0,1,1,date('Y')) - mktime(substr($this->start_time,0,2),substr($this->start_time,3,2),0,1,1,date('Y'))) / 60;
+	}
+
+	public function getBookedMinutes() {
+		$total = 0;
+
+		foreach (Yii::app()->db->createCommand()
+			->select("o.total_duration")
+			->from("et_ophtroperation_operation o")
+			->join("ophtroperation_operation_booking","ophtroperation_operation_booking.element_id = o.id")
+			->where("ophtroperation_operation_booking.session_id = :sessionId",array(':sessionId' => $this->id))
+			->queryAll() as $operation) {
+			$total += $operation->total_duration;
+		}
+
+		return $total;
+	}
+
+	public function getAvailable() {
+		return $this->duration - $this->bookedminutes;
+	}
+
+	public function getMinuteStatus() {
+		return $this->available >= 0 ? 'available' : 'overbooked';
+	}
 }
 ?>
