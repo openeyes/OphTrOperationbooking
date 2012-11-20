@@ -110,5 +110,30 @@ class OphTrOperation_Operation_Theatre extends BaseActiveRecord
 				'criteria' => $criteria,
 			));
 	}
+
+	public static function findByDateAndFirmID($date, $firmId) {
+		if ($firmId === null) {
+			$firmSql = 's.firm_id IS NULL';
+		} else {
+			if (!$firm = Firm::model()->findByPk($firmId)) {
+				throw new Exception('Firm id is invalid.');
+			}
+			$firmSql = "s.firm_id = $firmId";
+		}
+
+		$sessions = Yii::app()->db->createCommand()
+			->select("t.*, s.start_time, s.end_time, s.id AS session_id, s.consultant, s.anaesthetist, s.paediatric, s.general_anaesthetic, TIMEDIFF(s.end_time, s.start_time) AS session_duration, COUNT(a.id) AS bookings, SUM(o.total_duration) AS bookings_duration")
+			->from("ophtroperation_operation_session s")
+			->join("ophtroperation_operation_theatre t","s.theatre_id = t.id")
+			->leftJoin("ophtroperation_operation_booking a","s.id = a.session_id")
+			->leftJoin("et_ophtroperation_operation o","a.element_id = o.id")
+			->leftJoin("event e","o.event_id = e.id")
+			->where("s.available = 1 and s.date = :date and $firmSql and (e.deleted = 0 or e.deleted is null)",array(':date' => $date))
+			->group("s.id")
+			->order("s.start_time")
+			->queryAll();
+
+		return $sessions;
+	}
 }
 ?>

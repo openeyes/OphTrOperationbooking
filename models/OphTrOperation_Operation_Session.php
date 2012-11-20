@@ -26,7 +26,7 @@
  * @property time $start_time
  * @property time $end_time
  * @property string $comments
- * @property integer $status_id
+ * @property integer $available
  * @property boolean $consultant
  * @property boolean $paediatric
  * @property boolean $anaesthetist
@@ -69,10 +69,10 @@ class OphTrOperation_Operation_Session extends BaseActiveRecord
 		return array(
 			array('sequence_id, date, start_time, end_time', 'required'),
 			array('sequence_id, theatre_id', 'length', 'max' => 10),
-			array('comments, status, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id', 'safe'),
+			array('comments, available, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, sequence_id, theatre_id, date, start_time, end_time, comments, status, firm_id, site_id, weekday, consultant, paediatric, anaesthetist, general_anaesthetic', 'safe', 'on'=>'search'),
+			array('id, sequence_id, theatre_id, date, start_time, end_time, comments, available, firm_id, site_id, weekday, consultant, paediatric, anaesthetist, general_anaesthetic', 'safe', 'on'=>'search'),
 		);
 	}
 	
@@ -122,7 +122,7 @@ class OphTrOperation_Operation_Session extends BaseActiveRecord
 			));
 	}
 
-	public static function get($monthStart, $minDate, $firmId) {
+	public static function findByDateAndFirmID($monthStart, $minDate, $firmId) {
 		if ($firmId !== null) {
 			$firm = Firm::model()->findByPk($firmId);
 			if (empty($firm)) {
@@ -149,34 +149,12 @@ class OphTrOperation_Operation_Session extends BaseActiveRecord
 			->leftJoin("ophtroperation_operation_booking a","s.id = a.session_id")
 			->leftJoin("et_ophtroperation_operation o","a.element_id = o.id")
 			->leftJoin("event e","o.event_id = e.id")
-			->where("s.status != 0 AND s.date BETWEEN CAST('$startDate' AS DATE) AND CAST('$monthEnd' AS DATE) AND $firmSql")
+			->where("s.available = 1 AND s.date BETWEEN CAST('$startDate' AS DATE) AND CAST('$monthEnd' AS DATE) AND $firmSql")
 			->group("s.id")
 			->order("WEEKDAY(DATE) ASC")
 			->queryAll();
 
-print_r($sessions); exit;
-
-/*
-		$sql = "
-			SELECT s.*, TIMEDIFF(s.end_time, s.start_time) AS session_duration,
-				COUNT(a.id) AS bookings,
-				SUM(o.total_duration) AS bookings_duration
-			FROM `session` `s`
-			JOIN `theatre` `t` ON s.theatre_id = t.id
-			LEFT JOIN `session_firm_assignment` `f` ON s.id = f.session_id
-			LEFT JOIN `booking` `a` ON s.id = a.session_id
-			LEFT JOIN `element_operation` `o` ON a.element_operation_id = o.id
-			LEFT JOIN `event` `e` ON `o`.event_id = `e`.id
-			WHERE s.status != " . Session::STATUS_UNAVAILABLE . " AND
-				s.date BETWEEN CAST('$startDate' AS DATE) AND
-				CAST('$monthEnd' AS DATE) AND $firmSql
-			GROUP BY s.id
-			ORDER BY WEEKDAY(DATE) ASC
-		";
-		$sessions = Yii::app()->db->createCommand($sql)->query();
-
 		return $sessions;
-*/
 	}
 }
 ?>

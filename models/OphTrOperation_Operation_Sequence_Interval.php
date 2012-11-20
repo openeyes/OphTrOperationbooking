@@ -93,4 +93,20 @@ class OphTrOperation_Operation_Sequence_Interval extends BaseActiveRecord
 				'criteria' => $criteria,
 			));
 	}
+
+	public function getInteger($endTimestamp) {
+		switch ($this->id) {
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+				$interval = 60 * 60 * 24 * (($this->id-1) * 7)
+				break;
+			case 1:
+			case 6:
+				$interval = $endTimestamp + 1;
+				break;
+		}
+		return $interval;
+	}
 }

@@ -295,7 +295,7 @@ class m121114_105958_event_type_OphTrOperation extends CDbMigration
 				'start_time' => 'time NOT NULL',
 				'end_time' => 'time NOT NULL',
 				'comments' => 'text COLLATE utf8_bin',
-				'status' => "int(10) unsigned NOT NULL DEFAULT '0'",
+				'available' => "tinyint(1) unsigned NOT NULL DEFAULT 1",
 				'consultant' => "tinyint(1) unsigned NOT NULL DEFAULT '1'",
 				'paediatric' => "tinyint(1) unsigned NOT NULL DEFAULT '0'",
 				'anaesthetist' => "tinyint(1) unsigned NOT NULL DEFAULT '0'",
@@ -399,6 +399,7 @@ class m121114_105958_event_type_OphTrOperation extends CDbMigration
 				'cancellation_date' => 'datetime DEFAULT NULL',
 				'cancellation_reason_id' => 'int(10) unsigned NULL',
 				'cancellation_comment' => 'varchar(200) COLLATE utf8_bin NOT NULL',
+				'cancellation_user_id' => 'int(10) unsigned NULL',
 				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
 				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
 				'created_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
@@ -411,6 +412,7 @@ class m121114_105958_event_type_OphTrOperation extends CDbMigration
 				'KEY `et_ophtroperation_operation_booking_sti_fk` (`session_theatre_id`)',
 				'KEY `et_ophtroperation_operation_booking_cri_fk` (`cancellation_reason_id`)',
 				'KEY `et_ophtroperation_operation_booking_ses_fk` (`session_id`)',
+				'KEY `et_ophtroperation_operation_booking_caui_fk` (`cancellation_user_id`)',
 				'CONSTRAINT `et_ophtroperation_operation_booking_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `et_ophtroperation_operation_booking_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `et_ophtroperation_operation_booking_ele_fk` FOREIGN KEY (`element_id`) REFERENCES `et_ophtroperation_operation` (`id`)',
@@ -418,6 +420,7 @@ class m121114_105958_event_type_OphTrOperation extends CDbMigration
 				'CONSTRAINT `et_ophtroperation_operation_booking_sti_fk` FOREIGN KEY (`session_theatre_id`) REFERENCES `ophtroperation_operation_theatre` (`id`)',
 				'CONSTRAINT `et_ophtroperation_operation_booking_cri_fk` FOREIGN KEY (`cancellation_reason_id`) REFERENCES `ophtroperation_operation_cancellation_reason` (`id`)',
 				'CONSTRAINT `et_ophtroperation_operation_booking_ses_fk` FOREIGN KEY (`session_id`) REFERENCES `ophtroperation_operation_session` (`id`)',
+				'CONSTRAINT `et_ophtroperation_operation_booking_caui_fk` FOREIGN KEY (`cancellation_user_id`) REFERENCES `user` (`id`)',
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 
 		$this->createTable('ophtroperation_operation_procedures_procedures', array(

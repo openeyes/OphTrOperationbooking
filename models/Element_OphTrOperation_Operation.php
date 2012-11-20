@@ -118,6 +118,8 @@
 			'status' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Status', 'status_id'),
 			'erod' => array(self::HAS_ONE, 'OphTrOperation_Operation_EROD', 'element_id'),
 			'date_letter_sent' => array(self::HAS_ONE, 'OphTrOperation_Operation_Date_Letter_Sent', 'element_id', 'order' => 'date_letter_sent.id DESC'),
+			'cancelled_user' => array(self::BELONGS_TO, 'User', 'cancelled_user_id'),
+			'cancelledBookings' => array(self::HAS_MANY, 'OphTrOperation_Operation_Booking', 'element_id', 'order' => 'cancellation_date'),
 		);
 	}
 
@@ -441,13 +443,13 @@
 			$firmId = null;
 		}
 
-		$sessions = OphTrOperation_Operation_Session::get($monthStart, $minDate, $firmId);
+		$sessions = OphTrOperation_Operation_Session::findByDateAndFirmID($monthStart, $minDate, $firmId);
 
 		$results = array();
 		foreach ($sessions as $session) {
 			$date = $session['date'];
 			$weekday = date('N', strtotime($date));
-			$text = $this->getWeekdayText($weekday);
+			$text = Helper::getWeekdayText($weekday);
 
 			$sessionTime = explode(':', $session['session_duration']);
 			$session['duration'] = ($sessionTime[0] * 60) + $sessionTime[1];
@@ -504,6 +506,75 @@
 			}
 
 			array_multisort($dateSort, SORT_ASC, $dates);
+		}
+
+		return $results;
+	}
+
+	public function getTheatres($date, $emergency = false)
+	{
+		if (empty($date)) {
+			throw new Exception('Date is required.');
+		}
+
+		if (empty($emergency) || $emergency == 'EMG') {
+			$firmId = null;
+		} else {
+			$firmId = $emergency;
+		}
+
+		$sessions = OphTrOperation_Operation_Theatre::findByDateAndFirmID($date, $firmId);
+
+		$results = array();
+		$names = array();
+		foreach ($sessions as $session) {
+			$theatre = Theatre::model()->findByPk($session['id']);
+
+			$name = $session['name'] . ' (' . $theatre->site->short_name . ')';
+			$sessionTime = explode(':', $session['session_duration']);
+			$session['duration'] = ($sessionTime[0] * 60) + $sessionTime[1];
+			$session['time_available'] = $session['duration'] - $session['bookings_duration'];
+			$session['id'] = $session['session_id'];
+			unset($session['session_duration'], $session['date'], $session['name']);
+
+			// Add status field to indicate if session is full or not
+			if ($session['time_available'] <= 0) {
+				$session['status'] = 'full';
+			} else {
+				$session['status'] = 'available';
+			}
+
+			$session['date'] = $date;
+
+			// Add bookable field to indicate if session can be booked for this operation
+			$bookable = true;
+			if($this->anaesthetist_required && !$session['anaesthetist']) {
+				$bookable = false;
+				$session['bookable_reason'] = 'anaesthetist';
+			}
+			if($this->consultant_required && !$session['consultant']) {
+				$bookable = false;
+				$session['bookable_reason'] = 'consultant';
+			}
+			$paediatric = ($this->event->episode->patient->isChild());
+			if($paediatric && !$session['paediatric']) {
+				$bookable = false;
+				$session['bookable_reason'] = 'paediatric';
+			}
+			if($this->anaesthetic_type->name == 'GA' && !$session['general_anaesthetic']) {
+				$bookable = false;
+				$session['bookable_reason'] = 'general_anaesthetic';
+			}
+			$session['bookable'] = $bookable;
+			$results[$name][] = $session;
+			if (!in_array($name, $names)) {
+				$names[] = $name;
+			}
+
+		}
+
+		if (count($results) > 1) {
+			array_multisort($names, SORT_ASC, $results);
 		}
 
 		return $results;

@@ -101,34 +101,34 @@
 	</div>
 <?php } ?>
 
-<?php /*if (count($cancelledBookings)) { ?>
+<?php if (count($element->cancelledBookings)) { ?>
 	<h3 class="subsection">Cancelled Bookings</h3>
 	<ul class="eventComments">
-		<?php foreach($cancelledBookings as $cb) { ?>
+		<?php foreach($element->cancelledBookings as $cb) { ?>
 		<li>
-			Originally scheduled for <strong><?php echo $cb->NHSDate('date'); ?>,
-			<?php echo date('H:i',strtotime($cb->start_time)); ?> -
-			<?php echo date('H:i',strtotime($cb->end_time)); ?></strong>,
+			Originally scheduled for <strong><?php echo $cb->NHSDate('session_date'); ?>,
+			<?php echo date('H:i',strtotime($cb->session_start_time)); ?> -
+			<?php echo date('H:i',strtotime($cb->session_end_time)); ?></strong>,
 			in <strong><?php echo $cb->theatre->NameWithSite; ?></strong>.
-			Cancelled on <?php echo $cb->NHSDate('cancelled_date'); ?>
+			Cancelled on <?php echo $cb->NHSDate('cancellation_date'); ?>
 			by <strong><?php echo $cb->user->FullName; ?></strong>
 			due to <?php echo $cb->ReasonWithComment; ?>
 		</li>
 		<?php } ?>
 	</ul>
-<?php }*/ ?>
+<?php }?>
 
 <?php if ($element->status->name == 'Cancelled' && $element->cancellation_date) {?>
 	<h3 class="subsection">Cancellation details</h3>
 		<div class="eventHighlight">
-			<h4>Cancelled on <?php echo $element->NHSDate('cancellation_date') . ' by user ' . $co->user->username . ' for reason: ' . $co->cancelledReason->text; ?>
+			<h4>Cancelled on <?php echo $element->NHSDate('cancellation_date') . ' by user ' . $element->cancelled_user->username . ' for reason: ' . $element->cancelled_reason->name?>
 			</h4>
 		</div>
 
-	<?php if ($co->cancellation_comment) {?>
+	<?php if ($element->cancellation_comment) {?>
 		<h4>Cancellation comments</h4>
 		<div class="eventHighlight comments">
-			<h4><?php echo str_replace("\n","<br/>",$co->cancellation_comment)?></h4>
+			<h4><?php echo str_replace("\n","<br/>",$element->cancellation_comment)?></h4>
 		</div>
 	<?php } ?>
 <?php } ?>

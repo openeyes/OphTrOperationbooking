@@ -37,6 +37,12 @@
 
 class OphTrOperation_Operation_Sequence extends BaseActiveRecord
 {
+	const SELECT_1STWEEK = 1;
+	const SELECT_2NDWEEK = 2;
+	const SELECT_3RDWEEK = 4;
+	const SELECT_4THWEEK = 8;
+	const SELECT_5THWEEK = 16;
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -138,6 +144,37 @@ class OphTrOperation_Operation_Sequence extends BaseActiveRecord
 		if ($end <= $start) {
 			$this->addError('end_time', 'End time must be after the start time.');
 		}
+	}
+
+	public function getWeekOccurrences($weekday, $weekSelection, $startTimestamp, $endTimestamp, $startDate, $endDate) {
+		$dates = array();
+		$month = strtotime(date('Y-m-01',$startTimestamp));
+		$weekday_options = $this->getWeekdayOptions();
+		$weekday_string = $weekday_options[$weekday];
+		while($month <= $endTimestamp) {
+			$day = strtotime("first $weekday_string of", $month);
+			for ($i = self::SELECT_1STWEEK; $i <= self::SELECT_5THWEEK; $i *= 2) {
+				// Only add date if it is between start and end dates, and is a selected week. Also check we haven't rolled over into the next month (4 week months) 
+				if($day >= $startTimestamp && $day <= $endTimestamp && $day <= strtotime('last day of', $month) && ($weekSelection & $i)) {
+					$dates[] = date('Y-m-d',$day);
+				}
+				$day = strtotime("+1 week", $day);
+			}
+			$month = strtotime("+1 month", $month);
+		}
+		return $dates;
+	}
+
+	public function getWeekdayOptions() {
+		return array(
+			1 => 'Monday',
+			2 => 'Tuesday',
+			3 => 'Wednesday',
+			4 => 'Thursday',
+			5 => 'Friday',
+			6 => 'Saturday',
+			7 => 'Sunday',
+		);
 	}
 }
 ?>

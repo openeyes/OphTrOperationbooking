@@ -84,7 +84,7 @@ $this->header();
 			var month = $('input[id=pmonth]').val();
 			var operation = $('input[id=operation]').val();
 			$.ajax({
-				'url': '<?php echo Yii::app()->createUrl('booking/sessions'); ?>',
+				'url': '<?php echo Yii::app()->createUrl('/'.$event->eventType->class_name.'/default/sessions')?>',
 				'type': 'GET',
 				'data': {'operation': operation, 'date': month, 'firmId': '<?php echo empty($firm->id) ? 'EMG' : $firm->id ?>'},
 				'success': function(data) {
@@ -103,7 +103,7 @@ $this->header();
 			var month = $('input[id=nmonth]').val();
 			var operation = $('input[id=operation]').val();
 			$.ajax({
-				'url': '<?php echo Yii::app()->createUrl('booking/sessions'); ?>',
+				'url': '<?php echo Yii::app()->createUrl('/'.$event->eventType->class_name.'/default/sessions')?>',
 				'type': 'GET',
 				'data': {'operation': operation, 'date': month, 'firmId': '<?php echo empty($firm->id) ? 'EMG' : $firm->id ?>'},
 				'success': function(data) {
@@ -126,7 +126,7 @@ $this->header();
 			var month = $('#current_month').text();
 			var operation = $('input[id=operation]').val();
 			$.ajax({
-				'url': '<?php echo Yii::app()->createUrl('booking/theatres'); ?>',
+				'url': '<?php echo Yii::app()->createUrl('/'.$event->eventType->class_name.'/default/theatres'); ?>',
 				'type': 'GET',
 				'data': {'operation': operation, 'month': month, 'day': day, 'firm': '<?php echo empty($firm->id) ? 'EMG' : $firm->id ?>', 'reschedule': 0},
 				'success': function(data) {
