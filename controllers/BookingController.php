@@ -67,15 +67,8 @@ class BookingController extends BaseEventTypeController {
 
 				OELog::log("Booking made $booking->id");
 
-				$audit = new Audit;
-				$audit->action = "create";
-				$audit->target_type = "booking";
-				$audit->patient_id = $operation->event->episode->patient->id;
-				$audit->episode_id = $operation->event->episode_id;
-				$audit->event_id = $operation->event_id;
-				$audit->user_id = (Yii::app()->session['user'] ? Yii::app()->session['user']->id : null);
-				$audit->data = $booking->getAuditAttributes();
-				$audit->save();
+				$booking->audit('booking','create');
+
 				// Update episode status to 'listed'
 				$operation->event->episode->episode_status_id = 3;
 				if (!$operation->event->episode->save()) {
@@ -177,15 +170,7 @@ class BookingController extends BaseEventTypeController {
 
 					OELog::log("Booking rescheduled: $new_booking->id, cancelled booking=$booking->id");
 
-					$audit = new Audit;
-					$audit->action = "reschedule";
-					$audit->target_type = "booking";
-					$audit->patient_id = $operation->event->episode->patient_id;
-					$audit->episode_id = $operation->event->episode_id;
-					$audit->event_id = $operation->event_id;
-					$audit->user_id = (Yii::app()->session['user'] ? Yii::app()->session['user']->id : null);
-					$audit->data = $new_booking->getAuditAttributes();
-					$audit->save();
+					$new_booking->audit('booking','reschedule');
 
 					$episode = $operation->event->episode;
 
@@ -248,15 +233,7 @@ class BookingController extends BaseEventTypeController {
 						}
 					}
 
-					$audit = new Audit;
-					$audit->action = "cancel";
-					$audit->target_type = "booking";
-					$audit->patient_id = $booking->operation->event->episode->patient_id;
-					$audit->episode_id = $booking->operation->event->episode_id;
-					$audit->event_id = $booking->operation->event_id;
-					$audit->user_id = (Yii::app()->session['user'] ? Yii::app()->session['user']->id : null);
-					$audit->data = $booking->id;
-					$audit->save();
+					$booking->audit('booking','cancel');
 
 					$operation->event->episode->episode_status_id = 3;
 

@@ -719,5 +719,13 @@
 			}
 		}
 	}
+
+	public function audit($target, $action, $data=null, $log=false, $properties=array()) {
+		$properties['event_id'] = $this->event_id;
+		$properties['episode_id'] = $this->event->episode_id;
+		$properties['patient_id'] = $this->event->episode->patient_id;
+
+		return parent::audit($target, $action, $data, $log, $properties);
+	}
 }
 ?>
