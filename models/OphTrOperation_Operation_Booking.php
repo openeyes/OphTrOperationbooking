@@ -93,6 +93,8 @@ class OphTrOperation_Operation_Booking extends BaseActiveRecord
 			'ward' => array(self::BELONGS_TO, 'Ward', 'ward_id'),
 			'session' => array(self::BELONGS_TO, 'Session', 'session_id'),
 			'operation' => array(self::BELONGS_TO, 'Element_OphTrOperation_Operation', 'element_id'),
+			'theatre' => array(self::BELONGS_TO, 'Theatre', 'session_theatre_id'),
+			'cancellationReason' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Cancellation_Reason', 'cancellation_reason_id'),
 		);
 	}
 
@@ -126,6 +128,14 @@ class OphTrOperation_Operation_Booking extends BaseActiveRecord
 		return new CActiveDataProvider(get_class($this), array(
 				'criteria' => $criteria,
 			));
+	}
+
+	public function getCancellationReasonWithComment() {
+		$return = $this->cancellationReason->text;
+		if ($this->cancellation_comment) {
+			$return .= " ($this->cancellation_comment)";
+		}
+		return $return;
 	}
 }
 ?>

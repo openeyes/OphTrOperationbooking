@@ -428,6 +428,12 @@
 			$date = strtotime($interval, $date);
 		}
 
+		$thisMonth = mktime(0, 0, 0, date('m'), 1, date('Y'));
+
+		if ($date < $thisMonth) {
+			return $thisMonth;
+		}
+
 		return $date;
 	}
 
@@ -438,15 +444,9 @@
 	public function getSessions($firm) {
 		$emergency = $firm->name == 'Emergency List';
 
-		$minDate = $this->getMinDate();
-		$thisMonth = mktime(0, 0, 0, date('m'), 1, date('Y'));
-		if ($minDate < $thisMonth) {
-			$minDate = $thisMonth;
-		}
+		$monthStart = empty($_GET['date']) ? date('Y-m-01', $this->minDate) : $_GET['date'];
 
-		$monthStart = empty($_GET['date']) ? date('Y-m-01', $minDate) : $_GET['date'];
-
-		$sessions = OphTrOperation_Operation_Session::findByDateAndFirmID($monthStart, $minDate, $firm->id);
+		$sessions = OphTrOperation_Operation_Session::findByDateAndFirmID($monthStart, $this->minDate, $firm->id);
 
 		$results = array();
 		foreach ($sessions as $session) {

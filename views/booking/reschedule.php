@@ -18,14 +18,13 @@
  */
 
 $this->header();
-
 ?>
 <div id="schedule">
 	<div class="patientReminder">
 		<span class="patient"><?php echo $this->patient->getDisplayName()?> (<?php echo $this->patient->hos_num ?>)</span>
 	</div>
 
-	<h3>Schedule Operation</h3>
+	<h3>Re-schedule Operation</h3>
 
 	<?php
 	if ($event->episode->firm_id != $firm->id) {
@@ -44,6 +43,13 @@ $this->header();
 		<?php
 	}
 	?>
+	<div class="eventDetail">
+		<strong>Operation duration:</strong> <?php echo $operation->total_duration; ?> minutes
+	</div>
+	<div class="eventDetail">
+		<div class="label"><strong>Current schedule:</strong></div>
+		<?php $this->renderPartial('_session', array('operation' => $operation)); ?>
+	</div>
 
 	<div id="firmSelect" class="eventDetail clearfix">
 		<div class="label"><span class="normal">Viewing the schedule for </span><br /><strong><?php echo $firm->name?></strong></div>
@@ -71,7 +77,7 @@ $this->header();
 		<div id="calendar">
 			<div id="session_dates">
 				<div id="details">
-					<?php echo $this->renderPartial('_calendar', array('operation'=>Element_OphTrOperation_Operation::model()->find('event_id=?',array($event->id)), 'date'=>$date, 'sessions' => $sessions, 'firmId' => $firm->id), false, true); ?>
+					<?php echo $this->renderPartial('_calendar', array('operation'=>$operation, 'date'=>$date, 'sessions' => $sessions, 'firmId' => $firm->id), false, true); ?>
 				</div>
 			</div>
 		</div>
@@ -129,14 +135,15 @@ $this->header();
 			var month = $('#current_month').text();
 			var operation = $('input[id=operation]').val();
 			$.ajax({
-				'url': '<?php echo Yii::app()->createUrl('/'.$event->eventType->class_name.'/booking/theatres'); ?>',
+				'url': '<?php echo Yii::app()->createUrl('/'.$event->eventType->class_name.'/booking/theatres')?>',
 				'type': 'GET',
-				'data': {'operation': operation, 'month': month, 'day': day, 'firm': '<?php echo empty($firm->id) ? 'EMG' : $firm->id ?>', 'reschedule': 0},
+				'data': {'operation': operation, 'month': month, 'day': day, 'firm': '<?php echo empty($firm->id) ? 'EMG' : $firm->id ?>', 'reschedule': 1},
 				'success': function(data) {
 					$('#theatres').html(data);
 					if ($('#bookings').length > 0) {
 						$('#bookings').remove();
 					}
+					$("#theatres").tabs();
 					if ($('#theatres div.shinybutton').length == 1) {
 						var button = $('#theatres div.shinybutton');
 						var session = button.children().children('span.session_id').text();
@@ -155,10 +162,10 @@ $this->header();
 			$(this).addClass('highlighted');
 			showTheatreList(operation, month, day, session);
 		});
-		$(this).undelegate('#firmSelect #firmId','change').delegate('#firmSelect #firmId','change',function() {
+		$(this).undelegate('#firmSelect #firmId','click').delegate('#firmSelect #firmId','change',function() {
 			var firmId = $(this).val();
 			var operation = $('input[id=operation]').val();
-			window.location.href = '<?php echo Yii::app()->createUrl('/'.$event->eventType->class_name.'/booking/schedule/'.$event->id); ?>?firmId='+firmId;
+			window.location.href = '<?php echo Yii::app()->createUrl('/'.$event->eventType->class_name.'/booking/reschedule/'.$event->id)?>?firmId='+firmId;
 		});
 	});
 
@@ -171,6 +178,7 @@ $this->header();
 				'month': month,
 				'day': day,
 				'session': session,
+				'reschedule': true,
 			},
 			'success': function(data) {
 				if ($('#bookings').length == 0) {

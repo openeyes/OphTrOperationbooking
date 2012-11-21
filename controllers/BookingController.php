@@ -131,6 +131,159 @@ class BookingController extends BaseEventTypeController {
 	}
 
 	public function actionUpdate($id) {
+		if (!$event = Event::model()->findByPk($id)) {
+			throw new Exception('Unable to find event: '.$id);
+		}
+
+		if (isset($_POST['booking_id'])) {
+			$booking = OphTrOperation_Operation_Booking::model()->findByPk($_POST['booking_id']);
+			$reason = OphTrOperation_Operation_Cancellation_Reason::model()->findByPk($_POST['cancellation_reason']);
+			$operation = $booking->operation;
+
+			if (!$reason) {
+				die(json_encode(array('Please enter a cancellation reason')));
+			}
+
+			$booking->cancellation_date = date('Y-m-d H:i:s');
+			$booking->cancellation_reason_id = $reason->id;
+			$booking->cancellation_comment = strip_tags($_POST['cancellation_comment']);
+
+			if ($booking->save()) {
+				OELog::log("Booking cancelled: $booking->id");
+
+				if (!empty($_POST['Booking'])) {
+
+					// This is enforced in the model so no need to if ()
+					preg_match('/(^[0-9]{1,2}).*?([0-9]{2})$/',$_POST['Booking']['admission_time'],$m);
+					$_POST['Booking']['admission_time'] = $m[1].":".$m[2];
+
+					$new_booking = new OphTrOperation_Operation_Booking;
+					$new_booking->attributes = $_POST['Booking'];
+
+					$new_session = Session::Model()->findByPk($new_booking->session_id);
+
+					$new_booking->session_date = $new_session->date;
+					$new_booking->session_start_time = $new_session->start_time;
+					$new_booking->session_end_time = $new_session->end_time;
+					$new_booking->session_theatre_id = $new_session->theatre_id;
+
+					$wards = $operation->getWardOptions(
+					$new_session->theatre->site_id, $new_session->theatre_id);
+					$new_booking->ward_id = key($wards);
+
+					if (!$new_booking->save()) {
+						throw new SystemException('Unable to save booking: '.print_r($new_booking->getErrors(),true));
+					}
+
+					OELog::log("Booking rescheduled: $new_booking->id, cancelled booking=$booking->id");
+
+					$audit = new Audit;
+					$audit->action = "reschedule";
+					$audit->target_type = "booking";
+					$audit->patient_id = $operation->event->episode->patient_id;
+					$audit->episode_id = $operation->event->episode_id;
+					$audit->event_id = $operation->event_id;
+					$audit->user_id = (Yii::app()->session['user'] ? Yii::app()->session['user']->id : null);
+					$audit->data = $new_booking->getAuditAttributes();
+					$audit->save();
+
+					$episode = $operation->event->episode;
+
+					$episode->episode_status_id = 3;
+					if (!$episode->save()) {
+						throw new Exception('Unable to change episode status for episode '.$episode->id.': '.print_r($episode->getErrors(),true));
+					}
+
+					if (Yii::app()->params['urgent_booking_notify_hours'] && Yii::app()->params['urgent_booking_notify_email']) {
+						if (strtotime($new_booking->session->date) <= (strtotime(date('Y-m-d')) + (Yii::app()->params['urgent_booking_notify_hours'] * 3600))) {
+							if (!is_array(Yii::app()->params['urgent_booking_notify_email'])) {
+								$targets = array(Yii::app()->params['urgent_booking_notify_email']);
+							} else {
+								$targets = Yii::app()->params['urgent_booking_notify_email'];
+							}
+							foreach ($targets as $email) {
+								mail($email, "[OpenEyes] Urgent reschedule made","A patient booking was rescheduled with a TCI date within the next 24 hours.\n\nDisorder: ".$operation->getDisorder()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.","From: ".Yii::app()->params['urgent_booking_notify_email_from']."\r\n");
+							}
+						}
+					}
+
+					// Looking for a matching row in transport_list and remove it so the entry in the transport list isn't grey
+					if ($tl = TransportList::model()->find('item_table = ? and item_id = ?',array('booking',$new_booking->id))) {
+						$tl->delete();
+					}
+
+					$operation->site_id = $new_session->theatre->site_id;
+					$operation->status = ElementOperation::STATUS_RESCHEDULED;
+
+					// Update operation comments
+					if (!empty($_POST['Operation']['comments'])) {
+						$operation->comments = $_POST['Operation']['comments'];
+					}
+
+					if (!$operation->save()) {
+						throw new SystemException('Unable to update operation status: '.print_r($operation->getErrors(),true));
+					}
+
+					if (!empty($_POST['Session']['comments'])) {
+						$new_session->comments = $_POST['Session']['comments'];
+						if (!$new_session->save()) {
+							throw new SystemException('Unable to save session comments: '.print_r($new_session->getErrors(),true));
+						}
+					}
+				} else {
+					if (!$operation->event->addIssue('Operation requires scheduling')) {
+						throw new SystemException('Unable to save event_issue object for event: '.$operation->event->id);
+					}
+
+					if (Yii::app()->params['urgent_booking_notify_hours'] && Yii::app()->params['urgent_booking_notify_email']) {
+						if (strtotime($new_booking->session->date) <= (strtotime(date('Y-m-d')) + (Yii::app()->params['urgent_booking_notify_hours'] * 3600))) {
+							if (!is_array(Yii::app()->params['urgent_booking_notify_email'])) {
+								$targets = array(Yii::app()->params['urgent_booking_notify_email']);
+							} else {
+								$targets = Yii::app()->params['urgent_booking_notify_email'];
+							}
+							foreach ($targets as $email) {
+								mail($email, "[OpenEyes] Urgent cancellation made","A cancellation was made with a TCI date within the next 24 hours.\n\nDisorder: ".$operation->getDisorder()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.","From: ".Yii::app()->params['urgent_booking_notify_email_from']."\r\n");
+							}
+						}
+					}
+
+					$audit = new Audit;
+					$audit->action = "cancel";
+					$audit->target_type = "booking";
+					$audit->patient_id = $booking->operation->event->episode->patient_id;
+					$audit->episode_id = $booking->operation->event->episode_id;
+					$audit->event_id = $booking->operation->event_id;
+					$audit->user_id = (Yii::app()->session['user'] ? Yii::app()->session['user']->id : null);
+					$audit->data = $booking->id;
+					$audit->save();
+
+					$operation->event->episode->episode_status_id = 3;
+
+					if (!$operation->event->episode->save()) {
+						throw new Exception('Unable to update episode status for episode '.$operation->event->episode->id);
+					}
+
+					$operation->status_id = OphTrOperation_Operation_Status::model()->find('name=?',array('Requires rescheduling'))->id;
+
+					// we've just removed a booking and updated the element_operation status to 'needs rescheduling'
+					// any time we do that we need to add a new record to date_letter_sent
+					$date_letter_sent = new OphTrOperation_Operation_Date_Letter_Sent;
+					$date_letter_sent->element_id = $operation->id;
+					$date_letter_sent->save();
+
+					if (!$operation->save()) {
+						throw new SystemException('Unable to update operation status: '.print_r($operation->getErrors(),true));
+					}
+				}
+
+				$patientId = $booking->operation->event->episode->patient->id;
+
+				die(json_encode(array()));
+			}
+
+			die(json_encode($booking->getErrors(),true));
+		}
 	}
 
 	public function actionSchedule($id) {
@@ -150,14 +303,46 @@ class BookingController extends BaseEventTypeController {
 			$firm = Firm::model()->findByPk(Yii::app()->session['selected_firm_id']);
 		}
 
-		$this->renderPartial(
-			'schedule', array(
-			'event' => $event,
-			'firm' => $firm,
-			'firmList' => $firmList = Firm::model()->getListWithSpecialties(),
-			'sessions' => $operation->getSessions($firm),
-			'date' => $operation->minDate,
-			), false, true);
+		$this->renderPartial('schedule', array(
+				'event' => $event,
+				'firm' => $firm,
+				'firmList' => Firm::model()->listWithSpecialties,
+				'sessions' => $operation->getSessions($firm),
+				'date' => $operation->minDate,
+				), false, true);
+	}
+
+	public function actionReschedule($id) {
+		if (!$event = Event::model()->findByPk($id)) {
+			throw new Exception('Unable to find event: '.$id);
+		}
+
+		$operation = Element_OphTrOperation_Operation::model()->find('event_id=?',array($id));
+
+		if (@$_GET['firmId']) {
+			if (!$firm = Firm::model()->findByPk(@$_GET['firmId'])) {
+				throw new Exception('Unknown firm id: '.$_GET['firmId']);
+			}
+		} else {
+			$firm = Firm::model()->findByPk(Yii::app()->session['selected_firm_id']);
+		}
+
+		$firmList = Firm::model()->getListWithSpecialties();
+
+		$this->patient = $operation->event->episode->patient;
+		$this->title = 'Reschedule';
+
+		$this->renderPartial('reschedule', array(
+				'event' => $event,
+				'operation' => $operation,
+				'date' => $operation->minDate,
+				'sessions' => $operation->getSessions($firm),
+				'firm' => $firm,
+				'firmList' => Firm::model()->listWithSpecialties,
+			),
+			false,
+			true
+		);
 	}
 
 	public function actionSessions() {

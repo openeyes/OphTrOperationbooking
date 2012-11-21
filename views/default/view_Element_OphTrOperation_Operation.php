@@ -104,15 +104,15 @@
 <?php if (count($element->cancelledBookings)) { ?>
 	<h3 class="subsection">Cancelled Bookings</h3>
 	<ul class="eventComments">
-		<?php foreach($element->cancelledBookings as $cb) { ?>
+		<?php foreach($element->cancelledBookings as $booking) { ?>
 		<li>
-			Originally scheduled for <strong><?php echo $cb->NHSDate('session_date'); ?>,
-			<?php echo date('H:i',strtotime($cb->session_start_time)); ?> -
-			<?php echo date('H:i',strtotime($cb->session_end_time)); ?></strong>,
-			in <strong><?php echo $cb->theatre->NameWithSite; ?></strong>.
-			Cancelled on <?php echo $cb->NHSDate('cancellation_date'); ?>
-			by <strong><?php echo $cb->user->FullName; ?></strong>
-			due to <?php echo $cb->ReasonWithComment; ?>
+			Originally scheduled for <strong><?php echo $booking->NHSDate('session_date'); ?>,
+			<?php echo date('H:i',strtotime($booking->session_start_time)); ?> -
+			<?php echo date('H:i',strtotime($booking->session_end_time)); ?></strong>,
+			in <strong><?php echo $booking->theatre->NameWithSite; ?></strong>.
+			Cancelled on <?php echo $booking->NHSDate('cancellation_date'); ?>
+			by <strong><?php echo $booking->user->FullName; ?></strong>
+			due to <?php echo $booking->cancellationReasonWithComment; ?>
 		</li>
 		<?php } ?>
 	</ul>
@@ -160,7 +160,7 @@
 			<?php }else{?>
 				<button type="submit" class="auto classy disabled venti" value="submit" disabled="disabled"><span class="button-span button-span-blue">Print letter</span></button>
 			<?php }?>
-			<button type="submit" class="auto classy green venti" value="submit" id="btn_reschedule-now"><span class="button-span button-span-green">Reschedule now</span></button>
+			<button type="submit" class="auto classy green venti" value="submit" id="btn_reschedule-now"><a href="<?php echo Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/reschedule/'.$element->event_id)?>"><span class="button-span button-span-green">Reschedule now</span></a></button>
 			<button type="submit" class="auto classy green venti" value="submit" id="btn_reschedule-later"><span class="button-span button-span-green">Reschedule later</span></button>
 		<?php }?>
 		<button type="submit" class="auto classy red venti" value="submit" id="btn_cancel-operation"><span class="button-span button-span-red">Cancel operation</span></button>

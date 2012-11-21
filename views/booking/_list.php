@@ -192,7 +192,7 @@ if (!$reschedule) {
 
 					$.ajax({
 						'type': 'POST',
-						'url': <?php if ($reschedule) {?>'<?php echo Yii::app()->createUrl('/'.$openeyes->event->eventType->class_name.'/booking/update')?>',<?php }else{?>'<?php echo Yii::app()->createUrl('/'.$operation->event->eventType->class_name.'/booking/create')?>',<?php }?>
+						'url': <?php if ($reschedule) {?>'<?php echo Yii::app()->createUrl('/'.$operation->event->eventType->class_name.'/booking/update/'.$operation->event_id)?>',<?php }else{?>'<?php echo Yii::app()->createUrl('/'.$operation->event->eventType->class_name.'/booking/create')?>',<?php }?>
 						'data': $('#bookingForm').serialize(),
 						'dataType': 'json',
 						'success': function(data) {
