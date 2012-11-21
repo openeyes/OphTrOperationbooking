@@ -770,7 +770,7 @@
 					'errors' => $this->booking->getErrors()
 				);
 			}
-			OELog::log("Booking cancelled: $this->booking->id");
+			OELog::log("Booking cancelled: {$this->booking->id}");
 
 			$this->booking->audit('booking','cancel');
 
