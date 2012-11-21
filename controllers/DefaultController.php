@@ -16,6 +16,10 @@ class DefaultController extends BaseEventTypeController {
 	}
 
 	public function actionView($id) {
+		$this->extraViewProperties = array(
+			'operation' => Element_OphTrOperation_Operation::model()->find('event_id=?',array($id)),
+		);
+
 		parent::actionView($id);
 	}
 
