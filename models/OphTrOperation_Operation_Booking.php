@@ -137,5 +137,13 @@ class OphTrOperation_Operation_Booking extends BaseActiveRecord
 		}
 		return $return;
 	}
+
+	public function audit($target, $action, $data=null, $log=false, $properties=array()) {
+		$properties['event_id'] = $this->operation->event_id;
+		$properties['episode_id'] = $this->operation->event->episode_id;
+		$properties['patient_id'] = $this->operation->event->episode->patient_id;
+
+		return parent::audit($target, $action, $data, $log, $properties);
+	}
 }
 ?>

@@ -140,6 +140,7 @@ class BookingController extends BaseEventTypeController {
 			$booking->cancellation_date = date('Y-m-d H:i:s');
 			$booking->cancellation_reason_id = $reason->id;
 			$booking->cancellation_comment = strip_tags($_POST['cancellation_comment']);
+			$booking->cancellation_user_id = Yii::app()->session['user']->id;
 
 			if ($booking->save()) {
 				OELog::log("Booking cancelled: $booking->id");

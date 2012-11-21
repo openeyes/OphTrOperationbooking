@@ -114,14 +114,14 @@
 			by <strong><?php echo $booking->user->FullName; ?></strong>
 			due to <?php echo $booking->cancellationReasonWithComment; ?>
 		</li>
-		<?php } ?>
+		<?php }?>
 	</ul>
 <?php }?>
 
 <?php if ($element->status->name == 'Cancelled' && $element->cancellation_date) {?>
 	<h3 class="subsection">Cancellation details</h3>
 		<div class="eventHighlight">
-			<h4>Cancelled on <?php echo $element->NHSDate('cancellation_date') . ' by user ' . $element->cancelled_user->username . ' for reason: ' . $element->cancelled_reason->name?>
+			<h4>Cancelled on <?php echo $element->NHSDate('cancellation_date') . ' by user ' . $element->cancellation_user->username . ' for reason: ' . $element->cancellation_reason->text?>
 			</h4>
 		</div>
 
@@ -163,6 +163,6 @@
 			<button type="submit" class="auto classy green venti" value="submit" id="btn_reschedule-now"><a href="<?php echo Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/reschedule/'.$element->event_id)?>"><span class="button-span button-span-green">Reschedule now</span></a></button>
 			<button type="submit" class="auto classy green venti" value="submit" id="btn_reschedule-later"><a href="<?php echo Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/rescheduleLater/'.$element->event_id)?>"><span class="button-span button-span-green">Reschedule later</span></a></button>
 		<?php }?>
-		<button type="submit" class="auto classy red venti" value="submit" id="btn_cancel-operation"><span class="button-span button-span-red">Cancel operation</span></button>
+		<button type="submit" class="auto classy red venti" value="submit" id="btn_cancel-operation"><a href="<?php echo Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/default/cancel/'.$element->event_id)?>"><span class="button-span button-span-red">Cancel operation</span></a></button>
 	</div>
 <?php }?>

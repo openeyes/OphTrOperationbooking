@@ -118,7 +118,8 @@
 			'status' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Status', 'status_id'),
 			'erod' => array(self::HAS_ONE, 'OphTrOperation_Operation_EROD', 'element_id'),
 			'date_letter_sent' => array(self::HAS_ONE, 'OphTrOperation_Operation_Date_Letter_Sent', 'element_id', 'order' => 'date_letter_sent.id DESC'),
-			'cancelled_user' => array(self::BELONGS_TO, 'User', 'cancelled_user_id'),
+			'cancellation_user' => array(self::BELONGS_TO, 'User', 'cancellation_user_id'),
+			'cancellation_reason' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Cancellation_Reason', 'cancellation_reason_id'),
 			'cancelledBookings' => array(self::HAS_MANY, 'OphTrOperation_Operation_Booking', 'element_id', 'condition' => 'cancellation_date is not null', 'order' => 'cancellation_date'),
 			'booking' => array(self::HAS_ONE, 'OphTrOperation_Operation_Booking', 'element_id', 'condition' => 'cancellation_date is null'),
 		);
@@ -726,6 +727,78 @@
 		$properties['patient_id'] = $this->event->episode->patient_id;
 
 		return parent::audit($target, $action, $data, $log, $properties);
+	}
+
+	public function cancel($reason_id, $comment = null) {
+		$this->cancellation_date = date('Y-m-d H:i:s');
+		$this->cancellation_reason_id = $reason_id;
+		$this->cancellation_comment = $comment;
+		$this->cancellation_user_id = Yii::app()->session['user']->id;
+
+		$this->status_id = OphTrOperation_Operation_Status::model()->find('name=?',array('Cancelled'))->id;
+
+		if (!$this->save()) {
+			return array(
+				'result' => false,
+				'errors' => $this->getErrors()
+			);
+		}
+
+		OELog::log("Operation cancelled: $this->id");
+
+		$this->audit('operation','cancel');
+
+		$this->event->episode->episode_status_id = 5;
+
+		if (!$this->event->episode->save()) {
+			throw new Exception('Unable to change episode status for episode '.$this->event->episode->id);
+		}
+
+		$event = $this->event;
+		$event->datetime = date("Y-m-d H:i:s");
+		$event->save();
+
+		if ($this->booking) {
+			$this->booking->cancellation_date = date('Y-m-d H:i:s');
+			$this->booking->cancellation_reason_id = $reason_id;
+			$this->booking->cancellation_comment = $comment;
+			$this->booking->cancellation_user_id = Yii::app()->session['user']->id;
+
+			if (!$this->booking->save()) {
+				return array(
+					'result' => false,
+					'errors' => $this->booking->getErrors()
+				);
+			}
+			OELog::log("Booking cancelled: $this->booking->id");
+
+			$this->booking->audit('booking','cancel');
+
+			if(Yii::app()->params['urgent_booking_notify_hours'] && Yii::app()->params['urgent_booking_notify_email']) {
+				if(strtotime($session->date) <= (strtotime(date('Y-m-d')) + (Yii::app()->params['urgent_booking_notify_hours'] * 3600))) {
+					if (!is_array(Yii::app()->params['urgent_booking_notify_email'])) {
+						$targets = array(Yii::app()->params['urgent_booking_notify_email']);
+					} else {
+						$targets = Yii::app()->params['urgent_booking_notify_email'];
+					}
+					foreach ($targets as $email) {
+						mail(
+							$email,
+							"[OpenEyes] Urgent cancellation made","A cancellation was made with a TCI date within the next 24 hours.\n\nDisorder: "
+								. $this->getDisorder() . "\n\nPlease see: http://" . @$_SERVER['SERVER_NAME']
+								. Yii::app()->createUrl('transport')."\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.",
+							"From: " . Yii::app()->params['urgent_booking_notify_email_from']."\r\n"
+						);
+					}
+				}
+			}
+		}
+
+		return array('result'=>true);
+	}
+
+	public function isEditable() {
+		return $this->status->name != 'Cancelled';
 	}
 }
 ?>

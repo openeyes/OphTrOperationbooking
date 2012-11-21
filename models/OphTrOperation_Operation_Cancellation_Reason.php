@@ -105,5 +105,22 @@ class OphTrOperation_Operation_Cancellation_Reason extends BaseActiveRecord
 				'criteria' => $criteria,
 			));
 	}
+
+	public static function getReasonsByListNumber($listNo = 2)
+	{
+		$options = Yii::app()->db->createCommand()
+			->select('t.id, t.text')
+			->from('ophtroperation_operation_cancellation_reason t')
+			->where('list_no = :no', array(':no'=>$listNo))
+			->order('text ASC')
+			->queryAll();
+
+		$result = array();
+		foreach ($options as $value) {
+			$result[$value['id']] = $value['text'];
+		}
+
+		return $result;
+	}
 }
 ?>

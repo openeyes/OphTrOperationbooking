@@ -4,9 +4,17 @@
 $(document).ready(function() {
 	$('#et_save').unbind('click').click(function() {
 		if (!$(this).hasClass('inactive')) {
+			$('#schedule_now').val(0);
 			disableButtons();
+			return true;
+		}
+		return false;
+	});
 
-			
+	$('#et_save_and_schedule').unbind('click').click(function() {
+		if (!$(this).hasClass('inactive')) {
+			$('#schedule_now').val(1);
+			disableButtons();
 			return true;
 		}
 		return false;
