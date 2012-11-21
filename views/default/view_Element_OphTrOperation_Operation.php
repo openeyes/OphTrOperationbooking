@@ -161,7 +161,7 @@
 				<button type="submit" class="auto classy disabled venti" value="submit" disabled="disabled"><span class="button-span button-span-blue">Print letter</span></button>
 			<?php }?>
 			<button type="submit" class="auto classy green venti" value="submit" id="btn_reschedule-now"><a href="<?php echo Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/reschedule/'.$element->event_id)?>"><span class="button-span button-span-green">Reschedule now</span></a></button>
-			<button type="submit" class="auto classy green venti" value="submit" id="btn_reschedule-later"><span class="button-span button-span-green">Reschedule later</span></button>
+			<button type="submit" class="auto classy green venti" value="submit" id="btn_reschedule-later"><a href="<?php echo Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/rescheduleLater/'.$element->event_id)?>"><span class="button-span button-span-green">Reschedule later</span></a></button>
 		<?php }?>
 		<button type="submit" class="auto classy red venti" value="submit" id="btn_cancel-operation"><span class="button-span button-span-red">Cancel operation</span></button>
 	</div>

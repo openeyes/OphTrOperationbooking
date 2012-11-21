@@ -221,7 +221,7 @@ class BookingController extends BaseEventTypeController {
 					}
 
 					if (Yii::app()->params['urgent_booking_notify_hours'] && Yii::app()->params['urgent_booking_notify_email']) {
-						if (strtotime($new_booking->session->date) <= (strtotime(date('Y-m-d')) + (Yii::app()->params['urgent_booking_notify_hours'] * 3600))) {
+						if (strtotime($booking->session->date) <= (strtotime(date('Y-m-d')) + (Yii::app()->params['urgent_booking_notify_hours'] * 3600))) {
 							if (!is_array(Yii::app()->params['urgent_booking_notify_email'])) {
 								$targets = array(Yii::app()->params['urgent_booking_notify_email']);
 							} else {
@@ -316,6 +316,29 @@ class BookingController extends BaseEventTypeController {
 				'sessions' => $operation->getSessions($firm),
 				'firm' => $firm,
 				'firmList' => Firm::model()->listWithSpecialties,
+			),
+			false,
+			true
+		);
+	}
+
+	public function actionRescheduleLater($id) {
+		if (!$event = Event::model()->findByPk($id)) {
+			throw new Exception('Unable to find event: '.$id);
+		}
+
+		$operation = Element_OphTrOperation_Operation::model()->find('event_id=?',array($id));
+
+		$this->patient = $operation->event->episode->patient;
+		$this->title = 'Reschedule later';
+
+		Yii::app()->clientScript->registerCSSFile(Yii::app()->createUrl('css/theatre_calendar.css'), 'all');
+
+		$this->renderPartial('reschedule_later', array(
+				'operation' => $operation,
+				'date' => $operation->minDate,
+				'sessions' => $operation->getSessions($operation->event->episode->firm),
+				'patient' => $operation->event->episode->patient,
 			),
 			false,
 			true
