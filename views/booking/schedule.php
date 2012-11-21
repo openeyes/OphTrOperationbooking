@@ -158,7 +158,7 @@ $this->header();
 		$(this).undelegate('#firmSelect #firmId','change').delegate('#firmSelect #firmId','change',function() {
 			var firmId = $(this).val();
 			var operation = $('input[id=operation]').val();
-			window.location.href = '<?php echo Yii::app()->createUrl('booking/schedule'); ?>?operation='+operation+'&firmId='+firmId;
+			window.location.href = '<?php echo Yii::app()->createUrl('/'.$event->eventType->class_name.'/booking/schedule/'.$event->id); ?>?firmId='+firmId;
 		});
 	});
 

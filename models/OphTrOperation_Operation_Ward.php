@@ -36,6 +36,12 @@
 
 class OphTrOperation_Operation_Ward extends BaseActiveRecord
 {
+	const RESTRICTION_MALE = 1;
+	const RESTRICTION_FEMALE = 2;
+	const RESTRICTION_CHILD = 4;
+	const RESTRICTION_ADULT = 8;
+	const RESTRICTION_OBSERVATION = 16;
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class

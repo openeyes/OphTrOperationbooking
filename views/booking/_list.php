@@ -18,9 +18,9 @@
  */
 
 if (!$reschedule) {
-	echo CHtml::form(array('booking/create'), 'post', array('id' => 'bookingForm'));
+	echo CHtml::form(Yii::app()->createUrl('/'.$operation->event->eventType->class_name.'/booking/create'), 'post', array('id' => 'bookingForm'));
 } else {
-	echo CHtml::form(array('booking/update'), 'post', array('id' => 'bookingForm'));
+	echo CHtml::form(Yii::app()->createUrl('/'.$operation->event->eventType->class_name.'/booking/update'), 'post', array('id' => 'bookingForm'));
 }
 
 ?>
@@ -115,7 +115,7 @@ if (!$reschedule) {
 	if ($reschedule) {
 		echo CHtml::hiddenField('booking_id', $operation->booking->id);
 	}
-	echo CHtml::hiddenField('Booking[element_operation_id]', $operation->id);
+	echo CHtml::hiddenField('Booking[element_id]', $operation->id);
 	echo CHtml::hiddenField('Booking[session_id]', $session['id']);
 	?>
 
@@ -192,7 +192,7 @@ if (!$reschedule) {
 
 					$.ajax({
 						'type': 'POST',
-						'url': <?php if ($reschedule) {?>'<?php echo Yii::app()->createUrl('booking/update')?>',<?php }else{?>'<?php echo Yii::app()->createUrl('booking/create')?>',<?php }?>
+						'url': <?php if ($reschedule) {?>'<?php echo Yii::app()->createUrl('/'.$openeyes->event->eventType->class_name.'/booking/update')?>',<?php }else{?>'<?php echo Yii::app()->createUrl('/'.$operation->event->eventType->class_name.'/booking/create')?>',<?php }?>
 						'data': $('#bookingForm').serialize(),
 						'dataType': 'json',
 						'success': function(data) {
@@ -204,7 +204,7 @@ if (!$reschedule) {
 							});
 
 							if (n == 0) {
-								window.location.href = '<?php echo Yii::app()->createUrl('patient/event/'.$operation->event->id)?>';
+								window.location.href = '<?php echo Yii::app()->createUrl('/'.$operation->event->eventType->class_name.'/default/view/'.$operation->event_id)?>';
 							} else {
 								$('div.alertBox').show();
 								$('div.alertBox').html(html);

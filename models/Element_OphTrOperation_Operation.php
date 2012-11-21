@@ -119,7 +119,8 @@
 			'erod' => array(self::HAS_ONE, 'OphTrOperation_Operation_EROD', 'element_id'),
 			'date_letter_sent' => array(self::HAS_ONE, 'OphTrOperation_Operation_Date_Letter_Sent', 'element_id', 'order' => 'date_letter_sent.id DESC'),
 			'cancelled_user' => array(self::BELONGS_TO, 'User', 'cancelled_user_id'),
-			'cancelledBookings' => array(self::HAS_MANY, 'OphTrOperation_Operation_Booking', 'element_id', 'order' => 'cancellation_date'),
+			'cancelledBookings' => array(self::HAS_MANY, 'OphTrOperation_Operation_Booking', 'element_id', 'condition' => 'cancellation_date is not null', 'order' => 'cancellation_date'),
+			'booking' => array(self::HAS_ONE, 'OphTrOperation_Operation_Booking', 'element_id', 'condition' => 'cancellation_date is null'),
 		);
 	}
 
@@ -268,13 +269,20 @@
 	public function getLetterType() {
 		$letterTypes = $this->getLetterOptions();
 		$letterType = ($this->getDueLetter() !== null && isset($letterTypes[$this->getDueLetter()])) ? $letterTypes[$this->getDueLetter()] : false;
-		$has_gp = ($this->getDueLetter() != self::LETTER_GP || ($this->event->episode->patient->practice && $this->event->episode->patient->practice->address));
-		$patient = $this->event->episode->patient;
-		$has_address = (bool) $patient->correspondAddress;
 
 		if ($letterType == false && $this->getLastLetter() == self::LETTER_GP) {
 			$letterType = 'Refer to GP';
 		}
+
+		return $letterType;
+	}
+
+	public function getHas_gp() {
+		return ($this->getDueLetter() != self::LETTER_GP || ($this->event->episode->patient->practice && $this->event->episode->patient->practice->address));
+	}
+
+	public function getHas_address() {
+		return (bool)$this->event->episode->patient->correspondAddress;
 	}
 
 	public function getLastLetter()
@@ -427,8 +435,9 @@
 		return Element_OphTrOperation_ScheduleOperation::model()->find('event_id=?',array($this->event_id));
 	}
 
-	public function getSessions($emergency = false)
-	{
+	public function getSessions($firm) {
+		$emergency = $firm->name == 'Emergency List';
+
 		$minDate = $this->getMinDate();
 		$thisMonth = mktime(0, 0, 0, date('m'), 1, date('Y'));
 		if ($minDate < $thisMonth) {
@@ -437,13 +446,7 @@
 
 		$monthStart = empty($_GET['date']) ? date('Y-m-01', $minDate) : $_GET['date'];
 
-		if (!$emergency) {
-			$firmId = empty($_GET['firm']) ? $this->event->episode->firm_id : $_GET['firm'];
-		} else {
-			$firmId = null;
-		}
-
-		$sessions = OphTrOperation_Operation_Session::findByDateAndFirmID($monthStart, $minDate, $firmId);
+		$sessions = OphTrOperation_Operation_Session::findByDateAndFirmID($monthStart, $minDate, $firm->id);
 
 		$results = array();
 		foreach ($sessions as $session) {
@@ -578,6 +581,143 @@
 		}
 
 		return $results;
+	}
+
+	public function getWardOptions($siteId, $theatreId = null) {
+		if (!$site = Site::model()->findByPk($siteId)) {
+			throw new Exception('Invalid site id');
+		}
+
+		$results = array();
+
+		if (!empty($theatreId)) {
+			if ($ward = OphTrOperation_Operation_Ward::model()->find('theatre_id=?',array($theatreId))) {
+				$results[$ward->id] = $ward->name;
+			}
+		}
+
+		if (empty($results)) {
+			// otherwise select by site and patient age/gender
+			$patient = $this->event->episode->patient;
+
+			$genderRestrict = $ageRestrict = 0;
+			$genderRestrict = ('M' == $patient->gender) ? OphTrOperation_Operation_Ward::RESTRICTION_MALE : OphTrOperation_Operation_Ward::RESTRICTION_FEMALE;
+			$ageRestrict = ($patient->isChild()) ? OphTrOperation_Operation_Ward::RESTRICTION_CHILD : OphTrOperation_Operation_Ward::RESTRICTION_ADULT;
+
+			$whereSql = 's.id = :id AND
+				(w.restriction & :r1 > 0) AND (w.restriction & :r2 > 0)';
+			$whereParams = array(
+				':id' => $siteId,
+				':r1' => $genderRestrict,
+				':r2' => $ageRestrict
+			);
+
+			$wards = Yii::app()->db->createCommand()
+				->select('w.id, w.name')
+				->from('ophtroperation_operation_ward w')
+				->join('site s', 's.id = w.site_id')
+				->where($whereSql, $whereParams)
+				->queryAll();
+
+			$results = array();
+
+			foreach ($wards as $ward) {
+				$results[$ward['id']] = $ward['name'];
+			}
+		}
+
+		return $results;
+	}
+
+	public function calculateEROD($booking_session_id) {
+		$where = '';
+
+		if ($this->cancelledBookings) {
+			OELog::log("We have cancelled bookings so we dont set EROD");
+			return false;
+		} else {
+			OELog::log("No cancelled bookings so we set EROD");
+		}
+		$service_subspecialty_assignment_id = $this->event->episode->firm->service_subspecialty_assignment_id;
+
+		if ($this->consultant_required) {
+			$where .= " and session.consultant = 1";
+		}
+
+		if ($this->event->episode->patient->isChild()) {
+			$where .= " and session.paediatric = 1";
+
+			$service_subspecialty_assignment_id = $this->event->element_operation->booking->session->firm->serviceSubspecialtyAssignment->id;
+		}
+
+		if ($this->anaesthetist_required || $this->anaesthetic_type->code == 'GA') {
+			$where .= " and session.anaesthetist = 1 and session.general_anaesthetic = 1";
+		}
+
+		$lead_time_date = date('Y-m-d',strtotime($this->decision_date) + (86400 * 7 * Yii::app()->params['erod_lead_time_weeks']));
+
+		if ($rule = OphTrOperation_Operation_EROD_Rule::model()->find('subspecialty_id=?',array($this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty_id))) {
+			$firm_ids = array();
+			foreach ($rule->items as $item) {
+				if ($item->item_type == 'firm') {
+					$firm_ids[] = $item->item_id;
+				}
+			}
+
+			$where .= " and firm.id in (".implode(',',$firm_ids).")";
+		} else {
+			$where .= " and firm.service_subspecialty_assignment_id = $service_subspecialty_assignment_id";
+		}
+
+		foreach ($erod = Yii::app()->db->createCommand()->select("ophtroperation_operation_session.id as session_id, date, start_time, end_time, firm.name as firm_name, firm.id as firm_id, subspecialty.name as subspecialty_name, consultant, paediatric, anaesthetist, general_anaesthetic")
+			->from("ophtroperation_operation_session")
+			->join("firm","firm.id = ophtroperation_operation_session.firm_id")
+			->join("ophtroperation_operation_booking","ophtroperation_operation_booking.session_id = ophtroperation_operation_session.id")
+			->join("et_ophtroperation_operation","ophtroperation_operation_booking.element_id = et_ophtroperation_operation.id")
+			->join("service_subspecialty_assignment ssa","ssa.id = firm.service_subspecialty_assignment_id")
+			->join("subspecialty","subspecialty.id = ssa.subspecialty_id")
+			->join("ophtroperation_operation_theatre","ophtroperation_operation_session.theatre_id = ophtroperation_operation_theatre.id")
+			->where("ophtroperation_operation_session.date > '$lead_time_date' and ophtroperation_operation_session.available = 1 $where")
+			->group("ophtroperation_operation_session.id")
+			->order("ophtroperation_operation_session.date, ophtroperation_operation_session.start_time")
+			->queryAll() as $row) {
+			// removed this from the theatre join: and theatre.id != 10")		~chrisr
+
+			$session = OphTrOperation_Operation_Session::model()->findByPk($row['session_id']);
+			// if the session has no firm, under the existing booking logic it is an emergency session
+			if (!$session->firm) {
+				continue;
+			}
+			$available_time = $session->availableMinutes;
+
+			if ($session->id == $booking_session_id) {
+				// this is so that the available_time value saved below is accurate
+				$available_time -= $this->total_duration;
+			}
+
+			if ($available_time >= $this->total_duration) {
+				$erod = new OphTrOperation_Operation_EROD;
+				$erod->element_id = $this->id;
+				$erod->session_id = $row['session_id'];
+				$erod->session_date = $row['date'];
+				$erod->session_start_time = $row['start_time'];
+				$erod->session_end_time = $row['end_time'];
+				$erod->firm_id = $row['firm_id'];
+				$erod->consultant = $row['consultant'];
+				$erod->paediatric = $row['paediatric'];
+				$erod->anaesthetist = $row['anaesthetist'];
+				$erod->general_anaesthetic = $row['general_anaesthetic'];
+				$erod->session_duration = $session->duration;
+				$erod->total_operations_time = $session->bookedMinutes;
+				$erod->available_time = $available_time;
+
+				if (!$erod->save()) {
+					throw new Exception('Unable to save EROD: '.print_r($erod->getErrors(),true));
+				}
+
+				break;
+			}
+		}
 	}
 }
 ?>

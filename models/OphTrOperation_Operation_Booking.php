@@ -92,6 +92,7 @@ class OphTrOperation_Operation_Booking extends BaseActiveRecord
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 			'ward' => array(self::BELONGS_TO, 'Ward', 'ward_id'),
 			'session' => array(self::BELONGS_TO, 'Session', 'session_id'),
+			'operation' => array(self::BELONGS_TO, 'Element_OphTrOperation_Operation', 'element_id'),
 		);
 	}
 

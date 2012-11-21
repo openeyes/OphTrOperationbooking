@@ -103,9 +103,9 @@ class m121114_105958_event_type_OphTrOperation extends CDbMigration
 				'CONSTRAINT `ophtroperation_operation_status_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 
-		$this->insert('ophtroperation_operation_status',array('id'=>1,'name'=>'Pending'));
+		$this->insert('ophtroperation_operation_status',array('id'=>1,'name'=>'Requires scheduling'));
 		$this->insert('ophtroperation_operation_status',array('id'=>2,'name'=>'Scheduled'));
-		$this->insert('ophtroperation_operation_status',array('id'=>3,'name'=>'Needs rescheduling'));
+		$this->insert('ophtroperation_operation_status',array('id'=>3,'name'=>'Requires rescheduling'));
 		$this->insert('ophtroperation_operation_status',array('id'=>4,'name'=>'Rescheduled'));
 		$this->insert('ophtroperation_operation_status',array('id'=>5,'name'=>'Cancelled'));
 
@@ -214,7 +214,7 @@ class m121114_105958_event_type_OphTrOperation extends CDbMigration
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
 				'site_id' => 'int(10) unsigned NOT NULL',
 				'name' => 'varchar(255) COLLATE utf8_bin NOT NULL',
-				'restriction' => 'tinyint(1) DEFAULT NULL',
+				'restriction' => 'tinyint(1) unsigned NOT NULL DEFAULT 0',
 				'code' => 'varchar(10) COLLATE utf8_bin NOT NULL',
 				'theatre_id' => 'int(10) unsigned NULL',
 				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',

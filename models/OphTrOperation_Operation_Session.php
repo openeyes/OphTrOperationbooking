@@ -91,6 +91,7 @@ class OphTrOperation_Operation_Session extends BaseActiveRecord
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
 			'theatre' => array(self::BELONGS_TO, 'Theatre', 'theatre_id'),
+			'firm' => array(self::BELONGS_TO, 'Firm', 'firm_id'),
 		);
 	}
 
