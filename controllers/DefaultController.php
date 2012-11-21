@@ -1,6 +1,8 @@
 <?php
 
 class DefaultController extends BaseEventTypeController {
+	public $eventIssueCreate = 'Operation requires scheduling';
+
 	public function actionCreate() {
 		if (@$_POST['schedule_now']) {
 			$this->successUri = 'booking/schedule/';
