@@ -199,7 +199,7 @@ class BookingController extends BaseEventTypeController {
 					}
 
 					$operation->site_id = $new_session->theatre->site_id;
-					$operation->status = ElementOperation::STATUS_RESCHEDULED;
+					$operation->status_id = OphTrOperation_Operation_Status::model()->find('name=?',array('Rescheduled'))->id;
 
 					// Update operation comments
 					if (!empty($_POST['Operation']['comments'])) {
@@ -314,6 +314,7 @@ class BookingController extends BaseEventTypeController {
 				'firmList' => Firm::model()->listWithSpecialties,
 				'date' => $date,
 				'selectedDate' => @$selectedDate,
+				'sessions' => $operation->getFirmCalendarForMonth($firm, $date),
 				'theatres' => @$theatres,
 				'session' => @$session,
 				'bookings' => @$bookings,
