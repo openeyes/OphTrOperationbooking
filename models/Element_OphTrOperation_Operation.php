@@ -442,77 +442,78 @@
 		return Element_OphTrOperation_ScheduleOperation::model()->find('event_id=?',array($this->event_id));
 	}
 
-	public function getSessions($firm) {
-		$emergency = $firm->name == 'Emergency List';
+	public function getFirmCalendarForMonth($firm, $timestamp) {
+		$sessions = array();
 
-		$monthStart = empty($_GET['date']) ? date('Y-m-01', $this->minDate) : $_GET['date'];
+		$year = date('Y',$timestamp);
+		$month = date('m',$timestamp);
 
-		$sessions = OphTrOperation_Operation_Session::findByDateAndFirmID($monthStart, $this->minDate, $firm->id);
+		$rttDate = date('Y-m-d',strtotime('+6 weeks', strtotime($this->decision_date)));
 
-		$results = array();
-		foreach ($sessions as $session) {
-			$date = $session['date'];
-			$weekday = date('N', strtotime($date));
-			$text = Helper::getWeekdayText($weekday);
+		$criteria = new CDbCriteria;
+		$criteria->compare("firm_id",$firm->id);
+		$criteria->compare('available',1);
+		$criteria->addSearchCondition("date","$year-$month-%",false);
+		$criteria->order = "date asc";
 
-			$sessionTime = explode(':', $session['session_duration']);
-			$session['duration'] = ($sessionTime[0] * 60) + $sessionTime[1];
-			$session['time_available'] = $session['duration'] - $session['bookings_duration'];
-			unset($session['session_duration'], $session['date']);
+		$days = array();
+		$sessiondata = array();
 
-			$results[$text][$date]['sessions'][] = $session;
+		foreach (OphTrOperation_Operation_Session::model()->findAll($criteria) as $session) {
+			$day = date('D',strtotime($session->date));
+
+			$sessiondata[$session->date][] = $session;
+			$days[$day][] = $session->date;
 		}
 
-		foreach ($results as $weekday => $dates) {
-			$timestamp = strtotime($monthStart);
-			$firstWeekday = strtotime(date('Y-m-t', $timestamp - (60 * 60 * 24)));
-			$dateList = array_keys($dates);
-			while (date('N', strtotime($dateList[0])) != date('N', $firstWeekday)) {
-				$firstWeekday -= 60 * 60 * 24;
-			}
+		$sessions = array();
 
-			for ($weekCounter = 1; $weekCounter < 8; $weekCounter++) {
-				$addDays = ($weekCounter - 1) * 7;
-				$selectedDay = date('Y-m-d', mktime(0, 0, 0, date('m', $firstWeekday), date('d', $firstWeekday) + $addDays, date('Y', $firstWeekday)));
-				if (in_array($selectedDay, $dateList)) {
-					foreach ($dates[$selectedDay] as $sessions) {
-						$totalSessions = count($sessions);
-						$status = $totalSessions;
-
+		foreach ($days as $day => $dates) {
+			for ($i=1;$i<=date('t',mktime(0,0,0,$month,1,$year));$i++) {
+				if (date('D',mktime(0,0,0,$month,$i,$year)) == $day) {
+					$date = "$year-$month-".str_pad($i,2,'0',STR_PAD_LEFT);
+					if (in_array($date,$dates)) {
 						$open = $full = 0;
 
-						foreach ($sessions as $session) {
-							if ($session['time_available'] >= $this->total_duration) {
-								$open++;
-							} else {
-								$full++;
+						if (strtotime($date) < strtotime(date('Y-m-d'))) {
+							$status = 'inthepast';
+						} else {
+							foreach ($sessiondata[$date] as $session) {
+								if ($session->availableMinutes >= $this->total_duration) {
+									$open++;
+								} else {
+									$full++;
+								}
+							}
+
+							if ($full == count($sessiondata[$date])) {
+								$status = 'full';
+							} else if ($full >0 and $open >0) {
+								$status = 'limited';
+							} else if ($open == count($sessiondata[$date])) {
+								$status = 'available';
 							}
 						}
-						if ($full == $totalSessions) {
-							$status = 'full';
-						} elseif ($full > 0 && $open > 0) {
-							$status = 'limited';
-						} elseif ($open == $totalSessions) {
-							$status = 'available';
+
+						if ($date >= $rttDate) {
+							$status .= ' outside_rtt';
 						}
+
+						if ($this->booking && $this->booking->session->date == $date) {
+							$status .= ' selected_date';
+						}
+					} else {
+						$status = 'closed';
 					}
-				} else {
-					$status = 'closed';
+
+					$sessions[$day][$date] = array(
+						'status' => $status,
+					);
 				}
-				$results[$weekday][$selectedDay]['status'] = $status;
 			}
 		}
 
-		foreach ($results as $weekday => &$dates) {
-			$dateSort = array();
-			foreach ($dates as $date => $info) {
-				$dateSort[] = $date;
-			}
-
-			array_multisort($dateSort, SORT_ASC, $dates);
-		}
-
-		return $results;
+		return $sessions;
 	}
 
 	public function getTheatres($date, $emergency = false)
@@ -532,7 +533,7 @@
 		$results = array();
 		$names = array();
 		foreach ($sessions as $session) {
-			$theatre = Theatre::model()->findByPk($session['id']);
+			$theatre = OphTrOperation_Operation_Theatre::model()->findByPk($session['id']);
 
 			$name = $session['name'] . ' (' . $theatre->site->short_name . ')';
 			$sessionTime = explode(':', $session['session_duration']);
@@ -568,6 +569,10 @@
 			if($this->anaesthetic_type->name == 'GA' && !$session['general_anaesthetic']) {
 				$bookable = false;
 				$session['bookable_reason'] = 'general_anaesthetic';
+			}
+			if ($session['date'] < date('Y-m-d')) {
+				$bookable = false;
+				$session['bookable_reason'] = 'inthepast';
 			}
 			$session['bookable'] = $bookable;
 			$results[$name][] = $session;

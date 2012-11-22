@@ -29,45 +29,49 @@
 	<h5><?php echo $name ?></h5>
 	<div id="theatre-times_tab_<?php echo $i ?>" class="sessionTimes">
 
-		<?php foreach ($sessions as $session) { ?>
-			<div class="timeBlock <?php echo $session['status'] ?><?php if (strtotime(date("Y-m-d")) > strtotime($session['date'])) { echo ' inthepast'; } else if ($session['bookable']) { echo ' bookable';} ?>" id="bookingSession<?php echo $session['id'] ?>">
-				<div class="mainInfo">
-					<div class="time"><?php echo substr($session['start_time'], 0, 5) ?> - <?php echo substr($session['end_time'], 0, 5) ?></div>
-					<div class="timeLeft">
-						(<?php echo abs($session['time_available']) ?> min
-						<?php echo ($session['time_available'] >= 0) ? 'available)' : 'overbooked)' ?>
+		<?php foreach ($sessions as $j => $session) {
+			if ($session['id'] != @$selectedSession->id) {?>
+				<a href="<?php echo Yii::app()->createUrl('/'.$operation->event->eventType->class_name.'/booking/'.($operation->booking?'re':'').'schedule/'.$operation->event_id)?>?firm_id=<?php echo $firm->id?>&date=<?php echo date('Ym',strtotime($date))?>&day=<?php echo $_GET['day']?>&session_id=<?php echo $session['id']?>">
+			<?php }?>
+				<div class="timeBlock <?php echo $session['id'] == @$selectedSession->id ? 'selected_session' : $session['status'] ?><?php if (strtotime(date("Y-m-d")) > strtotime($session['date'])) { echo ' inthepast'; } else if ($session['bookable']) { echo ' bookable';} ?>" id="bookingSession<?php echo $session['id'] ?>">
+					<div class="mainInfo">
+						<div class="time"><?php echo substr($session['start_time'], 0, 5) ?> - <?php echo substr($session['end_time'], 0, 5) ?></div>
+						<div class="timeLeft">
+							(<?php echo abs($session['time_available']) ?> min
+							<?php echo ($session['time_available'] >= 0) ? 'available)' : 'overbooked)' ?>
+						</div>
+						<div class="session_id"><?php echo $session['id'] ?></div>
 					</div>
-					<div class="session_id"><?php echo $session['id'] ?></div>
+					<?php if($session['consultant'] || $session['anaesthetist'] || $session['paediatric']) { ?>
+					<div class="metadata">
+						<?php if($session['consultant']) { ?><div class="consultant" title="Consultant Present">Consultant</div><?php } ?>
+						<?php if($session['anaesthetist']) { ?><div class="anaesthetist" title="Anaesthetist Present">Anaesthetist<?php if ($session['general_anaesthetic']) {?> (GA)<?php }?></div><?php } ?>
+						<?php if($session['paediatric']) { ?><div class="paediatric" title="Paediatric Session">Paediatric</div><?php } ?>
+					</div>
+					<?php } ?>
 				</div>
-				<?php if($session['consultant'] || $session['anaesthetist'] || $session['paediatric']) { ?>
-				<div class="metadata">
-					<?php if($session['consultant']) { ?><div class="consultant" title="Consultant Present">Consultant</div><?php } ?>
-					<?php if($session['anaesthetist']) { ?><div class="anaesthetist" title="Anaesthetist Present">Anaesthetist<?php if ($session['general_anaesthetic']) {?> (GA)<?php }?></div><?php } ?>
-					<?php if($session['paediatric']) { ?><div class="paediatric" title="Paediatric Session">Paediatric</div><?php } ?>
-				</div>
-				<?php } ?>
-			</div>
-		<?php } ?>
+			<?php if ($session['id'] != @$selectedSession->id) {?>
+				</a>
+			<?php }?>
+		<?php }?>
 
-	</div> <!-- #theatre-times_tab_<?php echo $i ?> -->
+	</div>
 
 	<?php if (!$session['bookable']) {?>
 		<div class="alertBox" style="margin-top: 10px;">
 			<?php if ($session['bookable_reason'] == 'anaesthetist') {?>
-				The operation requires an anaesthetist, this session doesn't have one and so cannot be booked into.
+				The operation requires an anaesthetist, <?php echo $j>0 ? 'these sessions don\'t' : 'this session doesn\'t'?> have one and so cannot be booked into.
 			<?php }else if ($session['bookable_reason'] == 'consultant') {?>
-				The operation requires a consultant, this session doesn't have one and so cannot be booked into.
+				The operation requires a consultant, <?php echo $j>0 ? 'these sessions don\'t' : 'this session doesn\'t'?> have one and so cannot be booked into.
 			<?php }else if ($session['bookable_reason'] == 'paediatric') {?>
-				The operation is for a paediatric patient, this session isn't paediatric and so cannot be booked into.
+				The operation is for a paediatric patient, <?php echo $j>0 ? 'these sessions aren\'t' : 'this session isn\'t'?> paediatric and so cannot be booked into.
 			<?php }else if ($session['bookable_reason'] == 'general_anaesthetic') {?>
-				The operation requires general anaesthetic, this session doesn't have this and so cannot be booked into.
+				The operation requires general anaesthetic, <?php echo $j>0 ? 'these sessions don\'t' : 'this session doesn\'t'?> have this and so cannot be booked into.
+			<?php }else if ($session['bookable_reason'] == 'inthepast') {?>
+				You cannot book into <?php echo $j>0 ? 'these sessions as they are' : 'this session as it is'?> in the past.
 			<?php }?>
 		</div>
 	<?php }?>
-
-	<div class="alertBox sessionWarning" style="margin-top: 10px; display: none;">
-		You cannot book into this session as it is in the past.
-	</div>
 
 	<?php
 		$i++;
@@ -78,29 +82,3 @@
 		<h5>Sorry, this firm has no sessions on the selected day.</h5>
 	<?php }?>
 </div>
-
-<script type="text/javascript">
-	$('div.timeBlock.bookable, div.timeBlock.inthepast').unbind('click').click(function() {
-		id = this.id.replace(/bookingSession/,'');
-
-		if ($(this).hasClass('inthepast')) {
-			$('div.sessionWarning').show();
-		} else {
-			$('div.sessionWarning').hide();
-		}
-
-		$('#sessionDetails').html('<div style="margin-top: 10px;">&nbsp;<img src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" />&nbsp;&nbsp;Please wait ...</div>');
-
-		$.ajax({
-     	'url': '<?php echo Yii::app()->createUrl('/'.$operation->event->eventType->class_name.'/booking/list?operation='.$operation->id.'&session=')?>' + id,
-      'type': 'POST',
-      'data': 'operation=<?php echo $operation->id ?>&session=' + id + '&reschedule=<?php echo $reschedule ?>&bookable='+($(this).hasClass('bookable') ? '1' : '0'),
-      'success': function(data) {
-				$('#sessionDetails').html(data);
-				$('#sessionDetails').show();
-      }
-    });
-
-		return true;
-	});
-</script>

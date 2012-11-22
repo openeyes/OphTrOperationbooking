@@ -273,20 +273,52 @@ class BookingController extends BaseEventTypeController {
 
 		$this->patient = $event->episode->patient;
 
-		if (@$_GET['firmId']) {
-			if (!$firm = Firm::model()->findByPk(@$_GET['firmId'])) {
-				throw new Exception('Unknown firm id: '.$_GET['firmId']);
+		if (@$_GET['firm_id']) {
+			if (!$firm = Firm::model()->findByPk(@$_GET['firm_id'])) {
+				throw new Exception('Unknown firm id: '.$_GET['firm_id']);
 			}
 		} else {
 			$firm = Firm::model()->findByPk(Yii::app()->session['selected_firm_id']);
 		}
 
+		if (preg_match('/^([0-9]{4})([0-9]{2})$/',@$_GET['date'],$m)) {
+			$date = mktime(0,0,0,$m[2],1,$m[1]);
+		} else {
+			$date = $operation->minDate;
+		}
+
+		if (ctype_digit(@$_GET['day'])) {
+			$selectedDate = date('Y-m-d', mktime(0,0,0,date('m', $date), $_GET['day'], date('Y', $date)));
+			$theatres = $operation->getTheatres($selectedDate, $firm->id);
+
+			if ($session = OphTrOperation_Operation_Session::model()->findByPk(@$_GET['session_id'])) {
+				$criteria = new CDbCriteria;
+				$criteria->compare('session_id', $session->id);
+				$criteria->order = 'display_order ASC';
+				$bookings = OphTrOperation_Operation_Booking::model()->findAll($criteria);
+
+				foreach ($theatres as $name => $list) {
+					foreach ($list as $theatre) {
+						if ($theatre['session_id'] == $session->id) {
+							$bookable = $theatre['bookable'];
+						}
+					}
+				}
+			}
+		}
+
 		$this->renderPartial('schedule', array(
 				'event' => $event,
+				'operation' => $operation,
 				'firm' => $firm,
 				'firmList' => Firm::model()->listWithSpecialties,
-				'sessions' => $operation->getSessions($firm),
-				'date' => $operation->minDate,
+				'date' => $date,
+				'selectedDate' => @$selectedDate,
+				'theatres' => @$theatres,
+				'session' => @$session,
+				'bookings' => @$bookings,
+				'bookable' => @$bookable,
+				'inthepast' => @$inthepast,
 				), false, true);
 	}
 
@@ -297,30 +329,57 @@ class BookingController extends BaseEventTypeController {
 
 		$operation = Element_OphTrOperation_Operation::model()->find('event_id=?',array($id));
 
-		if (@$_GET['firmId']) {
-			if (!$firm = Firm::model()->findByPk(@$_GET['firmId'])) {
-				throw new Exception('Unknown firm id: '.$_GET['firmId']);
+		if (@$_GET['firm_id']) {
+			if (!$firm = Firm::model()->findByPk(@$_GET['firm_id'])) {
+				throw new Exception('Unknown firm id: '.$_GET['firm_id']);
 			}
 		} else {
 			$firm = Firm::model()->findByPk(Yii::app()->session['selected_firm_id']);
 		}
 
-		$firmList = Firm::model()->getListWithSpecialties();
-
 		$this->patient = $operation->event->episode->patient;
 		$this->title = 'Reschedule';
 
-		$this->renderPartial('reschedule', array(
+		if (preg_match('/^([0-9]{4})([0-9]{2})$/',@$_GET['date'],$m)) {
+			$date = mktime(0,0,0,$m[2],1,$m[1]);
+		} else {
+			$date = $operation->minDate;
+		}
+
+		if (ctype_digit(@$_GET['day'])) {
+			$selectedDate = date('Y-m-d', mktime(0,0,0,date('m', $date), $_GET['day'], date('Y', $date)));
+			$theatres = $operation->getTheatres($selectedDate, $firm->id);
+
+			if ($session = OphTrOperation_Operation_Session::model()->findByPk(@$_GET['session_id'])) {
+				$criteria = new CDbCriteria;
+				$criteria->compare('session_id', $session->id);
+				$criteria->order = 'display_order ASC';
+				$bookings = OphTrOperation_Operation_Booking::model()->findAll($criteria);
+
+				foreach ($theatres as $name => $list) {
+					foreach ($list as $theatre) {
+						if ($theatre['session_id'] == $session->id) {
+							$bookable = $theatre['bookable'];
+						}
+					}
+				}
+			}
+		}
+		
+		$this->renderPartial('schedule', array(
 				'event' => $event,
 				'operation' => $operation,
-				'date' => $operation->minDate,
-				'sessions' => $operation->getSessions($firm),
 				'firm' => $firm,
 				'firmList' => Firm::model()->listWithSpecialties,
-			),
-			false,
-			true
-		);
+				'date' => $date,
+				'sessions' => $operation->getFirmCalendarForMonth($firm, $date),
+				'selectedDate' => @$selectedDate,
+				'theatres' => @$theatres,
+				'session' => @$session,
+				'bookings' => @$bookings,
+				'bookable' => @$bookable,
+				'inthepast' => @$inthepast,
+				), false, true);
 	}
 
 	public function actionRescheduleLater($id) {
@@ -338,72 +397,10 @@ class BookingController extends BaseEventTypeController {
 		$this->renderPartial('reschedule_later', array(
 				'operation' => $operation,
 				'date' => $operation->minDate,
-				'sessions' => $operation->getSessions($operation->event->episode->firm),
 				'patient' => $operation->event->episode->patient,
 			),
 			false,
 			true
 		);
-	}
-
-	public function actionSessions() {
-		if (!$operation = Element_OphTrOperation_Operation::model()->findByPk(@$_GET['operation'])) {
-			throw new Exception('Operation id is invalid.');
-		}
-
-		$minDate = !empty($_GET['date']) ? strtotime($_GET['date']) : $operation->getMinDate();
-		$firmId = empty($_GET['firmId']) ? $operation->event->episode->firm_id : $_GET['firmId'];
-
-		if ($firmId != 'EMG') {
-			$_GET['firm'] = $firmId;
-			$firm = Firm::model()->findByPk($firmId);
-			$siteList = Site::getListByFirm($firmId);
-		} else {
-			$firm = new Firm;
-			$firm->name = 'Emergency List';
-			$siteList = Site::model()->getList();
-		}
-
-		$siteId = !empty($_GET['siteId']) ? $_GET['siteId'] : key($siteList);
-		$sessions = !empty($siteId) ? $operation->getSessions($firm, $siteId) : array();
-
-		$this->renderPartial('_calendar', array('operation'=>$operation, 'date'=>$minDate, 'sessions'=>$sessions, 'firmId'=>$firmId), false, true);
-	}
-
-	public function actionTheatres() {
-		if (!$operation = Element_OphTrOperation_Operation::model()->findByPk(@$_GET['operation'])) {
-			throw new Exception('Operation id is invalid.');
-		}
-		if (!@$_GET['month']) throw new Exception('Month is required');
-		if (!@$_GET['day']) throw new Exception('Day is required');
-
-		$firmId = empty($_GET['firm']) ? 'EMG' : $_GET['firm'];
-		$reschedule = !(empty($_REQUEST['reschedule']) || $_REQUEST['reschedule'] == 0);
-
-		$operation->getMinDate();
-
-		$time = strtotime($_GET['month']);
-		$date = date('Y-m-d', mktime(0,0,0,date('m', $time), $_GET['day'], date('Y', $time)));
-		$theatres = $operation->getTheatres($date, $firmId);
-
-		$this->renderPartial('_theatre_times', array('operation'=>$operation, 'date'=>$date, 'theatres'=>$theatres, 'reschedule' => $reschedule), false, true);
-	}
-
-	public function actionList() {
-		if (!$operation = Element_OphTrOperation_Operation::model()->findByPk(@$_GET['operation'])) {
-			throw new Exception('Operation id is invalid.');
-		}
-		if (!$session = OphTrOperation_Operation_Session::model()->findByPk(@$_GET['session'])) {
-			throw new Exception('Session id is invalid.');
-		}
-
-		$criteria = new CDbCriteria;
-		$criteria->compare('session_id', $session->id);
-		$criteria->order = 'display_order ASC';
-		$bookings = Booking::model()->findAll($criteria);
-
-		$reschedule = !(empty($_REQUEST['reschedule']) || $_REQUEST['reschedule'] == 0);
-
-		$this->renderPartial('_list', array('operation'=>$operation, 'session'=>$session, 'bookings'=>$bookings, 'reschedule'=>$reschedule), false, true);
 	}
 }

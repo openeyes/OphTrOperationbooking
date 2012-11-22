@@ -18,14 +18,13 @@
  */
 
 $this->header();
-
 ?>
 <div id="schedule">
 	<div class="patientReminder">
 		<span class="patient"><?php echo $this->patient->getDisplayName()?> (<?php echo $this->patient->hos_num ?>)</span>
 	</div>
 
-	<h3>Schedule Operation</h3>
+	<h3><?php echo $operation->booking? 'Re-schedule' : 'Schedule'?> Operation</h3>
 
 	<?php
 	if ($event->episode->firm_id != $firm->id) {
@@ -45,10 +44,20 @@ $this->header();
 	}
 	?>
 
+	<?php if ($operation->booking) {?>
+		<div class="eventDetail">
+			<strong>Operation duration:</strong> <?php echo $operation->total_duration; ?> minutes
+		</div>
+		<div class="eventDetail">
+			<div class="label"><strong>Current schedule:</strong></div>
+			<?php $this->renderPartial('_session', array('operation' => $operation)); ?>
+		</div>
+	<?php }?>
+
 	<div id="firmSelect" class="eventDetail clearfix">
 		<div class="label"><span class="normal">Viewing the schedule for </span><br /><strong><?php echo $firm->name?></strong></div>
 		<div class="data">
-			<select id="firmId">
+			<select id="firm_id">
 				<option value="">Select a different firm</option>
 				<option value="EMG">Emergency List</option>
 				<?php foreach ($firmList as $id => $name) {?>
@@ -71,115 +80,39 @@ $this->header();
 		<div id="calendar">
 			<div id="session_dates">
 				<div id="details">
-					<?php echo $this->renderPartial('_calendar', array('operation'=>Element_OphTrOperation_Operation::model()->find('event_id=?',array($event->id)), 'date'=>$date, 'sessions' => $sessions, 'firmId' => $firm->id), false, true); ?>
+					<?php echo $this->renderPartial('_calendar', array('operation'=>$operation, 'date'=>$date, 'firm' => $firm, 'selectedDate' => $selectedDate, 'sessions' => $sessions), false, true); ?>
 				</div>
 			</div>
 		</div>
 
-		<div id="theatres"></div>
-		<div id="sessionDetails"></div>
+		<div id="theatres">
+			<?php if ($theatres) {?>
+				<?php echo $this->renderPartial('_theatre_times', array('operation'=>$operation, 'date'=>$selectedDate, 'theatres'=>$theatres, 'reschedule' => $operation->booking, 'firm' => $firm, 'selectedDate' => $selectedDate, 'selectedSession' => $session), false,true)?>
+			<?php }?>
+		</div>
+		<div id="sessionDetails">
+			<?php if ($bookings) {?>
+				<?php echo $this->renderPartial('_list', array('operation'=>$operation, 'session'=>$session, 'bookings'=>$bookings, 'reschedule'=>$operation->booking, 'bookable'=>$bookable),false,true)?>
+			<?php }?>
+		</div>
 	</div>
 </div>
 
 <script type="text/javascript">
-	$(function() {
-		$(this).undelegate('#previous_month','click').delegate('#previous_month','click',function() {
-			var month = $('input[id=pmonth]').val();
+	$(document).ready(function() {
+		$(this).undelegate('#firmSelect #firm_id','change').delegate('#firmSelect #firm_id','change',function() {
+			var firm_id = $(this).val();
 			var operation = $('input[id=operation]').val();
-			$.ajax({
-				'url': '<?php echo Yii::app()->createUrl('/'.$event->eventType->class_name.'/booking/sessions')?>',
-				'type': 'GET',
-				'data': {'operation': operation, 'date': month, 'firmId': '<?php echo empty($firm->id) ? 'EMG' : $firm->id ?>'},
-				'success': function(data) {
-					$('#details').html(data);
-					if ($('#theatres').length > 0) {
-						$('#theatres').html('');
-					}
-					if ($('#bookings').length > 0) {
-						$('#bookings').remove();
-					}
-				}
-			});
-			return false;
-		});
-		$(this).undelegate('#next_month','click').delegate('#next_month','click',function() {
-			var month = $('input[id=nmonth]').val();
-			var operation = $('input[id=operation]').val();
-			$.ajax({
-				'url': '<?php echo Yii::app()->createUrl('/'.$event->eventType->class_name.'/booking/sessions')?>',
-				'type': 'GET',
-				'data': {'operation': operation, 'date': month, 'firmId': '<?php echo empty($firm->id) ? 'EMG' : $firm->id ?>'},
-				'success': function(data) {
-					$('#details').html(data);
-					if ($('#theatres').length > 0) {
-						$('#theatres').html('');
-					}
-					if ($('#bookings').length > 0) {
-						$('#bookings').remove();
-					}
-				}
-			});
-			return false;
-		});
-		$(this).undelegate('#calendar table td.available,#calendar table td.limited,#calendar table td.full,#calendar table td.inthepast,#calendar table td.closed','click').delegate('#calendar table td.available,#calendar table td.limited,#calendar table td.full,#calendar table td.inthepast,#calendar table td.closed','click',function() {
-			$('#sessionDetails').html('');
-			$('.selected_date').removeClass('selected_date');
-			$(this).addClass('selected_date');
-			var day = $(this).text();
-			var month = $('#current_month').text();
-			var operation = $('input[id=operation]').val();
-			$.ajax({
-				'url': '<?php echo Yii::app()->createUrl('/'.$event->eventType->class_name.'/booking/theatres'); ?>',
-				'type': 'GET',
-				'data': {'operation': operation, 'month': month, 'day': day, 'firm': '<?php echo empty($firm->id) ? 'EMG' : $firm->id ?>', 'reschedule': 0},
-				'success': function(data) {
-					$('#theatres').html(data);
-					if ($('#bookings').length > 0) {
-						$('#bookings').remove();
-					}
-					if ($('#theatres div.shinybutton').length == 1) {
-						var button = $('#theatres div.shinybutton');
-						var session = button.children().children('span.session_id').text();
-						button.addClass('highlighted');
-						showTheatreList(operation, month, day, session);
-					}
-				}
-			});
-		});
-		$(this).undelegate('#theatres div.shinybutton','click').delegate('#theatres div.shinybutton','click',function() {
-			var session = $(this).children().children('span.session_id').text();
-			var month = $('#current_month').text();
-			var operation = $('input[id=operation]').val();
-			var day = $('.selected_date').text();
-			$(this).siblings().removeClass('highlighted');
-			$(this).addClass('highlighted');
-			showTheatreList(operation, month, day, session);
-		});
-		$(this).undelegate('#firmSelect #firmId','change').delegate('#firmSelect #firmId','change',function() {
-			var firmId = $(this).val();
-			var operation = $('input[id=operation]').val();
-			window.location.href = '<?php echo Yii::app()->createUrl('/'.$event->eventType->class_name.'/booking/schedule/'.$event->id); ?>?firmId='+firmId;
+			if (window.location.href.match(/firm_id=/)) {
+				var href = window.location.href.replace(/firm_id=[0-9]+/,'firm_id='+firm_id);
+			} else if (window.location.href.match(/\?/)) {
+				var href = window.location.href + '&firm_id='+firm_id;
+			} else {
+				var href = window.location.href + '?firm_id='+firm_id;
+			}
+			href = href.replace(/(&|\?)day=[0-9]+/,'').replace(/(&|\?)session_id=[0-9]+/,'');
+			window.location.href = href;
 		});
 	});
-
-	function showTheatreList(operation, month, day, session) {
-		$.ajax({
-			'url': '<?php echo Yii::app()->createUrl('/'.$event->eventType->class_name.'/booking/list')?>',
-			'type': 'GET',
-			'data': {
-				'operation': operation,
-				'month': month,
-				'day': day,
-				'session': session,
-			},
-			'success': function(data) {
-				if ($('#bookings').length == 0) {
-					$('#operation').append(data);
-				} else {
-					$('#bookings').replaceWith(data);
-				}
-			}
-		});
-	}
 </script>
 <?php $this->footer()?>

@@ -44,7 +44,7 @@ if (!$reschedule) {
 <?php
 	$counter = 1;
 	foreach ($bookings as $booking) {
-		$thisOperation = $booking->elementOperation;
+		$thisOperation = $booking->operation;
 		if(!$thisOperation->event) {
 			// Event has been marked as deleted. This is a conflicted state, but for now the best thing we can do is skip it
 			continue;
@@ -55,7 +55,7 @@ if (!$reschedule) {
 		$procedures = $thisOperation->procedures;
 		$procedureNames = array();
 		foreach ($procedures as $procedure) {
-			$procedureNames[] = $procedure->term;
+			$procedureNames[] = $procedure->procedure->term;
 		}
 		$procedureList = implode(', ', $procedureNames);
 		if (empty($procedureList)) {
@@ -80,7 +80,7 @@ if (!$reschedule) {
 	if (($counter - 1) != 1) {
 		echo 's';
 	}
-	if ($_POST['bookable']) {
+	if ($bookable) {
 		echo ' currently scheduled';
 	} else {
 		echo ' were scheduled';
@@ -91,7 +91,7 @@ if (!$reschedule) {
 </table>
 </div>
 
-<?php if ($_POST['bookable']) {?>
+<?php if ($bookable) {?>
 	<div class="eventDetail clearfix">
 		<div class="label"><strong>Admission Time:</strong></div>
 		<div class="data"> 
@@ -155,7 +155,7 @@ if (!$reschedule) {
 	</div>
 	<div style="margin-top:10px;">
 	<button type="submit" class="classy green venti" id="confirm_slot"><span class="button-span button-span-green">Confirm slot</span></button>
-	<button type="button" class="classy red venti" id="cancel_scheduling"><span class="button-span button-span-red">Cancel <?php if($reschedule) { ?>re-<?php } ?>scheduling</span></button>
+	<button type="button" class="classy red venti" id="cancel_scheduling"><?php echo CHtml::link('<span class="button-span button-span-red">Cancel '.($reschedule ? 're-' : '').'scheduling</span>',array('default/view/'.$operation->event_id))?></button>
 	</div>
 
 	<?php
