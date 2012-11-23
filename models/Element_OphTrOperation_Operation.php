@@ -513,6 +513,66 @@
 			}
 		}
 
+		return $this->fixCalendarDateOrdering($sessions);
+	}
+
+	public function fixCalendarDateOrdering($sessions) {
+		$return = array();
+
+		foreach (array('Mon','Tue','Wed','Thu','Fri','Sat','Sun') as $day) {
+			if (isset($sessions[$day])) {
+				$return[$day] = $sessions[$day];
+			}
+		}
+
+		$max = 0;
+
+		$datelist = array();
+
+		$dayn = 0;
+		$day_lookup = array();
+		$session_lookup = array();
+
+		foreach ($return as $day => $dates) {
+			foreach ($dates as $date => $session) {
+				$datelist[$dayn][] = $date;
+				$session_lookup[$date] = $session;
+			}
+			$day_lookup[$dayn] = $day;
+			$dayn++;
+		}
+
+		while (1) {
+			$changed = false;
+			$datelist2 = array();
+
+			foreach ($datelist as $day => $dates) {
+				foreach ($dates as $i => $date) {
+					if (isset($datelist[$day+1][$i]) && $date > $datelist[$day+1][$i]) {
+						if (!isset($datelist2[$day]) || !in_array(date('Y-m-d',strtotime($date)-(86400*7)),$datelist2[$day])) {
+							$datelist2[$day][] = date('Y-m-d',strtotime($date)-(86400*7));
+							$session_lookup[date('Y-m-d',strtotime($date)-(86400*7))] = array('status' => 'blank');
+							$changed = true;
+						}
+					}
+					if (!isset($datelist2[$day]) || !in_array($date,$datelist2[$day])) {
+						$datelist2[$day][] = $date;
+					}
+				}
+			}
+
+			if (!$changed) break;
+			$datelist = $datelist2;
+		}
+
+		$sessions = array();
+
+		foreach ($datelist2 as $dayn => $dates) {
+			foreach ($dates as $date) {
+				$sessions[$day_lookup[$dayn]][$date] = $session_lookup[$date];
+			}
+		}
+
 		return $sessions;
 	}
 
@@ -735,6 +795,13 @@
 	}
 
 	public function cancel($reason_id, $comment = null) {
+		if (!$reason = OphTrOperation_Operation_Cancellation_Reason::model()->findByPk($reason_id)) {
+			return array(
+				'result' => false,
+				'errors' => array(array('Please select a cancellation reason')),
+			);
+		}
+
 		$this->cancellation_date = date('Y-m-d H:i:s');
 		$this->cancellation_reason_id = $reason_id;
 		$this->cancellation_comment = $comment;
@@ -804,6 +871,106 @@
 
 	public function isEditable() {
 		return $this->status->name != 'Cancelled';
+	}
+
+	public function schedule($booking_attributes, $operation_comments, $session_comments, $reschedule=false) {
+		$booking = new OphTrOperation_Operation_Booking;
+		$booking->attributes = $booking_attributes;
+
+		preg_match('/(^[0-9]{1,2}).*?([0-9]{2})$/',$booking_attributes['admission_time'],$m);
+		$booking->admission_time = $m[1].":".$m[2];
+
+		$session = $booking->session;
+
+		if ($this->booking) {
+			// race condition, two users attempted to book the same operation at the same time
+			return $this->redirect(Yii::app()->createUrl('default/view/'.$this->event_id));
+		}
+
+		foreach (array('date','start_time','end_time','theatre_id') as $field) {
+			$booking->{'session_'.$field} = $booking->session->$field;
+		}
+
+		$booking->ward_id = key($this->getWardOptions($session->theatre->site_id, $session->theatre_id));
+
+		$criteria = new CDbCriteria;
+		$criteria->compare('session_id',$session->id);
+		$criteria->order = 'display_order desc';
+		$criteria->limit = 1;
+
+		$booking->display_order = ($booking2 = OphTrOperation_Operation_Booking::model()->find($criteria)) ? $booking2->display_order+1 : 1;
+
+		if (!$booking->save()) {
+			die(json_encode($booking->getErrors(),true));
+		}
+
+		OELog::log("Booking ".($reschedule ? 'rescheduled' : 'made')." $booking->id");
+		$booking->audit('booking',$reschedule ? 'reschedule' : 'create');
+
+		if (!$this->erod) {
+			$this->calculateEROD($session->id);
+		}
+
+		$this->event->episode->episode_status_id = 3;
+
+		if (!$this->event->episode->save()) {
+			throw new Exception('Unable to change episode status id for episode '.$this->event->episode->id);
+		}
+
+		$this->event->deleteIssues();
+
+		if (Yii::app()->params['urgent_booking_notify_hours'] && Yii::app()->params['urgent_booking_notify_email']) {
+			if (strtotime($session->date) <= (strtotime(date('Y-m-d')) + (Yii::app()->params['urgent_booking_notify_hours'] * 3600))) {
+				if (!is_array(Yii::app()->params['urgent_booking_notify_email'])) {
+					$targets = array(Yii::app()->params['urgent_booking_notify_email']);
+				} else {
+					$targets = Yii::app()->params['urgent_booking_notify_email'];
+				}
+				foreach ($targets as $email) {
+					if ($reschedule) {
+						mail($email, "[OpenEyes] Urgent reschedule made","A patient booking was rescheduled with a TCI date within the next 24 hours.\n\nDisorder: ".$this->getDisorder()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.","From: ".Yii::app()->params['urgent_booking_notify_email_from']."\r\n");
+					} else {
+						mail($email, "[OpenEyes] Urgent booking made","A patient booking was made with a TCI date within the next 24 hours.\n\nDisorder: ".$this->getDisorder()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.","From: ".Yii::app()->params['urgent_booking_notify_email_from']."\r\n");
+					}
+				}
+			}
+		}
+
+		if ($reschedule) {
+			$this->setStatus('Rescheduled');
+		} else {
+			$this->setStatus('Scheduled');
+		}
+
+		$this->comments = $operation_comments;
+		$this->site_id = $booking->ward->site_id;
+
+		if (!$this->save()) {
+			throw new Exception('Unable to update operation data: '.print_r($this->getErrors(),true));
+		}
+
+		if ($tl = TransportList::model()->find('item_table = ? and item_id = ?',array('booking',$booking->id))) {
+			if (!$tl->delete()) {
+				throw new Exception('Unable to delete transport_list row: '.print_r($tl->getErrors(),true));
+			}
+		}
+
+		$session->comments = $session_comments;
+
+		if (!$session->save()) {
+			throw new Exception('Unable to save session comments: '.print_r($session->getErrors(),true));
+		}
+	}
+
+	public function setStatus($name) {
+		if (!$status = OphTrOperation_Operation_Status::model()->find('name=?',array($name))) {
+			throw new Exception('Invalid status: '.$name);
+		}
+
+		$this->status_id = $status->id;
+		if (!$this->save()) {
+			throw new Exception('Unable to change operation status: '.print_r($this->getErrors(),true));
+		}
 	}
 }
 ?>

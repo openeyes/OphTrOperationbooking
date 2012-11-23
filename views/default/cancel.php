@@ -42,7 +42,7 @@ echo CHtml::hiddenField('operation_id', $operation->id); ?>
 		<textarea name="cancellation_comment" rows=6 cols=40></textarea>
 		<div style="height: 0.4em;"></div>
 		<div class="buttonwrapper">
-			<button type="submit" class="classy red venti"><span class="button-span button-span-red">Cancel operation</span></button>
+			<button type="submit" class="classy red venti" id="cancel"><span class="button-span button-span-red">Cancel operation</span></button>
 			<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 		</div>
 <?php echo CHtml::endForm(); ?>
@@ -51,7 +51,7 @@ echo CHtml::hiddenField('operation_id', $operation->id); ?>
 <div class="alertBox" style="margin-top: 10px; display:none"><p>Please fix the following input errors:</p>
 <ul><li>&nbsp;</li></ul></div>
 <script type="text/javascript">
-	$('#cancelForm button[type="submit"]').click(function () {
+	$('#cancel').click(function() {
 		if (!$(this).hasClass('inactive')) {
 			disableButtons();
 

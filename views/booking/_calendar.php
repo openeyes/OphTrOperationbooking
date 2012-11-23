@@ -47,9 +47,13 @@ $nextYear = mktime(0,0,0, date('m'), 1, date('Y')+1);
 				<th><?php echo $weekday?></th>
 
 				<?php foreach ($list as $date => $session) {?>
-					<td class="<?php echo $session['status']?><?php if ($date == $selectedDate) {?> selected_date<?php }?>">
-						<?php echo date('j', strtotime($date))?>
-					</td>
+					<?php if ($session['status'] == 'blank') {?>
+						<td></td>
+					<?php }else{?>
+						<td class="<?php echo $session['status']?><?php if ($date == $selectedDate) {?> selected_date<?php }?>">
+							<?php echo date('j', strtotime($date))?>
+						</td>
+					<?php }?>
 				<?php }?>
 			</tr>
 		<?php }?>
@@ -74,6 +78,8 @@ $nextYear = mktime(0,0,0, date('m'), 1, date('Y')+1);
 <script type="text/javascript">
 	$('#calendar table td').click(function() {
 		var day = $(this).text().match(/[0-9]+/);
+		if (day == null) return false;
+
 		if (window.location.href.match(/day=/)) {
 			var href = window.location.href.replace(/day=[0-9]+/,'day='+day);
 		} else if (window.location.href.match(/\?/)) {

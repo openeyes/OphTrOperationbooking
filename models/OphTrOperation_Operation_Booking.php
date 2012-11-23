@@ -145,5 +145,52 @@ class OphTrOperation_Operation_Booking extends BaseActiveRecord
 
 		return parent::audit($target, $action, $data, $log, $properties);
 	}
+
+	public function cancel($reason, $cancellation_comment, $reschedule=false) {
+		$this->cancellation_date = date('Y-m-d H:i:s');
+		$this->cancellation_reason_id = $reason->id;
+		$this->cancellation_comment = $cancellation_comment;
+		$this->cancellation_user_id = Yii::app()->session['user']->id;
+
+		if (!$this->save()) {
+			throw new Exception('Unable to save booking: '.print_r($this->getErrors(),true));
+		}
+
+		OELog::log("Booking cancelled: $this->id");
+
+		if (!$reschedule) {
+			if (!$this->operation->event->addIssue('Operation requires scheduling')) {
+				throw new Exception('Unable to add event issue: '.print_r($this->operation->event->getErrors(),true));
+			}
+
+			if (Yii::app()->params['urgent_booking_notify_hours'] && Yii::app()->params['urgent_booking_notify_email']) {
+				if (strtotime($this->session->date) <= (strtotime(date('Y-m-d')) + (Yii::app()->params['urgent_booking_notify_hours'] * 3600))) {
+					if (!is_array(Yii::app()->params['urgent_booking_notify_email'])) {
+						$targets = array(Yii::app()->params['urgent_booking_notify_email']);
+					} else {
+						$targets = Yii::app()->params['urgent_booking_notify_email'];
+					}
+					foreach ($targets as $email) {
+						mail($email, "[OpenEyes] Urgent cancellation made","A cancellation was made with a TCI date within the next 24 hours.\n\nDisorder: ".$this->operation->getDisorder()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.","From: ".Yii::app()->params['urgent_booking_notify_email_from']."\r\n");
+					}
+				}
+			}
+
+			$this->audit('booking','cancel');
+
+			$this->operation->event->episode->episode_status_id = 3;
+			if (!$this->operation->event->episode->save()) {
+				throw new Exception('Unable to update episode status for episode: '.print_r($operation->event->episode->getErrors(),true));
+			}
+
+			// we've just cancelled a booking and updated the element_operation status to 'needs rescheduling'
+			// any time we do that we need to add a new record to date_letter_sent
+			$date_letter_sent = new OphTrOperation_Operation_Date_Letter_Sent;
+			$date_letter_sent->element_id = $this->element_id;
+			if (!$date_letter_sent->save()) {
+				throw new Exception('Unable to save date_letter_sent: '.print_r($date_letter_sent->getErrors(),true));
+			}
+		}
+	}
 }
 ?>
