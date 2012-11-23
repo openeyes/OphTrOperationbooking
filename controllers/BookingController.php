@@ -50,6 +50,10 @@ class BookingController extends BaseEventTypeController {
 			throw new Exception('Unable to find event: '.$id);
 		}
 
+		if (!$this->title) {
+			$this->title = "Schedule operation";
+		}
+
 		$operation = Element_OphTrOperation_Operation::model()->find('event_id=?',array($id));
 
 		$this->patient = $event->episode->patient;
@@ -105,63 +109,8 @@ class BookingController extends BaseEventTypeController {
 	}
 
 	public function actionReschedule($id) {
-		if (!$event = Event::model()->findByPk($id)) {
-			throw new Exception('Unable to find event: '.$id);
-		}
-
-		$operation = Element_OphTrOperation_Operation::model()->find('event_id=?',array($id));
-
-		if (@$_GET['firm_id']) {
-			if (!$firm = Firm::model()->findByPk(@$_GET['firm_id'])) {
-				throw new Exception('Unknown firm id: '.$_GET['firm_id']);
-			}
-		} else {
-			$firm = Firm::model()->findByPk(Yii::app()->session['selected_firm_id']);
-		}
-
-		$this->patient = $operation->event->episode->patient;
-		$this->title = 'Reschedule';
-
-		if (preg_match('/^([0-9]{4})([0-9]{2})$/',@$_GET['date'],$m)) {
-			$date = mktime(0,0,0,$m[2],1,$m[1]);
-		} else {
-			$date = $operation->minDate;
-		}
-
-		if (ctype_digit(@$_GET['day'])) {
-			$selectedDate = date('Y-m-d', mktime(0,0,0,date('m', $date), $_GET['day'], date('Y', $date)));
-			$theatres = $operation->getTheatres($selectedDate, $firm->id);
-
-			if ($session = OphTrOperation_Operation_Session::model()->findByPk(@$_GET['session_id'])) {
-				$criteria = new CDbCriteria;
-				$criteria->compare('session_id', $session->id);
-				$criteria->order = 'display_order ASC';
-				$bookings = OphTrOperation_Operation_Booking::model()->findAll($criteria);
-
-				foreach ($theatres as $name => $list) {
-					foreach ($list as $theatre) {
-						if ($theatre['session_id'] == $session->id) {
-							$bookable = $theatre['bookable'];
-						}
-					}
-				}
-			}
-		}
-		
-		$this->renderPartial('schedule', array(
-				'event' => $event,
-				'operation' => $operation,
-				'firm' => $firm,
-				'firmList' => Firm::model()->listWithSpecialties,
-				'date' => $date,
-				'sessions' => $operation->getFirmCalendarForMonth($firm, $date),
-				'selectedDate' => @$selectedDate,
-				'theatres' => @$theatres,
-				'session' => @$session,
-				'bookings' => @$bookings,
-				'bookable' => @$bookable,
-				'inthepast' => @$inthepast,
-				), false, true);
+		$this->title = "Reschedule operation";
+		return $this->actionSchedule($id);
 	}
 
 	public function actionRescheduleLater($id) {
