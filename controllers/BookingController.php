@@ -59,8 +59,13 @@ class BookingController extends BaseEventTypeController {
 		$this->patient = $event->episode->patient;
 
 		if (@$_GET['firm_id']) {
-			if (!$firm = Firm::model()->findByPk(@$_GET['firm_id'])) {
-				throw new Exception('Unknown firm id: '.$_GET['firm_id']);
+			if ($_GET['firm_id'] == 'EMG') {
+				$firm = new Firm;
+				$firm->name = 'Emergency List';
+			} else {
+				if (!$firm = Firm::model()->findByPk(@$_GET['firm_id'])) {
+					throw new Exception('Unknown firm id: '.$_GET['firm_id']);
+				}
 			}
 		} else {
 			$firm = Firm::model()->findByPk(Yii::app()->session['selected_firm_id']);
