@@ -102,7 +102,7 @@ class DefaultController extends BaseEventTypeController {
 			throw new Exception('Operation not found for event: '.$id);
 		}
 
-		$this->event->audit('admission letter','print',false);
+		$event->audit('admission letter','print',false);
 
 		$this->logActivity('printed admission letter');
 
@@ -112,31 +112,28 @@ class DefaultController extends BaseEventTypeController {
 			$firm = $operation->event->episode->firm;
 			$emergency_list = true;
 		}
-		$admissionContact = $operation->getAdmissionContact();
 		$emergency_list = false;
-		$cancelledBookings = $operation->getCancelledBookings();
 
 		$pdf_print = new OEPDFPrint('Openeyes', 'Booking letters', 'Booking letters');
 
 		$body = $this->render('letters/admission_letter', array(
 			'site' => $site,
-			'patient' => $patient,
+			'patient' => $event->episode->patient,
 			'firm' => $firm,
 			'emergencyList' => $emergency_list,
 			'operation' => $operation,
-			'cancelledBookings' => $cancelledBookings,
 		), true);
 
-		$oeletter = new OELetter($patient->addressname."\n".implode("\n",$patient->correspondAddress->letterarray),$site->name."\n".implode("\n",$site->letterarray)."\nTel: ".$site->telephone.($site->fax ? "\nFax: ".$site->fax : ''));
+		$oeletter = new OELetter($event->episode->patient->addressname."\n".implode("\n",$event->episode->patient->correspondAddress->letterarray),$site->name."\n".implode("\n",$site->letterarray)."\nTel: ".$site->telephone.($site->fax ? "\nFax: ".$site->fax : ''));
 		$oeletter->setBarcode('E:'.$operation->event_id);
 		$oeletter->addBody($body);
 
 		$pdf_print->addLetter($oeletter);
 
-		$body = $this->render('/letters/admission_form', array(
+		$body = $this->render('letters/admission_form', array(
 				'operation' => $operation,
 				'site' => $site,
-				'patient' => $patient,
+				'patient' => $event->episode->patient,
 				'firm' => $firm,
 				'emergencyList' => $emergency_list,
 		), true);

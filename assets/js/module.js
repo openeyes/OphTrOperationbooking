@@ -220,6 +220,14 @@ $(document).ready(function() {
 		href = href.replace(/(&|\?)day=[0-9]+/,'').replace(/(&|\?)session_id=[0-9]+/,'');
 		window.location.href = href;
 	});
+
+	$('#btn_print-letter').unbind('click').click(function() {
+		if (!$(this).hasClass('inactive')) {
+			disableButtons();
+			printPDF(baseUrl+'/OphTrOperation/default/admissionLetter/'+window.location.href.match(/[0-9]+/),'');
+			enableButtons();
+		}
+	});
 });
 
 function ucfirst(str) { str += ''; var f = str.charAt(0).toUpperCase(); return f + str.substr(1); }

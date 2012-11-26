@@ -148,21 +148,21 @@
 		if (empty($element->booking)) {
 			if ($element->letterType) {
 				if ($element->has_gp && $element->has_address) {?>
-					<button type="submit" class="auto classy blue venti" value="submit" id="btn_print-invitation-letter"><span class="button-span button-span-blue">Print <?php echo $element->letterType ?> letter</span></button>
+					<button type="submit" class="classy blue venti" value="submit" id="btn_print-invitation-letter"><span class="button-span button-span-blue">Print <?php echo $element->letterType ?> letter</span></button>
 				<?php }else{?>
-					<button type="submit" class="auto classy disabled venti" value="submit" disabled="disabled"><span class="button-span">Print <?php echo $element->letterType ?> letter</span></button>
+					<button type="submit" class="classy disabled venti" value="submit" disabled="disabled"><span class="button-span">Print <?php echo $element->letterType ?> letter</span></button>
 				<?php }?>
 			<?php }?>
-			<button type="submit" class="auto classy green venti" value="submit" id="btn_schedule-now"><a href="<?php echo Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/schedule/'.$element->event_id)?>"><span class="button-span button-span-green">Schedule now</span></a></button>
+			<button type="submit" class="classy green venti" value="submit" id="btn_schedule-now"><a href="<?php echo Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/schedule/'.$element->event_id)?>"><span class="button-span button-span-green">Schedule now</span></a></button>
 		<?php }else{?>
 			<?php if ($element->has_address) {?>
-				<button type="submit" class="auto classy blue venti" value="submit" id="btn_print-letter"><span class="button-span">Print letter</span></button>
+				<button type="submit" class="classy blue venti" value="submit" id="btn_print-letter"><span class="button-span">Print letter</span></button>
 			<?php }else{?>
-				<button type="submit" class="auto classy disabled venti" value="submit" disabled="disabled"><span class="button-span button-span-blue">Print letter</span></button>
+				<button type="submit" class="classy disabled venti" value="submit" disabled="disabled"><span class="button-span button-span-blue">Print letter</span></button>
 			<?php }?>
-			<button type="submit" class="auto classy green venti" value="submit" id="btn_reschedule-now"><a href="<?php echo Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/reschedule/'.$element->event_id)?>"><span class="button-span button-span-green">Reschedule now</span></a></button>
-			<button type="submit" class="auto classy green venti" value="submit" id="btn_reschedule-later"><a href="<?php echo Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/rescheduleLater/'.$element->event_id)?>"><span class="button-span button-span-green">Reschedule later</span></a></button>
+			<button type="submit" class="classy green venti" value="submit" id="btn_reschedule-now"><a href="<?php echo Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/reschedule/'.$element->event_id)?>"><span class="button-span button-span-green">Reschedule now</span></a></button>
+			<button type="submit" class="classy green venti" value="submit" id="btn_reschedule-later"><a href="<?php echo Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/rescheduleLater/'.$element->event_id)?>"><span class="button-span button-span-green">Reschedule later</span></a></button>
 		<?php }?>
-		<button type="submit" class="auto classy red venti" value="submit" id="btn_cancel-operation"><a href="<?php echo Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/default/cancel/'.$element->event_id)?>"><span class="button-span button-span-red">Cancel operation</span></a></button>
+		<button type="submit" class="classy red venti" value="submit" id="btn_cancel-operation"><a href="<?php echo Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/default/cancel/'.$element->event_id)?>"><span class="button-span button-span-red">Cancel operation</span></a></button>
 	</div>
 <?php }?>

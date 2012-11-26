@@ -980,7 +980,7 @@
 	}
 
 	public function getRefuseContact() {
-		if ($contact = $this->getContactByType(1)) {
+		if (!$contact = $this->getContactByType(1)) {
 			throw new Exception('Unable to find refuse contact for operation '.$this->id);
 		}
 
@@ -999,7 +999,7 @@
 
 	public function getContactByType($contact_type_id, $params=array()) {
 		$site_id = $this->booking->ward->site_id;
-		$subspecialty_id = $this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty;
+		$subspecialty_id = $this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty_id;
 		$theatre_id = $this->booking->session->theatre_id;
 		$firm_id = $this->event->episode->firm_id;
 
@@ -1027,6 +1027,44 @@
 		}
 
 		return OphTrOperation_Letter_Contact::model()->find('site_id=? and subspecialty_id=?',array($site_id,$subspecialty_id));
+	}
+
+	public function getDiagnosis() {
+		return Element_OphTrOperation_Diagnosis::model()->find('event_id=?',array($this->event_id));
+	}
+
+	// TODO make this generic
+	public function getName() {
+		if (in_array($this->booking->session->theatre->code, array('CRZ','BRZ'))) { // Not Ozurdex
+			return 'Ozurdex injection';
+		}
+	}
+
+	// TODO make this generic
+	public function showPreopWarning() {
+		$show = true;
+	 
+		// Not Ozurdex
+		if (in_array($this->booking->session->theatre->code, array('CRZ','BRZ'))) {
+			$show = false;
+		}
+	 
+		// Not External / Theatre 9
+		if($this->booking->session->theatre->code == 'CR9' && $this->booking->session->firm->serviceSubspecialtyAssignment->subspecialty->ref_spec == 'EX') {
+			$show = false;
+		}
+	 
+		return $show;
+	}
+
+	// TODO make this generic
+	public function showSeatingWarning() {
+		return (!in_array($this->booking->session->theatre->code, array('CRZ','BRZ'))); // Not Ozurdex
+	}
+
+	// TODO make this generic
+	public function showPrescriptionWarning() {
+		return (!in_array($this->booking->session->theatre->code, array('CRZ','BRZ'))); // Not Ozurdex
 	}
 }
 ?>
