@@ -68,6 +68,39 @@ $(document).ready(function() {
 			}
 		}
 	});
+
+	$('#cancel').click(function() {
+		if (!$(this).hasClass('inactive')) {
+			disableButtons();
+
+			$.ajax({
+				type: 'POST',
+				url: window.location.href,
+				data: $('#cancelForm').serialize(),
+				dataType: 'json',
+				success: function(data) {
+					var n=0;
+					var html = '';
+					$.each(data, function(key, value) {
+						html += '<ul><li>'+value+'</li></ul>';
+						n += 1;
+					});
+
+					if (n == 0) {
+						window.location.href = window.location.href.replace(/\/cancel\//,'/view/');
+					} else {
+						$('div.alertBox').show();
+						$('div.alertBox').html(html);
+					}
+
+					enableButtons();
+					return false;
+				}
+			});
+		}
+
+		return false;
+	});
 });
 
 function ucfirst(str) { str += ''; var f = str.charAt(0).toUpperCase(); return f + str.substr(1); }
