@@ -869,9 +869,11 @@
 		return $this->status->name != 'Cancelled';
 	}
 
-	public function schedule($booking_attributes, $operation_comments, $session_comments, $reschedule=false) {
+	public function schedule($booking_attributes, $operation_comments, $session_comments) {
 		$booking = new OphTrOperation_Operation_Booking;
 		$booking->attributes = $booking_attributes;
+
+		$reschedule = in_array($this->status_id,array(2,3,4));
 
 		preg_match('/(^[0-9]{1,2}).*?([0-9]{2})$/',$booking_attributes['admission_time'],$m);
 		$booking->admission_time = $m[1].":".$m[2];
