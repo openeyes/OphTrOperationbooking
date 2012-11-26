@@ -32,15 +32,19 @@ class DefaultController extends BaseEventTypeController {
 			throw new Exception('Unable to find event: '.$id);
 		} 
 
+		if (!$operation = Element_OphTrOperation_Operation::model()->find('event_id=?',array($event->id))) {
+			throw new CHttpException(500,'Operation not found');
+		}
+
+		if ($operation->status->name == 'Cancelled') {
+			return $this->redirect(array('default/view/'.$event->id));
+		}
+
 		Yii::app()->clientScript->registerCSSFile(Yii::app()->createUrl('css/theatre_calendar.css'), 'all');
 
 		$errors = array();
 
 		if (isset($_POST['cancellation_reason']) && isset($_POST['operation_id'])) {
-			if (!$operation = Element_OphTrOperation_Operation::model()->findByPk($_POST['operation_id'])) {
-				throw new CHttpException(500,'Operation not found');
-			}
-			
 			$comment = (isset($_POST['cancellation_comment'])) ? strip_tags(@$_POST['cancellation_comment']) : '';
 			$result = $operation->cancel(@$_POST['cancellation_reason'], $comment);
 

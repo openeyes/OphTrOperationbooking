@@ -843,7 +843,7 @@
 			$this->booking->audit('booking','cancel');
 
 			if(Yii::app()->params['urgent_booking_notify_hours'] && Yii::app()->params['urgent_booking_notify_email']) {
-				if(strtotime($session->date) <= (strtotime(date('Y-m-d')) + (Yii::app()->params['urgent_booking_notify_hours'] * 3600))) {
+				if(strtotime($this->booking->session_date) <= (strtotime(date('Y-m-d')) + (Yii::app()->params['urgent_booking_notify_hours'] * 3600))) {
 					if (!is_array(Yii::app()->params['urgent_booking_notify_email'])) {
 						$targets = array(Yii::app()->params['urgent_booking_notify_email']);
 					} else {

@@ -2,8 +2,6 @@
 
 class BookingController extends BaseEventTypeController {
 	public function actionCreate() {
-		$BOoking = new OphTrOperation_Operation_Booking;
-
 		if (isset($_POST['Booking'])) {
 			if (!$operation = Element_OphTrOperation_Operation::model()->findByPk(@$_POST['Booking']['element_id'])) {
 				throw new Exception('Operation not found: '.@$_POST['Booking']['element_id']);
@@ -54,7 +52,13 @@ class BookingController extends BaseEventTypeController {
 			$this->title = "Schedule operation";
 		}
 
-		$operation = Element_OphTrOperation_Operation::model()->find('event_id=?',array($id));
+		if (!$operation = Element_OphTrOperation_Operation::model()->find('event_id=?',array($id))) {
+			throw new Exception('Operation not found');
+		}
+
+		if ($operation->status->name == 'Cancelled') {
+			return $this->redirect(array('default/view/'.$event->id));
+		}
 
 		$this->patient = $event->episode->patient;
 
@@ -125,7 +129,13 @@ class BookingController extends BaseEventTypeController {
 			throw new Exception('Unable to find event: '.$id);
 		}
 
-		$operation = Element_OphTrOperation_Operation::model()->find('event_id=?',array($id));
+		if (!$operation = Element_OphTrOperation_Operation::model()->find('event_id=?',array($id))) {
+			throw new Exception('Operation not found');
+		}
+
+		if (in_array($operation->status->name,array('Requires scheduling','Requires rescheduling','Cancelled'))) {
+			return $this->redirect(array('default/view/'.$event->id));
+		}
 
 		$this->patient = $operation->event->episode->patient;
 		$this->title = 'Reschedule later';
