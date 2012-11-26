@@ -88,6 +88,7 @@ class BookingController extends BaseEventTypeController {
 			if ($session = OphTrOperation_Operation_Session::model()->findByPk(@$_GET['session_id'])) {
 				$criteria = new CDbCriteria;
 				$criteria->compare('session_id', $session->id);
+				$criteria->addCondition('cancellation_date is null');
 				$criteria->order = 'display_order ASC';
 				$bookings = OphTrOperation_Operation_Booking::model()->findAll($criteria);
 

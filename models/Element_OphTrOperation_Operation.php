@@ -970,5 +970,13 @@
 			throw new Exception('Unable to change operation status: '.print_r($this->getErrors(),true));
 		}
 	}
+
+	public function getProceduresCommaSeparated() {
+		$procedures = array();
+		foreach ($this->procedures as $procedure) {
+			$procedures[] = $procedure->procedure->term;
+		}
+		return empty($procedures) ? 'No procedures' : implode(', ',$procedures);
+	}
 }
 ?>

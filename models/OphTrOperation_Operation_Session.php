@@ -147,7 +147,7 @@ class OphTrOperation_Operation_Session extends BaseActiveRecord
 			->select("s.*, TIMEDIFF(s.end_time, s.start_time) AS session_duration, COUNT(a.id) AS bookings, SUM(o.total_duration) AS bookings_duration")
 			->from("ophtroperation_operation_session s")
 			->join("ophtroperation_operation_theatre t","s.theatre_id = t.id")
-			->leftJoin("ophtroperation_operation_booking a","s.id = a.session_id")
+			->leftJoin("ophtroperation_operation_booking a","s.id = a.session_id and a.cancellation_date is null")
 			->leftJoin("et_ophtroperation_operation o","a.element_id = o.id")
 			->leftJoin("event e","o.event_id = e.id")
 			->where("s.available = 1 AND s.date BETWEEN CAST('$startDate' AS DATE) AND CAST('$monthEnd' AS DATE) AND $firmSql")
@@ -168,8 +168,8 @@ class OphTrOperation_Operation_Session extends BaseActiveRecord
 		foreach (Yii::app()->db->createCommand()
 			->select("o.total_duration")
 			->from("et_ophtroperation_operation o")
-			->join("ophtroperation_operation_booking","ophtroperation_operation_booking.element_id = o.id")
-			->where("ophtroperation_operation_booking.session_id = :sessionId",array(':sessionId' => $this->id))
+			->join("ophtroperation_operation_booking b","b.element_id = o.id")
+			->where("b.session_id = :sessionId and b.cancellation_date is null",array(':sessionId' => $this->id))
 			->queryAll() as $operation) {
 			$total += $operation['total_duration'];
 		}
@@ -182,7 +182,7 @@ class OphTrOperation_Operation_Session extends BaseActiveRecord
 	}
 
 	public function getMinuteStatus() {
-		return $this->available >= 0 ? 'available' : 'overbooked';
+		return $this->availableMinutes >= 0 ? 'available' : 'overbooked';
 	}
 }
 ?>

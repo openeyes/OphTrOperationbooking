@@ -43,49 +43,33 @@ if (!$reschedule) {
 
 <?php
 	$counter = 1;
-	foreach ($bookings as $booking) {
-		$thisOperation = $booking->operation;
-		if(!$thisOperation->event) {
-			// Event has been marked as deleted. This is a conflicted state, but for now the best thing we can do is skip it
-			continue;
-		}
-		// Use nopas flag as temporary work around for merged patients
-		$patient_id = $thisOperation->event->episode->patient_id;
-		$patient = Patient::model()->noPas()->findByPk($patient_id);
-		$procedures = $thisOperation->procedures;
-		$procedureNames = array();
-		foreach ($procedures as $procedure) {
-			$procedureNames[] = $procedure->procedure->term;
-		}
-		$procedureList = implode(', ', $procedureNames);
-		if (empty($procedureList)) {
-			$procedureList = 'No procedures';
-		} ?>
-
-			<tr>
-				<td><?php echo $counter?>. <?php echo $patient->getDisplayName() ?></td>
-				<td><?php echo $procedureList; ?></td>
-				<td><?php echo $thisOperation->anaesthetic_type->name?></td>
-				<td><?php echo "{$thisOperation->total_duration} minutes"; ?></td>
-				<td><?php echo $booking->admission_time ?></td>
-				<td><?php echo $thisOperation->comments?></td>
-			</tr>
+	foreach ($bookings as $booking) {?>
+		<tr>
+			<td><?php echo $counter?>. <?php echo $booking->operation->event->episode->patient->getDisplayName()?></td>
+			<td><?php echo $booking->operation->getProceduresCommaSeparated()?></td>
+			<td><?php echo $booking->operation->anaesthetic_type->name?></td>
+			<td><?php echo "{$booking->operation->total_duration} minutes"; ?></td>
+			<td><?php echo $booking->admission_time?></td>
+			<td><?php echo $booking->operation->comments?></td>
+		</tr>
 <?php
 		$counter++;
 	} ?>
 	</tbody>
 		<tfoot>
 			<tr>
-				<th colspan="6"><?php echo ($counter - 1) . ' booking';
-	if (($counter - 1) != 1) {
-		echo 's';
-	}
-	if ($bookable) {
-		echo ' currently scheduled';
-	} else {
-		echo ' were scheduled';
-	}
-		?></th>
+				<th colspan="6">
+					<?php echo ($counter - 1) . ' booking';
+					if (($counter - 1) != 1) {
+						echo 's';
+					}
+					if ($bookable) {
+						echo ' currently scheduled';
+					} else {
+						echo ' were scheduled';
+					}
+					?>
+				</th>
 			</tr>
 		</tfoot>
 </table>
