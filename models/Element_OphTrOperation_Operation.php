@@ -1,4 +1,4 @@
-	<?php /**
+<?php /**
 	 * OpenEyes
 	 *
 	 * (C) Moorfields Eye Hospital NHS Foundation Trust, 2008-2011
@@ -977,6 +977,46 @@
 			$procedures[] = $procedure->procedure->term;
 		}
 		return empty($procedures) ? 'No procedures' : implode(', ',$procedures);
+	}
+
+	public function getAdmissionContact() {
+		return $this->getContactByType(1);
+	}
+
+	public function getHealthContact() {
+		return $this->getContactByType(2);
+	}
+
+	public function getContactByType($contact_type_id, $params=array()) {
+		$site_id = $this->booking->ward->site_id;
+		$subspecialty_id = $this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty;
+		$theatre_id = $this->booking->session->theatre_id;
+		$firm_id = $this->event->episode->firm_id;
+
+		foreach ($params as $key => $value) {
+			${$key} = $value;
+		}
+
+		if ($contact = OphTrOperation_Letter_Contact::model()->find('contact_type_id=? and site_id=? and subspecialty_id=? and theatre_id=? and firm_id=?',array($contact_type_id,$site_id,$subspecialty_id,$theatre_id,$firm_id))) {
+			return $contact;
+		}
+		if ($contact = OphTrOperation_Letter_Contact::model()->find('contact_type_id=? and site_id=? and theatre_id=?',array($contact_type_id,$site_id,$theatre_id))) {
+			return $contact;
+		}
+		if ($contact = OphTrOperation_Letter_Contact::model()->find('contact_type_id=? and site_id=? and subspecialty_id=? and theatre_id=?',array($contact_type_id,$site_id,$subspecialty_id,$theatre_id))) {
+			return $contact;
+		}
+		if ($contact = OphTrOperation_Letter_Contact::model()->find('contact_type_id=? and site_id=? and subspecialty_id=? and theatre_id is null',array($contact_type_id,$site_id,$subspecialty_id))) {
+			return $contact;
+		}
+		if ($contact = OphTrOperation_Letter_Contact::model()->find('contact_type_id=? and site_id is null and subspecialty_id is null and theatre_id=? and firm_id=?',array($contact_type_id,$theatre_id,$firm_id))) {
+			return $contact;
+		}
+		if ($contact = OphTrOperation_Letter_Contact::model()->find('contact_type_id=? and site_id=? and subspecialty_id is null and theatre_id is null and firm_id is null',array($contact_type_id,$site_id))) {
+			return $contact;
+		}
+
+		return OphTrOperation_Letter_Contact::model()->find('site_id=? and subspecialty_id=?',array($site_id,$subspecialty_id));
 	}
 }
 ?>

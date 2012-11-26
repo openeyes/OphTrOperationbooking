@@ -480,9 +480,57 @@ class m121114_105958_event_type_OphTrOperation extends CDbMigration
 				'CONSTRAINT `et_ophtroperation_scheduleope_ev_fk` FOREIGN KEY (`event_id`) REFERENCES `event` (`id`)',
 				'CONSTRAINT `et_ophtroperation_scheduleope_schedule_options_fk` FOREIGN KEY (`schedule_options_id`) REFERENCES `ophtroperation_scheduleope_schedule_options` (`id`)',
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
+
+		$this->createTable('ophtroperation_letter_contact_type', array(
+				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
+				'name' => 'varchar(64) COLLATE utf8_bin',
+				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'created_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'created_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'PRIMARY KEY (`id`)',
+				'KEY `ophtroperation_letter_contact_type_lmui_fk` (`last_modified_user_id`)',
+				'KEY `ophtroperation_letter_contact_type_cui_fk` (`created_user_id`)',
+				'CONSTRAINT `ophtroperation_letter_contact_type_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
+				'CONSTRAINT `ophtroperation_letter_contact_type_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
+			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
+
+		$this->insert('ophtroperation_letter_contact_type',array('id'=>1,'name'=>'Admission Coordinator'));
+		$this->insert('ophtroperation_letter_contact_type',array('id'=>2,'name'=>'Health'));
+
+		$this->createTable('ophtroperation_letter_contact', array(
+				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
+				'contact_type_id' => 'int(10) unsigned NOT NULL',
+				'site_id' => 'int(10) unsigned NULL',
+				'subspecialty_id' => 'int(10) unsigned NULL',
+				'theatre_id' => 'int(10) unsigned NULL',
+				'firm_id' => 'int(10) unsigned NULL',
+				'telephone' => 'varchar(64) COLLATE utf8_bin NOT NULL',
+				'title' => 'varchar(64) COLLATE utf8_bin NOT NULL',
+				'last_modified_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'last_modified_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'created_user_id' => 'int(10) unsigned NOT NULL DEFAULT 1',
+				'created_date' => 'datetime NOT NULL DEFAULT \'1901-01-01 00:00:00\'',
+				'PRIMARY KEY (`id`)',
+				'KEY `ophtroperation_letter_contact_cti_fk` (`contact_type_id`)',
+				'KEY `ophtroperation_letter_contact_site_id_fk` (`site_id`)',
+				'KEY `ophtroperation_letter_contact_subspecialty_id_fk` (`subspecialty_id`)',
+				'KEY `ophtroperation_letter_contact_theatre_id_fk` (`theatre_id`)',
+				'KEY `ophtroperation_letter_contact_firm_id_fk` (`firm_id`)',
+				'KEY `ophtroperation_letter_contact_lmui_fk` (`last_modified_user_id`)',
+				'KEY `ophtroperation_letter_contact_cui_fk` (`created_user_id`)',
+				'CONSTRAINT `ophtroperation_letter_contact_cti_fk` FOREIGN KEY (`contact_type_id`) REFERENCES `ophtroperation_letter_contact_type` (`id`)',
+				'CONSTRAINT `ophtroperation_letter_contact_site_id_fk` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`)',
+				'CONSTRAINT `ophtroperation_letter_contact_subspecialty_id_fk` FOREIGN KEY (`subspecialty_id`) REFERENCES `subspecialty` (`id`)',
+				'CONSTRAINT `ophtroperation_letter_contact_theatre_id_fk` FOREIGN KEY (`theatre_id`) REFERENCES `theatre` (`id`)',
+				'CONSTRAINT `ophtroperation_letter_contact_firm_id_fk` FOREIGN KEY (`firm_id`) REFERENCES `firm` (`id`)',
+				'CONSTRAINT `ophtroperation_letter_contact_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
+				'CONSTRAINT `ophtroperation_letter_contact_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
+			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 	}
 
 	public function down() {
+		$this->dropTable('ophtroperation_letter_contact');
 		$this->dropTable('et_ophtroperation_diagnosis');
 		$this->dropTable('ophtroperation_operation_procedures_procedures');
 		$this->dropTable('ophtroperation_operation_erod_rule_item');

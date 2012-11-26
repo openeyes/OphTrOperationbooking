@@ -86,4 +86,69 @@ class DefaultController extends BaseEventTypeController {
 
 		parent::init();
 	}
+
+	public function actionAdmissionLetter($id) {
+		if (!$event = Event::model()->findByPk($id)) {
+			throw new Exception('Event not found: '.$id);
+		}
+
+		$this->layout = '//layouts/pdf';
+
+		if ($event->episode->patient->date_of_death) {
+			return false;
+		}
+
+		if (!$operation = Element_OphTrOperation_Operation::model()->find('event_id = ?',array($id))) {
+			throw new Exception('Operation not found for event: '.$id);
+		}
+
+		$this->event->audit('admission letter','print',false);
+
+		$this->logActivity('printed admission letter');
+
+		$site = $operation->booking->session->theatre->site;
+		$firm = $operation->booking->session->firm;
+		if (!$firm) {
+			$firm = $operation->event->episode->firm;
+			$emergency_list = true;
+		}
+		$admissionContact = $operation->getAdmissionContact();
+		$emergency_list = false;
+		$cancelledBookings = $operation->getCancelledBookings();
+
+		$pdf_print = new OEPDFPrint('Openeyes', 'Booking letters', 'Booking letters');
+
+		$body = $this->render('/letters/admission_letter', array(
+			'site' => $site,
+			'patient' => $patient,
+			'firm' => $firm,
+			'emergencyList' => $emergency_list,
+			'operation' => $operation,
+			'refuseContact' => $admissionContact['refuse'],
+			'healthContact' => $admissionContact['health'],
+			'cancelledBookings' => $cancelledBookings,
+		), true);
+
+		$oeletter = new OELetter($patient->addressname."\n".implode("\n",$patient->correspondAddress->letterarray),$site->name."\n".implode("\n",$site->letterarray)."\nTel: ".$site->telephone.($site->fax ? "\nFax: ".$site->fax : ''));
+		$oeletter->setBarcode('E:'.$operation->event_id);
+		$oeletter->addBody($body);
+
+		$pdf_print->addLetter($oeletter);
+
+		$body = $this->render('/letters/admission_form', array(
+				'operation' => $operation,
+				'site' => $site,
+				'patient' => $patient,
+				'firm' => $firm,
+				'emergencyList' => $emergency_list,
+		), true);
+
+		$oeletter = new OELetter;
+		$oeletter->setFont('helvetica','10');
+		$oeletter->setBarcode('E:'.$operation->event_id);
+		$oeletter->addBody($body);
+
+		$pdf_print->addLetter($oeletter);
+		$pdf_print->output();
+	}
 }
