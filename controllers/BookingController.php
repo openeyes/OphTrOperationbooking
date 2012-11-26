@@ -36,7 +36,7 @@ class BookingController extends BaseEventTypeController {
 			$booking->cancel($reason,$_POST['cancellation_comment'],@$_POST['Booking']);
 
 			if (!empty($_POST['Booking'])) {
-				$operation->schedule($_POST['Booking'], $_POST['Operation']['comments'], $_POST['Session']['comments']);
+				$operation->schedule($_POST['Booking'], $_POST['Operation']['comments'], $_POST['Session']['comments'], true);
 			} else {
 				$operation->setStatus('Requires rescheduling');
 			}
