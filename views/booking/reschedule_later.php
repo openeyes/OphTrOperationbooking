@@ -64,36 +64,4 @@ $this->header()?>
 <div class="alertBox" style="margin-top: 10px; display:none"><p>Please fix the following input errors:</p>
 	<ul><li>&nbsp;</li></ul>
 </div>
-<script type="text/javascript">
-	$('#cancelForm button[type="submit"]').click(function(e) {
-		if (!$(this).hasClass('inactive')) {
-			$.ajax({
-				type: 'POST',
-				url: '<?php echo Yii::app()->createUrl('/'.$operation->event->eventType->class_name.'/booking/update/'.$operation->event_id)?>',
-				data: $('#cancelForm').serialize(),
-				dataType: 'json',
-				success: function(data) {
-					var n=0;
-					var html = '';
-					$.each(data, function(key, value) {
-						html += '<ul><li>'+value+'</li></ul>';
-						n += 1;
-					});
-
-					if (n == 0) {
-						window.location.href = '<?php echo Yii::app()->createUrl('/'.$operation->event->eventType->class_name.'/default/view/'.$operation->event->id)?>';
-					} else {
-						$('div.alertBox').show();
-						$('div.alertBox').html(html);
-					}
-
-					enableButtons();
-					return false;
-				}
-			});
-		}
-
-		return false;
-	});
-</script>
 <?php $this->footer()?>

@@ -91,28 +91,10 @@ $this->header();
 			<?php }?>
 		</div>
 		<div id="sessionDetails">
-			<?php if ($bookings) {?>
+			<?php if ($session) {?>
 				<?php echo $this->renderPartial('_list', array('operation'=>$operation, 'session'=>$session, 'bookings'=>$bookings, 'reschedule'=>$operation->booking, 'bookable'=>$bookable),false,true)?>
 			<?php }?>
 		</div>
 	</div>
 </div>
-
-<script type="text/javascript">
-	$(document).ready(function() {
-		$(this).undelegate('#firmSelect #firm_id','change').delegate('#firmSelect #firm_id','change',function() {
-			var firm_id = $(this).val();
-			var operation = $('input[id=operation]').val();
-			if (window.location.href.match(/firm_id=/)) {
-				var href = window.location.href.replace(/firm_id=[0-9]+/,'firm_id='+firm_id);
-			} else if (window.location.href.match(/\?/)) {
-				var href = window.location.href + '&firm_id='+firm_id;
-			} else {
-				var href = window.location.href + '?firm_id='+firm_id;
-			}
-			href = href.replace(/(&|\?)day=[0-9]+/,'').replace(/(&|\?)session_id=[0-9]+/,'');
-			window.location.href = href;
-		});
-	});
-</script>
 <?php $this->footer()?>

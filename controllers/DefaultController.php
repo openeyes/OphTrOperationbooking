@@ -75,4 +75,11 @@ class DefaultController extends BaseEventTypeController {
 				'errors' => $errors
 			), false, true);
 	}
+
+	public function init() {
+		Yii::app()->clientScript->registerScriptFile(Yii::app()->createUrl('js/jquery.validate.min.js'));
+		Yii::app()->clientScript->registerScriptFile(Yii::app()->createUrl('js/additional-validators.js'));
+
+		parent::init();
+	}
 }

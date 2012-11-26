@@ -75,20 +75,3 @@ $nextYear = mktime(0,0,0, date('m'), 1, date('Y')+1);
 		</tr>
 	</tfoot>
 </table>
-<script type="text/javascript">
-	$('#calendar table td').click(function() {
-		var day = $(this).text().match(/[0-9]+/);
-		if (day == null) return false;
-
-		if (window.location.href.match(/day=/)) {
-			var href = window.location.href.replace(/day=[0-9]+/,'day='+day);
-		} else if (window.location.href.match(/\?/)) {
-			var href = window.location.href + '&day='+day;
-		} else {
-			var href = window.location.href + '?day='+day;
-		}
-		href = href.replace(/(&|\?)session_id=[0-9]+/,'');
-		window.location.href = href;
-		return false;
-	});
-</script>

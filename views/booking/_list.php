@@ -165,61 +165,7 @@ if (!$reschedule) {
 	<div class="alertBox" style="margin-top: 10px; display:none"><p>Please fix the following input errors:</p>
 	<ul><li>&nbsp;</li></ul></div>
 
-	<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->createUrl('js/jquery.validate.min.js'))?>
-	<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->createUrl('js/additional-validators.js'))?>
 	<script type="text/javascript">
-		$('button#cancel_scheduling').click(function() {
-			if (!$(this).hasClass('inactive')) {
-				disableButtons();
-				document.location.href = '<?php echo Yii::app()->createUrl('patient/episodes/'.$operation->event->episode->patient->id)?>';
-			}
-			return false;
-		});
-		
-		$('#bookingForm').validate({
-			rules : {
-				"Booking[admission_time]" : {
-					required: true,
-					time: true
-				},
-				"cancellation_reason" : {
-					required: true
-				}
-			},
-			submitHandler: function(form){
-				if (!$('#bookingForm button#confirm_slot').hasClass('inactive')) {
-					disableButtons();
-
-					$.ajax({
-						'type': 'POST',
-						'url': <?php if ($reschedule) {?>'<?php echo Yii::app()->createUrl('/'.$operation->event->eventType->class_name.'/booking/update/'.$operation->event_id)?>',<?php }else{?>'<?php echo Yii::app()->createUrl('/'.$operation->event->eventType->class_name.'/booking/create')?>',<?php }?>
-						'data': $('#bookingForm').serialize(),
-						'dataType': 'json',
-						'success': function(data) {
-							var n=0;
-							var html = '';
-							$.each(data, function(key, value) {
-								html += '<ul><li>'+value+'</li></ul>';
-								n += 1;
-							});
-
-							if (n == 0) {
-								window.location.href = '<?php echo Yii::app()->createUrl('/'.$operation->event->eventType->class_name.'/default/view/'.$operation->event_id)?>';
-							} else {
-								$('div.alertBox').show();
-								$('div.alertBox').html(html);
-							}
-
-							enableButtons();
-							return false;
-						}
-					});
-
-					return false;
-				} else {
-					return false;
-				}
-			}
-		});
+		var patient_id = <?php echo $operation->event->episode->patient_id?>;
 	</script>
 <?php }?>
