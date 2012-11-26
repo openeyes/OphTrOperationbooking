@@ -26,7 +26,7 @@ $nextYear = mktime(0,0,0, date('m'), 1, date('Y')+1);
 	<div id="current_month" class="column"><?php echo date('F Y', $date)?></div>
 	<div class="column" id="month_back">
 		<span class="button">
-			<button type="submit" class="classy blue venti" name="yt1" id="previous_month"><?php echo CHtml::link('<span class="button-span button-span-blue">&#x25C0;&nbsp;&nbsp;previous month</span>',array('booking/'.($operation->booking?'re':'').'schedule/'.$operation->event_id.'?firm_id='.$firm->id.'&date='.date('Ym',$lastMonth)))?></button>
+			<button type="submit" class="classy blue venti" name="yt1" id="previous_month"><?php echo CHtml::link('<span class="button-span button-span-blue">&#x25C0;&nbsp;&nbsp;previous month</span>',array('booking/'.($operation->booking?'re':'').'schedule/'.$operation->event_id.'?firm_id='.($firm->id?$firm->id:'EMG').'&date='.date('Ym',$lastMonth)))?></button>
 		</span>
 	</div>
 	<div class="column" id="month_forward">
@@ -34,7 +34,7 @@ $nextYear = mktime(0,0,0, date('m'), 1, date('Y')+1);
 			echo '<button type="submit" class="classy blue inactive" name="yt1" id="next_month"><span class="button-span button-span-inactive">next month&nbsp;&nbsp;&#x25B6;</span></button>';
 		} else {?>
 			<span class="button">
-				<button type="submit" class="classy blue venti" name="yt1" id="next_month"><?php echo CHtml::link('<span class="button-span button-span-blue">next month&nbsp;&nbsp;&#x25B6;</span>',array('booking/'.($operation->booking?'re':'').'schedule/'.$operation->event_id.'?firm_id='.$firm->id.'&date='.date('Ym',$nextMonth)))?></button>
+				<button type="submit" class="classy blue venti" name="yt1" id="next_month"><?php echo CHtml::link('<span class="button-span button-span-blue">next month&nbsp;&nbsp;&#x25B6;</span>',array('booking/'.($operation->booking?'re':'').'schedule/'.$operation->event_id.'?firm_id='.($firm->id?$firm->id:'EMG').'&date='.date('Ym',$nextMonth)))?></button>
 			</span>
 		<?php }?>
 	</div>
