@@ -495,7 +495,7 @@ class m121114_105958_event_type_OphTrOperation extends CDbMigration
 				'CONSTRAINT `ophtroperation_letter_contact_type_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 
-		$this->insert('ophtroperation_letter_contact_type',array('id'=>1,'name'=>'Admission Coordinator'));
+		$this->insert('ophtroperation_letter_contact_type',array('id'=>1,'name'=>'Refuse'));
 		$this->insert('ophtroperation_letter_contact_type',array('id'=>2,'name'=>'Health'));
 
 		$this->createTable('ophtroperation_letter_contact', array(

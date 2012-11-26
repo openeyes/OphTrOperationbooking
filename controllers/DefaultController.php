@@ -118,14 +118,12 @@ class DefaultController extends BaseEventTypeController {
 
 		$pdf_print = new OEPDFPrint('Openeyes', 'Booking letters', 'Booking letters');
 
-		$body = $this->render('/letters/admission_letter', array(
+		$body = $this->render('letters/admission_letter', array(
 			'site' => $site,
 			'patient' => $patient,
 			'firm' => $firm,
 			'emergencyList' => $emergency_list,
 			'operation' => $operation,
-			'refuseContact' => $admissionContact['refuse'],
-			'healthContact' => $admissionContact['health'],
 			'cancelledBookings' => $cancelledBookings,
 		), true);
 

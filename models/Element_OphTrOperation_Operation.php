@@ -979,12 +979,22 @@
 		return empty($procedures) ? 'No procedures' : implode(', ',$procedures);
 	}
 
-	public function getAdmissionContact() {
-		return $this->getContactByType(1);
+	public function getRefuseContact() {
+		if ($contact = $this->getContactByType(1)) {
+			throw new Exception('Unable to find refuse contact for operation '.$this->id);
+		}
+
+		if ($contact->title) {
+			return $contact->title.' on '.$contact->telephone;
+		}
+
+		return $this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty->name.' Admission Coordinator on '.$contact->telephone;
 	}
 
 	public function getHealthContact() {
-		return $this->getContactByType(2);
+		if ($contact = $this->getContactByType(2)) {
+			return $contact->telephone;
+		}
 	}
 
 	public function getContactByType($contact_type_id, $params=array()) {
