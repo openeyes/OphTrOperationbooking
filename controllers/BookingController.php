@@ -95,6 +95,8 @@ class BookingController extends BaseEventTypeController {
 					}
 				}
 			}
+		} else if ($operation->booking) {
+			$selectedDate = $operation->booking->session->date;
 		}
 
 		$this->renderPartial('schedule', array(

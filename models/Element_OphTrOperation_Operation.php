@@ -498,10 +498,6 @@
 						if ($date >= $rttDate) {
 							$status .= ' outside_rtt';
 						}
-
-						if ($this->booking && $this->booking->session->date == $date) {
-							$status .= ' selected_date';
-						}
 					} else {
 						$status = 'closed';
 					}
