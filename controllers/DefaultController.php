@@ -27,6 +27,10 @@ class DefaultController extends BaseEventTypeController {
 		parent::actionPrint($id);
 	}
 
+	public function printActions() {
+		return array('print','admissionLetter');
+	}
+
 	public function actionCancel($id) {
 		if (!$event = Event::model()->findByPk($id)) {
 			throw new Exception('Unable to find event: '.$id);
