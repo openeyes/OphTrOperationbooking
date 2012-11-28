@@ -17,7 +17,7 @@
  */
 
 /**
- * This is the model class for table "et_ophtroperation_letter_contact".
+ * This is the model class for table "et_ophtroperation_letter_contact_rule".
  *
  * The followings are the available columns in table:
  * @property integer $id
@@ -30,14 +30,13 @@
  *
  * The followings are the available model relations:
  *
- * @property OphTrOperation_Letter_Contact_Type $contactType
  * @property Site $site
  * @property Subspecialty $subspecialty
  * @property Theatre $theatre
  * @property Firm $firm
  */
 
-class OphTrOperation_Letter_Contact extends BaseActiveRecord
+class OphTrOperation_Letter_Contact_Rule extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -53,7 +52,7 @@ class OphTrOperation_Letter_Contact extends BaseActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ophtroperation_letter_contact';
+		return 'ophtroperation_letter_contact_rule';
 	}
 
 	/**
@@ -64,7 +63,7 @@ class OphTrOperation_Letter_Contact extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('contact_type_id, site_id, subspecialty_id, theatre_id', 'safe'),
+			array('parent_id, contact_type_id, site_id, subspecialty_id, theatre_id, refuse_telephone, health_telephone', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, contact_type_id, site_id, subspecialty_id, theatre_id', 'safe', 'on' => 'search'),
@@ -79,13 +78,13 @@ class OphTrOperation_Letter_Contact extends BaseActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'contactType' => array(self::BELONGS_TO, 'OphTrOperation_Letter_Contact_Type', 'contact_type_id'),
 			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
 			'subspecialty' => array(self::BELONGS_TO, 'Subspecialty', 'subspecialty_id'),
 			'theatre' => array(self::BELONGS_TO, 'Theatre', 'theatre_id'),
 			'firm' => array(self::BELONGS_TO, 'Firm', 'firm_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
+			'children' => array(self::HAS_MANY, 'OphTrOperation_Letter_Contact_Rule', 'parent_rule_id'),
 		);
 	}
 
@@ -114,5 +113,25 @@ class OphTrOperation_Letter_Contact extends BaseActiveRecord
 		return new CActiveDataProvider(get_class($this), array(
 				'criteria' => $criteria,
 			));
+	}
+
+	public function applies($site_id, $subspecialty_id, $theatre_id, $firm_id) {
+		foreach (array('site_id','subspecialty_id','theatre_id','firm_id') as $field) {
+			if ($this->{$field} && $this->{$field} != ${$field}) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	public function parse($site_id, $subspecialty_id, $theatre_id, $firm_id) {
+		foreach ($this->children as $child_rule) {
+			if ($child_rule->applies($site_id, $subspecialty_id, $theatre_id, $firm_id)) {
+				return $child_rule->parse($site_id, $subspecialty_id, $theatre_id, $firm_id);
+			}
+		}
+
+		return $this;
 	}
 }

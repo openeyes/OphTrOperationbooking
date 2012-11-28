@@ -111,8 +111,7 @@ class DefaultController extends BaseEventTypeController {
 		$this->logActivity('printed admission letter');
 
 		$site = $operation->booking->session->theatre->site;
-		$firm = $operation->booking->session->firm;
-		if (!$firm) {
+		if (!$firm = $operation->booking->session->firm) {
 			$firm = $operation->event->episode->firm;
 			$emergency_list = true;
 		}

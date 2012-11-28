@@ -980,81 +980,54 @@
 	}
 
 	public function getRefuseContact() {
-		if (!$contact = $this->getContactByType(1)) {
-			throw new Exception('Unable to find refuse contact for operation '.$this->id);
+		if (!$contact = $this->letterContact) {
+			throw new Exception('Unable to find letter contact for operation '.$this->id);
 		}
 
 		if ($contact->title) {
-			return $contact->title.' on '.$contact->telephone;
+			return $contact->title.' on '.$contact->refuse_telephone;
 		}
 
-		return $this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty->name.' Admission Coordinator on '.$contact->telephone;
+		return $this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty->name.' Admission Coordinator on '.$contact->refuse_telephone;
 	}
 
 	public function getHealthContact() {
-		if ($contact = $this->getContactByType(2)) {
-			return $contact->telephone;
-		}
+		return $this->letterContact->health_telephone;
 	}
 
-	public function getContactByType($contact_type_id, $params=array()) {
+	public function getLetterContact() {
 		$site_id = $this->booking->ward->site_id;
 		$subspecialty_id = $this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty_id;
 		$theatre_id = $this->booking->session->theatre_id;
 		$firm_id = $this->event->episode->firm_id;
 
-		foreach ($params as $key => $value) {
-			${$key} = $value;
+		$criteria = new CDbCriteria;
+		$criteria->addCondition('parent_rule_id is null');
+		$criteria->order = 'rule_order asc';
+
+		foreach (OphTrOperation_Letter_Contact_Rule::model()->findAll($criteria) as $rule) {
+			if ($rule->applies($site_id,$subspecialty_id,$theatre_id,$firm_id)) {
+				return $rule->parse($site_id,$subspecialty_id,$theatre_id,$firm_id);
+			}
 		}
 
-		if ($contact = OphTrOperation_Letter_Contact::model()->find('contact_type_id=? and site_id=? and subspecialty_id=? and theatre_id=? and firm_id=?',array($contact_type_id,$site_id,$subspecialty_id,$theatre_id,$firm_id))) {
-			return $contact;
-		}
-		if ($contact = OphTrOperation_Letter_Contact::model()->find('contact_type_id=? and site_id=? and theatre_id=?',array($contact_type_id,$site_id,$theatre_id))) {
-			return $contact;
-		}
-		if ($contact = OphTrOperation_Letter_Contact::model()->find('contact_type_id=? and site_id=? and subspecialty_id=? and theatre_id=?',array($contact_type_id,$site_id,$subspecialty_id,$theatre_id))) {
-			return $contact;
-		}
-		if ($contact = OphTrOperation_Letter_Contact::model()->find('contact_type_id=? and site_id=? and subspecialty_id=? and theatre_id is null',array($contact_type_id,$site_id,$subspecialty_id))) {
-			return $contact;
-		}
-		if ($contact = OphTrOperation_Letter_Contact::model()->find('contact_type_id=? and site_id is null and subspecialty_id is null and theatre_id=? and firm_id=?',array($contact_type_id,$theatre_id,$firm_id))) {
-			return $contact;
-		}
-		if ($contact = OphTrOperation_Letter_Contact::model()->find('contact_type_id=? and site_id=? and subspecialty_id is null and theatre_id is null and firm_id is null',array($contact_type_id,$site_id))) {
-			return $contact;
-		}
-
-		return OphTrOperation_Letter_Contact::model()->find('site_id=? and subspecialty_id=?',array($site_id,$subspecialty_id));
+		return false;
 	}
 
 	public function getDiagnosis() {
 		return Element_OphTrOperation_Diagnosis::model()->find('event_id=?',array($this->event_id));
 	}
 
-	// TODO make this generic
-	public function getName() {
-		if (in_array($this->booking->session->theatre->code, array('CRZ','BRZ'))) { // Not Ozurdex
-			return 'Ozurdex injection';
+	public function getTextOperationName() {
+		if ($rule = OphTrOperation_Operation_Name_Rule::model()->find('theatre_id=?',array($this->booking->session->theatre_id))) {
+			return $this->event->episode->patient->childPrefix.$rule->name;
 		}
-	}
 
-	// TODO make this generic
-	public function showPreopWarning() {
-		$show = true;
-	 
-		// Not Ozurdex
-		if (in_array($this->booking->session->theatre->code, array('CRZ','BRZ'))) {
-			$show = false;
+		if ($rule = OphTrOperation_Operation_Name_Rule::model()->find('theatre_id is null')) {
+			return $this->event->episode->patient->childPrefix.$rule->name;
 		}
-	 
-		// Not External / Theatre 9
-		if($this->booking->session->theatre->code == 'CR9' && $this->booking->session->firm->serviceSubspecialtyAssignment->subspecialty->ref_spec == 'EX') {
-			$show = false;
-		}
-	 
-		return $show;
+
+		return $this->event->episode->patient->childPrefix.'operation';
 	}
 
 	// TODO make this generic
@@ -1064,7 +1037,35 @@
 
 	// TODO make this generic
 	public function showPrescriptionWarning() {
+		if ($this->booking->session->firm->serviceSubspecialtyAssignment->subspecialty_id == 13) {
+			return false;
+		}
 		return (!in_array($this->booking->session->theatre->code, array('CRZ','BRZ'))); // Not Ozurdex
+	}
+
+	// TODO make this generic
+	public function getTextChildUnwellPreopNumber() {
+		if ($this->booking->session->theatre->site_id == 5) {
+			return '020 8725 0060';
+		} else {
+			return '0207 566 2595 and ask to speak to a nurse';
+		}
+	}
+
+	// TODO make this generic
+	public function getTextAdmissionInstructionWarning() {
+		if ($this->event->episode->patient->isChild() && $this->booking->session->theatre->site_id != 5) {
+			return "Please contact the Children's Ward as soon as possible on 0207 566 2595 to discuss pre-operative instructions";
+		}
+	}
+
+	// TODO make this generic
+	public function getTextPaediatricAdmissionCoordinator() {
+		if ($this->booking->session->theatre->site_id == 5) {
+			return 'the Admissions Department 020 8725 0060';
+		} else {
+			return 'the Paediatrics and Strabismus Admission Coordinator on 020 7566 2258';
+		}
 	}
 }
 ?>

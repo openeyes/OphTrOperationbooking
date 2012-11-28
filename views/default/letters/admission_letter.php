@@ -19,242 +19,128 @@
 ?>
 
 <div class="accessible">
+	<?php echo $this->renderPartial('letters/letter_start', array(
+			'to' => $patient->salutationname,
+			'patient' => $patient,
+	))?>
 
-<?php echo $this->renderPartial('letters/letter_start', array(
-		'to' => $patient->salutationname,
-		'patient' => $patient,
-		)); ?>
+	<p>
+		<?php if ($operation->status->name == 'Rescheduled') {?>
+			I am writing to inform you that the date for your <?php echo $operation->textOperationName?> has been changed<?php if (isset($operation->cancelledBookings[0])) {?> from <?php echo date('jS F Y',strtotime($operation->cancelledBookings[0]->date))}?>, the new details are:
+		<?php }else{?>
+			I am pleased to confirm the date of your <?php echo $operation->textOperationName?> with <?php echo $firm->consultantName?>, the details are:
+		<?php }?>
+	</p>
 
-<?php
-$booking = $operation->booking;
-if($consultant = $firm->getConsultant()) {
-			$consultantName = $consultant->contact->title . ' ' . $consultant->contact->first_name . ' ' . $consultant->contact->last_name;
-		} else {
-			$consultantName = 'CONSULTANT';
-		}
-		$subspecialty = $firm->serviceSubspecialtyAssignment->subspecialty;
-		?>
-<?php if ($patient->isChild()) {
-		// Start Child ?>
+	<table class="borders">
+		<tr>
+			<th>Date of admission:</th>
+			<td><?php echo date('jS F Y', strtotime($operation->booking->session->date))?></td>
+		</tr>
+		<tr>
+			<th>Time to arrive:</th>
+			<td><?php echo date('g:ia',strtotime($operation->booking->admission_time))?></td>
+		</tr>
+		<tr>
+			<th>Ward:</th>
+			<td>
+				<?php echo $operation->booking->ward->longName?>
+			</td>
+		</tr>
+		<tr>
+			<th>Location:</th>
+			<td><?php echo CHtml::encode($site->name)?></td>
+		</tr>
+		<tr>
+			<th>Consultant:</th>
+			<td><?php echo $firm->consultantName?></td>
+		</tr>
+		<tr>
+			<th>Speciality:</th>
+			<td><?php echo $firm->serviceSubspecialtyAssignment->subspecialty->name?></td>
+		</tr>
+	</table>
+	<p></p>
 
-<p>
-	<?php if ($operation->status->name == 'Rescheduled') {
-			// Rescheduled ?>
-	I am writing to inform you that the date for your child's eye operation
-	has been changed
-	<?php if(isset($cancelledBookings[0])) { 
-		echo ' from ' . date('jS F Y', strtotime($cancelledBookings[0]->date));
-} ?>
-	. The details are now:
-	<?php } else {
-			// Scheduled ?>
-	I am writing to confirm the date for your child's eye operation. The
-	details are:
-	<?php } ?>
-</p>
+	<?php if (!$patient->isChild()) {?>
+		<p>
+			If this is not convenient or you no longer wish to proceed with surgery, please contact the <?php echo $operation->refuseContact?> as soon as possible.
+		</p>
 
-<table class="borders">
-	<tr>
-		<th>Date of admission:</th>
-		<td><?php echo date('jS F Y', strtotime($booking->session->date)) ?></td>
-		<th>Time to arrive:</th>
-		<td><?php echo date('g:ia',strtotime($booking->admission_time)) ?></td>
-	</tr>
-	<tr>
-		<th>Ward:</th>
-		<td><?php if ($site->id == 5) {
-			// St George's ?>St Georges Jungle Ward<?php } else {
-			// City Road ?>Richard Desmond's Children's Eye Centre (RDCEC)<?php }	?>
-		</td>
-		<th>Location:</th>
-		<td><?php echo CHtml::encode($site->name); ?></td>
-	</tr>
-	<tr>
-		<th>Consultant:</th>
-		<td><?php echo $consultantName ?></td>
-		<th>Speciality:</th>
-		<td><?php echo $subspecialty->name ?></td>
-	</tr>
-</table>
-<br/>
+		<?php if (!$operation->overnight_stay) {?>
+			<p>
+				<em>This is a daycase and you will be discharged from hospital on the same day.</em>
+			</p>
+		<?php }?>
 
-<p>To help ensure this admission proceeds smoothly, please follow these
-	instructions:</p>
+		<?php if ($operation->booking->session->showPreopWarning()) {?>
+			<p>
+				<strong>
+					All admissions require a Pre-Operative Assessment which you must attend. Non-attendance will cause a delay or possible <em>cancellation</em> to your surgery.
+				</strong>
+			</p>
+		<?php }?>
 
-<ul>
-	<?php if ($site ->id != 5) {
-			// City Road ?>
-	<li><strong>Please contact the Children's Ward as soon as possible on
-			0207 566 2595 to discuss pre-operative instructions</strong></li>
-	<?php } ?>
-	<li>Bring this letter with you on date of admission</li>
-	<?php if ($site->id == 5) {
-			// St Georges ?>
-	<li>Please go directly to the Jungle Ward on level 5 of the
-		Lanesborough wing at the time of your child's admission</li>
-	<?php } else { ?>
-	<li>Please go directly to the Main Reception in the RDCEC at the time
-		of your child's admission</li>
-	<?php } ?>
-</ul>
+		<?php if ($operation->showPrescriptionWarning()) {?>
+			<p>
+				<em>You may be given a prescription after your treatment. This can be collected from our pharmacy on the ward, however unless you have an exemption certificate the standard prescription charge will apply.	Please ensure you have the correct money or ask the relative/friend/carer who is collecting you to make sure they bring some money to cover the prescription.</em>
+			</p>
+		<?php }?>
+	<?php }?>
 
-<p>
-	If there has been any change in your child's general health, such as a
-	cough or cold, any infectious disease, or any other condition which
-	might affect their fitness for operation, please telephone
-	<?php if ($site->id == 5) {
-			// St Georges ?>
-	020 8725 0060
-	<?php } else { ?>
-	0207 566 2595 and ask to speak to a nurse
-	<?php } ?>
-	for advice.
-</p>
+	<p>To help ensure your admission proceeds smoothly, please follow these instructions:</p>
 
-<p>If you do not speak English, please arrange for an English speaking
-	adult to stay with you until you reach the ward and have been seen by a
-	doctor and anaesthetist.</p>
+	<ul>
+		<?php if ($operation->textAdmissionInstructionWarning) {?>
+			<li>
+				<strong><?php echo $operation->textAdmissionInstructionWarning?></strong>
+			</li>
+		<?php }?>
+		<li>
+			Bring this letter with you on date of admission
+		</li>
+		<li>
+			Please go directly to <?php echo $operation->booking->ward->directionsText?>
+			<?php if ($patient->isChild()) {?>
+				at the time of your child's admission
+			<?php }?>
+		</li>
+		<?php if (!$patient->isChild()) {?>
+			<li>
+				You must not drive yourself to or from hospital
+			</li>
+			<?php if ($operation->showSeatingWarning()) {?>
+				<li>
+					We would like to request that only 1 person should accompany you in order to ensure that adequate seating is available for patients
+				</li>
+			<?php }?>
+			<?php if ($operation->showPrescriptionWarning()) {?>
+				<li>
+					<em>Check whether you have to pay or are exempt from prescription charges. If you are exempt, you will need to provide proof that you are exempt every time you collect a prescription. The prescription charge is £7.40 per item.</em>
+				</li>
+			<?php }?>
+		<?php }?>
+	</ul>
 
-<p>
-	It is very important that you let us know immediately if you are unable
-	to keep this admission date. Please let us know by return of post, or
-	if necessary, telephone
-	<?php if ($site->id == 5) {
-			// St Georges ?>
-	the Admissions Department 020 8725 0060
-	<?php } else { ?>
-	the Paediatrics and Strabismus Admission Coordinator on 020 7566 2258.
-	<?php } ?>
-</p>
+	<?php if ($patient->isChild()) {?>
+		<p>
+			If there has been any change in your child's general health, such as a cough or cold, any infectious disease, or any other condition which might affect their fitness for operation, please telephone <?php echo $operation->textChildUnwellPreopNumber?> for advice.
+		</p>
+	<?php }else{?>
+		<p>
+			If you are unwell the day before admission, please contact us to ensure that it is still safe and appropriate to do the procedure.
+		</p>
+	<?php }?>
 
-<?php
-} // End Child
-else {
-			// Start Adult ?>
+	<p>
+		If you do not speak English, please arrange for an English speaking adult to stay with you until you reach the ward and have been seen by a doctor and anaesthetist.
+	</p>
 
-<p>
-	<?php if ($operation->status->name == 'Rescheduled') {
-			// Adult Rescheduled ?>
-	I am writing to inform you that the date for your
-	<?php if($operation->name) { 
-		echo $operation->name;
-	} else { ?>
-	eye operation
-	<?php } ?>
-	has been changed
-	<?php if(isset($cancelledBookings[0])) { 
-		echo ' from ' . date('jS F Y', strtotime($cancelledBookings[0]->date));
-} ?>
-	, the new details are:
-	<?php } else {
-			// Adult Scheduled ?>
-	I am pleased to confirm the date of your
-	<?php if($operation->name) { 
-		echo $operation->name;
-	} else { ?>
-	operation with
-	<?php echo $consultantName; 
-} ?>
-	, the details are:
-	<?php } ?>
-</p>
+	<?php if ($patient->isChild()) {?>
+		<p>
+			It is very important that you let us know immediately if you are unable to keep this admission date. Please let us know by return of post, or if necessary, telephone <?php echo $operation->textPaediatricAdmissionCoordinator?>
+		</p>
+	<?php }?>
 
-<table class="borders">
-	<tr>
-		<th>Date of admission:</th>
-		<td><?php echo date('jS F Y', strtotime($booking->session->date)) ?></td>
-	</tr>
-	<tr>
-		<th>Time to arrive:</th>
-		<td><?php echo date('g:ia',strtotime($booking->admission_time)) ?></td>
-	</tr>
-	<tr>
-		<th>Ward:</th>
-		<td><?php if ($subspecialty->id == 13) {
-			// Refractive laser ?>Refractive waiting room - Cumberledge Wing 4th
-			Floor<?php } else { ?><?php echo CHtml::encode($booking->ward->name); ?>
-			<?php } ?>
-		</td>
-	</tr>
-	<tr>
-		<th>Location:</th>
-		<td><?php echo CHtml::encode($site->name); ?></td>
-	</tr>
-	<tr>
-		<th>Consultant:</th>
-		<td><?php echo $consultantName ?></td>
-	</tr>
-	<tr>
-		<th>Speciality:</th>
-		<td><?php echo $subspecialty->name ?></td>
-	</tr>
-</table>
-<p></p>
-
-<p>
-	Please confirm this is convenient by calling
-	<?php echo $operation->refuseContact?>
-	within 5 working days.
-</p>
-
-<?php if(!$operation->overnight_stay) { ?>
-<p>
-	<em>This is a daycase and you will be discharged from hospital on the
-		same day.</em>
-</p>
-<?php } ?>
-
-<?php if($subspecialty->id != 13 && $operation->showPreopWarning()) { // Not refractive laser ?>
-<p>
-	<strong>All admissions require a Pre-Operative Assessment which you
-		must attend. Non-attendance will cause a delay or possible <em>cancellation</em>
-		to your surgery.
-	</strong>
-</p>
-<?php } ?>
-
-<p>If you are unwell the day before admission, please contact us to
-	ensure that it is still safe and appropriate to do the procedure. If
-	you do not speak English, please arrange for an English speaking adult
-	to stay with you until you reach the ward and have been seen by a
-	Doctor.</p>
-
-<?php if($subspecialty->id != 13 && $operation->showPrescriptionWarning()) { // Not refractive laser ?>
-<p>
-	<em>You may be given a prescription after your treatment. This can be
-		collected from our pharmacy on the ward, however unless you have an
-		exemption certificate the standard prescription charge will apply.
-		Please ensure you have the correct money or ask the
-		relative/friend/carer who is collecting you to make sure they bring
-		some money to cover the prescription.</em>
-</p>
-<?php } ?>
-
-<p>To help ensure your admission proceeds smoothly, please follow these
-	instructions:</p>
-
-<ul>
-	<li>Bring this letter with you on date of admission</li>
-	<li>Please go directly to <?php if ($subspecialty->id == 13) {
-		// Refractive laser ?> Refractive waiting room - Cumberledge Wing 4th
-		Floor<?php } else { ?> <?php echo CHtml::encode($booking->ward->name) ?>
-		ward<?php } ?>
-	</li>
-	<li>You must not drive yourself to or from hospital</li>
-	<?php if($operation->showSeatingWarning()) { ?>
-	<li>We would like to request that only 1 person should accompany you in
-		order to ensure that adequate seating is available for patients</li>
-	<?php } ?>
-	<?php if($subspecialty->id != 13 && $operation->showPrescriptionWarning()) { ?>
-	<li><em>Check whether you have to pay or are exempt from prescription
-			charges. If you are exempt, you will need to provide proof that you
-			are exempt every time you collect a prescription. The prescription
-			charge is £7.40 per item.</em></li>
-	<?php } ?>
-</ul>
-
-<?php } // End Adult ?>
-
-<?php echo $this->renderPartial('letters/letter_end'); ?>
-
+	<?php echo $this->renderPartial('letters/letter_end')?>
 </div>

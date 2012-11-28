@@ -17,14 +17,17 @@
  */
 
 /**
- * This is the model class for table "et_ophtroperation_letter_contact_type".
+ * This is the model class for table "et_ophtroperation_operation_preop_assessment_rule".
  *
  * The followings are the available columns in table:
  * @property integer $id
- * @property string $name
+ * @property integer $parent_rule_id
+ * @property integer $theatre_id
+ * @property integer $subspecialty_id
+ * @property boolean $show_warning
  */
 
-class OphTrOperation_Letter_Contact_Type extends BaseActiveRecord
+class OphTrOperation_Operation_Preop_Assessment_Rule extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -40,7 +43,7 @@ class OphTrOperation_Letter_Contact_Type extends BaseActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ophtroperation_letter_contact_type';
+		return 'ophtroperation_operation_preop_assessment_rule';
 	}
 
 	/**
@@ -51,7 +54,7 @@ class OphTrOperation_Letter_Contact_Type extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name', 'safe'),
+			array('parent_rule_id, theatre_id, subspecialty_id, show_warning', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, name', 'safe', 'on' => 'search'),
@@ -68,6 +71,7 @@ class OphTrOperation_Letter_Contact_Type extends BaseActiveRecord
 		return array(
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
+			'children' => array(self::HAS_MANY, 'OphTrOperation_Operation_Preop_Assessment_Rule', 'parent_rule_id'),
 		);
 	}
 
@@ -77,6 +81,8 @@ class OphTrOperation_Letter_Contact_Type extends BaseActiveRecord
 	public function attributeLabels()
 	{
 		return array(
+			'id' => 'ID',
+			'name' => 'Name',
 		);
 	}
 
@@ -92,9 +98,21 @@ class OphTrOperation_Letter_Contact_Type extends BaseActiveRecord
 		$criteria = new CDbCriteria;
 
 		$criteria->compare('id', $this->id, true);
+		$criteria->compare('name', $this->name, true);
 
 		return new CActiveDataProvider(get_class($this), array(
 				'criteria' => $criteria,
 			));
+	}
+
+	public function applies($theatre_id, $subspecialty_id) {
+		if ($this->theatre_id && $this->subspecialty_id) {
+			return ($theatre_id == $this->theatre_id && $subspecialty_id == $this->subspecialty_id);
+		} else if ($this->theatre_id) {
+			return ($theatre_id == $this->theatre_id);
+		} else if ($this->subspecialty_id) {
+			return ($subspecialty_id == $this->subspecialty_id);
+		}
+		return true;
 	}
 }

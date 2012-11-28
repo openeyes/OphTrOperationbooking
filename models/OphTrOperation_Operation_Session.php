@@ -184,5 +184,21 @@ class OphTrOperation_Operation_Session extends BaseActiveRecord
 	public function getMinuteStatus() {
 		return $this->availableMinutes >= 0 ? 'available' : 'overbooked';
 	}
+
+	public function showPreopWarning($rule=false) {
+		if (!$rule) {
+			if (!$rule = OphTrOperation_Operation_Preop_Assessment_Rule::model()->find('parent_rule_id is null')) {
+				return true;
+			}
+		}
+		
+		foreach ($rule->children as $child_rule) {
+			if ($child_rule->applies($this->theatre_id, $this->firm->serviceSubspecialtyAssignment->subspecialty_id)) {
+				return $this->showPreopWarning($child_rule);
+			}
+		} 
+
+		return $rule->show_warning;
+	}
 }
 ?>
