@@ -73,17 +73,15 @@
 			</p>
 		<?php }?>
 
-		<?php if ($operation->booking->session->showPreopWarning()) {?>
+		<?php if ($operation->booking->session->showWarning('Preop assessment')) {?>
 			<p>
-				<strong>
-					All admissions require a Pre-Operative Assessment which you must attend. Non-attendance will cause a delay or possible <em>cancellation</em> to your surgery.
-				</strong>
+				<?php echo $operation->booking->session->getWarningHTML('Preop assessment')?>
 			</p>
 		<?php }?>
 
-		<?php if ($operation->showPrescriptionWarning()) {?>
+		<?php if ($operation->booking->session->showWarning('Prescription')) {?>
 			<p>
-				<em>You may be given a prescription after your treatment. This can be collected from our pharmacy on the ward, however unless you have an exemption certificate the standard prescription charge will apply.	Please ensure you have the correct money or ask the relative/friend/carer who is collecting you to make sure they bring some money to cover the prescription.</em>
+				<?php echo $operation->booking->session->getWarningHTML('Prescription')?>
 			</p>
 		<?php }?>
 	<?php }?>
@@ -91,9 +89,9 @@
 	<p>To help ensure your admission proceeds smoothly, please follow these instructions:</p>
 
 	<ul>
-		<?php if ($operation->textAdmissionInstructionWarning) {?>
+		<?php if ($operation->booking->session->showWarning('Admission Instruction')) {?>
 			<li>
-				<strong><?php echo $operation->textAdmissionInstructionWarning?></strong>
+				<?php echo $operation->booking->session->getWarningHTML('Admission Instructions')?>
 			</li>
 		<?php }?>
 		<li>
@@ -109,14 +107,14 @@
 			<li>
 				You must not drive yourself to or from hospital
 			</li>
-			<?php if ($operation->showSeatingWarning()) {?>
+			<?php if ($operation->booking->session->showWarning('Seating')) {?>
 				<li>
-					We would like to request that only 1 person should accompany you in order to ensure that adequate seating is available for patients
+					<?php echo $operation->booking->session->getWarningHTML('Seating')?>
 				</li>
 			<?php }?>
-			<?php if ($operation->showPrescriptionWarning()) {?>
+			<?php if ($operation->booking->session->showWarning('Prescription')) {?>
 				<li>
-					<em>Check whether you have to pay or are exempt from prescription charges. If you are exempt, you will need to provide proof that you are exempt every time you collect a prescription. The prescription charge is £7.40 per item.</em>
+					<?php echo $operation->booking->session->getWarningHTML('Prescripion')?>
 				</li>
 			<?php }?>
 		<?php }?>
@@ -124,7 +122,7 @@
 
 	<?php if ($patient->isChild()) {?>
 		<p>
-			If there has been any change in your child's general health, such as a cough or cold, any infectious disease, or any other condition which might affect their fitness for operation, please telephone <?php echo $operation->textChildUnwellPreopNumber?> for advice.
+			If there has been any change in your child's general health, such as a cough or cold, any infectious disease, or any other condition which might affect their fitness for operation, please telephone <?php echo $operation->letterContact->refuse_telephone?> for advice.
 		</p>
 	<?php }else{?>
 		<p>
@@ -138,7 +136,7 @@
 
 	<?php if ($patient->isChild()) {?>
 		<p>
-			It is very important that you let us know immediately if you are unable to keep this admission date. Please let us know by return of post, or if necessary, telephone <?php echo $operation->textPaediatricAdmissionCoordinator?>
+			It is very important that you let us know immediately if you are unable to keep this admission date. Please let us know by return of post, or if necessary, telephone <?php echo $operation->refuseContact?>
 		</p>
 	<?php }?>
 

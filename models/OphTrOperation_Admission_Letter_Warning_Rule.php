@@ -27,7 +27,7 @@
  * @property boolean $show_warning
  */
 
-class OphTrOperation_Operation_Preop_Assessment_Rule extends BaseActiveRecord
+class OphTrOperation_Admission_Letter_Warning_Rule extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -43,7 +43,7 @@ class OphTrOperation_Operation_Preop_Assessment_Rule extends BaseActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ophtroperation_operation_preop_assessment_rule';
+		return 'ophtroperation_admission_letter_warning_rule';
 	}
 
 	/**
@@ -54,7 +54,7 @@ class OphTrOperation_Operation_Preop_Assessment_Rule extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('parent_rule_id, theatre_id, subspecialty_id, show_warning', 'safe'),
+			array('rule_type_id, parent_rule_id, rule_order, site_id, theatre_id, subspecialty_id, is_child, show_warning, warning_text, emphasis, strong', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, name', 'safe', 'on' => 'search'),
@@ -71,7 +71,7 @@ class OphTrOperation_Operation_Preop_Assessment_Rule extends BaseActiveRecord
 		return array(
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
-			'children' => array(self::HAS_MANY, 'OphTrOperation_Operation_Preop_Assessment_Rule', 'parent_rule_id'),
+			'children' => array(self::HAS_MANY, 'OphTrOperation_Admission_Letter_Warning_Rule', 'parent_rule_id'),
 		);
 	}
 
@@ -105,24 +105,40 @@ class OphTrOperation_Operation_Preop_Assessment_Rule extends BaseActiveRecord
 			));
 	}
 
-	public function applies($theatre_id, $subspecialty_id) {
-		if ($this->theatre_id && $this->subspecialty_id) {
-			return ($theatre_id == $this->theatre_id && $subspecialty_id == $this->subspecialty_id);
-		} else if ($this->theatre_id) {
-			return ($theatre_id == $this->theatre_id);
-		} else if ($this->subspecialty_id) {
-			return ($subspecialty_id == $this->subspecialty_id);
+	static public function getRule($rule_type_name, $site_id, $is_child, $theatre_id, $subspecialty_id) {
+		if (!$rule_type = OphTrOperation_Admission_Letter_Warning_Rule_Type::model()->find('name=?',array('Preop Assessment'))) {
+			throw new Exception("We were asked for a rule type that doesn't exist: $rule_type_name");
 		}
-		return true;
+
+		$criteria = new CDbCriteria;
+		$criteria->addCondition('parent_rule_id is null');
+		$criteria->addCondition("rule_type_id = $rule_type->id");
+		$criteria->order = 'rule_order asc';
+
+		foreach (OphTrOperation_Admission_Letter_Warning_Rule::model()->findAll($criteria) as $rule) {
+			if ($rule->applies($site_id, $is_child, $theatre_id, $subspecialty_id)) {
+				return $rule->parse($site_id, $is_child, $theatre_id, $subspecialty_id);
+			}
+		}
 	}
 
-	public function parse($theatre_id, $subspecialty_id) {
-		foreach ($this->children as $rule) {
-			if ($rule->applies($theatre_id, $subspecialty_id)) {
-				return $rule->parse($theatre_id, $subspecialty_id);
+	public function applies($site_id, $is_child, $theatre_id, $subspecialty_id) {
+		foreach (array('site_id', 'is_child', 'theatre_id','subspecialty_id') as $field) {
+			if ($this->{$field} !== null && $this->{$field} != ${$field}) {
+				return false;
 			}
 		}
 
-		return $this->show_warning;
+		return true;
+	}
+
+	public function parse($site_id, $is_child, $theatre_id, $subspecialty_id) {
+		foreach ($this->children as $rule) {
+			if ($rule->applies($site_id, $is_child, $theatre_id, $subspecialty_id)) {
+				return $rule->parse($site_id, $is_child, $theatre_id, $subspecialty_id);
+			}
+		}
+
+		return $this;
 	}
 }

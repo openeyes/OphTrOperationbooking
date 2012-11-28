@@ -185,18 +185,34 @@ class OphTrOperation_Operation_Session extends BaseActiveRecord
 		return $this->availableMinutes >= 0 ? 'available' : 'overbooked';
 	}
 
-	public function showPreopWarning() {
-		$criteria = new CDbCriteria;
-		$criteria->addCondition('parent_rule_id is null');
-		$criteria->order = 'rule_order asc';
+	public function showWarning($type) {
+		if ($rule = OphTrOperation_Admission_Letter_Warning_Rule::getRule($type,$this->booking->session->theatre->site_id,$this->booking->event->episode->patient->isChild(),$this->theatre_id,$this->firm->serviceSubspecialtyAssignment->subspecialty_id)) {
+			return $rule->show_warning;
+		}
 
-		foreach (OphTrOperation_Operation_Preop_Assessment_Rule::model()->findAll($criteria) as $rule) {
-			if ($rule->applies($this->theatre_id, $this->firm->serviceSubspecialtyAssignment->subspecialty_id)) {
-				return $rule->parse($this->theatre_id, $this->firm->serviceSubspecialtyAssignment->subspecialty_id);
+		return false;
+	}
+
+	public function getWarningHTML($type) {
+		$return = '';
+
+		if ($rule = OphTrOperation_Admission_Letter_Warning_Rule::getRule($type,$this->booking->session->theatre->site_id,$this->booking->event->episode->patient->isChild(),$this->theatre_id,$this->firm->serviceSubspecialtyAssignment->subspecialty_id)) {
+			if ($rule->strong) {
+				$return .= '<strong>';
+			}
+			if ($rule->emphasis) {
+				$return .= '<em>';
+			}
+			$return .= $rule->warning_text;
+			if ($rule->emphasis) {
+				$return .= '</em>';
+			}
+			if ($rule->strong) {
+				$return .= '</strong>';
 			}
 		}
 
-		return true;
+		return $return;
 	}
 }
 ?>

@@ -1029,43 +1029,5 @@
 
 		return $this->event->episode->patient->childPrefix.'operation';
 	}
-
-	// TODO make this generic
-	public function showSeatingWarning() {
-		return (!in_array($this->booking->session->theatre->code, array('CRZ','BRZ'))); // Not Ozurdex
-	}
-
-	// TODO make this generic
-	public function showPrescriptionWarning() {
-		if ($this->booking->session->firm->serviceSubspecialtyAssignment->subspecialty_id == 13) {
-			return false;
-		}
-		return (!in_array($this->booking->session->theatre->code, array('CRZ','BRZ'))); // Not Ozurdex
-	}
-
-	// TODO make this generic
-	public function getTextChildUnwellPreopNumber() {
-		if ($this->booking->session->theatre->site_id == 5) {
-			return '020 8725 0060';
-		} else {
-			return '0207 566 2595 and ask to speak to a nurse';
-		}
-	}
-
-	// TODO make this generic
-	public function getTextAdmissionInstructionWarning() {
-		if ($this->event->episode->patient->isChild() && $this->booking->session->theatre->site_id != 5) {
-			return "Please contact the Children's Ward as soon as possible on 0207 566 2595 to discuss pre-operative instructions";
-		}
-	}
-
-	// TODO make this generic
-	public function getTextPaediatricAdmissionCoordinator() {
-		if ($this->booking->session->theatre->site_id == 5) {
-			return 'the Admissions Department 020 8725 0060';
-		} else {
-			return 'the Paediatrics and Strabismus Admission Coordinator on 020 7566 2258';
-		}
-	}
 }
 ?>
