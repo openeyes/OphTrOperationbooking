@@ -115,4 +115,14 @@ class OphTrOperation_Operation_Preop_Assessment_Rule extends BaseActiveRecord
 		}
 		return true;
 	}
+
+	public function parse($theatre_id, $subspecialty_id) {
+		foreach ($this->children as $rule) {
+			if ($rule->applies($theatre_id, $subspecialty_id)) {
+				return $rule->parse($theatre_id, $subspecialty_id);
+			}
+		}
+
+		return $this->show_warning;
+	}
 }

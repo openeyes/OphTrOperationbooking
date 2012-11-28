@@ -185,20 +185,18 @@ class OphTrOperation_Operation_Session extends BaseActiveRecord
 		return $this->availableMinutes >= 0 ? 'available' : 'overbooked';
 	}
 
-	public function showPreopWarning($rule=false) {
-		if (!$rule) {
-			if (!$rule = OphTrOperation_Operation_Preop_Assessment_Rule::model()->find('parent_rule_id is null')) {
-				return true;
+	public function showPreopWarning() {
+		$criteria = new CDbCriteria;
+		$criteria->addCondition('parent_rule_id is null');
+		$criteria->order = 'rule_order asc';
+
+		foreach (OphTrOperation_Operation_Preop_Assessment_Rule::model()->findAll($criteria) as $rule) {
+			if ($rule->applies($this->theatre_id, $this->firm->serviceSubspecialtyAssignment->subspecialty_id)) {
+				return $rule->parse($this->theatre_id, $this->firm->serviceSubspecialtyAssignment->subspecialty_id);
 			}
 		}
-		
-		foreach ($rule->children as $child_rule) {
-			if ($child_rule->applies($this->theatre_id, $this->firm->serviceSubspecialtyAssignment->subspecialty_id)) {
-				return $this->showPreopWarning($child_rule);
-			}
-		} 
 
-		return $rule->show_warning;
+		return true;
 	}
 }
 ?>
