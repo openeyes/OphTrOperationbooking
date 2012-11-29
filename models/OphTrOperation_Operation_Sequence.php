@@ -31,7 +31,7 @@
  * The followings are the available model relations:
  *
  * @property Site $site
- * @property Theatre $theatre
+ * @property OphTrOperation_Operation_Theatre $theatre
  *
  */
 
@@ -90,10 +90,10 @@ class OphTrOperation_Operation_Sequence extends BaseActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'theatre' => array(self::BELONGS_TO, 'Theatre', 'theatre_id'),
+			'theatre' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Theatre', 'theatre_id'),
 			'firmAssignment' => array(self::HAS_ONE, 'SequenceFirmAssignment', 'sequence_id'),
 			'firm' => array(self::HAS_ONE, 'Firm', 'firm_id', 'through' => 'firmAssignment'),
-			'sessions' => array(self::HAS_MANY, 'Session', 'sequence_id'),
+			'sessions' => array(self::HAS_MANY, 'OphTrOperation_Operation_Session', 'sequence_id'),
 			'interval' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Sequence_Interval', 'interval_id'),
 		);
 	}

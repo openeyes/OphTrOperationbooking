@@ -106,12 +106,12 @@ class OphTrOperation_Admission_Letter_Warning_Rule extends BaseActiveRecord
 	}
 
 	static public function getRule($rule_type_name, $site_id, $is_child, $theatre_id, $subspecialty_id) {
-		if (!$rule_type = OphTrOperation_Admission_Letter_Warning_Rule_Type::model()->find('name=?',array('Preop Assessment'))) {
+		if (!$rule_type = OphTrOperation_Admission_Letter_Warning_Rule_Type::model()->find('name=?',array($rule_type_name))) {
 			throw new Exception("We were asked for a rule type that doesn't exist: $rule_type_name");
 		}
 
 		$criteria = new CDbCriteria;
-		$criteria->addCondition('parent_rule_id is null');
+		$criteria->addCondition("parent_rule_id is null and rule_type_id = $rule_type->id");
 		$criteria->addCondition("rule_type_id = $rule_type->id");
 		$criteria->order = 'rule_order asc';
 

@@ -984,8 +984,8 @@
 			throw new Exception('Unable to find letter contact for operation '.$this->id);
 		}
 
-		if ($contact->title) {
-			return $contact->title.' on '.$contact->refuse_telephone;
+		if ($contact->refuse_title) {
+			return $contact->refuse_title.' on '.$contact->refuse_telephone;
 		}
 
 		return $this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty->name.' Admission Coordinator on '.$contact->refuse_telephone;

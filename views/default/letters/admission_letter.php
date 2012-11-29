@@ -26,7 +26,7 @@
 
 	<p>
 		<?php if ($operation->status->name == 'Rescheduled') {?>
-			I am writing to inform you that the date for your <?php echo $operation->textOperationName?> has been changed<?php if (isset($operation->cancelledBookings[0])) {?> from <?php echo date('jS F Y',strtotime($operation->cancelledBookings[0]->date))}?>, the new details are:
+			I am writing to inform you that the date for your <?php echo $operation->textOperationName?> has been changed<?php if (isset($operation->cancelledBookings[0])) {?> from <?php echo date('jS F Y',strtotime($operation->cancelledBookings[0]->date));}?>, the new details are:
 		<?php }else{?>
 			I am pleased to confirm the date of your <?php echo $operation->textOperationName?> with <?php echo $firm->consultantName?>, the details are:
 		<?php }?>
@@ -73,15 +73,15 @@
 			</p>
 		<?php }?>
 
-		<?php if ($operation->booking->session->showWarning('Preop assessment')) {?>
+		<?php if ($operation->booking->showWarning('Preop Assessment')) {?>
 			<p>
-				<?php echo $operation->booking->session->getWarningHTML('Preop assessment')?>
+				<?php echo $operation->booking->getWarningHTML('Preop Assessment')?>
 			</p>
 		<?php }?>
 
-		<?php if ($operation->booking->session->showWarning('Prescription')) {?>
+		<?php if ($operation->booking->showWarning('Prescription')) {?>
 			<p>
-				<?php echo $operation->booking->session->getWarningHTML('Prescription')?>
+				<?php echo $operation->booking->getWarningHTML('Prescription')?>
 			</p>
 		<?php }?>
 	<?php }?>
@@ -89,9 +89,10 @@
 	<p>To help ensure your admission proceeds smoothly, please follow these instructions:</p>
 
 	<ul>
-		<?php if ($operation->booking->session->showWarning('Admission Instruction')) {?>
+		<?php if ($operation->booking->showWarning('Admission Instruction')) {?>
 			<li>
-				<?php echo $operation->booking->session->getWarningHTML('Admission Instructions')?>
+				test
+				<?php echo $operation->booking->getWarningHTML('Admission Instructions')?>
 			</li>
 		<?php }?>
 		<li>
@@ -107,14 +108,14 @@
 			<li>
 				You must not drive yourself to or from hospital
 			</li>
-			<?php if ($operation->booking->session->showWarning('Seating')) {?>
+			<?php if ($operation->booking->showWarning('Seating')) {?>
 				<li>
-					<?php echo $operation->booking->session->getWarningHTML('Seating')?>
+					<?php echo $operation->booking->getWarningHTML('Seating')?>
 				</li>
 			<?php }?>
-			<?php if ($operation->booking->session->showWarning('Prescription')) {?>
+			<?php if ($operation->booking->showWarning('Prescription')) {?>
 				<li>
-					<?php echo $operation->booking->session->getWarningHTML('Prescripion')?>
+					<?php echo $operation->booking->getWarningHTML('Prescription')?>
 				</li>
 			<?php }?>
 		<?php }?>

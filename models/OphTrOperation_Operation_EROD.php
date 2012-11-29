@@ -37,8 +37,8 @@
  *
  * The followings are the available model relations:
  *
- * @property Sequence $session
- * @property Theatre $theatre
+ * @property OphTrOperation_Operation_Sequence $session
+ * @property OphTrOperation_Operation_Theatre $theatre
  *
  */
 

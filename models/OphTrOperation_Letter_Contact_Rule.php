@@ -32,8 +32,8 @@
  *
  * @property Site $site
  * @property Subspecialty $subspecialty
- * @property Theatre $theatre
- * @property Firm $firm
+ * @property OphTrOperation_Operation_Theatre $theatre
+ * @property OphTrOperation_Operation_Firm $firm
  */
 
 class OphTrOperation_Letter_Contact_Rule extends BaseActiveRecord
@@ -80,7 +80,7 @@ class OphTrOperation_Letter_Contact_Rule extends BaseActiveRecord
 		return array(
 			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
 			'subspecialty' => array(self::BELONGS_TO, 'Subspecialty', 'subspecialty_id'),
-			'theatre' => array(self::BELONGS_TO, 'Theatre', 'theatre_id'),
+			'theatre' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Theatre', 'theatre_id'),
 			'firm' => array(self::BELONGS_TO, 'Firm', 'firm_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),

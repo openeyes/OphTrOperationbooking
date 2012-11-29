@@ -35,8 +35,8 @@
  *
  * The followings are the available model relations:
  *
- * @property Sequence $sequence
- * @property Theatre $theatre
+ * @property OphTrOperation_Operation_Sequence $sequence
+ * @property OphTrOperation_Operation_Theatre $theatre
  *
  */
 
@@ -90,7 +90,7 @@ class OphTrOperation_Operation_Session extends BaseActiveRecord
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
-			'theatre' => array(self::BELONGS_TO, 'Theatre', 'theatre_id'),
+			'theatre' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Theatre', 'theatre_id'),
 			'firm' => array(self::BELONGS_TO, 'Firm', 'firm_id'),
 		);
 	}
@@ -185,34 +185,24 @@ class OphTrOperation_Operation_Session extends BaseActiveRecord
 		return $this->availableMinutes >= 0 ? 'available' : 'overbooked';
 	}
 
-	public function showWarning($type) {
-		if ($rule = OphTrOperation_Admission_Letter_Warning_Rule::getRule($type,$this->booking->session->theatre->site_id,$this->booking->event->episode->patient->isChild(),$this->theatre_id,$this->firm->serviceSubspecialtyAssignment->subspecialty_id)) {
-			return $rule->show_warning;
-		}
-
-		return false;
+	public function getTimeSlot() {
+		return date('H:i',strtotime($this->start_time)) . ' - ' . date('H:i',strtotime($this->end_time));
 	}
 
-	public function getWarningHTML($type) {
-		$return = '';
-
-		if ($rule = OphTrOperation_Admission_Letter_Warning_Rule::getRule($type,$this->booking->session->theatre->site_id,$this->booking->event->episode->patient->isChild(),$this->theatre_id,$this->firm->serviceSubspecialtyAssignment->subspecialty_id)) {
-			if ($rule->strong) {
-				$return .= '<strong>';
-			}
-			if ($rule->emphasis) {
-				$return .= '<em>';
-			}
-			$return .= $rule->warning_text;
-			if ($rule->emphasis) {
-				$return .= '</em>';
-			}
-			if ($rule->strong) {
-				$return .= '</strong>';
-			}
+	public function getFirmName() {
+		if ($this->firm) {
+			return $this->firm->name . ' (' . $this->firm->serviceSubspecialtyAssignment->subspecialty->name . ')';
+		} else {
+			return 'Emergency List';
 		}
+	}
 
-		return $return;
+	public function getTheatreName() {
+		if($this->theatre) {
+			return $this->theatre->name . ' (' . $this->theatre->site->short_name . ')';
+		} else {
+			return 'None';
+		}
 	}
 }
 ?>

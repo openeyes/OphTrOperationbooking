@@ -34,7 +34,7 @@
  * @property Element_OphTrOperation_Operation $operation
  * @property User $user
  * @property User $usermodified
- * @property Ward $ward
+ * @property OphTrOperation_Operation_Ward $ward
  *
  */
 
@@ -90,10 +90,10 @@ class OphTrOperation_Operation_Booking extends BaseActiveRecord
 			'event' => array(self::BELONGS_TO, 'Event', 'event_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
-			'ward' => array(self::BELONGS_TO, 'Ward', 'ward_id'),
-			'session' => array(self::BELONGS_TO, 'Session', 'session_id'),
+			'ward' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Ward', 'ward_id'),
+			'session' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Session', 'session_id'),
 			'operation' => array(self::BELONGS_TO, 'Element_OphTrOperation_Operation', 'element_id'),
-			'theatre' => array(self::BELONGS_TO, 'Theatre', 'session_theatre_id'),
+			'theatre' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Theatre', 'session_theatre_id'),
 			'cancellationReason' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Cancellation_Reason', 'cancellation_reason_id'),
 		);
 	}
@@ -191,6 +191,36 @@ class OphTrOperation_Operation_Booking extends BaseActiveRecord
 				throw new Exception('Unable to save date_letter_sent: '.print_r($date_letter_sent->getErrors(),true));
 			}
 		}
+	}
+
+	public function showWarning($type) {
+		if ($rule = OphTrOperation_Admission_Letter_Warning_Rule::getRule($type,$this->session->theatre->site_id,$this->operation->event->episode->patient->isChild(),$this->session->theatre_id,$this->session->firm->serviceSubspecialtyAssignment->subspecialty_id)) {
+			return $rule->show_warning;
+		}
+
+		return false;
+	}
+
+	public function getWarningHTML($type) {
+		$return = '';
+
+		if ($rule = OphTrOperation_Admission_Letter_Warning_Rule::getRule($type,$this->session->theatre->site_id,$this->operation->event->episode->patient->isChild(),$this->session->theatre_id,$this->session->firm->serviceSubspecialtyAssignment->subspecialty_id)) {
+			if ($rule->strong) {
+				$return .= '<strong>';
+			}
+			if ($rule->emphasis) {
+				$return .= '<em>';
+			}
+			$return .= $rule->warning_text;
+			if ($rule->emphasis) {
+				$return .= '</em>';
+			}
+			if ($rule->strong) {
+				$return .= '</strong>';
+			}
+		}
+
+		return $return;
 	}
 }
 ?>
