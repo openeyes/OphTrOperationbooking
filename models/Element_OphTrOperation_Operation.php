@@ -997,21 +997,24 @@
 
 	public function getLetterContact() {
 		$site_id = $this->booking->ward->site_id;
-		$subspecialty_id = $this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty_id;
-		$theatre_id = $this->booking->session->theatre_id;
+		$service_id = $this->event->episode->firm->serviceSubspecialtyAssignment->service_id;
 		$firm_id = $this->event->episode->firm_id;
+		$is_child = $this->event->episode->patient->isChild();
 
 		$criteria = new CDbCriteria;
 		$criteria->addCondition('parent_rule_id is null');
 		$criteria->order = 'rule_order asc';
 
-		foreach (OphTrOperation_Letter_Contact_Rule::model()->findAll($criteria) as $rule) {
-			if ($rule->applies($site_id,$subspecialty_id,$theatre_id,$firm_id)) {
-				return $rule->parse($site_id,$subspecialty_id,$theatre_id,$firm_id);
+		foreach (OphTrOperation_Waiting_List_Contact_Rule::model()->findAll($criteria) as $rule) {
+			if ($rule->applies($site_id,$service_id,$firm_id,$is_child)) {
+				return $rule->parse($site_id,$service_id,$firm_id,$is_child);
 			}
 		}
 
 		return false;
+	}
+
+	public function getWaitingListContact() {
 	}
 
 	public function getDiagnosis() {
@@ -1028,6 +1031,80 @@
 		}
 
 		return $this->event->episode->patient->childPrefix.'operation';
+	}
+
+	public function confirmLetterPrinted($confirmto = null, $confirmdate = null) {
+		// admin users can set confirmto and confirm up to a specific point, steamrollering whatever else is in there
+		if (!is_null($confirmto)) {
+			if (!$dls = $this->date_letter_sent) {
+				$dls = new OphTrOperation_Operation_Date_Letter_Sent;
+				$dls->element_id = $this->id;
+			}
+			if ($confirmto == self::LETTER_GP) {
+				$dls->date_invitation_letter_sent = Helper::convertNHS2MySQL($confirmdate);
+				$dls->date_1st_reminder_letter_sent = Helper::convertNHS2MySQL($confirmdate);
+				$dls->date_2nd_reminder_letter_sent = Helper::convertNHS2MySQL($confirmdate);
+				$dls->date_gp_letter_sent = Helper::convertNHS2MySQL($confirmdate);
+			}
+			if ($confirmto == self::LETTER_INVITE) {
+				$dls->date_invitation_letter_sent = Helper::convertNHS2MySQL($confirmdate);
+				$dls->date_1st_reminder_letter_sent = null;
+				$dls->date_2nd_reminder_letter_sent = null;
+				$dls->date_gp_letter_sent = null;
+			}
+			if ($confirmto == self::LETTER_REMINDER_1) {
+				$dls->date_invitation_letter_sent = Helper::convertNHS2MySQL($confirmdate);
+				$dls->date_1st_reminder_letter_sent = Helper::convertNHS2MySQL($confirmdate);
+				$dls->date_2nd_reminder_letter_sent = null;
+				$dls->date_gp_letter_sent = null;
+			}
+			if ($confirmto == self::LETTER_REMINDER_2) {
+				$dls->date_invitation_letter_sent = Helper::convertNHS2MySQL($confirmdate);
+				$dls->date_1st_reminder_letter_sent = Helper::convertNHS2MySQL($confirmdate);
+				$dls->date_2nd_reminder_letter_sent = Helper::convertNHS2MySQL($confirmdate);
+				$dls->date_gp_letter_sent = null;
+			}
+			if ($confirmto == 'noletters') {
+				$dls->date_invitation_letter_sent = null;
+				$dls->date_1st_reminder_letter_sent = null;
+				$dls->date_2nd_reminder_letter_sent = null;
+				$dls->date_gp_letter_sent = null;
+			}
+			$dls->save();
+
+			OELog::log("Letter print confirmed, datelettersent=$dls->id confirmdate='$confirmdate'");
+
+		// Only confirm if letter is actually due
+		} else if ($this->getDueLetter() !== $this->getLastLetter()) {
+			if ($dls = $this->date_letter_sent) {
+				if ($dls->date_invitation_letter_sent == null) {
+					$dls->date_invitation_letter_sent = date('Y-m-d H:i:s');
+				} else if ($dls->date_1st_reminder_letter_sent == null) {
+					$dls->date_1st_reminder_letter_sent = date('Y-m-d H:i:s');
+				} else if ($dls->date_2nd_reminder_letter_sent == null) {
+					$dls->date_2nd_reminder_letter_sent = date('Y-m-d H:i:s');
+				} else if ($dls->date_gp_letter_sent == null) {
+					$dls->date_gp_letter_sent = date('Y-m-d H:i:s');
+				} else if ($dls->date_scheduling_letter_sent == null) {
+					$dls->date_scheduling_letter_sent = date('Y-m-d H:i:s');
+				}
+				if (!$dls->save()) {
+					throw new SystemException("Unable to update date_letter_sent record {$dls->id}: ".print_r($dls->getErrors(),true));
+				}
+
+				OELog::log("Letter print confirmed, datelettersent=$dls->id");
+
+			} else {
+				$dls = new OphTrOperation_Operation_Date_Letter_Sent;
+				$dls->element_id = $this->id;
+				$dls->date_invitation_letter_sent = date('Y-m-d H:i:s');
+				if (!$dls->save()) {
+					throw new SystemException('Unable to save new date_letter_sent record: '.print_r($dls->getErrors(),true));
+				}
+
+				OELog::log("Letter print confirmed, datelettersent=$dls->id");
+			}
+		}
 	}
 }
 ?>

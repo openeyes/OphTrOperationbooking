@@ -9,7 +9,7 @@ $(document).ready(function() {
 			}
 
 			disableButtons();
-			$('#searchResults').html('<div id="waitingList" class="grid-view-waitinglist"><table><tbody><tr><th>Letters sent</th><th>Patient</th><th>Hospital number</th><th>Location</th><th>Procedure</th><th>Eye</th><th>Firm</th><th>Decision date</th><th>Priority</th><th>Book status (requires...)</th><th><input style="margin-top: 0.4em;" type="checkbox" id="checkall" value=""></th></tr><tr><td colspan="7" style="border: none; padding-top: 10px;"><img src="/_img/ajax-loader.gif" /> Searching, please wait ...</td></tr></tbody></table></div>');
+			$('#searchResults').html('<div id="waitingList" class="grid-view-waitinglist"><table><tbody><tr><th>Letters sent</th><th>Patient</th><th>Hospital number</th><th>Location</th><th>Procedure</th><th>Eye</th><th>Firm</th><th>Decision date</th><th>Priority</th><th>Book status (requires...)</th><th><input style="margin-top: 0.4em;" type="checkbox" id="checkall" value=""></th></tr><tr><td colspan="7" style="border: none; padding-top: 10px;"><img src="'+baseUrl+'/img/ajax-loader.gif" /> Searching, please wait ...</td></tr></tbody></table></div>');
 
 			$.ajax({
 				'url': baseUrl+'/OphTrOperation/waitingList/search',
