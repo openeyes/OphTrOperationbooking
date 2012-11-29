@@ -60,7 +60,7 @@
 									<?php echo CHtml::dropDownList('firm-id', @$_POST['firm-id'], array(), array('empty'=>'All firms', 'disabled'=>(empty($firmId))))?>
 								</td>
 								<td>
-									<?php echo CHtml::dropDownList('status', @$_POST['status'], ElementOperation::getLetterOptions())?>
+									<?php echo CHtml::dropDownList('status', @$_POST['status'], Element_OphTrOperation_Operation::getLetterOptions())?>
 								</td>
 								<td>
 									<?php echo CHtml::dropDownList('site_id',@$_POST['site_id'],Site::model()->getListForCurrentInstitution(),array('empty'=>'All sites'))?>

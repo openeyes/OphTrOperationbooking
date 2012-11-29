@@ -46,7 +46,7 @@ if (empty($operations)) { ?>
 <?php
 	$i = 0;
 	foreach ($operations as $id => $operation) {
-		$eo = ElementOperation::model()->findByPk($operation['eoid']);
+		$eo = Element_OphTrOperation_Operation::model()->findByPk($operation['eoid']);
 		
 		$patient = NULL;
 		if(isset($operation['pid'])){
@@ -62,15 +62,15 @@ if (empty($operations)) { ?>
 ?>
 
 <?php
-	if ($eo->getWaitingListStatus() == ElementOperation::STATUS_PURPLE) {
+	if ($eo->getWaitingListStatus() == Element_OphTrOperation_Operation::STATUS_PURPLE) {
 		$tablecolour = "Purple";
-	} elseif ($eo->getWaitingListStatus() == ElementOperation::STATUS_GREEN1) {
+	} elseif ($eo->getWaitingListStatus() == Element_OphTrOperation_Operation::STATUS_GREEN1) {
 		$tablecolour = "Green";
-	} elseif ($eo->getWaitingListStatus() == ElementOperation::STATUS_GREEN2) {
+	} elseif ($eo->getWaitingListStatus() == Element_OphTrOperation_Operation::STATUS_GREEN2) {
 		$tablecolour = "Green";
-	} elseif ($eo->getWaitingListStatus() == ElementOperation::STATUS_ORANGE) {
+	} elseif ($eo->getWaitingListStatus() == Element_OphTrOperation_Operation::STATUS_ORANGE) {
 		$tablecolour = "Orange";
-	} elseif ($eo->getWaitingListStatus() == ElementOperation::STATUS_RED) {
+	} elseif ($eo->getWaitingListStatus() == Element_OphTrOperation_Operation::STATUS_RED) {
 		$tablecolour = "Red";
 	} else {
 		$tablecolour = "White";
@@ -83,24 +83,24 @@ if (empty($operations)) { ?>
 
 	if (is_null($lastletter)) {
 
-	} elseif ($lastletter == ElementOperation::LETTER_INVITE) {
+	} elseif ($lastletter == Element_OphTrOperation_Operation::LETTER_INVITE) {
 		?>
 			<img src="<?php echo Yii::app()->createUrl('img/_elements/icons/letters/invitation.png')?>" alt="Invitation" width="17" height="17" />
 		<?php
-	} elseif ($lastletter == ElementOperation::LETTER_REMINDER_1) {
+	} elseif ($lastletter == Element_OphTrOperation_Operation::LETTER_REMINDER_1) {
 		?>
 			<img src="<?php echo Yii::app()->createUrl('img/_elements/icons/letters/invitation.png')?>" alt="Invitation" width="17" height="17" />
 			<img src="<?php echo Yii::app()->createUrl('img/_elements/icons/letters/letter1.png')?>" alt="1st reminder" width="17" height="17" />
 		<?php
 
-	} elseif ($lastletter == ElementOperation::LETTER_REMINDER_2) {
+	} elseif ($lastletter == Element_OphTrOperation_Operation::LETTER_REMINDER_2) {
 		?>
 			<img src="<?php echo Yii::app()->createUrl('img/_elements/icons/letters/invitation.png')?>" alt="Invitation" width="17" height="17" />
 			<img src="<?php echo Yii::app()->createUrl('img/_elements/icons/letters/letter1.png')?>" alt="1st reminder" width="17" height="17" />
 			<img src="<?php echo Yii::app()->createUrl('img/_elements/icons/letters/letter2.png')?>" alt="2nd reminder" width="17" height="17" />
 		<?php
 
-	} elseif ($lastletter == ElementOperation::LETTER_GP) {
+	} elseif ($lastletter == Element_OphTrOperation_Operation::LETTER_GP) {
 		?>
 			<img src="<?php echo Yii::app()->createUrl('img/_elements/icons/letters/invitation.png')?>" alt="Invitation" width="17" height="17" />
 			<img src="<?php echo Yii::app()->createUrl('img/_elements/icons/letters/letter1.png')?>" alt="1st reminder" width="17" height="17" />
@@ -120,10 +120,10 @@ if (empty($operations)) { ?>
 	<td><?php echo $eo->event->episode->firm->name ?> (<?php echo $eo->event->episode->firm->serviceSubspecialtyAssignment->subspecialty->name ?>)</td>
 	<td><?php echo $eo->NHSDate('decision_date') ?></td>
 	<td><?php echo $eo->priority->name?></td>
-	<td><?php echo ucfirst(preg_replace('/^Requires /','',$eo->getStatusText())) ?></td>
+	<td><?php echo ucfirst(preg_replace('/^Requires /','',$eo->status->name)) ?></td>
 	<td<?php if ($tablecolour == 'White' && Yii::app()->user->checkAccess('admin')) { ?> class="admin-td"<?php } ?>>
 
-		<?php if(($patient && $patient->address) && $operation['eoid'] && ($eo->getDueLetter() != ElementOperation::LETTER_GP || ($eo->getDueLetter() == ElementOperation::LETTER_GP && $operation['practice_id']))) { ?>
+		<?php if(($patient && $patient->address) && $operation['eoid'] && ($eo->getDueLetter() != Element_OphTrOperation_Operation::LETTER_GP || ($eo->getDueLetter() == Element_OphTrOperation_Operation::LETTER_GP && $operation['practice_id']))) { ?>
 		<div>	
 			<input<?php if ($tablecolour == 'White' && !Yii::app()->user->checkAccess('admin')) { ?> disabled="disabled"<?php } ?> type="checkbox" id="operation<?php echo $operation['eoid']?>" value="1" />
 		</div>
