@@ -1015,7 +1015,7 @@
 	}
 
 	public function getWaitingListContact() {
-		$site_id = $this->booking->ward->site_id;
+		$site_id = $this->site->id;
 		$service_id = $this->event->episode->firm->serviceSubspecialtyAssignment->service_id;
 		$firm_id = $this->event->episode->firm_id;
 		$is_child = $this->event->episode->patient->isChild();
@@ -1026,7 +1026,8 @@
 
 		foreach (OphTrOperation_Waiting_List_Contact_Rule::model()->findAll($criteria) as $rule) {
 			if ($rule->applies($site_id,$service_id,$firm_id,$is_child)) {
-				return $rule->parse($site_id,$service_id,$firm_id,$is_child);
+				$rule = $rule->parse($site_id,$service_id,$firm_id,$is_child);
+				return $rule->name.' on '.$rule->telephone;
 			}
 		}
 

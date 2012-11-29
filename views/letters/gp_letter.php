@@ -23,21 +23,19 @@
 		'accessible' => false,
 		'patient' => $patient,
 		'patient_ref' => true,
-		)); ?>
+))?>
 
 <p>
-	This patient was recently referred to this hospital and a decision was
-	made that surgery was appropriate under the care of
-	<?php echo CHtml::encode($consultantName) ?>.
+	This patient was recently referred to this hospital and a decision was made that surgery was appropriate under the care of <?php echo CHtml::encode($consultantName) ?>.
 </p>
 
-<p>In accordance with the National requirements our admission system
-	provides patients with the opportunity to agree the date for their
-	operation. We have written twice to ask the patient to contact us to
-	discuss and agree a date but we have had no response.</p>
+<p>
+	In accordance with the National requirements our admission system provides patients with the opportunity to agree the date for their operation. We have written twice to ask the patient to contact us to discuss and agree a date but we have had no response.
+</p>
 
-<p>Therefore we have removed this patient from our waiting list and we
-	are referring them back to you.</p>
+<p>
+	Therefore we have removed this patient from our waiting list and we are referring them back to you.
+</p>
 
 <?php echo $this->renderPartial('../letters/letter_end'); ?>
 	

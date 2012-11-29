@@ -25,12 +25,28 @@
 ))?>
 
 <p class="accessible">
-	I recently invited you to telephone to arrange a date for your admission for surgery under the care of
-	<?php echo CHtml::encode($consultantName)?>.
+	I recently invited you to telephone to arrange a date for your <?php if ($patient->isChild()) { ?>child's <?php } ?> admission for surgery under the care of <?php echo CHtml::encode($consultantName) ?>.  I have not yet heard from you.
 </p>
 
 <p class="accessible">
-	Despite a reminder letter, I have not heard from you. I am therefore referring you back to your GP and have removed you from our waiting list.
+	This is currently anticipated to be a
+	<?php
+	if ($overnightStay) {
+		echo 'an overnight stay';
+	} else {
+		echo 'day case';
+	}
+	?>
+	procedure.
+</p>
+
+<p class="accessible">
+	Please will you telephone <?php echo $changeContact ?> within 2 weeks of the date of this letter to discuss and agree
+	a convenient date for this operation.
+</p>
+
+<p class="accessible">
+	Should you<?php	if ($patient->isChild()) { ?>r child<?php } ?> no longer require treatment please let me know as soon as possible.
 </p>
 
 <?php echo $this->renderPartial('../letters/letter_end', array('accessible' => true)); ?>
