@@ -78,7 +78,7 @@ class WaitingListController extends BaseEventTypeController
 			$operations = $this->getWaitingList($firm_id, $subspecialty_id, $status, $hos_num, $site_id);
 		}
 
-		$this->renderPartial('_list', array('operations' => $operations), false, true);
+		$this->renderPartial('_list', array('operations' => $operations, 'assetPath' => Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.'.$this->getModule()->name.'.assets'), false, -1, YII_DEBUG)), false, true);
 	}
 
 	public function getWaitingList($firm_id, $subspecialty_id, $status, $hos_num=false, $site_id=false) {
