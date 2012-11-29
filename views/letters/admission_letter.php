@@ -19,7 +19,7 @@
 ?>
 
 <div class="accessible">
-	<?php echo $this->renderPartial('letters/letter_start', array(
+	<?php echo $this->renderPartial('../letters/letter_start', array(
 			'to' => $patient->salutationname,
 			'patient' => $patient,
 	))?>
@@ -141,5 +141,5 @@
 		</p>
 	<?php }?>
 
-	<?php echo $this->renderPartial('letters/letter_end')?>
+	<?php echo $this->renderPartial('../letters/letter_end')?>
 </div>

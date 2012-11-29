@@ -7,6 +7,7 @@ class m121129_091456_waiting_list_contacts extends CDbMigration
 		$this->createTable('ophtroperation_waiting_list_contact_rule', array(
 				'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
 				'parent_rule_id' => 'int(10) unsigned NULL',
+				'rule_order' => 'int(10) unsigned NOT NULL DEFAULT 0',
 				'site_id' => 'int(10) unsigned NULL',
 				'service_id' => 'int(10) unsigned NULL',
 				'firm_id' => 'int(10) unsigned NULL',

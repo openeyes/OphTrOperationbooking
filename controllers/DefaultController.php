@@ -119,7 +119,7 @@ class DefaultController extends BaseEventTypeController {
 
 		$pdf_print = new OEPDFPrint('Openeyes', 'Booking letters', 'Booking letters');
 
-		$body = $this->render('letters/admission_letter', array(
+		$body = $this->render('../letters/admission_letter', array(
 			'site' => $site,
 			'patient' => $event->episode->patient,
 			'firm' => $firm,
@@ -133,7 +133,7 @@ class DefaultController extends BaseEventTypeController {
 
 		$pdf_print->addLetter($oeletter);
 
-		$body = $this->render('letters/admission_form', array(
+		$body = $this->render('../letters/admission_form', array(
 				'operation' => $operation,
 				'site' => $site,
 				'patient' => $event->episode->patient,

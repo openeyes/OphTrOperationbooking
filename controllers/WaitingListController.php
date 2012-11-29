@@ -21,7 +21,7 @@ class WaitingListController extends BaseEventTypeController
 {
 	public function printActions() {
 		return array(
-			'printletters',
+			'printLetters',
 		);
 	}
 
@@ -290,7 +290,7 @@ class WaitingListController extends BaseEventTypeController
 		$to_address = $patient->addressname . "\n" . implode("\n", $patient->correspondAddress->getLetterArray(false));
 		$site = $operation->site;
 		$firm = $operation->event->episode->firm;
-		$body = $this->render('letters/admission_form', array(
+		$body = $this->render('../letters/admission_form', array(
 				'operation' => $operation,
 				'site' => $site,
 				'patient' => $patient,
@@ -311,7 +311,7 @@ class WaitingListController extends BaseEventTypeController
 	protected function print_invitation_letter($pdf, $operation) {
 		$patient = $operation->event->episode->patient;
 		$to_address = $patient->addressname . "\n" . implode("\n", $patient->correspondAddress->getLetterArray(false));
-		$body = $this->render('letters/invitation_letter', array(
+		$body = $this->render('../letters/invitation_letter', array(
 				'to' => $patient->salutationname,
 				'consultantName' => $this->getConsultantName($operation),
 				'overnightStay' => $operation->overnight_stay,
@@ -330,7 +330,7 @@ class WaitingListController extends BaseEventTypeController
 	protected function print_reminder_letter($pdf, $operation) {
 		$patient = $operation->event->episode->patient;
 		$to_address = $patient->addressname . "\n" . implode("\n", $patient->correspondAddress->getLetterArray(false));
-		$body = $this->render('letters/reminder_letter', array(
+		$body = $this->render('../letters/reminder_letter', array(
 				'to' => $patient->salutationname,
 				'consultantName' => $this->getConsultantName($operation),
 				'overnightStay' => $operation->overnight_stay,
@@ -362,7 +362,7 @@ class WaitingListController extends BaseEventTypeController
 		} else {
 			throw new CException('Patient has no practice address');
 		}
-		$body = $this->render('letters/gp_letter', array(
+		$body = $this->render('../letters/gp_letter', array(
 				'to' => $salutation,
 				'patient' => $patient,
 				'consultantName' => $this->getConsultantName($operation),
@@ -373,7 +373,7 @@ class WaitingListController extends BaseEventTypeController
 
 		// Patient letter
 		$to_address = $patient->addressname . "\n" . implode("\n", $patient->correspondAddress->getLetterArray(false));
-		$body = $this->render('letters/gp_letter_patient', array(
+		$body = $this->render('../letters/gp_letter_patient', array(
 				'to' => $patient->salutationname,
 				'patient' => $patient,
 				'consultantName' => $this->getConsultantName($operation),

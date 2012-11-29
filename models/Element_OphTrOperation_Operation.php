@@ -853,7 +853,7 @@
 						mail(
 							$email,
 							"[OpenEyes] Urgent cancellation made","A cancellation was made with a TCI date within the next 24 hours.\n\nDisorder: "
-								. $this->getDisorder() . "\n\nPlease see: http://" . @$_SERVER['SERVER_NAME']
+								. $this->getDisorderText() . "\n\nPlease see: http://" . @$_SERVER['SERVER_NAME']
 								. Yii::app()->createUrl('transport')."\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.",
 							"From: " . Yii::app()->params['urgent_booking_notify_email_from']."\r\n"
 						);
@@ -926,9 +926,9 @@
 				}
 				foreach ($targets as $email) {
 					if ($reschedule) {
-						mail($email, "[OpenEyes] Urgent reschedule made","A patient booking was rescheduled with a TCI date within the next 24 hours.\n\nDisorder: ".$this->getDisorder()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.","From: ".Yii::app()->params['urgent_booking_notify_email_from']."\r\n");
+						mail($email, "[OpenEyes] Urgent reschedule made","A patient booking was rescheduled with a TCI date within the next 24 hours.\n\nDisorder: ".$this->getDisorderText()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.","From: ".Yii::app()->params['urgent_booking_notify_email_from']."\r\n");
 					} else {
-						mail($email, "[OpenEyes] Urgent booking made","A patient booking was made with a TCI date within the next 24 hours.\n\nDisorder: ".$this->getDisorder()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.","From: ".Yii::app()->params['urgent_booking_notify_email_from']."\r\n");
+						mail($email, "[OpenEyes] Urgent booking made","A patient booking was made with a TCI date within the next 24 hours.\n\nDisorder: ".$this->getDisorderText()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.","From: ".Yii::app()->params['urgent_booking_notify_email_from']."\r\n");
 					}
 				}
 			}
@@ -997,6 +997,25 @@
 
 	public function getLetterContact() {
 		$site_id = $this->booking->ward->site_id;
+		$subspecialty_id = $this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty_id;
+		$theatre_id = $this->booking->session->theatre_id;
+		$firm_id = $this->event->episode->firm_id;
+
+		$criteria = new CDbCriteria;
+		$criteria->addCondition('parent_rule_id is null');
+		$criteria->order = 'rule_order asc';
+
+		foreach (OphTrOperation_Letter_Contact_Rule::model()->findAll($criteria) as $rule) {
+			if ($rule->applies($site_id,$subspecialty_id,$theatre_id,$firm_id)) {
+				return $rule->parse($site_id,$subspecialty_id,$theatre_id,$firm_id);
+			}
+		}
+
+		return false;
+	}
+
+	public function getWaitingListContact() {
+		$site_id = $this->booking->ward->site_id;
 		$service_id = $this->event->episode->firm->serviceSubspecialtyAssignment->service_id;
 		$firm_id = $this->event->episode->firm_id;
 		$is_child = $this->event->episode->patient->isChild();
@@ -1012,9 +1031,6 @@
 		}
 
 		return false;
-	}
-
-	public function getWaitingListContact() {
 	}
 
 	public function getDiagnosis() {
@@ -1105,6 +1121,13 @@
 				OELog::log("Letter print confirmed, datelettersent=$dls->id");
 			}
 		}
+	}
+
+	public function getDisorderText() {
+		if (!$diagonsis = Element_OphTrOperation_Diagnosis::model()->find('event_id=?',array($this->event_id))) {
+			throw new Exception("Unable to find diagnosis element for event_id $this->event_id");
+		}
+		return $diagnosis->disorder->term;
 	}
 }
 ?>
