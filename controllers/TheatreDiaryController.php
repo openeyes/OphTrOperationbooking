@@ -17,14 +17,17 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class TheatreDiaryController extends BaseController
+class TheatreDiaryController extends BaseEventTypeController
 {
-	/**
-		* @var string the default layout for the views. Defaults to '//layouts/column2', meaning
-		* using two-column layout. See 'protected/views/layouts/column2.php'.
-		*/
 	public $layout='//layouts/main';
  
+	public function init() {
+		Yii::app()->clientScript->registerScriptFile(Yii::app()->createUrl('js/jquery.validate.min.js'));
+		Yii::app()->clientScript->registerScriptFile(Yii::app()->createUrl('js/additional-validators.js'));
+
+		parent::init();
+	}
+
 	public function filters()
 	{
 		return array('accessControl');
@@ -110,154 +113,170 @@ class TheatreDiaryController extends BaseController
 	{
 		Audit::add('diary','search',serialize($_POST));
 
-		$this->renderPartial('_list', array('theatres' => $this->getTheatres()), false, true);
+		$this->renderPartial('_list', array('diary' => $this->getDiary()), false, true);
 	}
 
-	public function getTheatres()
-	{
-		$operation = new ElementOperation;
-		$theatres = array();
-		if (!empty($_POST)) {
-			$siteId = !empty($_POST['site-id']) ? $_POST['site-id'] : null;
-			$subspecialtyId = !empty($_POST['subspecialty-id']) ? $_POST['subspecialty-id'] : null;
-			$firmId = !empty($_POST['firm-id']) ? $_POST['firm-id'] : null;
-			$theatreId = !empty($_POST['theatre-id']) ? $_POST['theatre-id'] : null;
-			$wardId = !empty($_POST['ward-id']) ? $_POST['ward-id'] : null;
-			$emergencyList = !empty($_POST['emergency_list']) ? $_POST['emergency_list'] : null;
+	public function getDiary() {
+		$firmId = Yii::app()->session['selected_firm_id'];
 
-			if (!empty($_POST['date-start']) && !empty($_POST['date-end'])) {
-				$_POST['date-filter'] = 'custom';
+		$_POST['date-start'] = Helper::convertNHS2MySQL($_POST['date-start']);
+		$_POST['date-end'] = Helper::convertNHS2MySQL($_POST['date-end']);
+
+		if (empty($_POST['date-start']) || empty($_POST['date-end'])) {
+			$startDate = $this->getNextSessionDate($firmId);
+			$endDate = $startDate;
+		} else {
+			$startDate = $_POST['date-start'];
+			$endDate = $_POST['date-end'];
+		}
+
+		$whereSql = 's.date BETWEEN :start AND :end';
+		$whereParams = array(':start' => $startDate, ':end' => $endDate);
+
+		if (@$_POST['emergency_list']) {
+			$whereSql .= ' and f.id is null';
+		} else {
+			if (@$_POST['site-id']) {
+				$whereSql .= ' AND t.site_id = :siteId';
+				$whereParams[':siteId'] = $_POST['site-id'];
 			}
-			$filter = !empty($_POST['date-filter']) ? $_POST['date-filter'] : null;
-
-			$service = new BookingService;
-
-			if (
-				empty($siteId) &&
-				empty($subspecialtyId) &&
-				empty($firmId) &&
-				empty($theatreId) &&
-				empty($wardId) &&
-				empty($filter) &&
-				empty($emergencyList)
-			) {
-				// No search options selected, e.g. the page has just loaded, so set to the session firm
-				$firmId = Yii::app()->session['selected_firm_id'];
+			if (@$_POST['theatre-id']) {
+				$whereSql .= ' AND t.id = :theatreId';
+				$whereParams[':theatreId'] = $_POST['theatre-id'];
 			}
-
-			$_POST['date-start'] = Helper::convertNHS2MySQL($_POST['date-start']);
-			$_POST['date-end'] = Helper::convertNHS2MySQL($_POST['date-end']);
-
-			if (empty($_POST['date-start']) || empty($_POST['date-end'])) {
-				$startDate = $service->getNextSessionDate($firmId);
-				$endDate = $startDate;
-			} else {
-				$startDate = $_POST['date-start'];
-				$endDate = $_POST['date-end'];
+			if (@$_POST['subspecialty-id']) {
+				$whereSql .= ' AND spec.id = :subspecialtyId';
+				$whereParams[':subspecialtyId'] = $_POST['subspecialty-id'];
 			}
+			if (@$_POST['firm-id']) {
+				$whereSql .= ' AND f.id = :firmId';
+				$whereParams[':firmId'] = $_POST['firm-id'];
+			}
+			if (@$_POST['ward-id']) {
+				$whereSql .= ' AND w.id = :wardId';
+				$whereParams[':wardId'] = $_POST['ward-id'];
+			}
+		}
 
-			$data = $service->findTheatresAndSessions(
-				$startDate,
-				$endDate,
-				$siteId,
-				$theatreId,
-				$subspecialtyId,
-				$firmId,
-				$wardId,
-				$emergencyList
-			);
+		$whereSql .= ' AND ( e.deleted = 0 OR e.deleted is null ) AND ( ep.deleted = 0 OR ep.deleted is null) ';
 
-			foreach ($data as $values) {
-				$sessionTime = explode(':', $values['session_duration']);
-				$sessionDuration = ($sessionTime[0] * 60) + $sessionTime[1];
+		$data = Yii::app()->db->createCommand()
+			->select('DISTINCT(o.id) AS operation_id, t.name, i.short_name as site_name, s.date, s.start_time, s.end_time,
+					s.id AS session_id, TIMEDIFF(s.end_time, s.start_time) AS session_duration, s.comments AS session_comments,
+					s.consultant as session_consultant, s.anaesthetist as session_anaesthetist, s.paediatric as session_paediatric,
+					s.general_anaesthetic as session_general_anaesthetic, f.name AS firm_name, spec.name AS subspecialty_name, o.eye_id,
+					an.name as anaesthetic_type, o.comments, b.admission_time, o.consultant_required, o.overnight_stay, e.id AS event_id,
+					ep.id AS episode_id, p.id AS patient_id, o.total_duration AS duration, c.first_name, c.last_name, p.dob, p.gender,
+					p.hos_num, w.name AS ward, b.display_order, b.confirmed, pr.name as priority, s.available, mu.first_name AS mu_fn,
+					mu.last_name AS mu_ln, cu.first_name as cu_fn, cu.last_name as cu_ln, s.last_modified_date,
+					su.first_name as session_first_name, su.last_name as session_last_name')
+			->from('ophtroperation_operation_session s')
+			->join('ophtroperation_operation_theatre t', 't.id = s.theatre_id')
+			->leftJoin('site i', 'i.id = t.site_id')
+			->leftJoin('ophtroperation_operation_booking b', 'b.session_id = s.id')
+			->leftJoin('et_ophtroperation_operation o', 'o.id = b.element_id')
+			->leftJoin('anaesthetic_type an','o.anaesthetic_type_id = an.id')
+			->leftJoin('ophtroperation_operation_priority pr','pr.id = o.priority_id')
+			->leftJoin('event e', 'e.id = o.event_id')
+			->leftJoin('episode ep', 'ep.id = e.episode_id')
+			->leftJoin('patient p', 'p.id = ep.patient_id')
+			->leftJoin('contact c', "c.parent_id = p.id and c.parent_class = 'Patient'")
+			->leftJoin('firm f', 'f.id = s.firm_id')
+			->leftJoin('service_subspecialty_assignment ssa', 'ssa.id = f.service_subspecialty_assignment_id')
+			->leftJoin('subspecialty spec', 'spec.id = ssa.subspecialty_id')
+			->leftJoin('user mu','b.last_modified_user_id = mu.id')
+			->leftJoin('user cu','b.created_user_id = cu.id')
+			->leftJoin('user su','s.last_modified_user_id = su.id')
+			->leftJoin('ophtroperation_operation_ward w', 'w.id = b.ward_id')
+			->where($whereSql, $whereParams)
+			->order('t.name ASC, s.date ASC, s.start_time ASC, s.end_time ASC, b.display_order ASC')
+			->queryAll();
 
-				$eye = Eye::model()->findByPk($values['eye_id']);
-				$anaesthetic_type = AnaestheticType::model()->findByPk($values['anaesthetic_type_id']);
-				$age = Helper::getAge($values['dob']);
+		$diary = array();
 
-				$procedures = array('List'=>'', 'Long' => array());
+		foreach ($data as $row) {
+			if (!isset($diary[$row['site_name']][$row['name']][$row['date']][$row['session_id']])) {
+				$sessionTime = explode(':', $row['session_duration']);
 
-				foreach (Yii::app()->db->createCommand()
-					->select("p.short_format, p.term")
-					->from("proc p")
-					->join('operation_procedure_assignment opa', 'opa.proc_id = p.id')
-					->where('opa.operation_id = :id',
-						array(':id'=>$values['operation_id']))
-					->order('opa.display_order ASC')
-					->queryAll() as $row) {
-					if ($procedures['List']) {
-						$procedures['List'] .= ", ";
-					}
-					$procedures['List'] .= $row['short_format'];
-					$procedures['Long'][] = $row['term'];
-				}
-				
-				$theatreTitle = $values['name'] . ' ('. $values['site_name'] . ')';
-				//$theatreTitle = $values['name'];
-				$theatres[$theatreTitle][$values['date']][] = array(
-					'operationId' => $values['operation_id'],
-					'episodeId' => $values['episodeId'],
-					'eventId' => $values['eventId'],
-					'firm_name' => @$values['firm_name'],
-					'subspecialty_name' => @$values['subspecialty_name'],
-					'startTime' => $values['start_time'],
-					'endTime' => $values['end_time'],
-					'sequenceId' => $values['sequence_id'], // TODO: References to sequences need to be removed when possible
-					'sessionId' => $values['session_id'],
-					'sessionDuration' => $sessionDuration,
-					'operationDuration' => $values['operation_duration'],
-					'operationComments' => $values['comments'],
-					'consultantRequired' => $values['consultant_required'],
-					'overnightStay' => $values['overnight_stay'],
-					'admissionTime' => $values['admission_time'],
-					'timeAvailable' => $sessionDuration,
-					'eye' => ($eye) ? $eye->ShortName : '',
-					'eye_long' => ($eye) ? $eye->name : '',
-					'anaesthetic' => ($anaesthetic_type) ? $anaesthetic_type->name : '',
-					'procedures' => $procedures['List'],
-					'procedures_long' => (count($procedures['Long'])) ? implode(', ', $procedures['Long']) : '',
-					'patientHosNum' => $values['hos_num'],
-					'patientId' => $values['patientId'],
-					'patientName' => strtoupper($values['last_name']) . ', ' . $values['first_name'],
-					'patientAge' => $age,
-					'patientGender' => $values['gender'],
-					'ward' => $values['ward'],
-					'displayOrder' => $values['display_order'],
-					'comments' => $values['session_comments'],
-					'operationDuration' => $values['operation_duration'],
-					'confirmed' => $values['confirmed'],
-					'consultant' => $values['session_consultant'],
-					'paediatric' => $values['session_paediatric'],
-					'anaesthetist' => $values['session_anaesthetist'],
-					'general_anaesthetic' => $values['session_general_anaesthetic'],
-					'priority' => $values['priority'],
-					'status' => $values['status'],
-					'created_user' => $values['cu_fn'].' '.$values['cu_ln'],
-					'last_modified_user' => $values['mu_fn'].' '.$values['mu_ln'],
-					'last_modified_date' => preg_replace('/ .*$/','',$values['last_modified_date']),
-					'last_modified_time' => preg_replace('/^.* /','',$values['last_modified_date']),
-					'session_first_name' => $values['session_first_name'],
-					'session_last_name' => $values['session_last_name']
+				$diary[$row['site_name']][$row['name']][$row['date']][$row['session_id']] = array(
+					'id' => $row['session_id'],
+					'timestamp' => strtotime($row['date']),
+					'site_name' => $row['site_name'],
+					'theatre_name' => $row['name'],
+					'firm_name' => $row['firm_name'],
+					'subspecialty_name' => $row['subspecialty_name'],
+					'start_time' => $row['start_time'],
+					'end_time' => $row['end_time'],
+					'duration' => ($sessionTime[0] * 60) + $sessionTime[1],
+					'comments' => $row['session_comments'],
+					'available' => $row['available'],
+					'consultant' => $row['session_consultant'],
+					'anaesthetist' => $row['session_anaesthetist'],
+					'paediatric' => $row['session_paediatric'],
+					'general_anaesthetic' => $row['session_general_anaesthetic'],
+					'last_modified_date' => preg_replace('/ .*$/','',$row['last_modified_date']),
+					'last_modified_time' => preg_replace('/^.* /','',$row['last_modified_date']),
+					'session_first_name' => $row['session_first_name'],
+					'session_last_name' => $row['session_last_name'],
+					'bookings' => array(),
 				);
-
-				if (empty($theatreTotals[$values['name']][$values['date']][$values['session_id']])) {
-					$theatreTotals[$theatreTitle][$values['date']][$values['session_id']] = $values['operation_duration'];
-				} else {
-					$theatreTotals[$theatreTitle][$values['date']][$values['session_id']] += $values['operation_duration'];
-				}
 			}
 
-			foreach ($theatres as $name => &$dates) {
-				foreach ($dates as $date => &$sessions) {
-					foreach ($sessions as &$session) {
-						$totalBookings = $theatreTotals[$name][$date][$session['sessionId']];
-						$session['timeAvailable'] = $session['sessionDuration'] - $totalBookings;
+			if ($row['operation_id']) {
+				$diary[$row['site_name']][$row['name']][$row['date']][$row['session_id']]['bookings'][] = array(
+					'patient' => strtoupper($row['last_name']).', '.$row['first_name'].' ('.Helper::getAge($row['dob']).')',
+					'hos_num' => $row['hos_num'],
+					'gender' => $row['gender'],
+					'operation_id' => $row['operation_id'],
+					'eye_id' => $row['eye_id'],
+					'anaesthetic_type' => $row['anaesthetic_type'],
+					'comments' => $row['comments'],
+					'admission_time' => $row['admission_time'],
+					'consultant_required' => $row['consultant_required'],
+					'overnight_stay' => $row['overnight_stay'],
+					'event_id' => $row['event_id'],
+					'duration' => $row['duration'],
+					'ward' => $row['ward'],
+					'confirmed' => $row['confirmed'],
+					'priority' => $row['priority'],
+					'created_user' => $row['cu_fn'].' '.$row['cu_ln'],
+					'last_modified_user' => $row['mu_fn'].' '.$row['mu_ln'],
+				);
+			}
+		}
+
+		foreach ($diary as $site_name => $theatres) {
+			foreach ($theatres as $theatre_name => $dates) {
+				foreach ($dates as $date => $sessions) {
+					foreach ($sessions as $session_id => $session) {
+						$totalBookings = 0;
+						foreach ($session['bookings'] as $booking) {
+							$totalBookings += $booking['duration'];
+						}
+						$diary[$site_name][$theatre_name][$date][$session_id]['available_time'] = $session['duration'] - $totalBookings;
 					}
 				}
 			}
 		}
 
-		return $theatres;
+		return $diary;
+	}
+	
+	public function getNextSessionDate($firmId) {
+		$date = Yii::app()->db->createCommand()
+			->select('date')
+			->from('ophtroperation_operation_session s')
+			->where('s.firm_id = :fid AND date >= CURDATE()', array(':fid' => $firmId))
+			->order('date ASC')
+			->limit(1)
+			->queryRow();
+
+		if (empty($date)) {
+			// No sessions, return today
+			return date('Y-m-d');
+		} else {
+			return $date['date'];
+		}
 	}
 
 	public function getBookingList() {
@@ -285,30 +304,21 @@ class TheatreDiaryController extends BaseController
 
 		return Yii::app()->db->createCommand()
 			->select('p.hos_num, c.first_name, c.last_name, p.dob, p.gender, s.date, w.code as ward_code, w.name as ward_name, f.pas_code as consultant, sp.ref_spec as subspecialty')
-			->from('booking b')
-			->join('session s','b.session_id = s.id')
-			->join('theatre t','s.theatre_id = t.id')
-			->join('session_firm_assignment sfa','sfa.session_id = s.id')
-			->join('firm f','f.id = sfa.firm_id')
+			->from('ophtroperation_operation_booking b')
+			->join('ophtroperation_operation_session s','b.session_id = s.id')
+			->join('ophtroperation_operation_theatre t','s.theatre_id = t.id')
+			->join('firm f','f.id = s.firm_id')
 			->join('service_subspecialty_assignment ssa','ssa.id = f.service_subspecialty_assignment_id')
 			->join('subspecialty sp','sp.id = ssa.subspecialty_id')
-			->join('element_operation eo','b.element_operation_id = eo.id')
+			->join('et_ophtroperation_operation eo','b.element_id = eo.id')
 			->join('event e','eo.event_id = e.id')
 			->join('episode ep','e.episode_id = ep.id')
 			->join('patient p','ep.patient_id = p.id')
 			->join('contact c',"c.parent_id = p.id and c.parent_class = 'Patient'")
-			->join('ward w','b.ward_id = w.id')
+			->join('ophtroperation_operation_ward w','b.ward_id = w.id')
 			->where($whereSql, $whereParams)
 			->order($order)
 			->queryAll();
-	}
-
-	public function get_month_num($month) {
-		for ($i=1;$i<=12;$i++) {
-			if (date('M',mktime(0,0,0,$i,1,date('Y'))) == $month) {
-				return $i;
-			}
-		}
 	}
 
 	/**
@@ -317,14 +327,13 @@ class TheatreDiaryController extends BaseController
 		*/
 	public function actionFilterFirms()
 	{
-		echo CHtml::tag('option', array('value'=>''),
-			CHtml::encode('All firms'), true);
+		echo CHtml::tag('option', array('value'=>''), CHtml::encode('All firms'), true);
+
 		if (!empty($_POST['subspecialty_id'])) {
 			$firms = $this->getFilteredFirms($_POST['subspecialty_id']);
 
 			foreach ($firms as $id => $name) {
-				echo CHtml::tag('option', array('value'=>$id),
-					CHtml::encode($name), true);
+				echo CHtml::tag('option', array('value'=>$id), CHtml::encode($name), true);
 			}
 		}
 	}
@@ -335,14 +344,13 @@ class TheatreDiaryController extends BaseController
 		*/
 	public function actionFilterTheatres()
 	{
-		echo CHtml::tag('option', array('value'=>''),
-			CHtml::encode('All theatres'), true);
+		echo CHtml::tag('option', array('value'=>''), CHtml::encode('All theatres'), true);
+
 		if (!empty($_POST['site_id'])) {
 			$theatres = $this->getFilteredTheatres($_POST['site_id']);
 
 			foreach ($theatres as $id => $name) {
-				echo CHtml::tag('option', array('value'=>$id),
-					CHtml::encode($name), true);
+				echo CHtml::tag('option', array('value'=>$id), CHtml::encode($name), true);
 			}
 		}
 	}
@@ -353,32 +361,16 @@ class TheatreDiaryController extends BaseController
 		*/
 	public function actionFilterWards()
 	{
-		echo CHtml::tag('option', array('value'=>''),
-			CHtml::encode('All wards'), true);
+		echo CHtml::tag('option', array('value'=>''), CHtml::encode('All wards'), true);
+
 		if (!empty($_POST['site_id'])) {
 			$wards = $this->getFilteredWards($_POST['site_id']);
 
 			foreach ($wards as $id => $name) {
-				echo CHtml::tag('option', array('value'=>$id),
-					CHtml::encode($name), true);
+				echo CHtml::tag('option', array('value'=>$id), CHtml::encode($name), true);
 			}
 		}
 	}
-
-	/*public function actionUpdateSessionComments()
-	{
-		if (Yii::app()->getRequest()->getIsAjaxRequest()) {
-			if (!empty($_POST['id']) && !empty($_POST['comments'])) {
-				$session = Session::model()->findByPk($_POST['id']);
-
-				if (!empty($session)) {
-					$session->comments = $_POST['comments'];
-					$session->save();
-				}
-			}
-			return true;
-		}
-	}*/
 
 	public function actionSaveSessions() {
 		if (Yii::app()->getRequest()->getIsAjaxRequest()) {
@@ -507,7 +499,7 @@ class TheatreDiaryController extends BaseController
 	{
 		$data = Yii::app()->db->createCommand()
 			->select('t.id, t.name')
-			->from('theatre t')
+			->from('ophtroperation_operation_theatre t')
 			->where('t.site_id = :id',
 				array(':id'=>$siteId))
 			->queryAll();

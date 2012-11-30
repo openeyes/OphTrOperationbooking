@@ -188,7 +188,7 @@
 			searchData = $('#theatre-filter').serialize();
 
 			$.ajax({
-				'url': '<?php echo Yii::app()->createUrl('theatre/search')?>',
+				'url': baseUrl+'/OphTrOperation/theatreDiary/search',
 				'type': 'POST',
 				'data': searchData,
 				'success': function(data) {
