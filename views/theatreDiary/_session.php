@@ -82,7 +82,7 @@
 						<span id="admitTime_ro_<?php echo $id?>_<?php echo $booking['operation_id']?>"><?php echo substr($booking['admission_time'], 0, 5)?></span>
 					</td>
 					<td class="td_sort" style="display: none;">
-						<img src="<?php echo $assetPath?>/diaryIcons/draggable_row.png" alt="draggable_row" width="25" height="28" />
+						<img src="<?php echo $assetPath?>/img/diaryIcons/draggable_row.png" alt="draggable_row" width="25" height="28" />
 					</td>
 					<td class="hospital"><?php echo CHtml::link($booking['hos_num'], Yii::app()->createUrl('/OphTrOperation/default/view/'.$booking['event_id']));
 					?></td>
