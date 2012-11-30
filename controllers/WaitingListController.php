@@ -17,19 +17,16 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class WaitingListController extends BaseEventTypeController
-{
+class WaitingListController extends BaseEventTypeController {
+	public $js = array(
+		'js/jquery.validate.min.js',
+		'js/additional-validators.js',
+	);
+
 	public function printActions() {
 		return array(
 			'printLetters',
 		);
-	}
-
-	public function init() {
-		Yii::app()->clientScript->registerScriptFile(Yii::app()->createUrl('js/jquery.validate.min.js'));
-		Yii::app()->clientScript->registerScriptFile(Yii::app()->createUrl('js/additional-validators.js'));
-
-		parent::init();
 	}
 
 	/**

@@ -1,6 +1,11 @@
 <?php
 
 class DefaultController extends BaseEventTypeController {
+	public $js = array(
+		'js/jquery.validate.min.js',
+		'js/additional-validators.js',
+	);
+
 	public $eventIssueCreate = 'Operation requires scheduling';
 
 	public function actionCreate() {
@@ -82,13 +87,6 @@ class DefaultController extends BaseEventTypeController {
 				'date' => $operation->minDate,
 				'errors' => $errors
 			), false, true);
-	}
-
-	public function init() {
-		Yii::app()->clientScript->registerScriptFile(Yii::app()->createUrl('js/jquery.validate.min.js'));
-		Yii::app()->clientScript->registerScriptFile(Yii::app()->createUrl('js/additional-validators.js'));
-
-		parent::init();
 	}
 
 	public function actionAdmissionLetter($id) {

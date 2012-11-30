@@ -20,13 +20,10 @@
 class TheatreDiaryController extends BaseEventTypeController
 {
 	public $layout='//layouts/main';
- 
-	public function init() {
-		Yii::app()->clientScript->registerScriptFile(Yii::app()->createUrl('js/jquery.validate.min.js'));
-		Yii::app()->clientScript->registerScriptFile(Yii::app()->createUrl('js/additional-validators.js'));
-
-		parent::init();
-	}
+	public $js = array(
+		'js/jquery.validate.min.js',
+		'js/additional-validators.js',
+	);
 
 	public function filters()
 	{

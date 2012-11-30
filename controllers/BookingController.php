@@ -1,6 +1,11 @@
 <?php
 
 class BookingController extends BaseEventTypeController {
+	public $js = array(
+		'js/jquery.validate.min.js',
+		'js/additional-validators.js',
+	);
+
 	public function actionCreate() {
 		if (isset($_POST['Booking'])) {
 			if (!$operation = Element_OphTrOperation_Operation::model()->findByPk(@$_POST['Booking']['element_id'])) {
@@ -151,12 +156,5 @@ class BookingController extends BaseEventTypeController {
 			false,
 			true
 		);
-	}
-
-	public function init() {
-		Yii::app()->clientScript->registerScriptFile(Yii::app()->createUrl('js/jquery.validate.min.js'));
-		Yii::app()->clientScript->registerScriptFile(Yii::app()->createUrl('js/additional-validators.js'));
-
-		parent::init();
 	}
 }
