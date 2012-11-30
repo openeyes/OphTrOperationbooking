@@ -609,20 +609,20 @@
 
 			// Add bookable field to indicate if session can be booked for this operation
 			$bookable = true;
-			if($this->anaesthetist_required && !$session['anaesthetist']) {
+			if ($this->anaesthetist_required && !$session['anaesthetist']) {
 				$bookable = false;
 				$session['bookable_reason'] = 'anaesthetist';
 			}
-			if($this->consultant_required && !$session['consultant']) {
+			if ($this->consultant_required && !$session['consultant']) {
 				$bookable = false;
 				$session['bookable_reason'] = 'consultant';
 			}
 			$paediatric = ($this->event->episode->patient->isChild());
-			if($paediatric && !$session['paediatric']) {
+			if ($paediatric && !$session['paediatric']) {
 				$bookable = false;
 				$session['bookable_reason'] = 'paediatric';
 			}
-			if($this->anaesthetic_type->name == 'GA' && !$session['general_anaesthetic']) {
+			if ($this->anaesthetic_type->name == 'GA' && !$session['general_anaesthetic']) {
 				$bookable = false;
 				$session['bookable_reason'] = 'general_anaesthetic';
 			}
@@ -635,7 +635,6 @@
 			if (!in_array($name, $names)) {
 				$names[] = $name;
 			}
-
 		}
 
 		if (count($results) > 1) {

@@ -103,14 +103,15 @@ class TheatreDiaryController extends BaseEventTypeController
 	public function actionPrintList() {
 		Audit::add('diary','print list',serialize($_POST));
 
-		$this->renderPartial('_print_list', array('bookings'=>$this->getBookingList()), false, true);
+		$this->renderPartial('_print_list', array('bookings'=>$this->getBookingList(), 'assetPath'=>Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.'.$this->getModule()->name.'.assets'), false, -1, YII_DEBUG)));
 	}
 
 	public function actionSearch()
 	{
 		Audit::add('diary','search',serialize($_POST));
 
-		$this->renderPartial('_list', array('diary' => $this->getDiary()), false, true);
+		$this->renderPartial('_list', array('diary' => $this->getDiary(), 'assetPath'=>Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.'.
+		$this->getModule()->name.'.assets'), false, -1, YII_DEBUG)), false, true);
 	}
 
 	public function getDiary() {
@@ -225,7 +226,7 @@ class TheatreDiaryController extends BaseEventTypeController
 					'hos_num' => $row['hos_num'],
 					'gender' => $row['gender'],
 					'operation_id' => $row['operation_id'],
-					'eye_id' => $row['eye_id'],
+					'eye' => Eye::model()->findByPk($row['eye_id'])->name,
 					'anaesthetic_type' => $row['anaesthetic_type'],
 					'comments' => $row['comments'],
 					'admission_time' => $row['admission_time'],
@@ -238,6 +239,7 @@ class TheatreDiaryController extends BaseEventTypeController
 					'priority' => $row['priority'],
 					'created_user' => $row['cu_fn'].' '.$row['cu_ln'],
 					'last_modified_user' => $row['mu_fn'].' '.$row['mu_ln'],
+					'procedures' => Element_OphTrOperation_Operation::model()->findByPk($row['operation_id'])->getProceduresCommaSeparated(),
 				);
 			}
 		}

@@ -36,7 +36,7 @@ if (empty($diary)) {?>
 			<h3 class="theatre"><strong><?php echo $theatre_name?> (<?php echo $site_name?>)</strong></h3>
 			<?php foreach ($dates as $date => $sessions) {
 				foreach ($sessions as $session_id => $session) {
-					$this->renderPartial('_session',array('id' => $session_id, 'session'=>$session, 'bookings'=>$session['bookings']));
+					$this->renderPartial('_session',array('id' => $session_id, 'session'=>$session, 'bookings'=>$session['bookings'], 'assetPath'=>$assetPath));
 				}
 			}
 		}

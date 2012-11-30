@@ -82,9 +82,9 @@
 						<span id="admitTime_ro_<?php echo $id?>_<?php echo $booking['operation_id']?>"><?php echo substr($booking['admission_time'], 0, 5)?></span>
 					</td>
 					<td class="td_sort" style="display: none;">
-						<img src="<?php echo Yii::app()->createUrl('img/_elements/icons/draggable_row.png')?>" alt="draggable_row" width="25" height="28" />
+						<img src="<?php echo $assetPath?>/diaryIcons/draggable_row.png" alt="draggable_row" width="25" height="28" />
 					</td>
-					<td class="hospital"><?php echo CHtml::link($booking['hos_num'], Yii::app()->createUrl('/patient/event/' . $booking['event_id']));
+					<td class="hospital"><?php echo CHtml::link($booking['hos_num'], Yii::app()->createUrl('/OphTrOperation/default/view/'.$booking['event_id']));
 					?></td>
 					<td class="confirm"><input id="confirm_<?php echo $booking['operation_id']?>" type="checkbox" value="1" name="confirm_<?php echo $booking['operation_id']?>" disabled="disabled" <?php if ($booking['confirmed']) {?>checked="checked" <?php }?>/></td>
 					<td class="patient leftAlign"><?php echo $booking['patient']?></td>
@@ -93,34 +93,22 @@
 					<td class="anesthetic"><?php echo $booking['anaesthetic_type'] ?></td>
 					<td class="ward"><?php echo $booking['ward']; ?></td>
 					<td class="alerts">
-					<?php
-		if ($booking['gender'] == 'M') {
-?>
-<img src="<?php echo Yii::app()->createUrl('img/_elements/icons/alerts/male.png')?>" alt="male" title="male" width="17" height="17" />
-<?php
-		} else {
-?>
-<img src="<?php echo Yii::app()->createUrl('img/_elements/icons/alerts/female.png')?>" alt="female" title="female" width="17" height="17" />
-<?php
-		}
-
-		?><img src="<?php echo Yii::app()->createUrl('img/_elements/icons/alerts/confirmed.png')?>" alt="confirmed" width="17" height="17" class="confirmed" title="confirmed"<?php if (!$booking['confirmed']) {?> style="display: none;"<?php }?>><?php
-
-		if (!empty($booking['operationComments']) && preg_match('/\w/', $booking['operationComments'])) {
-				?><img src="<?php echo Yii::app()->createUrl('img/_elements/icons/alerts/comment.png')?>" alt="<?php echo htmlentities($booking['operationComments']) ?>" title="<?php echo htmlentities($booking['operationComments']) ?>" width="17" height="17" />
-<?php
-		}
-
-		if (!empty($booking['overnightStay'])) {
-				?><img src="<?php echo Yii::app()->createUrl('img/_elements/icons/alerts/overnight.png')?>" alt="Overnight stay required" title="Overnight stay required" width="17" height="17" />
-<?php
-		}
-
-		if (!empty($booking['consultantRequired'])) {
-				?><img src="<?php echo Yii::app()->createUrl('img/_elements/icons/alerts/consultant.png')?>" alt="Consultant required" title="Consultant required" width="17" height="17" />
-<?php
-		}
-		?><img src="<?php echo Yii::app()->createUrl('img/_elements/icons/alerts/booked_user.png')?>" alt="Created by: <?php echo $booking['created_user']."\n"?>Last modified by: <?php echo $booking['last_modified_user']?>" title="Created by: <?php echo $booking['created_user']."\n"?>Last modified by: <?php echo $booking['last_modified_user']?>" width="17" height="17" /><?php
+						<?php if ($booking['gender'] == 'M') {?>
+							<img src="<?php echo $assetPath?>img/diaryIcons/male.png" alt="male" title="male" width="17" height="17" />
+						<?php } else {?>
+							<img src="<?php echo $assetPath?>/img/diaryIcons/female.png" alt="female" title="female" width="17" height="17" />
+						<?php }?>
+						<img src="<?php echo $assetPath?>/img/diaryIcons/confirmed.png" alt="confirmed" width="17" height="17" class="confirmed" title="confirmed"<?php if (!$booking['confirmed']) {?> style="display: none;"<?php }?>>
+						<?php if (!empty($booking['operationComments']) && preg_match('/\w/', $booking['operationComments'])) {?>
+							<img src="<?php echo $assetPath?>/img/diaryIcons/comment.png" alt="<?php echo htmlentities($booking['operationComments']) ?>" title="<?php echo htmlentities($booking['operationComments']) ?>" width="17" height="17" />
+						<?php }?>
+						<?php if (!empty($booking['overnightStay'])) {?>
+							<img src="<?php echo $assetPath?>/img/diaryIcons/overnight.png" alt="Overnight stay required" title="Overnight stay required" width="17" height="17" />
+						<?php }?>
+						<?php if (!empty($booking['consultantRequired'])) {?>
+							<img src="<?php echo $assetPath?>/img/diaryIcons/consultant.png" alt="Consultant required" title="Consultant required" width="17" height="17" />
+						<?php }?>
+						<img src="<?php echo $assetPath?>/img/diaryIcons/booked_user.png" alt="Created by: <?php echo $booking['created_user']."\n"?>Last modified by: <?php echo $booking['last_modified_user']?>" title="Created by: <?php echo $booking['created_user']."\n"?>Last modified by: <?php echo $booking['last_modified_user']?>" width="17" height="17" /><?php
 ?>
 					</td>
 				</tr>
