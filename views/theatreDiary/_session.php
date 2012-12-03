@@ -1,14 +1,20 @@
-<div class="infoBox" id="infoBox_<?php echo $id?>" style="display: none;">
+<div class="infoBox diaryViewMode" id="infoBox_<?php echo $id?>" style="display: none;">
 	<strong>Session updated!</strong>
 </div>
 
-<div class="action_options" id="action_options_<?php echo $id?>" style="float: right;">
+<div class="action_options diaryViewMode" data-id="<?php echo $id?>" style="float: right;">
 	<img id="loader_<?php echo $id?>" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="margin-right: 5px; margin-bottom: 4px; display: none;" />
-	<div class="session_options">
+	<div class="session_options diaryViewMode" data-id="<?php echo $id?>">
 		<span class="aBtn_inactive">View</span>
 		<span class="aBtn edit-event">
-			<a href="#" id="edit-sessions_<?php echo $id?>" class="edit-sessions">Edit</a>
+			<a href="#" rel="<?php echo $id?>" class="edit-session">Edit</a>
 		</span>
+	</div>
+	<div class="session_options diaryEditMode" data-id="<?php echo $id?>" style="display: none;">
+		<span class="aBtn view-event">
+			<a href="#" rel="<?php echo $id?>" class="view-session">View</a>
+		</span>
+		<span class="aBtn_inactive edit-event">Edit</span>
 	</div>
 </div>
 <h3 class="sessionDetails">
@@ -38,7 +44,7 @@
 <div class="theatre-sessions whiteBox clearfix">
 	<div style="float: right;">
 		<?php if (Yii::app()->user->checkAccess('purplerinse')) {?>
-			<div class="purpleUser" id="purple_rinse_<?php echo $id?>" style="display:none; width:207px;">
+			<div class="purpleUser diaryEditMode" data-id="<?php echo $id?>" style="display:none; width:207px;">
 				<input type="checkbox" id="consultant_<?php echo $id?>" name="consultant_<?php echo $id?>" value="1"<?php if ($session['consultant']){?> checked="checked"<?php }?> /> Consultant present<br/>
 				<input type="checkbox" id="paediatric_<?php echo $id?>" name="paediatric_<?php echo $id?>" value="1"<?php if ($session['paediatric']){?> checked="checked"<?php }?> /> Paediatric<br/>
 				<input type="checkbox" id="anaesthetic_<?php echo $id?>" name="anaesthetic_<?php echo $id?>" value="1"<?php if ($session['anaesthetist']){?> checked="checked"<?php }?> /> Anaesthetist present<br/>
@@ -46,16 +52,16 @@
 				<input type="checkbox" id="available_<?php echo $id?>" name="available_<?php echo $id?>" value="1"<?php if ($session['available']){?> checked="checked"<?php }?> /> Session available<br/>
 			</div>
 		<?php }else{?>
-			<input type="hidden" id="consultant_<?php echo $id?>" name="consultant_<?php echo $id?>" value="<?php if ($session['consultant']){ echo '1';} else { echo '0';}?>" />
-			<input type="hidden" id="paediatric_<?php echo $id?>" name="paediatric_<?php echo $id?>" value="<?php if ($session['paediatric']){ echo '1';} else { echo '0';}?>" />
-			<input type="hidden" id="anaesthetic_<?php echo $id?>" name="anaesthetic_<?php echo $id?>" value="<?php if ($session['anaesthetist']){ echo '1';} else { echo '0';}?>" />
-			<input type="hidden" id="available_<?php echo $id?>" name="available_<?php echo $id?>" value="<?php if ($session['available']){ echo '1';} else { echo '0';}?>" />
+			<input type="hidden" id="consultant_<?php echo $id?>" name="consultant_<?php echo $id?>" value="<?php echo $session['consultant']?>" />
+			<input type="hidden" id="paediatric_<?php echo $id?>" name="paediatric_<?php echo $id?>" value="<?php echo $session['paediatric']?>" />
+			<input type="hidden" id="anaesthetic_<?php echo $id?>" name="anaesthetic_<?php echo $id?>" value="<?php echo $session['anaesthetist']?>" />
+			<input type="hidden" id="available_<?php echo $id?>" name="available_<?php echo $id?>" value="<?php echo $session['available']?>" />
 		<?php }?>
 		<div class="sessionComments" style="display:block; width:205px;">
 			<form>
 				<h4>Session Comments</h4>
-				<textarea style="display: none;" rows="2" name="comments<?php echo $id ?>" id="comments<?php echo $id ?>"><?php echo $session['comments'] ?></textarea>
-				<div id="comments_ro_<?php echo $id?>" title="Modified on <?php echo Helper::convertMySQL2NHS($session['last_modified_date'])?> at <?php echo $session['last_modified_time']?> by <?php echo $session['session_first_name']?> <?php echo $session['session_last_name']?>"><?php echo strip_tags($session['comments'])?></div>
+				<textarea style="display: none;" rows="2" name="comments<?php echo $id?>" class="comments diaryEditMode" data-id="<?php echo $id?>"><?php echo $session['comments']?></textarea>
+				<div class="comments_ro diaryViewMode" data-id="<?php echo $id?>" title="Modified on <?php echo Helper::convertMySQL2NHS($session['last_modified_date'])?> at <?php echo $session['last_modified_time']?> by <?php echo $session['session_first_name']?> <?php echo $session['session_last_name']?>"><?php echo strip_tags($session['comments'])?></div>
 			</form>
 		</div>
 	</div>
@@ -63,7 +69,7 @@
 		<thead id="thead_<?php echo $id?>">
 			<tr>
 				<th>Admit time</th>
-				<th class="th_sort" style="display: none;">Sort</th>
+				<th class="th_sort diaryEditMode" data-id="<?php echo $id?>" style="display: none;">Sort</th>
 				<th>Hospital #</th>
 				<th>Confirmed</th>
 				<th>Patient (Age)</th>
@@ -78,10 +84,10 @@
 			<?php foreach ($bookings as $booking) {?>
 				<tr id="oprow_<?php echo $booking['operation_id'] ?>">
 					<td class="session">
-						<input style="display: none;" type="text" name="admitTime_<?php echo $booking['operation_id']?>" id="admitTime_<?php echo $id?>_<?php echo $booking['operation_id'] ?>" value="<?php echo substr($booking['admission_time'], 0, 5)?>" size="4">
-						<span id="admitTime_ro_<?php echo $id?>_<?php echo $booking['operation_id']?>"><?php echo substr($booking['admission_time'], 0, 5)?></span>
+						<input style="display: none;" type="text" class="admitTime diaryEditMode" name="admitTime_<?php echo $booking['operation_id']?>" data-id="<?php echo $id?>" data-operation-id="<?php echo $booking['operation_id']?>" value="<?php echo $booking['admission_time']?>" size="4">
+						<span class="admitTime_ro diaryViewMode" data-id="<?php echo $id?>" data-operation-id="<?php echo $booking['operation_id']?>"><?php echo substr($booking['admission_time'], 0, 5)?></span>
 					</td>
-					<td class="td_sort" style="display: none;">
+					<td class="td_sort diaryEditMode" data-id="<?php echo $id?>" style="display: none;">
 						<img src="<?php echo $assetPath?>/img/diaryIcons/draggable_row.png" alt="draggable_row" width="25" height="28" />
 					</td>
 					<td class="hospital"><?php echo CHtml::link($booking['hos_num'], Yii::app()->createUrl('/OphTrOperation/default/view/'.$booking['event_id']));
@@ -94,7 +100,7 @@
 					<td class="ward"><?php echo $booking['ward']; ?></td>
 					<td class="alerts">
 						<?php if ($booking['gender'] == 'M') {?>
-							<img src="<?php echo $assetPath?>img/diaryIcons/male.png" alt="male" title="male" width="17" height="17" />
+							<img src="<?php echo $assetPath?>/img/diaryIcons/male.png" alt="male" title="male" width="17" height="17" />
 						<?php } else {?>
 							<img src="<?php echo $assetPath?>/img/diaryIcons/female.png" alt="female" title="female" width="17" height="17" />
 						<?php }?>
@@ -108,8 +114,7 @@
 						<?php if (!$booking['consultant_required']) {?>
 							<img src="<?php echo $assetPath?>/img/diaryIcons/consultant.png" alt="Consultant required" title="Consultant required" width="17" height="17" />
 						<?php }?>
-						<img src="<?php echo $assetPath?>/img/diaryIcons/booked_user.png" alt="Created by: <?php echo $booking['created_user']."\n"?>Last modified by: <?php echo $booking['last_modified_user']?>" title="Created by: <?php echo $booking['created_user']."\n"?>Last modified by: <?php echo $booking['last_modified_user']?>" width="17" height="17" /><?php
-?>
+						<img src="<?php echo $assetPath?>/img/diaryIcons/booked_user.png" alt="Created by: <?php echo $booking['created_user']."\n"?>Last modified by: <?php echo $booking['last_modified_user']?>" title="Created by: <?php echo $booking['created_user']."\n"?>Last modified by: <?php echo $booking['last_modified_user']?>" width="17" height="17" />
 					</td>
 				</tr>
 			<?php }?>
@@ -135,4 +140,9 @@
 			</tr>
 		</tfoot>
 	</table>
+	<div style="display: none;" data-id="<?php echo $id?>" class="classy_buttons diaryEditMode">
+		<img id="loader2_<?php echo $id?>" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="margin-right: 2px; display: none" />
+		<button type="submit" class="classy green mini" id="btn_edit_session_save_<?php echo $id?>"><span class="button-span button-span-green">Save changes to session</span></button>
+		<button type="submit" class="classy red mini" id="btn_edit_session_cancel_<?php echo $id?>"><span class="button-span button-span-red">Cancel</span></button>
+	</div>
 </div>

@@ -135,5 +135,9 @@ class OphTrOperation_Operation_Theatre extends BaseActiveRecord
 
 		return $sessions;
 	}
+
+	public function getNameWithSite() {
+		return $this->name . ' (' . $this->site->name . ')';
+	}
 }
 ?>

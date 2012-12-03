@@ -93,8 +93,7 @@ class TheatreDiaryController extends BaseEventTypeController
 		$this->render('index', array('wards'=>$wards, 'theatres'=>$theatres));
 	}
 
-	public function actionPrintDiary()
-	{
+	public function actionPrintDiary() {
 		Audit::add('diary','print',serialize($_POST));
 
 		Yii::app()->getClientScript()->registerCssFile(Yii::app()->createUrl(
@@ -122,8 +121,7 @@ class TheatreDiaryController extends BaseEventTypeController
 	{
 		Audit::add('diary','search',serialize($_POST));
 
-		$this->renderPartial('_list', array('diary' => $this->getDiary(), 'assetPath'=>Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.'.
-		$this->getModule()->name.'.assets'), false, -1, YII_DEBUG)), false, true);
+		$this->renderPartial('_list', array('diary' => $this->getDiary(), 'assetPath'=>Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.OphTrOperation.assets'), false, -1, YII_DEBUG)), false, true);
 	}
 
 	public function getDiary() {
@@ -610,12 +608,10 @@ class TheatreDiaryController extends BaseEventTypeController
 		die("0");
 	}
 
-	public function actionSetFilter() {
-		$so = Yii::app()->session['theatre_searchoptions'];
+	public function actionSetDiaryFilter() {
 		foreach ($_POST as $key => $value) {
-			$so[$key] = $value;
+			YiiSession::set('theatre_searchoptions',$key,$value);
 		}
-		Yii::app()->session['theatre_searchoptions'] = $so;
 	}
 
 	public function actionGetSessionTimestamps() {

@@ -21,7 +21,7 @@ button.classy > a { color: #fff; }
 #operation table tbody td.full { background:#427633; font-size:16px; }
 #operation table tbody td.closed { background:#828282; font-size:16px; }
 #operation table tbody td.selected_date { background:#3665ff; font-size:16px; color:#fff; }
-#operation table tbody td.outside_rtt{ background-image: url(../img/_elements/icons/RTT-warning.png); background-position: bottom right; background-repeat: no-repeat; }
+#operation table tbody td.outside_rtt{ background-image: url(../img/bookingIcons/RTT-warning.png); background-position: bottom right; background-repeat: no-repeat; }
 #operation table tbody td.inthepast { background:#828282; font-size:16px; }
 
 /* hovers */
@@ -36,7 +36,7 @@ button.classy > a { color: #fff; }
 #operation #key #full       .color_box { background:#427633; }
 #operation #key #closed     .color_box { background:#828282; }
 #operation #key #selected_date  .color_box { background:#3665ff; }
-#operation #key #outside_rtt  .color_box { background:transparent url(../img/_elements/icons/RTT-warning_tiny.png) top left no-repeat; }
+#operation #key #outside_rtt  .color_box { background:transparent url(../img/bookingIcons/RTT-warning_tiny.png) top left no-repeat; }
 
 /* theatres */
 #theatres { margin-top:10px; }
@@ -72,13 +72,13 @@ button.classy > a { color: #fff; }
 .session_options .aBtn > a:active { border:none; color:#fff; background:#2546b1; }
 
 /* aBtn SPRITES 11px */
-.aBtn a.sprite.showhide > span { display:inline-block; width:11px; height:11px; background:transparent url(../img/_elements/icons/_sprites/showhide_icon.png) no-repeat top left; }
+.aBtn a.sprite.showhide > span { display:inline-block; width:11px; height:11px; background:transparent url(../../../img/_elements/icons/_sprites/showhide_icon.png) no-repeat top left; }
 .aBtn a.sprite.showhide > .hide { background-position: top left; }
 .aBtn a:hover.sprite.showhide > .hide { background-position: top right; }
 .aBtn a.sprite.showhide > .show { background-position: bottom left; }
 .aBtn a:hover.sprite.showhide > .show { background-position: bottom right; }
 
-.aBtn a.sprite.showhide2 > span { display:inline-block; width:11px; height:11px; background:transparent url(../img/_elements/icons/_sprites/showhide_icon.png) no-repeat top left; }
+.aBtn a.sprite.showhide2 > span { display:inline-block; width:11px; height:11px; background:transparent url(../../../img/_elements/icons/_sprites/showhide_icon.png) no-repeat top left; }
 .aBtn a.sprite.showhide2 > .hide { background-position: top left; }
 .aBtn a:hover.sprite.showhide2 > .hide { background-position: top right; }
 .aBtn a.sprite.showhide2 > .show { background-position: bottom left; }
@@ -96,7 +96,7 @@ button.classy > a { color: #fff; }
 #theatre_display #theatreList { margin-top:15px; }
 #theatreList > div.fullBox { background:#888; color: #fff; padding:5px 10px; }
 #theatreList h3.theatre { background:none; color:#333; font-weight:normal; padding: 6px 10px 5px 10px;  }
-#theatreList h3.sessionDetails { display:inline-block; font-size:13px; color:#444; background: #fafafa url(../img/_elements/gradients/bg_tab_grey.png) bottom left repeat-x; margin:0 0 0 10px; padding:5px 10px 5px 10px; -webkit-border-top-left-radius: 5px; -webkit-border-top-right-radius: 5px; -moz-border-radius-topleft: 5px; -moz-border-radius-topright: 5px; border-top-left-radius: 5px; border-top-right-radius: 5px;}
+#theatreList h3.sessionDetails { display:inline-block; font-size:13px; color:#444; background: #fafafa url(../../../img/_elements/gradients/bg_tab_grey.png) bottom left repeat-x; margin:0 0 0 10px; padding:5px 10px 5px 10px; -webkit-border-top-left-radius: 5px; -webkit-border-top-right-radius: 5px; -moz-border-radius-topleft: 5px; -moz-border-radius-topright: 5px; border-top-left-radius: 5px; border-top-right-radius: 5px;}
 #theatreList .theatre-sessions { margin-bottom:15px; }
 
 /* Theatre sesssion diary data - based on grid-view class */

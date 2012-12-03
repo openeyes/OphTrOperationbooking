@@ -27,9 +27,6 @@
 if (empty($diary)) {?>
 	<p class="fullBox"><strong>No theatre schedules match your search criteria.</strong></p>
 <?php }else{ $panels = array()?>
-	<span style="margin-left: 10px; color: #f00; display: none;" id="updated-flash">
-		Session updated!
-	</span>
 	<?php
 	foreach ($diary as $site_name => $theatres) {
 		foreach ($theatres as $theatre_name => $dates) {?>
@@ -182,45 +179,6 @@ if (empty($diary)) {?>
 
 	var selected_tbody_id = null;
 
-	$(this).undelegate('a.edit-sessions','click').delegate('a.edit-sessions','click',function() {
-		cancel_edit();
-
-		$('div.infoBox').hide();
-
-		selected_tbody_id = $(this).attr('id').replace(/^edit-sessions_/,'');
-
-		$('#updated-flash').hide();
-		$('div[id="comments_ro_'+selected_tbody_id+'"]').hide();
-		$('textarea[name="comments'+selected_tbody_id+'"]').show();
-		$('span[id^="admitTime_ro_'+selected_tbody_id+'_"]').hide();
-		$('input[id^="admitTime_'+selected_tbody_id+'_"]').show();
-		enable_sort(selected_tbody_id);
-		$('div.action_options').map(function() {
-			var html = $(this).children('div.session_options').html();
-			if (m = html.match(/edit-sessions_([0-9]+)/)) {
-				$(this).children('div.session_options').html('<span class="aBtn_inactive">View</span><span class="aBtn edit-event"><a class="edit-sessions" id="edit-sessions_'+m[1]+'" href="#">Edit</a></span>');
-			}
-			if (m = html.match(/view-sessions_([0-9]+)/)) {
-				$(this).children('div.session_options').html('<span class="aBtn_inactive">View</span><span class="aBtn edit-event"><a class="edit-sessions" id="edit-sessions_'+m[1]+'" href="#">Edit</a></span>');
-			}
-		});
-		$('div.action_options').hide();
-		$('#action_options_'+selected_tbody_id).show();
-		$('#btn_print').hide();
-		$('tbody[id="tbody_'+selected_tbody_id+'"] td.confirm input[name^="confirm_"]').attr('disabled',false);
-		// Save original state
-		$('tbody[id="tbody_'+selected_tbody_id+'"] td.confirm input[name^="confirm_"]').each(function(){
-			$(this).attr('data-ischecked', $(this).is(':checked'));
-		});
-		$('tbody[id="tbody_'+selected_tbody_id+'"] td.td_sort').show();
-		$('thead[id="thead_'+selected_tbody_id+'"] th.th_sort').show();
-		$('#buttons_'+selected_tbody_id).show();
-		$('div[id="purple_rinse_'+selected_tbody_id+'"]').show();
-		$('th.footer').attr('colspan','10');
-		$('#action_options_'+selected_tbody_id).children('div.session_options').html('<span class="aBtn"><a href="#" id="view-sessions_'+selected_tbody_id+'" class="view-sessions">View</a></span><span class="aBtn_inactive edit-event">Edit</span>');
-		return false;
-	});
-
 	$(this).undelegate('a.view-sessions','click').delegate('a.view-sessions','click',function() {
 		cancel_edit();
 		return false;
@@ -239,31 +197,6 @@ if (empty($diary)) {?>
 		cancel_edit();
 		enableButtons();
 		$('#loader2_'+id).hide();
-	}
-
-	function cancel_edit() {
-		if (selected_tbody_id !== null) {
-			var tbody_id = "tbody_"+selected_tbody_id;
-
-			if (table_states[tbody_id] !== undefined) {
-				for (x in table_states[tbody_id]) {
-					$('#'+table_states[tbody_id][x]).appendTo('#'+tbody_id);
-				}
-			}
-
-			if (purple_states[selected_tbody_id] !== undefined) {
-				$('#consultant_'+selected_tbody_id).attr('checked',purple_states[selected_tbody_id]["consultant"]);
-				$('#paediatric_'+selected_tbody_id).attr('checked',purple_states[selected_tbody_id]["paediatric"]);
-				$('#anaesthetic_'+selected_tbody_id).attr('checked',purple_states[selected_tbody_id]["anaesthetic"]);
-				$('#available_'+selected_tbody_id).attr('checked',purple_states[selected_tbody_id]["available"]);
-				$('#general_anaesthetic_'+selected_tbody_id).attr('checked',purple_states[selected_tbody_id]["general_anaesthetic"]);
-			}
-
-			view_mode();
-
-			$('div[id^="buttons_"]').hide();
-			$('th.footer').attr('colspan','9');
-		}
 	}
 
 	function view_mode() {

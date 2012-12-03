@@ -109,7 +109,7 @@
 			Originally scheduled for <strong><?php echo $booking->NHSDate('session_date'); ?>,
 			<?php echo date('H:i',strtotime($booking->session_start_time)); ?> -
 			<?php echo date('H:i',strtotime($booking->session_end_time)); ?></strong>,
-			in <strong><?php echo $booking->theatre->NameWithSite; ?></strong>.
+			in <strong><?php echo $booking->theatre->nameWithSite; ?></strong>.
 			Cancelled on <?php echo $booking->NHSDate('cancellation_date'); ?>
 			by <strong><?php echo $booking->user->FullName; ?></strong>
 			due to <?php echo $booking->cancellationReasonWithComment; ?>

@@ -126,8 +126,8 @@
 		<div class="printable" id="printable"></div>
 	</div>
 	<div style="text-align:right; margin-right:10px;">
-		<button type="submit" class="classy blue tall" id="btn_print_diary"><span class="button-span button-span-blue">Print</span></button>
-		<button type="submit" class="classy blue tall" id="btn_print_diary_list"><span class="button-span button-span-blue">Print list</span></button>
+		<button type="submit" class="classy blue tall diaryViewMode" id="btn_print_diary"><span class="button-span button-span-blue">Print</span></button>
+		<button type="submit" class="classy blue tall diaryViewMode" id="btn_print_diary_list"><span class="button-span button-span-blue">Print list</span></button>
 	</div>
 </div>
 <div id="iframeprintholder" style="display: none;"></div>
@@ -135,106 +135,8 @@
 	var searchData;
 
 	$(document).ready(function() {
-		return getList();
+		return getDiary();
 	});
-	$('#theatre-filter button[type="submit"]').click(function() {
-		return getList();
-	});
-
-	$(document).ready(function() {
-		$("#btn_print_diary").click(function() {
-			printElem('printDiary',
-			{
-				pageTitle:'openeyes printout',
-				printBodyOptions:{styleToAdd:'width:auto !important; margin: 0.75em !important;',classNameToAdd : 'openeyesPrintout'},overrideElementCSS:['css/style.css',{href:'css/style.css',media:'print'}]
-			});
-		});
-
-		$('#btn_print_diary_list').click(function() {
-			if ($('#site-id').val() == '' || $('#subspecialty-id').val() == '' || $('#date-start').val() == '' || $('#date-end').val() == '') {
-				alert('To print the booking list you must select a site, a subspecialty and a date range.');
-				scrollTo(0,0);
-				return false;
-			}
-
-			printElem('printList',
-			{
-				pageTitle:'openeyes printout',
-				printBodyOptions:{styleToAdd:'width:auto !important; margin: 0.75em !important;',classNameToAdd : 'openeyesPrintout'},overrideElementCSS:['css/style.css',{href:'css/style.css',media:'print'}]
-			});
-		});
-	});
-
-	function printElem(method,options){
-		$.ajax({
-			'url': baseUrl+'/OphTrOperation/theatreDiary/'+method,
-			'type': 'POST',
-			'data': searchData,
-			'success': function(data) {
-				$('#printable').html(data);
-				$('#printable').printElement(options);
-				return false;
-			}
-		});
-	}
-
-	function getList() {
-		var button = $('#theatre-filter button[type="submit"]');
-
-		if (!button.hasClass('inactive')) {
-			disableButtons();
-			$('#theatreList').html('<h3 class="theatre firstTheatre">Please wait...</h3>');
-
-			searchData = $('#theatre-filter').serialize();
-
-			$.ajax({
-				'url': baseUrl+'/OphTrOperation/theatreDiary/search',
-				'type': 'POST',
-				'data': searchData,
-				'success': function(data) {
-					$('#theatreList').html(data);
-					enableButtons();
-					return false;
-				}
-			});
-		}
-
-		return false;
-	}
-
-	$('input[name=emergency_list]').change(function() {
-		if ($(this).is(':checked')) {
-			$('#site-id').attr("disabled", true);
-			$('#subspecialty-id').attr("disabled", true);
-			$('#theatre-id').attr("disabled", true);
-			$('#firm-id').attr("disabled", true);
-			$('#ward-id').attr("disabled", true);
-		} else {
-			$('#site-id').attr("disabled", false);
-			$('#subspecialty-id').attr("disabled", false);
-			$('#theatre-id').attr("disabled", false);
-			$('#firm-id').attr("disabled", false);
-			$('#ward-id').attr("disabled", false);
-		}
-	});
-	function loadTheatresAndWards(siteId) {
-		$.ajax({
-			'type': 'POST',
-			'data': {'site_id': siteId},
-			'url': '<?php echo Yii::app()->createUrl('theatre/filterTheatres')?>',
-			'success':function(data) {
-				$('#theatre-id').html(data);
-				$.ajax({
-					'type': 'POST',
-					'data': {'site_id': siteId},
-					'url': '<?php echo Yii::app()->createUrl('theatre/filterWards')?>',
-					'success':function(data) {
-						$('#ward-id').html(data);
-					}
-				});
-			}
-		});
-	}
 
 	$(this).undelegate('button[id^="btn_save_"]','click').delegate('button[id^="btn_save_"]','click',function() {
 		if (!$(this).hasClass('inactive')) {
@@ -441,7 +343,7 @@
 		$('#date-start').datepicker('setDate', format_date(today));
 		$('#date-end').datepicker('setDate', format_date(today));
 
-		setFilter({'date-filter':'today','date-start':$('#date-start').val(),'date-end':$('#date-end').val()});
+		setDiaryFilter({'date-filter':'today','date-start':$('#date-start').val(),'date-end':$('#date-end').val()});
 
 		return true;
 	});
@@ -454,7 +356,7 @@
 		$('#date-start').datepicker('setDate', format_date(today));
 		$('#date-end').datepicker('setDate', format_date(returnDateWithInterval(today, 6)));
 		
-		setFilter({'date-filter':'week','date-start':$('#date-start').val(),'date-end':$('#date-end').val()});
+		setDiaryFilter({'date-filter':'week','date-start':$('#date-start').val(),'date-end':$('#date-end').val()});
 		
 		return true;
 	});
@@ -467,14 +369,14 @@
 		$('#date-start').val(format_date(today));
 		$('#date-end').val(format_date(returnDateWithInterval(today, 29)));
 		
-		setFilter({'date-filter':'month','date-start':$('#date-start').val(),'date-end':$('#date-end').val()});
+		setDiaryFilter({'date-filter':'month','date-start':$('#date-start').val(),'date-end':$('#date-end').val()});
 		
 		return true;
 	});
 	
 	$('#date-filter_3').click(function() {
 
-		setFilter({'date-filter':'custom','date-start':$('#date-start').val(),'date-end':$('#date-end').val()});
+		setDiaryFilter({'date-filter':'custom','date-start':$('#date-start').val(),'date-end':$('#date-end').val()});
 		
 		return true;
 	});
@@ -496,7 +398,7 @@
 			$('#date-start').datepicker('setDate', format_date(returnDateWithIntervalFromString(sd, -7)));
 		}
 
-		setFilter({'date-filter':''});
+		setDiaryFilter({'date-filter':''});
 		$('input[type="radio"]').attr('checked',true);
 		$('#date-start').trigger('change');
 		$('#date-end').trigger('change');
@@ -529,7 +431,7 @@
 			}
 		}
 
-		setFilter({'date-filter':''});
+		setDiaryFilter({'date-filter':''});
 		$('input[type="radio"]').attr('checked',true);
 		$('#date-start').trigger('change');
 		$('#date-end').trigger('change');
@@ -581,70 +483,27 @@
 		return str.charAt(0).toUpperCase() + str.substr(1);
 	}
 
-	function setFilter(values) {
-		var data = '';
-		var load_theatres_and_wards = false;
-
-		for (var i in values) {
-			if (data.length >0) {
-				data += "&";
-			}
-			data += i + "=" + values[i];
-
-			var field = i;
-			var value = values[i];
-		}
-
-		$.ajax({
-			'url': '<?php echo Yii::app()->createUrl('theatre/setFilter')?>',
-			'type': 'POST',
-			'data': data,
-			'success': function(html) {
-				if (field == 'site-id') {
-					loadTheatresAndWards(value);
-				} else if (field == 'subspecialty-id') {
-					$.ajax({
-						'url': '<?php echo Yii::app()->createUrl('theatre/filterFirms')?>',
-						'type': 'POST',
-						'data': 'subspecialty_id='+$('#subspecialty-id').val(),
-						'success': function(data) {
-							if ($('#subspecialty-id').val() != '') {
-								$('#firm-id').attr('disabled', false);
-								$('#firm-id').html(data);
-							} else {
-								$('#firm-id').attr('disabled', true);
-								$('#firm-id').html(data);
-							}
-						}
-					});
-				}
-			}
-		});
-	}
-
 	$('select').change(function() {
 		var hash = {};
 		hash[$(this).attr('id')] = $(this).val();
-		setFilter(hash);
+		setDiaryFilter(hash);
 	});
 
 	$('#emergency_list').click(function() {
 		if ($(this).is(':checked')) {
-			setFilter({'emergency_list':1});
+			setDiaryFilter({'emergency_list':1});
 		} else {
-			setFilter({'emergency_list':0});
+			setDiaryFilter({'emergency_list':0});
 		}
 	});
 
 	$('#date-start').change(function() {
-		setFilter({'date-start':$(this).val()});
-		$('input[type="radio"]').attr('checked','');
+		setDiaryFilter({'date-start':$(this).val()});
 		$('#date-filter_3').attr('checked','checked');
 	});
 
 	$('#date-end').change(function() {
-		setFilter({'date-end':$(this).val()});
-		$('input[type="radio"]').attr('checked','');
+		setDiaryFilter({'date-end':$(this).val()});
 		$('#date-filter_3').attr('checked','checked');
 	});
 </script>
