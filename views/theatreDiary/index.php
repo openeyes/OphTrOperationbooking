@@ -126,8 +126,8 @@
 		<div class="printable" id="printable"></div>
 	</div>
 	<div style="text-align:right; margin-right:10px;">
-		<button type="submit" class="classy blue tall" id="btn_print"><span class="button-span button-span-blue">Print</span></button>
-		<button type="submit" class="classy blue tall" id="btn_print_list"><span class="button-span button-span-blue">Print list</span></button>
+		<button type="submit" class="classy blue tall" id="btn_print_diary"><span class="button-span button-span-blue">Print</span></button>
+		<button type="submit" class="classy blue tall" id="btn_print_diary_list"><span class="button-span button-span-blue">Print list</span></button>
 	</div>
 </div>
 <div id="iframeprintholder" style="display: none;"></div>
@@ -142,7 +142,7 @@
 	});
 
 	$(document).ready(function() {
-		$("#btn_print").click(function() {
+		$("#btn_print_diary").click(function() {
 			printElem('printDiary',
 			{
 				pageTitle:'openeyes printout',
