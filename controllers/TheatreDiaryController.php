@@ -97,7 +97,13 @@ class TheatreDiaryController extends BaseEventTypeController
 	{
 		Audit::add('diary','print',serialize($_POST));
 
-		$this->renderPartial('_print_diary', array('theatres'=>$this->getTheatres()), false, true);
+		Yii::app()->getClientScript()->registerCssFile(Yii::app()->createUrl(
+			Yii::app()->getAssetManager()->publish(
+				Yii::getPathOfAlias('application.modules.'.$this->getModule()->name.'.assets')
+			).'/css/module.css'
+		));
+
+		$this->renderPartial('_print_diary', array('diary'=>$this->getDiary()), false, true);
 	}
 
 	public function actionPrintList() {
@@ -117,8 +123,8 @@ class TheatreDiaryController extends BaseEventTypeController
 	public function getDiary() {
 		$firmId = Yii::app()->session['selected_firm_id'];
 
-		$_POST['date-start'] = Helper::convertNHS2MySQL($_POST['date-start']);
-		$_POST['date-end'] = Helper::convertNHS2MySQL($_POST['date-end']);
+		$_POST['date-start'] = Helper::convertNHS2MySQL(@$_POST['date-start']);
+		$_POST['date-end'] = Helper::convertNHS2MySQL(@$_POST['date-end']);
 
 		if (empty($_POST['date-start']) || empty($_POST['date-end'])) {
 			$startDate = $this->getNextSessionDate($firmId);
@@ -222,7 +228,9 @@ class TheatreDiaryController extends BaseEventTypeController
 
 			if ($row['operation_id']) {
 				$diary[$row['site_name']][$row['name']][$row['date']][$row['session_id']]['bookings'][] = array(
-					'patient' => strtoupper($row['last_name']).', '.$row['first_name'].' ('.Helper::getAge($row['dob']).')',
+					'patient' => strtoupper($row['last_name']).', '.$row['first_name'],
+					'patient_with_age' => strtoupper($row['last_name']).', '.$row['first_name'].' ('.Helper::getAge($row['dob']).')',
+					'age' => Helper::getAge($row['dob']),
 					'hos_num' => $row['hos_num'],
 					'gender' => $row['gender'],
 					'operation_id' => $row['operation_id'],
@@ -282,7 +290,7 @@ class TheatreDiaryController extends BaseEventTypeController
 		$from = Helper::convertNHS2MySQL($_POST['date-start']);
 		$to = Helper::convertNHS2MySQL($_POST['date-end']);
 
-		$whereSql = 't.site_id = :siteId and sp.id = :subspecialtyId and eo.status in (1,3) and date >= :dateFrom and date <= :dateTo';
+		$whereSql = 't.site_id = :siteId and sp.id = :subspecialtyId and eo.status_id in (1,3) and date >= :dateFrom and date <= :dateTo';
 		$whereParams = array(':siteId' => $_POST['site-id'], ':subspecialtyId' => $_POST['subspecialty-id'], ':dateFrom' => $from, ':dateTo' => $to);
 		$order = 'w.name ASC, p.hos_num ASC';
 

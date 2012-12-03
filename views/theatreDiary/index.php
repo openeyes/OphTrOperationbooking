@@ -167,7 +167,7 @@
 
 	function printElem(method,options){
 		$.ajax({
-			'url': '<?php echo Yii::app()->createUrl('theatre')?>/'+method,
+			'url': baseUrl+'/OphTrOperation/theatreDiary/'+method,
 			'type': 'POST',
 			'data': searchData,
 			'success': function(data) {
