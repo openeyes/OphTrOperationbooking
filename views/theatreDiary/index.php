@@ -150,7 +150,7 @@
 			});
 		});
 
-		$('#btn_print_list').click(function() {
+		$('#btn_print_diary_list').click(function() {
 			if ($('#site-id').val() == '' || $('#subspecialty-id').val() == '' || $('#date-start').val() == '' || $('#date-end').val() == '') {
 				alert('To print the booking list you must select a site, a subspecialty and a date range.');
 				scrollTo(0,0);

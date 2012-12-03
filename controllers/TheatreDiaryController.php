@@ -109,7 +109,13 @@ class TheatreDiaryController extends BaseEventTypeController
 	public function actionPrintList() {
 		Audit::add('diary','print list',serialize($_POST));
 
-		$this->renderPartial('_print_list', array('bookings'=>$this->getBookingList(), 'assetPath'=>Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.'.$this->getModule()->name.'.assets'), false, -1, YII_DEBUG)));
+		Yii::app()->getClientScript()->registerCssFile(Yii::app()->createUrl(
+			Yii::app()->getAssetManager()->publish(
+				Yii::getPathOfAlias('application.modules.'.$this->getModule()->name.'.assets')
+			).'/css/module.css'
+		));
+
+		$this->renderPartial('_print_list', array('bookings'=>$this->getBookingList()), false, true);
 	}
 
 	public function actionSearch()
@@ -290,7 +296,7 @@ class TheatreDiaryController extends BaseEventTypeController
 		$from = Helper::convertNHS2MySQL($_POST['date-start']);
 		$to = Helper::convertNHS2MySQL($_POST['date-end']);
 
-		$whereSql = 't.site_id = :siteId and sp.id = :subspecialtyId and eo.status_id in (1,3) and date >= :dateFrom and date <= :dateTo';
+		$whereSql = 't.site_id = :siteId and sp.id = :subspecialtyId and eo.status_id in (2,4) and date >= :dateFrom and date <= :dateTo';
 		$whereParams = array(':siteId' => $_POST['site-id'], ':subspecialtyId' => $_POST['subspecialty-id'], ':dateFrom' => $from, ':dateTo' => $to);
 		$order = 'w.name ASC, p.hos_num ASC';
 
