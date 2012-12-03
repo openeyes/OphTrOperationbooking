@@ -66,6 +66,7 @@ foreach ($diary as $site_name => $theatres) {
 										<td style="max-width: 500px; word-wrap:break-word; overflow: hidden;">
 										<?php echo !empty($booking['procedures']) ? '['.$booking['eye'].'] '.htmlspecialchars($booking['procedures']) : 'No procedures'?><br />
 										<?php echo htmlspecialchars($booking['comments'])?>
+										<?php echo htmlspecialchars($session['comments'])?>
 										<td><?php echo $booking['admission_time']?></td>
 									</tr>
 								<?php }?>
