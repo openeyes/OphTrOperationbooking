@@ -35,6 +35,135 @@ $(document).ready(function() {
 		$('#firm-id').attr("disabled", $(this).is(':checked'));
 		$('#ward-id').attr("disabled", $(this).is(':checked'));
 	});
+
+	$('#date-filter_0').click(function() {
+		today = new Date();
+
+		clearBoundaries();
+
+		$('#date-start').datepicker('setDate', format_date(today));
+		$('#date-end').datepicker('setDate', format_date(today));
+
+		setDiaryFilter({'date-filter':'today','date-start':$('#date-start').val(),'date-end':$('#date-end').val()});
+
+		return true;
+	});
+
+	$('#date-filter_1').click(function() {
+		today = new Date();
+
+		clearBoundaries();
+
+		$('#date-start').datepicker('setDate', format_date(today));
+		$('#date-end').datepicker('setDate', format_date(returnDateWithInterval(today, 6)));
+
+		setDiaryFilter({'date-filter':'week','date-start':$('#date-start').val(),'date-end':$('#date-end').val()});
+
+		return true;
+	});
+
+	$('#date-filter_2').click(function() {
+		today = new Date();
+
+		clearBoundaries();
+
+		$('#date-start').val(format_date(today));
+		$('#date-end').val(format_date(returnDateWithInterval(today, 29)));
+
+		setDiaryFilter({'date-filter':'month','date-start':$('#date-start').val(),'date-end':$('#date-end').val()});
+
+		return true;
+	});
+
+	$('#date-filter_3').click(function() {
+
+		setDiaryFilter({'date-filter':'custom','date-start':$('#date-start').val(),'date-end':$('#date-end').val()});
+	 
+		return true;
+	});
+
+	$('#last_week').click(function() {
+		sd = $('#date-start').val();
+
+		clearBoundaries();
+
+		if (sd == '') {
+			today = new Date();
+			$('#date-start').datepicker('setDate', format_date(returnDateWithInterval(today, -8)));
+			$('#date-end').datepicker('setDate', format_date(returnDateWithInterval(today, -1)));
+		} else {
+			$('#date-end').datepicker('setDate', format_date(returnDateWithInterval(new Date(sd), -1)));
+			$('#date-start').datepicker('setDate', format_date(returnDateWithInterval(new Date(sd), -7)));
+		}
+
+		setDiaryFilter({'date-filter':''});
+		$('input[type="radio"]').attr('checked',true);
+		$('#date-start').trigger('change');
+		$('#date-end').trigger('change');
+		return false;
+	});
+
+	$('#next_week').click(function() {
+		ed = $('#date-end').val();
+
+		clearBoundaries();
+
+		if (ed == '') {
+			today = new Date();
+
+			$('#date-start').datepicker('setDate', format_date(today));
+			$('#date-end').datepicker('setDate', format_date(returnDateWithInterval(today, 7)));
+		} else {
+			today = new Date();
+
+			if (ed == format_date(today)) {
+				$('#date-start').datepicker('setDate', format_date(returnDateWithInterval(new Date(ed), 7)));
+				$('#date-end').datepicker('setDate', format_date(returnDateWithInterval(new Date(ed), 13)));
+			} else {
+				$('#date-start').datepicker('setDate', format_date(returnDateWithInterval(new Date(ed), 1)));
+				$('#date-end').datepicker('setDate', format_date(returnDateWithInterval(new Date(ed), 7)));
+			}
+		}
+
+		setDiaryFilter({'date-filter':''});
+		$('input[type="radio"]').attr('checked',true);
+		$('#date-start').trigger('change');
+		$('#date-end').trigger('change');
+
+		return false;
+	});
+
+	$('#date-start').bind('change',function() {
+		$('#date-end').datepicker('option','minDate',$('#date-start').datepicker('getDate'));
+	});
+
+	$('#date-end').bind('change',function() {
+		$('#date-start').datepicker('option','maxDate',$('#date-end').datepicker('getDate'));
+	});
+
+	$('select').change(function() {
+		var hash = {};
+		hash[$(this).attr('id')] = $(this).val();
+		setDiaryFilter(hash);
+	});
+
+	$('#emergency_list').click(function() {
+		if ($(this).is(':checked')) {
+			setDiaryFilter({'emergency_list':1});
+		} else {
+			setDiaryFilter({'emergency_list':0});
+		}
+	});
+
+	$('#date-start').change(function() {
+		setDiaryFilter({'date-start':$(this).val()});
+		$('#date-filter_3').attr('checked','checked');
+	});
+
+	$('#date-end').change(function() {
+		setDiaryFilter({'date-end':$(this).val()});
+		$('#date-filter_3').attr('checked','checked');
+	});
 });
 
 function printElem(method,options){
@@ -132,4 +261,13 @@ function loadTheatresAndWards(siteId) {
 			});
 		}
 	});
+}
+
+function clearBoundaries() {
+	$('#date-start').datepicker('option','minDate', '').datepicker('option','maxDate', '');
+	$('#date-end').datepicker('option','minDate', '').datepicker('option','maxDate', '');
+}
+
+function returnDateWithInterval(d, interval) {
+	return new Date(d.getTime() + (86400000 * interval));
 }
