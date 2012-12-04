@@ -110,7 +110,13 @@ $(document).ready(function() {
 
 					$('div.comments_ro[data-id="'+session_id+'"]').text($('textarea[name="comments_'+session_id+'"]').val());
 
-					cancel_edit();
+					if ($('#available_'+session_id).is(':checked')) {
+						$('#session_unavailable_'+session_id).hide();
+					} else {
+						$('#session_unavailable_'+session_id).show();
+					}
+
+					cancel_edit(true);
 					$('#infoBox_'+session_id).show();
 
 					enableButtons();
@@ -127,8 +133,8 @@ $(document).ready(function() {
 	});
 });
 
-function cancel_edit() {
-	if (theatre_edit_session_id != null) {
+function cancel_edit(dont_reset_checkboxes) {
+	if (!dont_reset_checkboxes && theatre_edit_session_id != null) {
 		for (var i in theatre_edit_session_data) {
 			$('#'+i+'_'+theatre_edit_session_id).attr('checked',(theatre_edit_session_data[i] ? 'checked' : 'false'));
 		}
