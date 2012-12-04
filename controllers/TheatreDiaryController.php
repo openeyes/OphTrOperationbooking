@@ -421,7 +421,7 @@ class TheatreDiaryController extends BaseEventTypeController
 		if (Yii::app()->user->checkAccess('purplerinse')) {
 			$session->consultant = $_POST['consultant_'.$session->id];
 			$session->paediatric = $_POST['paediatric_'.$session->id];
-			$session->anaesthetist = $_POST['anaesthetic_'.$session->id];
+			$session->anaesthetist = $_POST['anaesthetist_'.$session->id];
 			$session->general_anaesthetic = $_POST['general_anaesthetic_'.$session->id];
 			$session->available = $_POST['available_'.$session->id];
 		}
@@ -576,7 +576,7 @@ class TheatreDiaryController extends BaseEventTypeController
 					echo "0";
 				}
 				return;
-			case 'anaesthetic':
+			case 'anaesthetist':
 				if (Yii::app()->db->createCommand()
 					->select("eo.anaesthetist_required")
 					->from("et_ophtroperation_operation eo")

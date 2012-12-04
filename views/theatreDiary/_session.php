@@ -48,19 +48,19 @@
 				<div class="purpleUser diaryEditMode" data-id="<?php echo $id?>" style="display:none; width:207px;">
 					<input type="hidden" name="consultant_<?php echo $id?>" value="0" />
 					<input type="hidden" name="paediatric_<?php echo $id?>" value="0" />
-					<input type="hidden" name="anaesthetic_<?php echo $id?>" value="0" />
+					<input type="hidden" name="anaesthetist_<?php echo $id?>" value="0" />
 					<input type="hidden" name="general_anaesthetic_<?php echo $id?>" value="0" />
 					<input type="hidden" name="available_<?php echo $id?>" value="0" />
 					<input type="checkbox" id="consultant_<?php echo $id?>" name="consultant_<?php echo $id?>" value="1"<?php if ($session['consultant']){?> checked="checked"<?php }?> /> Consultant present<br/>
 					<input type="checkbox" id="paediatric_<?php echo $id?>" name="paediatric_<?php echo $id?>" value="1"<?php if ($session['paediatric']){?> checked="checked"<?php }?> /> Paediatric<br/>
-					<input type="checkbox" id="anaesthetic_<?php echo $id?>" name="anaesthetic_<?php echo $id?>" value="1"<?php if ($session['anaesthetist']){?> checked="checked"<?php }?> /> Anaesthetist present<br/>
+					<input type="checkbox" id="anaesthetist_<?php echo $id?>" name="anaesthetist_<?php echo $id?>" value="1"<?php if ($session['anaesthetist']){?> checked="checked"<?php }?> /> Anaesthetist present<br/>
 					<input type="checkbox" id="general_anaesthetic_<?php echo $id?>" name="general_anaesthetic_<?php echo $id?>" value="1"<?php if ($session['general_anaesthetic']){?> checked="checked"<?php }?> /> General anaesthetic available<br/>
 					<input type="checkbox" id="available_<?php echo $id?>" name="available_<?php echo $id?>" value="1"<?php if ($session['available']){?> checked="checked"<?php }?> /> Session available<br/>
 				</div>
 			<?php }else{?>
 				<input type="hidden" id="consultant_<?php echo $id?>" name="consultant_<?php echo $id?>" value="<?php echo $session['consultant']?>" />
 				<input type="hidden" id="paediatric_<?php echo $id?>" name="paediatric_<?php echo $id?>" value="<?php echo $session['paediatric']?>" />
-				<input type="hidden" id="anaesthetic_<?php echo $id?>" name="anaesthetic_<?php echo $id?>" value="<?php echo $session['anaesthetist']?>" />
+				<input type="hidden" id="anaesthetist_<?php echo $id?>" name="anaesthetist_<?php echo $id?>" value="<?php echo $session['anaesthetist']?>" />
 				<input type="hidden" id="available_<?php echo $id?>" name="available_<?php echo $id?>" value="<?php echo $session['available']?>" />
 			<?php }?>
 			<div class="sessionComments" style="display:block; width:205px;">

@@ -7,7 +7,7 @@ $(document).ready(function() {
 		theatre_edit_session_data = {
 			"consultant": $('#consultant_'+theatre_edit_session_id).is(':checked'),
 			"paediatric": $('#paediatric_'+theatre_edit_session_id).is(':checked'),
-			"anaesthetic": $('#anaesthetic_'+theatre_edit_session_id).is(':checked'),
+			"anaesthetist": $('#anaesthetist_'+theatre_edit_session_id).is(':checked'),
 			"general_anaesthetic": $('#general_anaesthetic_'+theatre_edit_session_id).is(':checked'),
 			"available": $('#available_'+theatre_edit_session_id).is(':checked')
 		};
@@ -54,10 +54,10 @@ $(document).ready(function() {
 		}
 	});
 
-	$('input[id^="anaesthetic_"]').die('click').live('click',function() {
+	$('input[id^="anaesthetist_"]').die('click').live('click',function() {
 		if (!$(this).is(':checked')) {
 			var session_id = $(this).attr('id').match(/[0-9]+/);
-			checkRequired('anaesthetic',session_id);
+			checkRequired('anaesthetist',session_id);
 		}
 	});
 
@@ -110,11 +110,11 @@ $(document).ready(function() {
 
 					$('div.comments_ro[data-id="'+session_id+'"]').text($('textarea[name="comments_'+session_id+'"]').val());
 
-					if ($('#available_'+session_id).is(':checked')) {
-						$('#session_unavailable_'+session_id).hide();
-					} else {
-						$('#session_unavailable_'+session_id).show();
-					}
+					$('#available_'+session_id).is(':checked') ? $('#session_unavailable_'+session_id).hide() : $('#session_unavailable_'+session_id).show();
+					$('#consultant_'+session_id).is(':checked') ? $('#consultant_icon_'+session_id).show() : $('#consultant_icon_'+session_id).hide();
+					$('#anaesthetist_'+session_id).is(':checked') ? $('#anaesthetist_icon_'+session_id).show() : $('#anaesthetist_icon_'+session_id).hide();
+					$('#anaesthetist_icon_'+session_id).html($('#general_anaesthetic_'+session_id).is(':checked') ? 'Anaesthetist (GA)' : 'Anaesthetist');
+					$('#paediatric_'+session_id).is(':checked') ? $('#paediatric_icon_'+session_id).show() : $('#paediatric_icon_'+session_id).hide();
 
 					cancel_edit(true);
 					$('#infoBox_'+session_id).show();
@@ -167,7 +167,7 @@ function checkRequired(type, session_id) {
 					case 'paediatric':
 						alert("Sorry, you cannot remove the 'Paediatric' flag from this session because there are one or more patients booked into it who are paediatric.");
 						break;
-					case 'anaesthetic':
+					case 'anaesthetist':
 						alert("Sorry, you cannot remove the 'Anaesthetist required' flag from this session because there are one or more patients booked into it who require an anaesthetist.");
 						break;
 					case 'general_anaesthetic':
