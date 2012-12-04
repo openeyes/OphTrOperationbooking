@@ -506,7 +506,7 @@ class TheatreDiaryController extends BaseEventTypeController
 	{
 		$data = Yii::app()->db->createCommand()
 			->select('w.id, w.name')
-			->from('ward w')
+			->from('ophtroperation_operation_ward w')
 			->where('w.site_id = :id',
 				array(':id'=>$siteId))
 			->order('w.name ASC')
