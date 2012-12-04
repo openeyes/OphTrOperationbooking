@@ -1,29 +1,5 @@
 
 $(document).ready(function() {
-	$("#btn_print_diary").click(function() {
-		printElem('printDiary', {
-			pageTitle:'openeyes printout',
-			printBodyOptions:{styleToAdd:'width:auto !important; margin: 0.75em !important;',classNameToAdd:'openeyesPrintout'},overrideElementCSS:['css/style.css',{href:'css/style.css',media:'print'}]
-		});
-	});
-
-	$('#btn_print_diary_list').click(function() {
-		if ($('#site-id').val() == '' || $('#subspecialty-id').val() == '' || $('#date-start').val() == '' || $('#date-end').val() == '') {
-			alert('To print the booking list you must select a site, a subspecialty and a date range.');
-			scrollTo(0,0);
-			return false;
-		}
-
-		printElem('printList',{
-			pageTitle:'openeyes printout',
-			printBodyOptions:{
-				styleToAdd:'width:auto !important; margin: 0.75em !important;',
-				classNameToAdd:'openeyesPrintout'
-			},
-			overrideElementCSS:['css/style.css',{href:'css/style.css',media:'print'}]
-		});
-	});
-
 	$('#theatre-filter button[type="submit"]').click(function() {
 		return getDiary();
 	});
@@ -165,19 +141,6 @@ $(document).ready(function() {
 		$('#date-filter_3').attr('checked','checked');
 	});
 });
-
-function printElem(method,options){
-	$.ajax({
-		'url': baseUrl+'/OphTrOperation/theatreDiary/'+method,
-		'type': 'POST',
-		'data': searchData,
-		'success': function(data) {
-			$('#printable').html(data);
-			$('#printable').printElement(options);
-			return false;
-		}
-	});
-}
 
 function getDiary() {
 	var button = $('#theatre-filter button[type="submit"]');

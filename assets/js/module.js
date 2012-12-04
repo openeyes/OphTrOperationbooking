@@ -228,4 +228,66 @@ $(document).ready(function() {
 			enableButtons();
 		}
 	});
+
+	$("#btn_print_diary").click(function() {
+		printElem('printDiary', {
+			pageTitle:'openeyes printout',
+			printBodyOptions:{styleToAdd:'width:auto !important; margin: 0.75em !important;',classNameToAdd:'openeyesPrintout'},overrideElementCSS:['css/style.css',{href:'css/style.css',media:'print'}]
+		});
+	});
+
+	$('#btn_print_diary_list').click(function() {
+		if ($('#site-id').val() == '' || $('#subspecialty-id').val() == '' || $('#date-start').val() == '' || $('#date-end').val() == '') {
+			alert('To print the booking list you must select a site, a subspecialty and a date range.');
+			scrollTo(0,0);
+			return false;
+		}
+
+		printElem('printList',{
+			pageTitle:'openeyes printout',
+			printBodyOptions:{
+				styleToAdd:'width:auto !important; margin: 0.75em !important;',
+				classNameToAdd:'openeyesPrintout'
+			},
+			overrideElementCSS:['css/style.css',{href:'css/style.css',media:'print'}]
+		});
+	});
 });
+
+function printElem(method,options){
+	$.ajax({
+		'url': baseUrl+'/OphTrOperation/theatreDiary/'+method,
+		'type': 'POST',
+		'data': searchData,
+		'success': function(data) {
+			$('#printable').html(data);
+			$('#printable').printElement(options);
+			return false;
+		}
+	});
+}
+
+function theatreDiaryIconHovers() {
+	var offsetY = 28;
+	var offsetX = 10;
+	var tipWidth = 0;
+
+	$('.alerts img').hover(function(e){
+		var titleText = $(this).attr('title');
+		$(this).data('tipText',titleText).removeAttr('title');
+
+		$('<p class="alertIconHelp"></p>').text(titleText).appendTo('body');
+		$('<img />').attr({width:'17',height:'17',src:$(this).attr('src')}).prependTo('.alertIconHelp');
+		tipWidth = $('.alertIconHelp').outerWidth();
+		$('.alertIconHelp').css('top', (e.pageY - offsetY) + 'px').css('left', (e.pageX - (tipWidth + offsetX)) + 'px').fadeIn('fast');
+
+	},function(e){
+		$(this).attr('title',$(this).data('tipText'));
+		$('.alertIconHelp').remove();
+
+	}).mousemove(function(e) {
+		$('.alertIconHelp')
+			.css('top', (e.pageY - offsetY) + 'px')
+			.css('left', (e.pageX - (tipWidth + offsetX)) + 'px');
+	});
+}
