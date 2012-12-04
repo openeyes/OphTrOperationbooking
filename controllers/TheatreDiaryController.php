@@ -548,66 +548,6 @@ class TheatreDiaryController extends BaseEventTypeController
 		return $wards;
 	}
 
-	public function actionRequiresConsultant() {
-		if (isset($_POST['operations']) && is_array($_POST['operations'])) {
-			foreach ($_POST['operations'] as $operation_id) {
-				if ($operation = ElementOperation::Model()->findByPk($operation_id)) {
-					if ($operation->consultant_required) {
-						die("1");
-					}
-				} else {
-					throw new SystemException('Operation not found: '.$operation_id);
-				}
-			}
-		}
-		die("0");
-	}
-
-	public function actionIsChild() {
-		if (isset($_POST['patients']) && is_array($_POST['patients'])) {
-			foreach ($_POST['patients'] as $hos_num) {
-				if ($patient = Patient::Model()->find('hos_num = ?',array($hos_num))) {
-					if ($patient->isChild()) {
-						die("1");
-					}
-				} else {
-					throw new SystemException('Patient not found: '.$hos_num);
-				}
-			}
-		}
-		die("0");
-	}
-
-	public function actionRequiresAnaesthetist() {
-		if (isset($_POST['operations']) && is_array($_POST['operations'])) {
-			foreach ($_POST['operations'] as $operation_id) {
-				if ($operation = ElementOperation::Model()->findByPk($operation_id)) {
-					if ($operation->anaesthetist_required) {
-						die("1");
-					}
-				} else {
-					throw new SystemException('Operation not found: '.$operation_id);
-				}
-			}
-		}
-		die("0");
-	}
-
-	public function actionRequiresGeneralAnaesthetic() {
-		if (isset($_POST['operations']) && is_array($_POST['operations'])) {
-			foreach ($_POST['operations'] as $operation_id) {
-				if ($operation = ElementOperation::Model()->findByPk($operation_id)) {
-					if ($operation->anaesthetic_type->name == 'GA') {
-						die("1");
-					}
-				} else {
-					throw new SystemException('Operation not found: '.$operation_id);
-				}
-			}
-		}
-		die("0");
-	}
-
 	public function actionSetDiaryFilter() {
 		foreach ($_POST as $key => $value) {
 			YiiSession::set('theatre_searchoptions',$key,$value);
@@ -624,5 +564,74 @@ class TheatreDiaryController extends BaseEventTypeController
 				echo "Modified on ".Helper::convertMySQL2NHS($last_modified_date)." at ".$last_modified_time." by ".$user->first_name." ".$user->last_name;
 			}
 		}
+	}
+
+	public function actionCheckRequired() {
+		if (!$session = OphTrOperation_Operation_Session::model()->findByPk(@$_POST['session_id'])) {
+			throw new Exception('Session not found: '.$_POST['session_id']);
+		}
+
+		switch (@$_POST['type']) {
+			case 'consultant':
+				if (Yii::app()->db->createCommand()
+					->select("eo.consultant_required")
+					->from("et_ophtroperation_operation eo")
+					->join("ophtroperation_operation_booking b","b.element_id = eo.id")
+					->join("ophtroperation_operation_session s","b.session_id = s.id")
+					->where("s.id = $session->id and eo.status_id in (2,4) and b.cancellation_date is null and eo.consultant_required = 1")
+					->queryRow()) {
+					echo "1";
+				} else {
+					echo "0";
+				}
+				return;
+			case 'paediatric':
+				$child_age = isset(Yii::app()->params['child_age_limit']) ? Yii::app()->params['child_age_limit'] : Patient::CHILD_AGE_LIMIT;
+				$age_limit = date('Y')-$child_age.date('-m-d',time()+86400);
+
+				if (Yii::app()->db->createCommand()
+					->select("p.id")
+					->from("patient p")
+					->join("episode e","e.patient_id = p.id")
+					->join("event ev","ev.episode_id = e.id")
+					->join("et_ophtroperation_operation eo","eo.event_id = ev.id")
+					->join("ophtroperation_operation_booking b","b.element_id = eo.id")
+					->join("ophtroperation_operation_session s","b.session_id = s.id")
+					->where("s.id = $session->id and eo.status_id in (2,4) and b.cancellation_date is null and p.dob >= '$age_limit'")
+					->queryRow()) { 
+					echo "1";
+				} else {
+					echo "0";
+				}
+				return;
+			case 'anaesthetic':
+				if (Yii::app()->db->createCommand()
+					->select("eo.anaesthetist_required")
+					->from("et_ophtroperation_operation eo")
+					->join("ophtroperation_operation_booking b","b.element_id = eo.id")
+					->join("ophtroperation_operation_session s","b.session_id = s.id")
+					->where("s.id = $session->id and eo.status_id in (2,4) and b.cancellation_date is null and eo.anaesthetist_required = 1")
+					->queryRow()) { 
+					echo "1";
+				} else {
+					echo "0";
+				}
+				return;
+			case 'general_anaesthetic':
+				if (Yii::app()->db->createCommand()
+					->select("eo.anaesthetist_required")
+					->from("et_ophtroperation_operation eo")
+					->join("ophtroperation_operation_booking b","b.element_id = eo.id")
+					->join("ophtroperation_operation_session s","b.session_id = s.id")
+					->where("s.id = $session->id and eo.status_id in (2,4) and b.cancellation_date is null and eo.anaesthetic_type_id = 5")
+					->queryRow()) {
+					echo "1";
+				} else {
+					echo "0";
+				}
+				return;
+		}
+
+		throw new Exception('Unknown type: '.@$_POST['type']);
 	}
 }
