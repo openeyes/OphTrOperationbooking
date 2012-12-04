@@ -432,101 +432,15 @@ class TheatreDiaryController extends BaseEventTypeController
 			throw new Exception('Unable to save session: '.print_r($session->getErrors(),true));
 		}
 
-		foreach ($bookings as $booking) {
+		foreach ($bookings as $i => $booking) {
+			$booking->display_order = $i+1;
+
 			if (!$booking->save()) {
 				throw new Exception('Unable to save booking: '.print_r($session->getErrors(),true));
 			}
 		}
 
 		echo json_encode(array());
-	}
-
-	public function actionSaveSessions() {
-		if (Yii::app()->getRequest()->getIsAjaxRequest()) {
-			$display_order = 1;
-
-			$errors = array();
-
-			// validation of theatre times
-			foreach ($_POST as $key => $value) {
-				if (preg_match('/^operation_([0-9]+)$/',$key,$operation_id)) {
-					// This is validated in the model and the front-end so doesn't need an if ()
-					preg_match('/^([0-9]{1,2}).*?([0-9]{2})$/',$value,$admission_time);
-					$booking_ts = mktime($admission_time[1],$admission_time[2],0,1,1,date('Y'));
-					$booking = Booking::model()->findByAttributes(array('element_operation_id' => $operation_id[1]));
-					//preg_match('/^([0-9]{2}):([0-9]{2})/',$booking->session->start_time,$session_start_time);
-					preg_match('/^([0-9]{2}):([0-9]{2})/',$booking->session->end_time,$session_end_time);
-					//$session_from = mktime($session_start_time[1],$session_start_time[2],0,1,1,date('Y'));
-					$session_to = mktime($session_end_time[1],$session_end_time[2],59,1,1,date('Y'));
-
-					if ($booking_ts > $session_to) {
-						$errors[] = array(
-							'operation_id' => $operation_id[1],
-							'message' => "The requested admission time is outside the window for this session."
-						);
-					}
-				}
-			}
-
-			if (!empty($errors)) {
-				die(json_encode($errors));
-			}
-
-			foreach ($_POST as $key => $value) {
-				if (preg_match('/^operation_([0-9]+)$/',$key,$m)) {
-					$booking = Booking::model()->findByAttributes(array('element_operation_id' => $m[1]));
-
-					if (!empty($booking)) {
-						// This is validated in the model and the front-end so doesn't need an if ()
-						preg_match('/^([0-9]{1,2}).*?([0-9]{2})$/',$value,$m2);
-						$value = $m2[1].":".$m2[2];
-
-						$booking->confirmed = (@$_POST['confirm_'.$m[1]] ? 1 : 0);
-						$booking->admission_time = $value;
-						$booking->display_order = $display_order++;
-						if (!$booking->save()) {
-							throw new SystemException('Unable to save booking: '.print_r($booking->getErrors(),true));
-						}
-
-						$booking->elementOperation->event->audit('booking','update (diary)',$booking->getAuditAttributes());
-					}
-				}
-
-				if (preg_match('/^comments_([0-9]+)$/',$key,$m)) {
-					$session = Session::model()->findByPk($m[1]);
-
-					if (!empty($session)) {
-						$session->comments = $value;
-
-						foreach ($_POST as $key => $value) {
-							if (preg_match('/^consultant_([0-9]+)$/',$key,$n) && $m[1] == $n[1]) {
-								$session->consultant = ($value == 'true' ? 1 : 0);
-							}
-							if (preg_match('/^paediatric_([0-9]+)$/',$key,$n) && $m[1] == $n[1]) {
-								$session->paediatric = ($value == 'true' ? 1 : 0);
-							}
-							if (preg_match('/^anaesthetic_([0-9]+)$/',$key,$n) && $m[1] == $n[1]) {
-								$session->anaesthetist = ($value == 'true' ? 1 : 0);
-							}
-							if (preg_match('/^general_anaesthetic_([0-9]+)$/',$key,$n) && $m[1] == $n[1]) {
-								$session->general_anaesthetic = ($value == 'true' ? 1 : 0);
-							}
-							if (preg_match('/^available_([0-9]+)$/',$key,$n) && $m[1] == $n[1]) {
-								$session->status= ($value == 'true' ? 0 : 1);
-							}
-						}
-
-						if (!$session->save()) {
-							throw new SystemException('Unable to save session: '.print_r($session->getErrors(),true));
-						}
-
-						$session->audit('session','update (diary)');
-					}
-				}
-			}
-
-			die(json_encode(array()));
-		}
 	}
 
 	/**
