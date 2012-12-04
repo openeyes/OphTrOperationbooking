@@ -87,7 +87,6 @@
 						<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
 							'name'=>'date-start',
 							'id'=>'date-start',
-							// additional javascript options for the date picker plugin
 							'options'=>array(
 								'showAnim'=>'fold',
 								'dateFormat'=>Helper::NHS_DATE_FORMAT_JS
@@ -99,7 +98,6 @@
 						<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
 							'name'=>'date-end',
 							'id'=>'date-end',
-							// additional javascript options for the date picker plugin
 							'options'=>array(
 								'showAnim'=>'fold',
 								'dateFormat'=>Helper::NHS_DATE_FORMAT_JS
