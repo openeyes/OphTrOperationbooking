@@ -68,7 +68,62 @@ $(document).ready(function() {
 		}
 	});
 
-	$(this).undelegate('button[id^="btn_save_"]','click').delegate('button[id^="btn_save_"]','click',function() {
+	$(this).undelegate('button[id^="btn_edit_session_save_"]','click').delegate('button[id^="btn_edit_session_save_"]','click',function() {
+		if (!$(this).hasClass('inactive')) {
+			disableButtons();
+
+			var session_id = $(this).attr('id').match(/[0-9]+/);
+
+			$('input[name^="admitTime_"]').map(function() {
+				var m = $(this).val().match(/^([0-9]{1,2}).*?([0-9]{2})$/);
+				if (m) {
+					$(this).val(m[1]+':'+m[2]);
+				}
+			});
+
+			$.ajax({
+				type: "POST",
+				data: $('#session_form'+session_id).serialize()+"&session_id="+session_id,
+				dataType: 'json',
+				url: baseUrl+'/OphTrOperation/theatreDiary/saveSession',
+				success: function(errors) {
+					var first = false;
+					for (var operation_id in errors) {
+						$('#oprow_'+operation_id).attr('style','background-color: #f00;');
+
+						if (!first) {
+							$('input[name="admitTime_'+operation_id+'"]').select().focus();
+							first = true;
+						}
+					}
+
+					if (first) {
+						alert("One or more admission times were entered incorrectly, please correct the entries highlighted in red.");
+						return false;
+					}
+
+					$('tr[id^="oprow_"]').attr('style','');
+
+					$('#session_form'+session_id+' span.admitTime_ro').map(function() {
+						$(this).text($('input[name="admitTime_'+$(this).attr('data-operation-id')+'"]').val());
+					});
+
+					$('div.comments_ro[data-id="'+session_id+'"]').text($('textarea[name="comments_'+session_id+'"]').val());
+
+					cancel_edit();
+					$('#infoBox_'+session_id).show();
+
+					enableButtons();
+				}
+			});
+		}
+
+		return false;
+	});
+
+	$(this).undelegate('button[id^="btn_edit_session_cancel_"]','click').delegate('button[id^="btn_edit_session_cancel_"]','click',function() {
+		cancel_edit();
+		return false;
 	});
 });
 
@@ -82,7 +137,10 @@ function cancel_edit() {
 	$('.diaryViewMode').show();
 	$('.diaryEditMode').hide();
 	$('.infoBox').hide();
+	$('tbody[id="tbody_'+theatre_edit_session_id+'"] td.confirm input[name^="confirm_"]').attr('disabled','disabled');
 	$('th.footer').attr('colspan','9');
+
+	theatre_edit_session_id = null;
 }
 
 var theatre_edit_session_id = null;

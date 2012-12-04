@@ -241,7 +241,7 @@ class TheatreDiaryController extends BaseEventTypeController
 					'eye' => Eye::model()->findByPk($row['eye_id'])->name,
 					'anaesthetic_type' => $row['anaesthetic_type'],
 					'comments' => $row['comments'],
-					'admission_time' => $row['admission_time'],
+					'admission_time' => substr($row['admission_time'],0,5),
 					'consultant_required' => $row['consultant_required'],
 					'overnight_stay' => $row['overnight_stay'],
 					'event_id' => $row['event_id'],
@@ -381,6 +381,64 @@ class TheatreDiaryController extends BaseEventTypeController
 				echo CHtml::tag('option', array('value'=>$id), CHtml::encode($name), true);
 			}
 		}
+	}
+
+	public function actionSaveSession() {
+		if (!$session = OphTrOperation_Operation_Session::model()->findByPk(@$_POST['session_id'])) {
+			throw new Exception('Session not found: '.@$_POST['session_id']);
+		}
+
+		$errors = array();
+		$bookings = array();
+
+		foreach ($_POST as $key => $value) {
+			if (preg_match('/^admitTime_([0-9]+)$/',$key,$m)) {
+				if (!$operation = Element_OphTrOperation_Operation::model()->findByPk($m[1])) {
+					throw new Exception('Operation not found: '.$m[1]);
+				}
+
+				if (!$booking = $operation->booking) {
+					throw new Exception('Operation has no active booking: '.$m[1]);
+				}
+
+				$booking->admission_time = $value;
+				$booking->confirmed = @$_POST['confirm_'.$m[1]];
+
+				if (!$booking->validate()) {
+					$formErrors = $booking->getErrors();
+					$errors[(integer)$m[1]] = $formErrors['admission_time'][0];
+				} else {
+					$bookings[] = $booking;
+				}
+			}
+		}
+
+		if (!empty($errors)) {
+			echo json_encode($errors);
+			return;
+		}
+
+		if (Yii::app()->user->checkAccess('purplerinse')) {
+			$session->consultant = $_POST['consultant_'.$session->id];
+			$session->paediatric = $_POST['paediatric_'.$session->id];
+			$session->anaesthetist = $_POST['anaesthetic_'.$session->id];
+			$session->general_anaesthetic = $_POST['general_anaesthetic_'.$session->id];
+			$session->available = $_POST['available_'.$session->id];
+		}
+
+		$session->comments = $_POST['comments_'.$session->id];
+
+		if (!$session->save()) {
+			throw new Exception('Unable to save session: '.print_r($session->getErrors(),true));
+		}
+
+		foreach ($bookings as $booking) {
+			if (!$booking->save()) {
+				throw new Exception('Unable to save booking: '.print_r($session->getErrors(),true));
+			}
+		}
+
+		echo json_encode(array());
 	}
 
 	public function actionSaveSessions() {
