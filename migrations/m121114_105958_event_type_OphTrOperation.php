@@ -518,7 +518,7 @@ class m121114_105958_event_type_OphTrOperation extends CDbMigration
 	}
 
 	public function down() {
-		$this->dropTable('ophtroperation_letter_contact');
+		$this->dropTable('ophtroperation_letter_contact_rule');
 		$this->dropTable('et_ophtroperation_diagnosis');
 		$this->dropTable('ophtroperation_operation_procedures_procedures');
 		$this->dropTable('ophtroperation_operation_erod_rule_item');
