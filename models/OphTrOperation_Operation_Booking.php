@@ -65,7 +65,7 @@ class OphTrOperation_Operation_Booking extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('element_id, session_id, display_order, ward_id, admission_time, confirmed, session_date, session_start_time, session_end_time, session_theatre_id, cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id', 'safe'),
+			array('element_id, session_id, display_order, ward_id, admission_time, confirmed, session_date, session_start_time, session_end_time, session_theatre_id, transport_arranged, cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id', 'safe'),
 			array('element_id', 'required'),
 			array('display_order', 'numerical', 'integerOnly'=>true),
 			array('ward_id', 'numerical', 'integerOnly'=>true),
