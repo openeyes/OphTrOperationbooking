@@ -92,7 +92,7 @@ class WaitingListController extends BaseEventTypeController {
 
 		if ($hos_num && ctype_digit($hos_num)) {
 			$whereSql .= " AND pat.hos_num REGEXP :hos_num_regex";
-			$whereParams[":hos_num_regex"] = '^[0]*$hos_num$';
+			$whereParams[":hos_num_regex"] = "^[0]*$hos_num$";
 		}
 
 		if ($site_id && ctype_digit($site_id)) {
@@ -116,7 +116,6 @@ class WaitingListController extends BaseEventTypeController {
 			->where("ep.end_date IS NULL and eo.status_id in (1,3) $whereSql and ev.deleted = 0 group by opa.element_id",$whereParams)
 			->order("decision_date asc")
 			->queryAll();
-
 	}
 
 	/**
