@@ -22,24 +22,28 @@
 	<div class="no_address" style="display: none;">One or more patients has no Address, please correct in PAS before printing a letter for them.</div>
 </div>
 <div id="waitingList" class="grid-view">
-	<?php if (empty($operations)) {?>
-		<h2 class="theatre">Partial bookings waiting list empty.</h2>
-	<?php }else{?>
-		<table class="waiting-list">
-			<tbody>
+	<table class="waiting-list">
+		<tbody>
+			<tr>
+				<th>Letters sent</th>
+				<th style="width: 120px;">Patient</th>
+				<th style="width: 53px;">Hospital number</th>
+				<th style="width: 95px;">Location</th>
+				<th>Procedure</th>
+				<th>Eye</th>
+				<th>Firm</th>
+				<th style="width: 80px;">Decision date</th>
+				<th>Priority</th>
+				<th>Book status (requires...)</th>
+				<th><input style="margin-top: 0.4em;" type="checkbox" id="checkall" value="" /> All</th>
+			</tr>
+			<?php if (empty($operations)) {?>
 				<tr>
-					<th>Letters sent</th>
-					<th style="width: 120px;">Patient</th>
-					<th style="width: 53px;">Hospital number</th>
-					<th style="width: 95px;">Location</th>
-					<th>Procedure</th>
-					<th>Eye</th>
-					<th>Firm</th>
-					<th style="width: 80px;">Decision date</th>
-					<th>Priority</th>
-					<th>Book status (requires...)</th>
-					<th><input style="margin-top: 0.4em;" type="checkbox" id="checkall" value="" /> All</th>
+					<td colspan="7" style="border: none; padding-top: 10px;">
+						There are no patients who match the specified criteria.
+					</td>
 				</tr>
+			<?php }else{?>
 				<?php
 				$i = 0;
 				foreach ($operations as $id => $operation) {
@@ -130,33 +134,33 @@
 						</td>
 					</tr>
 				<?php }?>
-			</tbody>
-			<tfoot>
-				<tr>
-					<td colspan="11">
-						<div id="key">
-							<span>Colour Key:</span>
-							<div class="container" id="sendflag-invitation"><div class="color_box"></div><div class="label">Send invitation letter</div></div>
-							<div class="container" id="sendflag-reminder"><div class="color_box"></div><div class="label">Send another reminder (2 weeks)</div></div>
-							<div class="container" id="sendflag-GPremoval"><div class="color_box"></div><div class="label">Send GP removal letter</div></div>
-							<div class="container" id="sendflag-remove"><div class="color_box"></div><div class="label">Patient is due to be removed</div></div>
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="11" class="small">
-						<div id="letters-key">
-							<span>Letters sent out:</span>&nbsp;&nbsp;
-							<img src="<?php echo $assetPath?>/img/letterIcons/invitation.png" alt="Invitation" height="17" width="17"> - Invitation
-							<img src="<?php echo $assetPath?>/img/letterIcons/letter1.png" alt="1st reminder" height="17" width="17"> - 1<sup>st</sup> Reminder
-							<img src="<?php echo $assetPath?>/img/letterIcons/letter2.png" alt="2nd reminder" height="17" width="17"> - 2<sup>nd</sup> Reminder
-							<img src="<?php echo $assetPath?>/img/letterIcons/GP.png" alt="GP" height="17" width="17"> - GP Removal
-						</div>
-					</td>
-				</tr>
-			</tfoot>
-		</table>
-	<?php }?>
+			<?php }?>
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="11">
+					<div id="key">
+						<span>Colour Key:</span>
+						<div class="container" id="sendflag-invitation"><div class="color_box"></div><div class="label">Send invitation letter</div></div>
+						<div class="container" id="sendflag-reminder"><div class="color_box"></div><div class="label">Send another reminder (2 weeks)</div></div>
+						<div class="container" id="sendflag-GPremoval"><div class="color_box"></div><div class="label">Send GP removal letter</div></div>
+						<div class="container" id="sendflag-remove"><div class="color_box"></div><div class="label">Patient is due to be removed</div></div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="11" class="small">
+					<div id="letters-key">
+						<span>Letters sent out:</span>&nbsp;&nbsp;
+						<img src="<?php echo $assetPath?>/img/letterIcons/invitation.png" alt="Invitation" height="17" width="17"> - Invitation
+						<img src="<?php echo $assetPath?>/img/letterIcons/letter1.png" alt="1st reminder" height="17" width="17"> - 1<sup>st</sup> Reminder
+						<img src="<?php echo $assetPath?>/img/letterIcons/letter2.png" alt="2nd reminder" height="17" width="17"> - 2<sup>nd</sup> Reminder
+						<img src="<?php echo $assetPath?>/img/letterIcons/GP.png" alt="GP" height="17" width="17"> - GP Removal
+					</div>
+				</td>
+			</tr>
+		</tfoot>
+	</table>
 </div>
 <script type="text/javascript">
 	$('#checkall').click(function() {
