@@ -1128,5 +1128,43 @@
 		}
 		return $diagnosis->disorder->term;
 	}
+
+	public function sentInvitation() {
+		if (is_null($last_letter = $this->lastLetter)) return false;
+
+		return in_array($last_letter,array(
+			Element_OphTrOperation_Operation::LETTER_INVITE,
+			Element_OphTrOperation_Operation::LETTER_REMINDER_1,
+			Element_OphTrOperation_Operation::LETTER_REMINDER_2,
+			Element_OphTrOperation_Operation::LETTER_GP
+		));
+	}
+
+	public function sent1stReminder() {
+		if (is_null($last_letter = $this->lastLetter)) return false;
+
+		return in_array($last_letter,array(
+			Element_OphTrOperation_Operation::LETTER_REMINDER_1,
+			Element_OphTrOperation_Operation::LETTER_REMINDER_2,
+			Element_OphTrOperation_Operation::LETTER_GP
+		));
+	}
+
+	public function sent2ndReminder() {
+		if (is_null($last_letter = $this->lastLetter)) return false;
+
+		return in_array($last_letter,array(
+			Element_OphTrOperation_Operation::LETTER_REMINDER_2,
+			Element_OphTrOperation_Operation::LETTER_GP
+		));
+	}
+
+	public function sentGPLetter() {
+		if (is_null($last_letter = $this->lastLetter)) return false;
+
+		return in_array($last_letter,array(
+			Element_OphTrOperation_Operation::LETTER_GP
+		));
+	}
 }
 ?>

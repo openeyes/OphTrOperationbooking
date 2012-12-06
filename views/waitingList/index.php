@@ -57,7 +57,7 @@
 									)))?>
 								</td>
 								<td>
-									<?php echo CHtml::dropDownList('firm-id', @$_POST['firm-id'], array(), array('empty'=>'All firms', 'disabled'=>(empty($firmId))))?>
+									<?php echo CHtml::dropDownList('firm-id', @$_POST['firm-id'], $this->getFilteredFirms(@$_POST['subspecialty-id']), array('empty'=>'All firms', 'disabled'=>!@$_POST['firm-id']))?>
 								</td>
 								<td>
 									<?php echo CHtml::dropDownList('status', @$_POST['status'], Element_OphTrOperation_Operation::getLetterOptions())?>

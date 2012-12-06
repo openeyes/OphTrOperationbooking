@@ -41,45 +41,6 @@ $(document).ready(function() {
 		}
 	});
 
-	function print_items_from_selector(sel,all) {
-		var operations = new Array();
-
-		var nogp = 0;
-
-		var operations = $(sel).map(function(i,n) {
-			var no_gp = $(n).parent().parent().hasClass('waitinglistOrange') && $(n).parent().html().match(/>NO GP</)
-
-			if (no_gp) nogp += 1;
-
-			if (!no_gp) {
-				return $(n).attr('id').replace(/operation/,'');
-			}
-		}).get();
-
-		if (operations.length == 0) {
-			if (nogp == 0) {
-				alert("No items selected for printing.");
-			} else {
-				show_letter_warnings(nogp);
-			}
-		} else {
-			show_letter_warnings(nogp);
-			printPDF(baseUrl+'/OphTrOperation/waitingList/printLetters', {'operations': operations, 'all': all});
-		}
-	}
-
-	function show_letter_warnings(nogp) {
-		var msg = '';
-
-		if (nogp >0) {
-			msg += nogp+" item"+(nogp == 1 ? '' : 's')+" could not be printed as the patient has no GP practice.";
-		}
-
-		if (msg.length >0) {
-			alert(msg);
-		}
-	}
-
 	$('#btn_confirm_selected').click(function() {
 		if (!$(this).hasClass('inactive')) {
 			var data = '';
@@ -173,3 +134,42 @@ $(document).ready(function() {
 		});
 	});
 });
+
+function print_items_from_selector(sel,all) {
+	var operations = new Array();
+
+	var nogp = 0;
+
+	var operations = $(sel).map(function(i,n) {
+		var no_gp = $(n).parent().parent().hasClass('waitinglistOrange') && $(n).parent().html().match(/>NO GP</)
+
+		if (no_gp) nogp += 1;
+
+		if (!no_gp) {
+			return $(n).attr('id').replace(/operation/,'');
+		}
+	}).get();
+
+	if (operations.length == 0) {
+		if (nogp == 0) {
+			alert("No items selected for printing.");
+		} else {
+			show_letter_warnings(nogp);
+		}
+	} else {
+		show_letter_warnings(nogp);
+		printPDF(baseUrl+'/OphTrOperation/waitingList/printLetters', {'operations': operations, 'all': all});
+	}
+}
+
+function show_letter_warnings(nogp) {
+	var msg = '';
+
+	if (nogp >0) {
+		msg += nogp+" item"+(nogp == 1 ? '' : 's')+" could not be printed as the patient has no GP practice.";
+	}
+
+	if (msg.length >0) {
+		alert(msg);
+	}
+}

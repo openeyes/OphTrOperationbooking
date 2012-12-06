@@ -70,19 +70,17 @@
 					}?>
 					<tr class="waitinglist<?php echo ($i % 2 == 0) ? 'Even' : 'Odd'; ?>">
 						<td class="letterStatus waitinglist<?php echo $tablecolour ?>">
-							<?php if (($lastletter = $eo->getLastLetter()) !== null) {?>
-								<?php if (in_array($lastletter,array(Element_OphTrOperation_Operation::LETTER_INVITE,Element_OphTrOperation_Operation::LETTER_REMINDER_1,Element_OphTrOperation_Operation::LETTER_REMINDER_2,Element_OphTrOperation_Operation::LETTER_GP))) {?>
-									<img src="<?php echo $assetPath?>/img/letterIcons/invitation.png" alt="Invitation" width="17" height="17" />
-								<?php }?>
-								<?php if (in_array($lastletter,array(Element_OphTrOperation_Operation::LETTER_REMINDER_1,Element_OphTrOperation_Operation::LETTER_REMINDER_2,Element_OphTrOperation_Operation::LETTER_GP))) {?>
-									<img src="<?php echo $assetPath?>/img/letterIcons/letter1.png" alt="1st reminder" width="17" height="17" />
-								<?php }?>
-								<?php if (in_array($lastletter,array(Element_OphTrOperation_Operation::LETTER_REMINDER_2,Element_OphTrOperation_Operation::LETTER_GP))) {?>
-									<img src="<?php echo $assetPath?>/img/letterIcons/letter2.png" alt="2nd reminder" width="17" height="17" />
-								<?php }?>
-								<?php if ($lastletter == Element_OphTrOperation_Operation::LETTER_GP) {?>
-									<img src="<?php echo $assetPath?>/img/letterIcons/GP.png" alt="GP" width="17" height="17" />
-								<?php }?>
+							<?php if ($eo->sentInvitation()) {?>
+								<img src="<?php echo $assetPath?>/img/letterIcons/invitation.png" alt="Invitation" width="17" height="17" />
+							<?php }?>
+							<?php if ($eo->sent1stReminder()) {?>
+								<img src="<?php echo $assetPath?>/img/letterIcons/letter1.png" alt="1st reminder" width="17" height="17" />
+							<?php }?>
+							<?php if ($eo->sent2ndReminder()) {?>
+								<img src="<?php echo $assetPath?>/img/letterIcons/letter2.png" alt="2nd reminder" width="17" height="17" />
+							<?php }?>
+							<?php if ($eo->sentGPLetter()) {?>
+								<img src="<?php echo $assetPath?>/img/letterIcons/GP.png" alt="GP" width="17" height="17" />
 							<?php }?>
 						</td>
 						<td class="patient">
