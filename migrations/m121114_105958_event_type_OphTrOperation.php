@@ -399,6 +399,7 @@ class m121114_105958_event_type_OphTrOperation extends CDbMigration
 				'session_end_time' => 'time NOT NULL',
 				'session_theatre_id' => 'int(10) unsigned NOT NULL',
 				'transport_arranged' => 'tinyint(1) unsigned NOT NULL DEFAULT 0',
+				'transport_arranged_date' => 'datetime DEFAULT NULL',
 				'cancellation_date' => 'datetime DEFAULT NULL',
 				'cancellation_reason_id' => 'int(10) unsigned NULL',
 				'cancellation_comment' => 'varchar(200) COLLATE utf8_bin NOT NULL',
