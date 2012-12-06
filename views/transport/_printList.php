@@ -17,13 +17,9 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-<div id="no_gp_warning" class="alertBox" style="display: none;">One or more patients has no GP practice, please correct in PAS before printing GP letter.</div>
-<div id="waitingList" class="grid-view-waitinglist">
-<?php if (empty($bookings)) {?>
-	<h3>No bookings match your search criteria.</h3>
-<?php }else{?>
+<div id="printable">
 	<table>
-		<tbody>
+		<thead>
 			<tr>
 				<th>Hospital number</th>
 				<th>Patient</th>
@@ -36,13 +32,14 @@
 				<th>Subspecialty</th>
 				<th>DTA</th>
 				<th>Priority</th>
-				<th><input style="margin-top: 0.4em;" type="checkbox" id="transport_checkall" value="" /></th>
 			</tr>
-			<?php foreach ($bookings as $id => $booking) {?>
-				<tr class="waitinglist<?php echo $booking['colour']?>">
+		</thead>
+		<tbody>
+			<?php foreach ($bookings as $booking) {?>
+				<tr>
 					<td style="width: 53px;"><?php echo $booking['hos_num'] ?></td>
-					<td class="patient">
-						<?php echo CHtml::link("<strong>" . trim(strtoupper($booking['last_name'])) . '</strong>, ' . $booking['first_name'], Yii::app()->createUrl('OphTrOperation/default/view/' . $booking['evid']))?>
+					<td>
+						<?php echo "<strong>" . trim(strtoupper($booking['last_name'])) . '</strong>, ' . trim($booking['first_name'])?>
 					</td>
 					<td style="width: 83px;"><?php echo date('j-M-Y',strtotime($booking['session_date']))?></td>
 					<td style="width: 73px;"><?php echo $booking['session_time']?></td>
@@ -52,10 +49,9 @@
 					<td style="width: 43px;"><?php echo $booking['firm'] ?></td>
 					<td style="width: 53px;"><?php echo $booking['subspecialty']?></td>
 					<td style="width: 80px;"><?php echo Helper::convertMySQL2NHS($booking['decision_date']) ?></td>
-					<td><?php echo $booking['priority']?></td>
-					<td style="width: 20px;"><input type="checkbox" name="bookings[]" value="<?php echo $booking['booking_id']?>" /></td>
+					<td><?php echo $booking['priority_id'] == 1 ? 'Routine' : 'Urgent'?></td>
 				</tr>
 			<?php }?>
 		</tbody>
 	</table>
-<?php }?>
+</div>

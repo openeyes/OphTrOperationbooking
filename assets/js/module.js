@@ -252,6 +252,97 @@ $(document).ready(function() {
 			overrideElementCSS:['css/style.css',{href:'css/style.css',media:'print'}]
 		});
 	});
+
+	$('button.btn_transport_viewall').click(function() {
+		if (!$(this).hasClass('inactive')) {
+			disableButtons();
+			var m = window.location.href.match(/page=([0-9]+)/);
+			if (m) {
+				window.location.href = baseUrl+'/OphTrOperation/transport/index?page='+m[1];
+			} else {
+				window.location.href = baseUrl+'/OphTrOperation/transport/index';
+			}
+		}
+		return false;
+	});
+
+	$('button.btn_transport_filter').click(function() {
+		if (!$(this).hasClass('inactive')) {
+			disableButtons();
+			var get = '';
+			var m = window.location.href.match(/page=([0-9]+)/);
+			if (m) {
+				get = 'page='+m[1];
+			}
+			if (!$('#include_bookings').is(':checked')) {
+				if (get) get += '&';
+				get += 'include_bookings=0';
+			}
+			if (!$('#include_reschedules').is(':checked')) {
+				if (get) get += '&';
+				get += 'include_reschedules=0';
+			}
+			if (!$('#include_cancellations').is(':checked')) {
+				if (get) get += '&';
+				get += 'include_cancellations=0';
+			}
+			if ($('#transport_date_from').val()) {
+				if (get) get += '&';
+				get += 'date_from='+$('#transport_date_from').val();
+			}
+			if ($('#transport_date_to').val()) {
+				if (get) get += '&';
+				get += 'date_to='+$('#transport_date_to').val();
+			}
+			window.location.href = baseUrl+'/OphTrOperation/transport/index?'+get;
+		}
+		return false;
+	});
+
+	$('button.btn_transport_confirm').click(function() {
+		if (!$(this).hasClass('inactive')) {
+			disableButtons();
+
+			$.ajax({
+				type: "POST",
+				url: baseUrl+"/OphTrOperation/transport/confirm",
+				data: $('input[name^="bookings"]:checked').serialize(),
+				success: function(html) {
+					if (html == "1") {
+						$('input[name^="bookings"]:checked').map(function() {
+							$(this).parent().parent().attr('class','waitinglistGrey');
+							$(this).attr('checked',false);
+						});
+					} else {
+						alert("Something went wrong trying to confirm the transport item.\n\nPlease try again or contact OpenEyes support.");
+					}
+					enableButtons();
+					return false;
+				}
+			});
+		}
+
+		return false;
+	});
+
+	$('button.btn_transport_print').click(function() {
+		if (!$(this).hasClass('inactive')) {
+			disableButtons();
+			printUrl(window.location.href.replace(/\/index/,'/printList'));
+			setTimeout('enableButtons();',3000);
+		}
+		return false;
+	});
+
+	$('button.btn_transport_download').click(function() {
+		if (!$(this).hasClass('inactive')) {
+			$('#csvform').submit();
+		}
+	});
+
+	$('#transport_checkall').click(function() {
+		$('input[name^="bookings"]').attr('checked',$('#transport_checkall').is(':checked'));
+	});
 });
 
 function printElem(method,options){

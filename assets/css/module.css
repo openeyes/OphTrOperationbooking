@@ -189,3 +189,4 @@ table.waiting-list tr.hover{ background-color: #ffffdd; }
 .waitinglistOrange{ background-color: #F7BF8D; }
 
 div.transport_pagination { margin-top: 15px; margin-bottom: 8px; }
+span.transport_pagination_selected { background-color: #0B59DA; color: #fff; }
