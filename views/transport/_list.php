@@ -19,12 +19,9 @@
 ?>
 <div id="no_gp_warning" class="alertBox" style="display: none;">One or more patients has no GP practice, please correct in PAS before printing GP letter.</div>
 <div id="waitingList" class="grid-view-waitinglist">
-<?php
-if (empty($bookings['bookings'])) { ?>
-<h3>No bookings match your search criteria.</h3>
-<?php
-} else {
-?>
+<?php if (empty($bookings['bookings'])) {?>
+	<h3>No bookings match your search criteria.</h3>
+<?php }else{?>
 	<table>
 		<tbody>
 			<tr>
@@ -41,64 +38,42 @@ if (empty($bookings['bookings'])) { ?>
 				<th>Priority</th>
 				<th><input style="margin-top: 0.4em;" type="checkbox" id="checkall" value="" /></th>
 			</tr>
-<?php
-	if ($bookings) {
-		foreach ($bookings['bookings'] as $id => $booking) {?>
-	<?php
-		if (!$booking['transport_arranged']) {
-			if (strtotime($booking['session_date']) <= (strtotime(date('Y-m-d')) + 86400)) {
-				$tablecolour = "Red";
-			} else {
-				$tablecolour = "Green";
-			}
-		} else {
-			$tablecolour = "Grey";
-		}
-	?>
-			<tr class="waitinglist<?php echo $tablecolour ?>">
-			<?php
-	?>
-		<td style="width: 53px;"><?php echo $booking['hos_num'] ?></td>
-		<td class="patient">
-			<?php echo CHtml::link("<strong>" . trim(strtoupper($booking['last_name'])) . '</strong>, ' . $booking['first_name'], Yii::app()->createUrl('patient/event/' . $booking['evid']))?>
-		</td>
-		<td style="width: 83px;"><?php echo date('j-M-Y',strtotime($booking['session_date']))?></td>
-		<td style="width: 73px;"><?php echo $booking['session_time']?></td>
-		<td style="width: 95px;"><?php echo $booking['location']?></td>
-		<td style="width: 170px;"><?php echo $booking['ward_name']?></td>
-		<td style="width: 53px;"><?php echo $booking['method']?></td>
-		<td style="width: 43px;"><?php echo $booking['firm'] ?></td>
-		<td style="width: 53px;"><?php echo $booking['subspecialty']?></td>
-		<td style="width: 80px;"><?php echo Helper::convertMySQL2NHS($booking['decision_date']) ?></td>
-		<td><?php echo $booking['priority_id'] == 1 ? 'Routine' : 'Urgent'?></td>
-		<td style="width: 20px;">
-			<?php if ($booking['method'] == 'Cancelled') {?>
-				<input type="checkbox" name="cancelled[]" value="<?php echo $booking['booking_id']?>" />
-			<?php }else{?>
-				<input type="checkbox" name="booked[]" value="<?php echo $booking['booking_id']?>" />
-			<?php }?>
-		</td>
-	</tr>
+			<?php if ($bookings) {
+				foreach ($bookings['bookings'] as $id => $booking) {?>
+					<tr class="waitinglist<?php echo $booking['colour']?>">
+						<td style="width: 53px;"><?php echo $booking['hos_num'] ?></td>
+						<td class="patient">
+							<?php echo CHtml::link("<strong>" . trim(strtoupper($booking['last_name'])) . '</strong>, ' . $booking['first_name'], Yii::app()->createUrl('OphTrOperation/default/view/' . $booking['evid']))?>
+						</td>
+						<td style="width: 83px;"><?php echo date('j-M-Y',strtotime($booking['session_date']))?></td>
+						<td style="width: 73px;"><?php echo $booking['session_time']?></td>
+						<td style="width: 95px;"><?php echo $booking['location']?></td>
+						<td style="width: 170px;"><?php echo $booking['ward_name']?></td>
+						<td style="width: 53px;"><?php echo $booking['method']?></td>
+						<td style="width: 43px;"><?php echo $booking['firm'] ?></td>
+						<td style="width: 53px;"><?php echo $booking['subspecialty']?></td>
+						<td style="width: 80px;"><?php echo Helper::convertMySQL2NHS($booking['decision_date']) ?></td>
+						<td><?php echo $booking['priority']?></td>
+						<td style="width: 20px;">
+							<input type="checkbox" name="bookings[]" value="<?php echo $booking['booking_id']?>" />
+						</td>
+					</tr>
 
+				<?php }
+				if (count($bookings['bookings']) == 0) {?>
+					<tr>
+						<td colspan="7" style="border: none; padding-top: 10px;">
+							There is no relevant activity for the selected date.
+						</td>
+					</tr>
+				<?php }?>
+			</tbody>
+		</table>
 	<?php }
-
-		if (count($bookings['bookings']) == 0) { ?>
-		<tr>
-			<td colspan="7" style="border: none; padding-top: 10px;">
-				There is no relevant activity for the selected date.
-			</td>
-		</tr>
-		<?php }
-	?>
-	</tbody>
-	</table>
-	<?php
-	}
 }
-
-$done = array();
 ?>
 
+<?php /*
 <div style="display: none;">
 	<div id="printable">
 		<table>
@@ -139,11 +114,11 @@ $done = array();
 		</table>
 	</div>
 </div>
-
+*/?>
+</div>
 <script type="text/javascript">
-$('#checkall').click(function() {
-	$('input[name^="cancelled"]').attr('checked',$('#checkall').is(':checked'));
-	$('input[name^="booked"]').attr('checked',$('#checkall').is(':checked'));
-});
+	$('#checkall').click(function() {
+		$('input[name^="cancelled"]').attr('checked',$('#checkall').is(':checked'));
+		$('input[name^="booked"]').attr('checked',$('#checkall').is(':checked'));
+	});
 </script>
-</div> <!-- #waitingList -->

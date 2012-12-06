@@ -89,16 +89,15 @@ class TransportController extends BaseEventTypeController
 		$data = array();
 		$data_all = array();
 
-		$exclude_sites = array(3,5);
-		$exclude_theatres = array();
+		!empty(Yii::app()->params['transport_exclude_sites']) and $where .= ' and si.id not in ('.implode(',',Yii::app()->params['transport_exclude_sites']).') ';
+		!empty(Yii::app()->params['transport_exclude_theatres']) and $where .= ' and s.theatre_id not in ('.implode(',',Yii::app()->params['transport_exclude_theatres']).') ';
 
-		!empty($exclude_sites) and $where .= ' and si.id not in ('.implode(',',$exclude_sites).') ';
-		!empty($exclude_theatres) and $where .= ' and s.theatre_id not in ('.implode(',',$exclude_theatres).') ';
+		!$include_bookings and $where .= ' and (b.cancellation_date is not null or status_id != 2)';
+		!$include_reschedules and $where .= ' and (b.cancellation_date is not null or status_id = 2)';
+		!$include_cancellations and $where .= ' and (b.cancellation_date is null)';
 
-		foreach (Yii::app()->db->createCommand()
-			->select("eo.id as eoid, eo.priority_id, b.id as booking_id, p.id as pid, ev.id as evid, c.first_name, c.last_name, p.hos_num, eo.eye_id, f.pas_code as firm,
-				eo.decision_date, su.ref_spec as subspecialty, s.date as session_date, s.start_time as session_time, eo.status_id, b.created_date,
-				w.name as ward_name, s.theatre_id, s.id as session_id, b.cancellation_date, si.short_name as site_short_name, si.name as site_name, b.transport_arranged")
+		$this->total_items = Yii::app()->db->createCommand()
+			->select("count(*)")
 			->from("et_ophtroperation_operation eo")
 			->join("event ev","eo.event_id = ev.id")
 			->join("episode e","ev.episode_id = e.id")
@@ -109,42 +108,144 @@ class TransportController extends BaseEventTypeController
 			->join("contact c","c.parent_id = p.id and c.parent_class = 'Patient'")
 			->join("(select element_id,max(id) as maxid from ophtroperation_operation_booking group by element_id) as btmp","btmp.element_id = eo.id")
 			->join("ophtroperation_operation_booking b","b.id = btmp.maxid")
-			->join("ophtroperation_operation_session s","s.id = b.session_id")
+			->join("ophtroperation_operation_session s","s.id = b.session_id and s.date >= '$today'")
 			->join("ophtroperation_operation_theatre t","t.id = s.theatre_id")
 			->join("site si","si.id = t.site_id")
 			->join("ward w","w.id = b.ward_id")
-			->where("(ev.deleted = 0 or ev.deleted is null) and (e.deleted = 0 or e.deleted is null) and (b.transport_arranged = 0 or (b.transport_arranged = 1 and b.last_modified_date >= '$today')) $where")
-			->order("session_date asc, session_time asc")
-			->queryAll() as $i => $row) {
+			->where("(ev.deleted = 0 or ev.deleted is null) and (e.deleted = 0 or e.deleted is null) and (b.transport_arranged = 0 or b.transport_arranged_date = '$today') $where")
+			->queryScalar();
 
-			if ($row['cancellation_date']) {
-				$row['method'] = 'Cancelled';
-			} else if ($row['status_id'] == 2) {
-				$row['method'] = 'Booked';
-			} else {
-				$row['method'] = 'Rescheduled';
+		$data = Yii::app()->db->createCommand()
+			->select("eo.id as eoid, eo.priority_id, b.id as booking_id, p.id as pid, ev.id as evid, c.first_name, c.last_name, p.hos_num, eo.eye_id, f.pas_code as firm,
+				eo.decision_date, su.ref_spec as subspecialty, s.date as session_date, s.start_time as session_time, eo.status_id, b.created_date, w.name as ward_name,
+				s.theatre_id, s.id as session_id, b.cancellation_date, b.transport_arranged, unix_timestamp(str_to_date(concat(date,' ',start_time),'%Y-%m-%d %H:%i:%s')) as timestamp,
+				case isnull(b.cancellation_date) when 0 then 'Cancelled' else ( case status_id = 2 when 1 then 'Booked' else 'Rescheduled' end ) end as method,
+				case si.short_name != '' when 1 then si.short_name else si.name end as location, case eo.priority_id = 1 when 1 then 'Routine' else 'Urgent' end as priority,
+				case transport_arranged = 0 when 1 then ( case s.date <= now() + interval 1 day when 1 then 'Red' else 'Green' end ) else 'Grey' end as colour")
+			->from("et_ophtroperation_operation eo")
+			->join("event ev","eo.event_id = ev.id")
+			->join("episode e","ev.episode_id = e.id")
+			->join("firm f","e.firm_id = f.id")
+			->join("service_subspecialty_assignment ssa","f.service_subspecialty_assignment_id = ssa.id")
+			->join("subspecialty su","ssa.subspecialty_id = su.id")
+			->join("patient p","e.patient_id = p.id")
+			->join("contact c","c.parent_id = p.id and c.parent_class = 'Patient'")
+			->join("(select element_id,max(id) as maxid from ophtroperation_operation_booking group by element_id) as btmp","btmp.element_id = eo.id")
+			->join("ophtroperation_operation_booking b","b.id = btmp.maxid")
+			->join("ophtroperation_operation_session s","s.id = b.session_id and s.date >= '$today'")
+			->join("ophtroperation_operation_theatre t","t.id = s.theatre_id")
+			->join("site si","si.id = t.site_id")
+			->join("ward w","w.id = b.ward_id")
+			->where("(ev.deleted = 0 or ev.deleted is null) and (e.deleted = 0 or e.deleted is null) and (b.transport_arranged = 0 or b.transport_arranged_date = '$today') $where")
+			->order("timestamp asc")
+			->offset($offset)
+			->limit($this->items_per_page)
+			->queryAll();
+
+		$this->pages = ceil($this->total_items / $this->items_per_page);
+
+		return array('bookings' => $data);
+	}
+
+	public function actionDigest() {
+		$times = Yii::app()->params['transport_csv_intervals'];
+
+		foreach ($times as $i => $time) {
+			if ($_GET['time'] == preg_replace('/:/','',$time)) {
+				if ($i == 0) {
+					$from = strtotime($_GET['date'].' '.$times[count($times)-1]) - 86400;
+					$to = strtotime($_GET['date'].' '.$_GET['time']);
+				} else {
+					$from = strtotime($_GET['date'].' '.$last_time);
+					$to = strtotime($_GET['date'].' '.$_GET['time']);
+				}
+				break;
 			}
 
-			$ts = strtotime($row['session_date'].' '.$row['session_time']);
-			$row['location'] = $row['site_short_name'] ? $row['site_short_name'] : $row['site_name'];
+			$last_time = $time;
+		}
 
-			if (($include_bookings && $row['method'] == 'Booked') || ($include_reschedules && $row['method'] == 'Rescheduled') || ($include_cancellations && $row['method'] == 'Cancelled')) {
-				if (count($data_all) >= $offset && count($data) < $this->items_per_page) {
-					while (isset($data[$ts])) $ts++;
-					$data[$ts] = $row;
+		header("Content-Type: text/plain");
+		header("Content-Description: File Transfer");
+		header('Content-disposition: attachment; filename="'.$_GET['date'].'_'.$_GET['time'].'.csv"');
+		header("Content-Transfer-Encoding: binary");
+
+		$bookings = $this->getTCIEvents(date('Y-m-d H:i:s',$from), date('Y-m-d H:i:s',$to));
+
+		echo "Hospital number,Patient,Session date,Session time,Site,Method,Firm,Subspecialty,Decision date,Priority\n";
+
+		foreach ($bookings['bookings_all'] as $booking) {
+			echo '"'.$booking['hos_num'].'","'.$booking['last_name'].', '.$booking['first_name'].'","'.$booking['session_date'].'","'.$booking['session_time'].'","'.$booking['location'].'","'.$booking['method'].'","'.$booking['firm'].'","'.$booking['subspecialty'].'","'.$booking['decision_date'].'","'.$booking['priority'].'"'."\n";
+		}
+
+		Yii::app()->end();
+	}
+
+	/**
+	 * Print transport letters for bookings
+	 */
+	public function actionPrint($id) {
+		$booking_ids = (isset($_REQUEST['booked'])) ? $_REQUEST['booked'] : null;
+		if (!is_array($booking_ids)) {
+			throw new CHttpException('400', 'Invalid booking list');
+		}
+		$bookings = OphTrOperation_Operation_Booking::model()->findAllByPk($booking_ids);
+
+		// Print a letter for booking, separated by a page break
+		$break = false;
+		foreach($bookings as $booking) {
+			if ($break) {
+				$this->renderPartial("letters/break");
+			} else {
+				$break = true;
+			}
+			$patient = $booking->operation->event->episode->patient;
+			$transport = array(
+				'request_to' => 'FIXME: REQUEST TO',
+				'request_from' => 'FIXME: REQUEST FROM',
+				'escort' => '', // FIXME: No source yet
+				'mobility' => '', // FIXME: No source yet
+				'oxygen' => '', // FIXME: No source yet
+				'contact_name' => 'FIXME: CONTACT NAME',
+				'contact_number' => 'FIXME: CONTACT NUMBER',
+				'comments' => '', // FIXME: No source yet
+			);
+			$this->renderPartial("transport/transport_form", array(
+				'booking' => $booking,
+				'patient' => $patient,
+				'transport' => $transport,
+			));
+		}
+	}
+
+	public function actionConfirm() {
+		if (is_array(@$_REQUEST['bookings'])) {
+			foreach (@$_REQUEST['bookings'] as $booking) {
+				if (!$booking->transport_arranged) {
+					$booking->transport_arranged = 1;
+					if (!$booking->save()) {
+						throw new Exception('Unable to save booking: '.print_r($booking->getErrors(),true));
+					}
 				}
-				while (isset($data_all[$ts])) $ts++;
-				$data_all[$ts] = $row;
 			}
 		}
 
-		ksort($data);
-		ksort($data_all);
+		echo '1';
+	}
 
-		$this->total_items = count($data_all);
-		$this->pages = ceil($this->total_items / $this->items_per_page);
+	public function actionDownloadcsv() {
+		header("Content-type: application/csv");
+		header("Content-Disposition: attachment; filename=transport.csv");
+		header("Pragma: no-cache");
+		header("Expires: 0");
 
-		return array('bookings' => $data, 'bookings_all' => $data_all);
+		echo "Hospital number,First name,Last name,TCI date,Admission time,Site,Ward,Method,Firm,Specialty,DTA,Priority\n";
+
+		$data = $this->getBookings();
+
+		foreach ($data['bookings_all'] as $row) {
+			echo '"'.$row['hos_num'].'","'.trim($row['first_name']).'","'.trim($row['last_name']).'","'.$row['order_date'].'","'.$row['order_time'].'","'.$row['location'].'","'.$row['ward_name'].'","'.$row['method'].'","'.$row['firm'].'","'.$row['subspecialty'].'","'.$row['decision_date'].'","'.$row['priority'].'"'."\n";
+		}
 	}
 
 	public function getUriAppend() {
