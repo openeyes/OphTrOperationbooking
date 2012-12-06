@@ -101,19 +101,22 @@ class WaitingListController extends BaseEventTypeController {
 		}
 
 		return Yii::app()->db->createCommand()
-			->select('eo.id as eoid, eo.decision_date, ev.id as evid, ep.id as epid, pat.id as pid, co.first_name, co.last_name, pat.hos_num, pat.gp_id, pat.practice_id, pad.id as practice_address_id, GROUP_CONCAT(p.short_format SEPARATOR ", ") as List')
+			->select("eo.id AS eoid, eo.decision_date as decision_date, ev.id AS evid, ep.id AS epid, pat.id AS pid, co.first_name, co.last_name, pat.hos_num, pat.gp_id,
+				pat.practice_id, pad.id AS practice_address_id, GROUP_CONCAT(p.short_format SEPARATOR \", \") AS List")
 			->from("et_ophtroperation_operation eo")
 			->join("event ev","eo.event_id = ev.id")
 			->join("episode ep","ev.episode_id = ep.id")
 			->join("firm f","ep.firm_id = f.id")
 			->join("service_subspecialty_assignment ssa","f.service_subspecialty_assignment_id = ssa.id")
 			->join("patient pat","ep.patient_id = pat.id")
-			->join("contact co","co.parent_id = pat.id and co.parent_class = 'Patient'")
+			->join("contact co","co.parent_id = pat.id AND co.parent_class = 'Patient'")
 			->join("ophtroperation_operation_procedures_procedures opa","opa.element_id = eo.id")
 			->join("proc p","opa.proc_id = p.id")
-			->leftJoin("address pad","pad.parent_id = pat.practice_id and pad.parent_class = 'Practice'")
-			->where("ep.end_date is null and eo.status_id in (1,3) $whereSql and ev.deleted = 0 group by eo.decision_date", $whereParams)
+			->leftJoin("address pad","pad.parent_id = pat.practice_id AND pad.parent_class = 'Practice'")
+			->where("ep.end_date IS NULL and eo.status_id in (1,3) $whereSql and ev.deleted = 0 group by opa.element_id")
+			->order("decision_date asc")
 			->queryAll();
+
 	}
 
 	/**

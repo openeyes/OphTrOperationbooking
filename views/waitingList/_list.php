@@ -70,8 +70,7 @@
 					}?>
 					<tr class="waitinglist<?php echo ($i % 2 == 0) ? 'Even' : 'Odd'; ?>">
 						<td class="letterStatus waitinglist<?php echo $tablecolour ?>">
-							<?php
-							if ($lastletter = $eo->getLastLetter()) {?>
+							<?php if (($lastletter = $eo->getLastLetter()) !== null) {?>
 								<?php if (in_array($lastletter,array(Element_OphTrOperation_Operation::LETTER_INVITE,Element_OphTrOperation_Operation::LETTER_REMINDER_1,Element_OphTrOperation_Operation::LETTER_REMINDER_2,Element_OphTrOperation_Operation::LETTER_GP))) {?>
 									<img src="<?php echo $assetPath?>/img/letterIcons/invitation.png" alt="Invitation" width="17" height="17" />
 								<?php }?>
@@ -87,7 +86,7 @@
 							<?php }?>
 						</td>
 						<td class="patient">
-							<?php echo CHtml::link("<strong>" . trim(strtoupper($operation['last_name'])) . '</strong>, ' . $operation['first_name'], Yii::app()->createUrl('/patient/event/' . $operation['evid']))?>
+							<?php echo CHtml::link("<strong>" . trim(strtoupper($operation['last_name'])) . '</strong>, ' . $operation['first_name'], Yii::app()->createUrl('/OphTrOperation/default/view/'.$operation['evid']))?>
 						</td>
 						<td><?php echo $operation['hos_num'] ?></td>
 						<td><?php echo $eo->site->short_name?></td>

@@ -292,7 +292,6 @@
 			return null;
 		}
 		if (
-			!is_null($this->date_letter_sent->date_invitation_letter_sent) and
 			$this->date_letter_sent->date_invitation_letter_sent and	// an invitation letter has been sent
 			is_null($this->date_letter_sent->date_1st_reminder_letter_sent) and // but no 1st reminder
 			is_null($this->date_letter_sent->date_2nd_reminder_letter_sent) and // no 2nd reminder
