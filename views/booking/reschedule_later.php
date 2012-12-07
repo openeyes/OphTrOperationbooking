@@ -45,7 +45,7 @@ $this->header()?>
 			$listIndex = 2;
 		}
 		echo CHtml::dropDownList('cancellation_reason', '',
-			CancellationReason::getReasonsByListNumber($listIndex),
+			OphTrOperation_Operation_Cancellation_Reason::getReasonsByListNumber($listIndex),
 			array('empty'=>'Select a reason')
 		)?>
 		<br/>
