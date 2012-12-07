@@ -41,6 +41,9 @@ foreach ($diary as $site_name => $theatres) {
 									<td>DATE:</td>
 									<td><?php echo Helper::convertDate2NHS($date)?></td>
 								</tr>
+								<tr>
+									<td>COMMENTS: <?php echo htmlspecialchars($session['comments'])?></td>
+								</tr>
 							</tbody>
 						</table>
 						<table class="d_data">
@@ -66,7 +69,6 @@ foreach ($diary as $site_name => $theatres) {
 										<td style="max-width: 500px; word-wrap:break-word; overflow: hidden;">
 										<?php echo !empty($booking['procedures']) ? '['.$booking['eye'].'] '.htmlspecialchars($booking['procedures']) : 'No procedures'?><br />
 										<?php echo htmlspecialchars($booking['comments'])?>
-										<?php echo htmlspecialchars($session['comments'])?>
 										<td><?php echo $booking['admission_time']?></td>
 									</tr>
 								<?php }?>
