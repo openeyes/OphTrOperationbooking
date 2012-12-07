@@ -16,7 +16,7 @@ class m121128_122049_ophtroperation_operation_name_rule extends CDbMigration
 				'KEY `ophtroperation_operation_name_rule_theatre_id_fk` (`theatre_id`)',
 				'KEY `ophtroperation_operation_name_rule_last_modified_user_id_fk` (`last_modified_user_id`)',
 				'KEY `ophtroperation_operation_name_rule_created_user_id_fk` (`created_user_id`)',
-				'CONSTRAINT `ophtroperation_operation_name_rule_theatre_id_fk` FOREIGN KEY (`theatre_id`) REFERENCES `theatre` (`id`)',
+				'CONSTRAINT `ophtroperation_operation_name_rule_theatre_id_fk` FOREIGN KEY (`theatre_id`) REFERENCES `ophtroperation_operation_theatre` (`id`)',
 				'CONSTRAINT `ophtroperation_operation_name_rule_last_modified_user_id_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `ophtroperation_operation_name_rule_created_user_id_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)'
 			),

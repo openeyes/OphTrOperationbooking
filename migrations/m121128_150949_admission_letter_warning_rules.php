@@ -47,7 +47,7 @@ class m121128_150949_admission_letter_warning_rules extends CDbMigration
 				'CONSTRAINT `ophtroperation_admission_lwr_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `ophtroperation_admission_lwr_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `ophtroperation_admission_lwr_pri_fk` FOREIGN KEY (`parent_rule_id`) REFERENCES `ophtroperation_admission_letter_warning_rule` (`id`)',
-				'CONSTRAINT `ophtroperation_admission_lwr_ti_fk` FOREIGN KEY (`theatre_id`) REFERENCES `theatre` (`id`)',
+				'CONSTRAINT `ophtroperation_admission_lwr_ti_fk` FOREIGN KEY (`theatre_id`) REFERENCES `ophtroperation_operation_theatre` (`id`)',
 				'CONSTRAINT `ophtroperation_admission_lwr_si_fk` FOREIGN KEY (`subspecialty_id`) REFERENCES `subspecialty` (`id`)',
 				'CONSTRAINT `ophtroperation_admission_lwr_site_fk` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`)',
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');

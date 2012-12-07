@@ -511,7 +511,7 @@ class m121114_105958_event_type_OphTrOperation extends CDbMigration
 				'CONSTRAINT `ophtroperation_letter_contact_rule_pi_fk` FOREIGN KEY (`parent_rule_id`) REFERENCES `ophtroperation_letter_contact_rule` (`id`)',
 				'CONSTRAINT `ophtroperation_letter_contact_rule_site_id_fk` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`)',
 				'CONSTRAINT `ophtroperation_letter_contact_rule_subspecialty_id_fk` FOREIGN KEY (`subspecialty_id`) REFERENCES `subspecialty` (`id`)',
-				'CONSTRAINT `ophtroperation_letter_contact_rule_theatre_id_fk` FOREIGN KEY (`theatre_id`) REFERENCES `theatre` (`id`)',
+				'CONSTRAINT `ophtroperation_letter_contact_rule_theatre_id_fk` FOREIGN KEY (`theatre_id`) REFERENCES `ophtroperation_operation_theatre` (`id`)',
 				'CONSTRAINT `ophtroperation_letter_contact_rule_firm_id_fk` FOREIGN KEY (`firm_id`) REFERENCES `firm` (`id`)',
 				'CONSTRAINT `ophtroperation_letter_contact_rule_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)',
 				'CONSTRAINT `ophtroperation_letter_contact_rule_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)',
