@@ -92,7 +92,7 @@ $this->header();
 		</div>
 		<div id="sessionDetails">
 			<?php if ($session) {?>
-				<?php echo $this->renderPartial('_list', array('operation'=>$operation, 'session'=>$session, 'bookings'=>$bookings, 'reschedule'=>$operation->booking, 'bookable'=>$bookable),false,true)?>
+				<?php echo $this->renderPartial('_list', array('operation'=>$operation, 'session'=>$session, 'bookings'=>$bookings, 'reschedule'=>$operation->booking, 'bookable'=>$bookable, 'errors' => $errors),false,true)?>
 			<?php }?>
 		</div>
 	</div>

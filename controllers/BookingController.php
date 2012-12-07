@@ -6,7 +6,7 @@ class BookingController extends BaseEventTypeController {
 		'js/additional-validators.js',
 	);
 
-	public function actionCreate() {
+	/*public function actionCreate() {
 		if (isset($_POST['Booking'])) {
 			if (!$operation = Element_OphTrOperation_Operation::model()->findByPk(@$_POST['Booking']['element_id'])) {
 				throw new Exception('Operation not found: '.@$_POST['Booking']['element_id']);
@@ -16,7 +16,7 @@ class BookingController extends BaseEventTypeController {
 
 			die(json_encode(array()));
 		}
-	}
+	}*/
 
 	public function actionUpdate($id) {
 		if (!$event = Event::model()->findByPk($id)) {
@@ -104,6 +104,22 @@ class BookingController extends BaseEventTypeController {
 						}
 					}
 				}
+
+				if (!empty($_POST['Booking']['element_id'])) {
+					if (!$operation = Element_OphTrOperation_Operation::model()->findByPk($_POST['Booking']['element_id'])) {
+						throw new Exception('Operation not found: '.$_POST['Booking']['element_id']);
+					}
+
+					if (($result = $operation->schedule($_POST['Booking'], $_POST['Operation']['comments'], $_POST['Session']['comments'])) !== true) {
+						$errors = $result;
+					} else {
+						$this->redirect(array('/OphTrOperation/default/view/'.$operation->event_id));
+					}
+				} else {
+					$_POST['Booking']['admission_time'] = ($session['start_time'] == '13:30:00') ? '12:00' : date('H:i', strtotime('-1 hour', strtotime($session['start_time'])));
+					$_POST['Session']['comments'] = $session['comments'];
+					$_POST['Operation']['comments'] = $operation->comments;
+				}
 			}
 		} else if ($operation->booking) {
 			$selectedDate = $operation->booking->session->date;
@@ -122,6 +138,7 @@ class BookingController extends BaseEventTypeController {
 				'bookings' => @$bookings,
 				'bookable' => @$bookable,
 				'inthepast' => @$inthepast,
+				'errors' => @$errors,
 				), false, true);
 	}
 

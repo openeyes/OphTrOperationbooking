@@ -126,51 +126,10 @@ $(document).ready(function() {
 		return false;
 	});
 
-	$('#bookingForm').validate({
-		rules : {
-			"Booking[admission_time]" : {
-				required: true,
-				time: true
-			},
-			"cancellation_reason" : {
-				required: true
-			}
-		},
-		submitHandler: function(form){
-			if (!$('#bookingForm button#confirm_slot').hasClass('inactive')) {
-				disableButtons();
-
-				var rescheduling = window.location.href.match(/\/reschedule\//) == null ? false : true;
-				var event_id = window.location.href.match(/[0-9]+/);
-
-				$.ajax({
-					'type': 'POST',
-					'url': rescheduling ? baseUrl+'/OphTrOperation/booking/update/'+event_id : baseUrl+'/OphTrOperation/booking/create/'+event_id,
-					'data': $('#bookingForm').serialize(),
-					'dataType': 'json',
-					'success': function(data) {
-						var n=0;
-						var html = '';
-						$.each(data, function(key, value) {
-							html += '<ul><li>'+value+'</li></ul>';
-							n += 1;
-						});
-						if (n == 0) {
-							window.location.href = baseUrl+'/OphTrOperation/default/view/'+event_id;
-						} else {
-							$('div.alertBox').show();
-							$('div.alertBox').html(html);
-						}
-
-						enableButtons();
-						return false;
-					}
-				});
-
-				return false;
-			} else {
-				return false;
-			}
+	$('#bookingForm button#confirm_slot').click(function() {
+		if (!$(this).hasClass('inactive')) {
+			disableButtons();
+			return true;
 		}
 	});
 

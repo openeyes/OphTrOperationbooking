@@ -18,9 +18,9 @@
  */
 
 if (!$reschedule) {
-	echo CHtml::form(Yii::app()->createUrl('/'.$operation->event->eventType->class_name.'/booking/create'), 'post', array('id' => 'bookingForm'));
+	echo CHtml::form(Yii::app()->createUrl('/OphTrOperation/booking/schedule/'.$operation->event->id.'?firm_id='.$_GET['firm_id'].'&date='.$_GET['date'].'&day='.$_GET['day'].'&session_id='.$_GET['session_id']), 'post', array('id' => 'bookingForm'));
 } else {
-	echo CHtml::form(Yii::app()->createUrl('/'.$operation->event->eventType->class_name.'/booking/update'), 'post', array('id' => 'bookingForm'));
+	echo CHtml::form(Yii::app()->createUrl('/OphTrOperation/booking/update'), 'post', array('id' => 'bookingForm'));
 }
 
 ?>
@@ -79,7 +79,7 @@ if (!$reschedule) {
 	<div class="eventDetail clearfix">
 		<div class="label"><strong>Admission Time:</strong></div>
 		<div class="data"> 
-			<input type="text" id="Booking_admission_time" name="Booking[admission_time]" value="<?php echo ($session['start_time'] == '13:30:00') ? '12:00' : date('H:i', strtotime('-1 hour', strtotime($session['start_time']))) ?>" size="6">
+			<input type="text" id="Booking_admission_time" name="Booking[admission_time]" value="<?php echo $_POST['Booking']['admission_time']?>" size="6" />
 			<span id="Booking_admission_time_error"></span>
 		</div>
 	</div>
@@ -90,7 +90,7 @@ if (!$reschedule) {
 		</div>
 		<div class="data">
 			<div class="sessionComments" style="width:400px; display:inline-block; margin-bottom:0; ">
-				<textarea id="Session_comments" name="Session[comments]" rows="2" style="width:395px;"><?php echo htmlspecialchars($session['comments']) ?></textarea>
+				<textarea id="Session_comments" name="Session[comments]" rows="2" style="width:395px;"><?php echo htmlspecialchars($_POST['Session']['comments'])?></textarea>
 			</div>
 		</div>	
 	</div>
@@ -104,33 +104,33 @@ if (!$reschedule) {
 	?>
 
 	<?php if ($reschedule) { ?>
-	<h3>Reason for Reschedule</h3>
-	<div class="eventDetail clearfix" style="position:relative;">
-		<div class="label"><strong><?php echo CHtml::label('Reschedule Reason: ', 'cancellation_reason'); ?></strong></div>
-		<?php if (date('Y-m-d') == date('Y-m-d', strtotime($operation->booking->session->date))) {
-			$listIndex = 3;
-		} else {
-			$listIndex = 2;
-		} ?>
-		<div class="data">
-		<?php echo CHtml::dropDownList('cancellation_reason', '',
-			OphTrOperation_Operation_Cancellation_Reason::getReasonsByListNumber($listIndex),
-			array('empty' => 'Select a reason')
-		); ?>
+		<h3>Reason for Reschedule</h3>
+		<div class="eventDetail clearfix" style="position:relative;">
+			<div class="label"><strong><?php echo CHtml::label('Reschedule Reason: ', 'cancellation_reason'); ?></strong></div>
+			<?php if (date('Y-m-d') == date('Y-m-d', strtotime($operation->booking->session->date))) {
+				$listIndex = 3;
+			} else {
+				$listIndex = 2;
+			} ?>
+			<div class="data">
+			<?php echo CHtml::dropDownList('cancellation_reason', '',
+				OphTrOperation_Operation_Cancellation_Reason::getReasonsByListNumber($listIndex),
+				array('empty' => 'Select a reason')
+			); ?>
+			</div>
 		</div>
-	</div>
-	<div class="eventDetail clearfix" style="position:relative;">
-		<div class="label"><strong><?php echo CHtml::label('Reschedule Comments: ', 'cancellation_comment'); ?></strong></div>
-		<div class="data">
-			<textarea name="cancellation_comment" rows=3 cols=50></textarea>
+		<div class="eventDetail clearfix" style="position:relative;">
+			<div class="label"><strong><?php echo CHtml::label('Reschedule Comments: ', 'cancellation_comment'); ?></strong></div>
+			<div class="data">
+				<textarea name="cancellation_comment" rows=3 cols=50></textarea>
+			</div>
 		</div>
-	</div>
-	<?php } ?>
+	<?php }?>
 
 	<div class="eventDetail clearfix" style="position:relative;">
 		<div class="label"><strong><?php echo CHtml::label('Operation Comments: ', 'operation_comments'); ?></strong></div>
 		<div class="data">
-			<textarea id="operation_comments" name="Operation[comments]" rows=3 cols=50><?php echo $operation->comments ?></textarea>
+			<textarea id="operation_comments" name="Operation[comments]" rows=3 cols=50><?php echo htmlspecialchars($_POST['Operation']['comments'])?></textarea>
 		</div>
 	</div>
 
@@ -146,8 +146,20 @@ if (!$reschedule) {
 	echo CHtml::endForm();
 	?>
 
-	<div class="alertBox" style="margin-top: 10px; display:none"><p>Please fix the following input errors:</p>
-	<ul><li>&nbsp;</li></ul></div>
+	<div class="alertBox" style="margin-top: 10px;<?php if (!is_array($errors)) {?> display:none<?php }?>">
+		<p>Please fix the following input errors:</p>
+		<ul>
+			<?php if (is_array($errors)) {
+				foreach ($errors as $errors2) {
+					foreach ($errors2 as $error) {?>
+						<li><?php echo $error?></li>
+					<?php }
+				}
+			}else{?>
+				<li>&nbsp;</li></ul>
+			<?php }?>
+		</ul>
+	</div>
 
 	<script type="text/javascript">
 		var patient_id = <?php echo $operation->event->episode->patient_id?>;

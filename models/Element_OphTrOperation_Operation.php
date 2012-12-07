@@ -873,14 +873,17 @@
 
 		$reschedule = in_array($this->status_id,array(2,3,4));
 
-		preg_match('/(^[0-9]{1,2}).*?([0-9]{2})$/',$booking_attributes['admission_time'],$m);
-		$booking->admission_time = $m[1].":".$m[2];
+		if (preg_match('/(^[0-9]{1,2}).*?([0-9]{2})$/',$booking_attributes['admission_time'],$m)) {
+			$booking->admission_time = $m[1].":".$m[2];
+		} else {
+			$booking->admission_time = $booking_attributes['admission_time'];
+		}
 
 		$session = $booking->session;
 
 		if ($this->booking) {
 			// race condition, two users attempted to book the same operation at the same time
-			return Yii::app()->getController()->redirect(Yii::app()->createUrl('/OphTrOperation/default/view/'.$this->event_id));
+			return Yii::app()->getController()->redirect(array('/OphTrOperation/default/view/'.$this->event_id));
 		}
 
 		foreach (array('date','start_time','end_time','theatre_id') as $field) {
@@ -897,7 +900,7 @@
 		$booking->display_order = ($booking2 = OphTrOperation_Operation_Booking::model()->find($criteria)) ? $booking2->display_order+1 : 1;
 
 		if (!$booking->save()) {
-			die(json_encode($booking->getErrors(),true));
+			return $booking->getErrors();
 		}
 
 		OELog::log("Booking ".($reschedule ? 'rescheduled' : 'made')." $booking->id");
@@ -950,6 +953,8 @@
 		if (!$session->save()) {
 			throw new Exception('Unable to save session comments: '.print_r($session->getErrors(),true));
 		}
+
+		return true;
 	}
 
 	public function setStatus($name) {
