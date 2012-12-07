@@ -37,39 +37,43 @@ class TransportController extends BaseEventTypeController
 	public function accessRules()
 	{
 		return array(
-			array('allow',
-				'users'=>array('@')
-			),
+			array('allow', 'users'=>array('@')),
 			// non-logged in can't view anything
-			array('deny',
-				'users'=>array('?')
-			),
+			array('deny', 'users'=>array('?')),
 		);
 	}
 
 	public function actionIndex()
 	{
+		!isset($_GET['include_bookings']) and $_GET['include_bookings'] = 1;
+		!isset($_GET['include_reschedules']) and $_GET['include_reschedules'] = 1;
+		!isset($_GET['include_cancellations']) and $_GET['include_cancellations'] = 1;
+
+		$this->render('index');
+	}
+
+	public function actionTCIs() {
 		if (ctype_digit(@$_GET['page'])) $this->page = $_GET['page'];
-		$this->render('index',array('bookings' => $this->getTransportList()));
+		$this->renderPartial('_list',array('bookings'=>$this->getTransportList()));
 	}
 
 	public function getTransportList($all=false) {
-		if (!empty($_REQUEST)) {
-			if (preg_match('/^[0-9]+ [a-zA-Z]{3} [0-9]{4}$/',@$_REQUEST['date_from']) && preg_match('/^[0-9]+ [a-zA-Z]{3} [0-9]{4}$/',@$_REQUEST['date_to'])) {
-				$date_from = Helper::convertNHS2MySQL($_REQUEST['date_from'])." 00:00:00";
-				$date_to = Helper::convertNHS2MySQL($_REQUEST['date_to'])." 23:59:59";
+		if (!empty($_GET)) {
+			if (preg_match('/^[0-9]+ [a-zA-Z]{3} [0-9]{4}$/',@$_GET['date_from']) && preg_match('/^[0-9]+ [a-zA-Z]{3} [0-9]{4}$/',@$_GET['date_to'])) {
+				$date_from = Helper::convertNHS2MySQL($_GET['date_from'])." 00:00:00";
+				$date_to = Helper::convertNHS2MySQL($_GET['date_to'])." 23:59:59";
 			}
 		}
 
-		!isset($_REQUEST['include_bookings']) and $_REQUEST['include_bookings'] = 1;
-		!isset($_REQUEST['include_reschedules']) and $_REQUEST['include_reschedules'] = 1;
-		!isset($_REQUEST['include_cancellations']) and $_REQUEST['include_cancellations'] = 1;
+		!isset($_GET['include_bookings']) and $_GET['include_bookings'] = 1;
+		!isset($_GET['include_reschedules']) and $_GET['include_reschedules'] = 1;
+		!isset($_GET['include_cancellations']) and $_GET['include_cancellations'] = 1;
 
-		if (!@$_REQUEST['include_bookings'] && !@$_REQUEST['include_reschedules'] && !@$_REQUEST['include_cancellations']) {
-			$_REQUEST['include_bookings'] = 1;
+		if (!@$_GET['include_bookings'] && !@$_GET['include_reschedules'] && !@$_GET['include_cancellations']) {
+			$_GET['include_bookings'] = 1;
 		}
 
-		return $this->getTransportEvents(@$date_from, @$date_to, $all, (boolean)@$_REQUEST['include_bookings'], (boolean)@$_REQUEST['include_reschedules'], (boolean)@$_REQUEST['include_cancellations']);
+		return $this->getTransportEvents(@$date_from, @$date_to, $all, (boolean)@$_GET['include_bookings'], (boolean)@$_GET['include_reschedules'], (boolean)@$_GET['include_cancellations']);
 	}
 
 	public function getTransportEvents($from, $to, $all=false, $include_bookings, $include_reschedules, $include_cancellations) {
@@ -159,7 +163,7 @@ class TransportController extends BaseEventTypeController
 	 * Print transport letters for bookings
 	 */
 	public function actionPrint($id) {
-		$booking_ids = (isset($_REQUEST['booked'])) ? $_REQUEST['booked'] : null;
+		$booking_ids = (isset($_GET['booked'])) ? $_GET['booked'] : null;
 		if (!is_array($booking_ids)) {
 			throw new CHttpException('400', 'Invalid booking list');
 		}
@@ -193,8 +197,8 @@ class TransportController extends BaseEventTypeController
 	}
 
 	public function actionConfirm() {
-		if (is_array(@$_REQUEST['bookings'])) {
-			foreach (@$_REQUEST['bookings'] as $booking_id) {
+		if (is_array(@$_GET['bookings'])) {
+			foreach (@$_GET['bookings'] as $booking_id) {
 				if (($booking = OphTrOperation_Operation_Booking::model()->findByPk($booking_id)) && !$booking->transport_arranged) {
 					$booking->transport_arranged = 1;
 					$booking->transport_arranged_date = date('Y-m-d H:i:s');
@@ -226,8 +230,8 @@ class TransportController extends BaseEventTypeController
 	public function getUriAppend() {
 		$return = '';
 		foreach (array('date_from', 'date_to', 'include_bookings' => 0, 'include_reschedules' => 0, 'include_cancellations' => 0) as $token) {
-			if (isset($_REQUEST[$token])) {
-				$return .= '&'.$token.'='.$_REQUEST[$token];
+			if (isset($_GET[$token])) {
+				$return .= '&'.$token.'='.$_GET[$token];
 			}
 		}
 		return $return;

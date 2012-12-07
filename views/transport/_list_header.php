@@ -17,7 +17,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-<?php echo $this->renderPartial('_pagination')?>
+<div class="transport_pagination"><span class="transport_pagination_back"> &laquo; back &nbsp; </span><span class="transport_pagination_selected">&nbsp;1 </span><span class="transport_pagination_next"> &nbsp; next &raquo;</span></div>
 <div id="no_gp_warning" class="alertBox" style="display: none;">One or more patients has no GP practice, please correct in PAS before printing GP letter.</div>
 <div id="transportList" class="grid-view-waitinglist">
 	<table>
@@ -38,33 +38,15 @@
 			</tr>
 		</thead>
 		<tbody>
-			<?php if (empty($bookings)) {?>
-				<tr>
-					<td colspan="12">
-						No items matched your search criteria.
-					</td>
-				</tr>
-			<?php }else{?>
-				<?php foreach ($bookings as $id => $booking) {?>
-					<tr class="waitinglist<?php echo $booking['colour']?>">
-						<td style="width: 53px;"><?php echo $booking['hos_num'] ?></td>
-						<td class="patient">
-							<?php echo CHtml::link("<strong>" . trim(strtoupper($booking['last_name'])) . '</strong>, ' . $booking['first_name'], Yii::app()->createUrl('OphTrOperation/default/view/' . $booking['evid']))?>
-						</td>
-						<td style="width: 83px;"><?php echo date('j-M-Y',strtotime($booking['session_date']))?></td>
-						<td style="width: 73px;"><?php echo $booking['session_time']?></td>
-						<td style="width: 95px;"><?php echo $booking['location']?></td>
-						<td style="width: 170px;"><?php echo $booking['ward_name']?></td>
-						<td style="width: 53px;"><?php echo $booking['method']?></td>
-						<td style="width: 43px;"><?php echo $booking['firm'] ?></td>
-						<td style="width: 53px;"><?php echo $booking['subspecialty']?></td>
-						<td style="width: 80px;"><?php echo Helper::convertMySQL2NHS($booking['decision_date']) ?></td>
-						<td><?php echo $booking['priority']?></td>
-						<td style="width: 20px;"><input type="checkbox" name="bookings[]" value="<?php echo $booking['booking_id']?>" /></td>
-					</tr>
-				<?php }?>
-			<?php }?>
+			<tr>
+				<td colspan="12">
+					<img src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" class="loader" /> loading data ...
+				</td>
+			</tr>
 		</tbody>
 	</table>
 </div>
-<?php echo $this->renderPartial('_pagination')?>
+<div class="transport_pagination"><span class="transport_pagination_back"> &laquo; back &nbsp; </span><span class="transport_pagination_selected">&nbsp;1 </span><span class="transport_pagination_next"> &nbsp; next &raquo;</span></div>
+<script type="text/javascript">
+	$(document).ready(function() { transport_load_tcis(); });
+</script>

@@ -38,7 +38,7 @@
 						'showAnim'=>'fold',
 						'dateFormat'=>Helper::NHS_DATE_FORMAT_JS
 					),
-					'value' => @$_REQUEST['date_from'],
+					'value' => @$_GET['date_from'],
 					'htmlOptions' => array('style' => "width: 95px;"),
 				))?>
 				<label for="transport_date_to">
@@ -51,7 +51,7 @@
 						'showAnim'=>'fold',
 						'dateFormat'=>Helper::NHS_DATE_FORMAT_JS
 					),
-					'value' => @$_REQUEST['date_to'],
+					'value' => @$_GET['date_to'],
 					'htmlOptions' => array('style' => "width: 95px;"),
 				))?>
 				<button type="submit" class="classy blue mini btn_transport_filter"><span class="button-span button-span-blue">Filter</span></button>
@@ -62,20 +62,20 @@
 					Include:
 				</label>
 				&nbsp;
-				<input type="checkbox" name="include_bookings" id="include_bookings" class="filter" value="1"<?php if (@$_REQUEST['include_bookings']){?> checked="checked"<?php }?> /> Bookings
-				<input type="checkbox" name="include_reschedules" id="include_reschedules" class="filter" value="1"<?php if (@$_REQUEST['include_reschedules']){?> checked="checked"<?php }?> /> Reschedules
-				<input type="checkbox" name="include_cancellations" id="include_cancellations" class="filter" value="1"<?php if (@$_REQUEST['include_cancellations']){?> checked="checked"<?php }?> /> Cancellations
+				<input type="checkbox" name="include_bookings" id="include_bookings" class="filter" value="1"<?php if (@$_GET['include_bookings']){?> checked="checked"<?php }?> /> Bookings
+				<input type="checkbox" name="include_reschedules" id="include_reschedules" class="filter" value="1"<?php if (@$_GET['include_reschedules']){?> checked="checked"<?php }?> /> Reschedules
+				<input type="checkbox" name="include_cancellations" id="include_cancellations" class="filter" value="1"<?php if (@$_GET['include_cancellations']){?> checked="checked"<?php }?> /> Cancellations
 			</form>
 			<form id="csvform" method="post" action="<?php echo Yii::app()->createUrl('/OphTrOperation/transport/downloadcsv')?>">
-				<input type="hidden" name="date_from" value="<?php echo @$_REQUEST['date_from']?>" />
-				<input type="hidden" name="date_to" value="<?php echo @$_REQUEST['date_to']?>" />
-				<input type="hidden" name="include_bookings" value="<?php echo (@$_REQUEST['include_bookings'] ? 1 : 0)?>" />
-				<input type="hidden" name="include_reschedules" value="<?php echo (@$_REQUEST['include_reschedules'] ? 1 : 0)?>" />
-				<input type="hidden" name="include_cancellations" value="<?php echo (@$_REQUEST['include_cancellations'] ? 1 : 0)?>" />
+				<input type="hidden" name="date_from" value="<?php echo @$_GET['date_from']?>" />
+				<input type="hidden" name="date_to" value="<?php echo @$_GET['date_to']?>" />
+				<input type="hidden" name="include_bookings" value="<?php echo (@$_GET['include_bookings'] ? 1 : 0)?>" />
+				<input type="hidden" name="include_reschedules" value="<?php echo (@$_GET['include_reschedules'] ? 1 : 0)?>" />
+				<input type="hidden" name="include_cancellations" value="<?php echo (@$_GET['include_cancellations'] ? 1 : 0)?>" />
 			</form>
-			<?php echo $this->renderPartial('/transport/_pagination')?>
-			<?php echo $this->renderPartial('/transport/_list',array('bookings' => $bookings))?>
-			<?php echo $this->renderPartial('/transport/_pagination')?>
+			<div id="transport_data">
+				<?php echo $this->renderPartial('/transport/_list_header')?>
+			</div>
 		</div>
 		<button type="submit" class="classy blue venti btn_transport_download" style="margin-right: 10px; margin-top: 20px; margin-bottom: 20px; float: right;"><span class="button-span button-span-blue">Download CSV</span></button>
 		<button type="submit" class="classy blue tall btn_transport_print" style="margin-right: 10px; margin-top: 20px; margin-bottom: 20px; float: right;"><span class="button-span button-span-blue">Print list</span></button>
