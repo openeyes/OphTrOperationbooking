@@ -110,7 +110,7 @@ class TransportController extends BaseEventTypeController
 				->join("ophtroperation_operation_session s","s.id = b.session_id and s.date >= '$today'")
 				->join("ophtroperation_operation_theatre t","t.id = s.theatre_id")
 				->join("site si","si.id = t.site_id")
-				->join("ward w","w.id = b.ward_id")
+				->join("ophtroperation_operation_ward w","w.id = b.ward_id")
 				->where("(ev.deleted = 0 or ev.deleted is null) and (e.deleted = 0 or e.deleted is null) and (b.transport_arranged = 0 or b.transport_arranged_date = '$today') $where")
 				->queryScalar();
 		}
@@ -135,7 +135,7 @@ class TransportController extends BaseEventTypeController
 			->join("ophtroperation_operation_session s","s.id = b.session_id and s.date >= '$today'")
 			->join("ophtroperation_operation_theatre t","t.id = s.theatre_id")
 			->join("site si","si.id = t.site_id")
-			->join("ward w","w.id = b.ward_id")
+			->join("ophtroperation_operation_ward w","w.id = b.ward_id")
 			->where("(ev.deleted = 0 or ev.deleted is null) and (e.deleted = 0 or e.deleted is null) and (b.transport_arranged = 0 or b.transport_arranged_date = '$today') $where")
 			->order("timestamp asc");
 
