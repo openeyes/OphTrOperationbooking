@@ -880,7 +880,7 @@
 
 		if ($this->booking) {
 			// race condition, two users attempted to book the same operation at the same time
-			return $this->redirect(Yii::app()->createUrl('default/view/'.$this->event_id));
+			return Yii::app()->getController()->redirect(Yii::app()->createUrl('/OphTrOperation/default/view/'.$this->event_id));
 		}
 
 		foreach (array('date','start_time','end_time','theatre_id') as $field) {
@@ -943,12 +943,6 @@
 
 		if (!$this->save()) {
 			throw new Exception('Unable to update operation data: '.print_r($this->getErrors(),true));
-		}
-
-		if ($tl = TransportList::model()->find('item_table = ? and item_id = ?',array('booking',$booking->id))) {
-			if (!$tl->delete()) {
-				throw new Exception('Unable to delete transport_list row: '.print_r($tl->getErrors(),true));
-			}
 		}
 
 		$session->comments = $session_comments;
