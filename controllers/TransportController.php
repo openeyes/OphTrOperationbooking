@@ -197,9 +197,13 @@ class TransportController extends BaseEventTypeController
 	}
 
 	public function actionConfirm() {
-		if (is_array(@$_GET['bookings'])) {
-			foreach (@$_GET['bookings'] as $booking_id) {
-				if (($booking = OphTrOperation_Operation_Booking::model()->findByPk($booking_id)) && !$booking->transport_arranged) {
+		if (is_array(@$_POST['bookings'])) {
+			foreach ($_POST['bookings'] as $booking_id) {
+				if (!$booking = OphTrOperation_Operation_Booking::model()->findByPk($booking_id)) {
+					throw new Exception('Booking not found: '.$booking_id);
+				}
+
+				if (!$booking->transport_arranged) {
 					$booking->transport_arranged = 1;
 					$booking->transport_arranged_date = date('Y-m-d H:i:s');
 					if (!$booking->save()) {
