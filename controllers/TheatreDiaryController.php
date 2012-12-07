@@ -181,7 +181,7 @@ class TheatreDiaryController extends BaseEventTypeController
 			->from('ophtroperation_operation_session s')
 			->join('ophtroperation_operation_theatre t', 't.id = s.theatre_id')
 			->leftJoin('site i', 'i.id = t.site_id')
-			->leftJoin('ophtroperation_operation_booking b', 'b.session_id = s.id')
+			->leftJoin('ophtroperation_operation_booking b', 'b.session_id = s.id and b.cancellation_date is null')
 			->leftJoin('et_ophtroperation_operation o', 'o.id = b.element_id')
 			->leftJoin('anaesthetic_type an','o.anaesthetic_type_id = an.id')
 			->leftJoin('ophtroperation_operation_priority pr','pr.id = o.priority_id')
