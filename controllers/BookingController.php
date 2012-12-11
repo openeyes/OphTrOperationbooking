@@ -1,52 +1,11 @@
 <?php
 
 class BookingController extends BaseEventTypeController {
+	public $reschedule = false;
 	public $js = array(
 		'js/jquery.validate.min.js',
 		'js/additional-validators.js',
 	);
-
-	/*public function actionCreate() {
-		if (isset($_POST['Booking'])) {
-			if (!$operation = Element_OphTrOperation_Operation::model()->findByPk(@$_POST['Booking']['element_id'])) {
-				throw new Exception('Operation not found: '.@$_POST['Booking']['element_id']);
-			}
-
-			$operation->schedule($_POST['Booking'], $_POST['Operation']['comments'], $_POST['Session']['comments']);
-
-			die(json_encode(array()));
-		}
-	}*/
-
-	public function actionUpdate($id) {
-		if (!$event = Event::model()->findByPk($id)) {
-			throw new Exception('Unable to find event: '.$id);
-		}
-
-		if (!$operation = Element_OphTrOperation_Operation::model()->find('event_id=?',array($id))) {
-			throw new Exception('Unable to find operation: '.$id);
-		}
-
-		if (!$reason = OphTrOperation_Operation_Cancellation_Reason::model()->findByPk($_POST['cancellation_reason'])) {
-			die(json_encode(array(array("Please select a cancellation reason"))));
-		}
-
-		if (isset($_POST['booking_id'])) {
-			if (!$booking = OphTrOperation_Operation_Booking::model()->findByPk($_POST['booking_id'])) {
-				throw new Exception('Booking not found: '.@$_POST['booking_id']);
-			}
-
-			$booking->cancel($reason,$_POST['cancellation_comment'],@$_POST['Booking']);
-
-			if (!empty($_POST['Booking'])) {
-				$operation->schedule($_POST['Booking'], $_POST['Operation']['comments'], $_POST['Session']['comments']);
-			} else {
-				$operation->setStatus('Requires rescheduling');
-			}
-
-			die(json_encode(array()));
-		}
-	}
 
 	public function actionSchedule($id) {
 		if (!$event = Event::model()->findByPk($id)) {
@@ -110,7 +69,7 @@ class BookingController extends BaseEventTypeController {
 						throw new Exception('Operation not found: '.$_POST['Booking']['element_id']);
 					}
 
-					if (($result = $operation->schedule($_POST['Booking'], $_POST['Operation']['comments'], $_POST['Session']['comments'])) !== true) {
+					if (($result = $operation->schedule($_POST['Booking'], $_POST['Operation']['comments'], $_POST['Session']['comments'], $this->reschedule)) !== true) {
 						$errors = $result;
 					} else {
 						$this->redirect(array('/OphTrOperation/default/view/'.$operation->event_id));
@@ -144,6 +103,7 @@ class BookingController extends BaseEventTypeController {
 
 	public function actionReschedule($id) {
 		$this->title = "Reschedule operation";
+		$this->reschedule = true;
 		return $this->actionSchedule($id);
 	}
 
@@ -165,10 +125,26 @@ class BookingController extends BaseEventTypeController {
 
 		Yii::app()->clientScript->registerCSSFile(Yii::app()->createUrl('css/theatre_calendar.css'), 'all');
 
+		if (!empty($_POST)) {
+			if (!$reason = OphTrOperation_Operation_Cancellation_Reason::model()->findByPk($_POST['cancellation_reason'])) {
+				$errors = array("Please select a rescheduling reason");
+			} else if (isset($_POST['booking_id'])) {
+				if (!$booking = OphTrOperation_Operation_Booking::model()->findByPk($_POST['booking_id'])) {
+					throw new Exception('Booking not found: '.@$_POST['booking_id']);
+				}
+
+				$booking->cancel($reason,$_POST['cancellation_comment'],false);
+				$operation->setStatus('Requires rescheduling');
+
+				$this->redirect(array('/OphTrOperation/default/view/'.$event->id));
+			}
+		}
+
 		$this->renderPartial('reschedule_later', array(
 				'operation' => $operation,
 				'date' => $operation->minDate,
 				'patient' => $operation->event->episode->patient,
+				'errors' => @$errors,
 			),
 			false,
 			true

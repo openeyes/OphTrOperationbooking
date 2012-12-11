@@ -34,7 +34,7 @@ $this->header()?>
 		<p><strong>Current schedule:</strong></p>
 		<?php $this->renderPartial('_session', array('operation' => $operation)); ?><br />
 		<?php
-		echo CHtml::form(array('booking/update'), 'post', array('id' => 'cancelForm'));
+		echo CHtml::form(array('booking/rescheduleLater/'.$operation->event_id), 'post', array('id' => 'cancelForm'));
 		echo CHtml::hiddenField('booking_id', $operation->booking->id); ?>
 		<p/>
 		<?php
@@ -55,13 +55,19 @@ $this->header()?>
 		<textarea name="cancellation_comment" rows=6 cols=40></textarea>
 		<div style="height: 0.4em;"></div>
 		<div class="clear"></div>
-		<button type="submit" class="classy red venti"><span class="button-span button-span-red">Confirm reschedule later</span></button>
+		<button type="submit" class="classy red venti auto"><span class="button-span button-span-red">Confirm reschedule later</span></button>
 		<img src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" class="loader" />
 		<?php
 		echo CHtml::endForm(); ?>
 	</div>
 </div>
-<div class="alertBox" style="margin-top: 10px; display:none"><p>Please fix the following input errors:</p>
-	<ul><li>&nbsp;</li></ul>
-</div>
+<?php if (is_array($errors)) {?>
+	<div class="alertBox" style="margin-top: 10px;"><p>Please fix the following input errors:</p>
+		<ul>
+			<?php foreach ($errors as $error) {?>
+				<li><?php echo $error?></li>
+			<?php }?>
+		</ul>
+	</div>
+<?php }?>
 <?php $this->footer()?>

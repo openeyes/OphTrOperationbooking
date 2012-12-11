@@ -20,12 +20,10 @@
 if (!$reschedule) {
 	echo CHtml::form(Yii::app()->createUrl('/OphTrOperation/booking/schedule/'.$operation->event->id.'?firm_id='.$_GET['firm_id'].'&date='.$_GET['date'].'&day='.$_GET['day'].'&session_id='.$_GET['session_id']), 'post', array('id' => 'bookingForm'));
 } else {
-	echo CHtml::form(Yii::app()->createUrl('/OphTrOperation/booking/update'), 'post', array('id' => 'bookingForm'));
+	echo CHtml::form(Yii::app()->createUrl('/OphTrOperation/booking/reschedule/'.$operation->event->id.'?firm_id='.$_GET['firm_id'].'&date='.$_GET['date'].'&day='.$_GET['day'].'&session_id='.$_GET['session_id']), 'post', array('id' => 'bookingForm'));
 }
-
 ?>
 	<h4>Other operations in this session: <?php echo abs($session->availableMinutes) . " min {$session->minuteStatus}"; ?></h4>
-
 	<div class="theatre-sessions">
 	<table id="appointment_list">
 		<thead>

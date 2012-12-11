@@ -867,7 +867,7 @@
 		return $this->status->name != 'Cancelled';
 	}
 
-	public function schedule($booking_attributes, $operation_comments, $session_comments) {
+	public function schedule($booking_attributes, $operation_comments, $session_comments, $reschedule=false) {
 		$booking = new OphTrOperation_Operation_Booking;
 		$booking->attributes = $booking_attributes;
 
@@ -881,9 +881,17 @@
 
 		$session = $booking->session;
 
-		if ($this->booking) {
+		if ($this->booking && !$reschedule) {
 			// race condition, two users attempted to book the same operation at the same time
 			return Yii::app()->getController()->redirect(array('/OphTrOperation/default/view/'.$this->event_id));
+		}
+
+		if ($reschedule && $this->booking) {
+			if (!$reason = OphTrOperation_Operation_Cancellation_Reason::model()->findByPk($_POST['cancellation_reason'])) {
+				return array(array('Please select a rescheduling reason'));
+			}
+
+			$this->booking->cancel($reason,$_POST['cancellation_comment'],$reschedule);
 		}
 
 		foreach (array('date','start_time','end_time','theatre_id') as $field) {

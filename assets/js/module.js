@@ -133,39 +133,6 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#cancelForm button[type="submit"]').click(function(e) {
-		var event_id = window.location.href.match(/[0-9]+/);
-
-		if (!$(this).hasClass('inactive')) {
-			$.ajax({
-				type: 'POST',
-				url: baseUrl+'/OphTrOperation/booking/update/'+event_id,
-				data: $('#cancelForm').serialize(),
-				dataType: 'json',
-				success: function(data) {
-					var n=0;
-					var html = '';
-					$.each(data, function(key, value) {
-						html += '<ul><li>'+value+'</li></ul>';
-						n += 1;
-					});
-
-					if (n == 0) {
-						window.location.href = baseUrl+'/OphTrOperation/default/view/'+event_id;
-					} else {
-						$('div.alertBox').show();
-						$('div.alertBox').html(html);
-					}
-
-					enableButtons();
-					return false;
-				}
-			});
-		}
-
-		return false;
-	});
-
 	$(this).undelegate('#firmSelect #firm_id','change').delegate('#firmSelect #firm_id','change',function() {
 		var firm_id = $(this).val();
 		var operation = $('input[id=operation]').val();
