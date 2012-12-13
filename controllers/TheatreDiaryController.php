@@ -131,11 +131,30 @@ class TheatreDiaryController extends BaseEventTypeController
 		$_POST['date-end'] = Helper::convertNHS2MySQL(@$_POST['date-end']);
 
 		if (empty($_POST['date-start']) || empty($_POST['date-end'])) {
-			$startDate = $this->getNextSessionDate($firmId);
-			$endDate = $startDate;
+			$startDate = $endDate = $this->getNextSessionDate($firmId);
 		} else {
 			$startDate = $_POST['date-start'];
 			$endDate = $_POST['date-end'];
+
+			if (preg_match('/^([0-9]{1,2})\/([0-9]{1,2})\/([0-9]{2})$/',$startDate,$m)) {
+				$m[1] = str_pad($m[1],2,0,STR_PAD_LEFT);
+				$m[2] = str_pad($m[2],2,0,STR_PAD_LEFT);
+				$startDate = "20{$m[3]}-{$m[2]}-{$m[1]}";
+			}
+
+			if (preg_match('/^([0-9]{1,2})\/([0-9]{1,2})\/([0-9]{2})$/',$endDate,$m)) {
+				$m[1] = str_pad($m[1],2,0,STR_PAD_LEFT);
+				$m[2] = str_pad($m[2],2,0,STR_PAD_LEFT);
+				$endDate = "20{$m[3]}-{$m[2]}-{$m[1]}";
+			}
+
+			if (!strtotime($startDate) || !strtotime($endDate)) {
+				throw new Exception('Invalid start and end dates.');
+			}
+
+			if (strtotime($endDate) < strtotime($startDate)) {
+				list($startDate,$endDate) = array($endDate,$startDate);
+			}
 		}
 
 		$whereSql = 's.date BETWEEN :start AND :end';
