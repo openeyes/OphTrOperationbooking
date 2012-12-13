@@ -91,8 +91,11 @@ class WaitingListController extends BaseEventTypeController {
 		}
 
 		if ($hos_num && ctype_digit($hos_num)) {
-			$whereSql .= " AND pat.hos_num REGEXP :hos_num_regex";
-			$whereParams[":hos_num_regex"] = "^[0]*$hos_num$";
+			if (Yii::app()->params['pad_hos_num']) {
+				$hos_num = sprintf(Yii::app()->params['pad_hos_num'],$hos_num);
+			}
+			$whereSql .= " AND pat.hos_num = :hos_num";
+			$whereParams[":hos_num"] = $hos_num;
 		}
 
 		if ($site_id && ctype_digit($site_id)) {
