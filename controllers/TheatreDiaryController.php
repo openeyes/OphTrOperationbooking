@@ -401,14 +401,16 @@ class TheatreDiaryController extends BaseEventTypeController
 					throw new Exception('Operation has no active booking: '.$m[1]);
 				}
 
-				$booking->admission_time = $value;
-				$booking->confirmed = @$_POST['confirm_'.$m[1]];
+				if ($booking->admission_time != $value || $booking->confirmed != @$_POST['confirm_'.$m[1]]) {
+					$booking->admission_time = $value;
+					$booking->confirmed = @$_POST['confirm_'.$m[1]];
 
-				if (!$booking->validate()) {
-					$formErrors = $booking->getErrors();
-					$errors[(integer)$m[1]] = $formErrors['admission_time'][0];
-				} else {
-					$bookings[] = $booking;
+					if (!$booking->validate()) {
+						$formErrors = $booking->getErrors();
+						$errors[(integer)$m[1]] = $formErrors['admission_time'][0];
+					} else {
+						$bookings[] = $booking;
+					}
 				}
 			}
 		}
