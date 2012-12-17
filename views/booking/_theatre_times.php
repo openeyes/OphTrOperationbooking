@@ -31,7 +31,7 @@
 
 		<?php foreach ($sessions as $j => $session) {
 			if ($session['id'] != @$selectedSession->id) {?>
-				<a href="<?php echo Yii::app()->createUrl('/'.$operation->event->eventType->class_name.'/booking/'.($operation->booking?'re':'').'schedule/'.$operation->event_id)?>?firm_id=<?php echo $firm->id ? $firm->id : 'EMG'?>&date=<?php echo date('Ym',strtotime($date))?>&day=<?php echo $_GET['day']?>&session_id=<?php echo $session['id']?>">
+				<a href="<?php echo Yii::app()->createUrl('/'.$operation->event->eventType->class_name.'/booking/'.($operation->booking?'re':'').'schedule/'.$operation->event_id)?>?firm_id=<?php echo $firm->id ? $firm->id : 'EMG'?>&date=<?php echo date('Ym',strtotime($date))?>&day=<?php echo $_GET['day']?>&session_id=<?php echo $session['id']?>#book">
 			<?php }?>
 				<div class="timeBlock <?php echo $session['id'] == @$selectedSession->id ? 'selected_session' : $session['status'] ?><?php if (strtotime(date("Y-m-d")) > strtotime($session['date'])) { echo ' inthepast'; } else if ($session['bookable']) { echo ' bookable';} ?>" id="bookingSession<?php echo $session['id'] ?>">
 					<div class="mainInfo">

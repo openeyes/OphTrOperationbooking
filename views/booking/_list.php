@@ -73,6 +73,8 @@ if (!$reschedule) {
 </table>
 </div>
 
+<a id="book"></a>
+
 <?php if ($bookable) {?>
 	<div class="eventDetail clearfix">
 		<div class="label"><strong>Admission Time:</strong></div>
