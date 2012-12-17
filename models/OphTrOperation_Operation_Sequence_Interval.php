@@ -100,7 +100,7 @@ class OphTrOperation_Operation_Sequence_Interval extends BaseActiveRecord
 			case 3:
 			case 4:
 			case 5:
-				$interval = 60 * 60 * 24 * (($this->id-1) * 7)
+				$interval = 60 * 60 * 24 * (($this->id-1) * 7);
 				break;
 			case 1:
 			case 6:
