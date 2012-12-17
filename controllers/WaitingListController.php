@@ -275,7 +275,7 @@ class WaitingListController extends BaseEventTypeController {
 	 * @return string
 	 */
 	protected function getFromAddress($operation) {
-		$from_address = $operation->site->getLetterAddress();
+		$from_address = implode("\n",$operation->site->getLetterArray(false,false));
 		$from_address .= "\nTel: " . $operation->site->telephone;
 		if ($operation->site->fax) {
 			$from_address .= "\nFax: " . $operation->site->fax;
