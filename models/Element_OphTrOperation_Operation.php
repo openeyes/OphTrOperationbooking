@@ -1130,7 +1130,7 @@
 	}
 
 	public function getDisorderText() {
-		if (!$diagonsis = Element_OphTrOperation_Diagnosis::model()->find('event_id=?',array($this->event_id))) {
+		if (!$diagnosis = Element_OphTrOperation_Diagnosis::model()->find('event_id=?',array($this->event_id))) {
 			throw new Exception("Unable to find diagnosis element for event_id $this->event_id");
 		}
 		return $diagnosis->disorder->term;
