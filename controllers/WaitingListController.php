@@ -193,13 +193,17 @@ class WaitingListController extends BaseEventTypeController {
 	public function actionPrintLetters() {
 		Audit::add('waiting list',(@$_REQUEST['all']=='true' ? 'print all' : 'print selected'),serialize($_POST));
 
-		$operation_ids = (isset($_REQUEST['operations'])) ? $_REQUEST['operations'] : null;
-		$auto_confirm = (isset($_REQUEST['confirm']) && $_REQUEST['confirm'] == 1);
-		if (!is_array($operation_ids)) {
-			throw new CHttpException('400', 'Invalid operation list');
+		if (isset($_REQUEST['event_id'])) {
+			$operations = Element_OphTrOperation_Operation::model()->findAll('event_id=?',array($_REQUEST['event_id']));
+			$auto_confirm = false;
+		} else {
+			$operation_ids = (isset($_REQUEST['operations'])) ? $_REQUEST['operations'] : null;
+			$auto_confirm = (isset($_REQUEST['confirm']) && $_REQUEST['confirm'] == 1);
+			if (!is_array($operation_ids)) {
+				throw new CHttpException('400', 'Invalid operation list');
+			}
+			$operations = Element_OphTrOperation_Operation::model()->findAllByPk($operation_ids);
 		}
-		$operations = Element_OphTrOperation_Operation::model()->findAllByPk($operation_ids);
-
 
 		// Print letter(s) for each operation
 		$this->layout = '//layouts/pdf';

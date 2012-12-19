@@ -148,7 +148,7 @@
 		if (empty($element->booking)) {
 			if ($element->letterType) {
 				if ($element->has_gp && $element->has_address) {?>
-					<button type="submit" class="classy blue venti" value="submit" id="btn_print-invitation-letter"><span class="button-span button-span-blue">Print <?php echo $element->letterType ?> letter</span></button>
+					<button type="submit" class="classy blue venti" value="submit" id="btn_print-letter"><span class="button-span button-span-blue">Print <?php echo $element->letterType ?> letter</span></button>
 				<?php }else{?>
 					<button type="submit" class="classy disabled venti" value="submit" disabled="disabled"><span class="button-span">Print <?php echo $element->letterType ?> letter</span></button>
 				<?php }?>
