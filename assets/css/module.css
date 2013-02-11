@@ -1,3 +1,6 @@
+#event_content.watermarkBox { background:#fafafa url(../img/watermark.png) top left repeat-y; }
+#event_content h3.withEventIcon { background:transparent url(../img/medium.png) center left no-repeat; }
+
 button.classy > a { color: #fff; }
 
 #operation { }
