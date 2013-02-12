@@ -1,8 +1,10 @@
-<?php
-$this->breadcrumbs=array($this->module->id);
-$this->header();
+<?php $this->header() ?>
+
+<h3 class="withEventIcon"><?php  echo $this->event_type->name ?> (<?php echo Element_OphTrOperation_Operation::model()->find('event_id=?',array($this->event->id))->status->name?>)</h3>
+
+<?php 
+	$this->renderPartial('//patient/event_actions');
 ?>
-<h3 class="withEventIcon" style="background:transparent url(<?php echo $this->assetPath?>/img/medium.png) center left no-repeat;"><?php  echo $this->event_type->name ?> (<?php echo Element_OphTrOperation_Operation::model()->find('event_id=?',array($this->event->id))->status->name?>)</h3>
 
 <?php $this->renderPartial('//base/_messages'); ?>
 
@@ -31,4 +33,4 @@ $this->header();
 	<div class="cleartall"></div>
 </div>
 
-<?php  $this->footer();?>
+<?php  $this->footer() ?>
