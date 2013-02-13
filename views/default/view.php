@@ -2,10 +2,6 @@
 
 <h3 class="withEventIcon"><?php  echo $this->event_type->name ?> (<?php echo Element_OphTrOperation_Operation::model()->find('event_id=?',array($this->event->id))->status->name?>)</h3>
 
-<?php 
-	$this->renderPartial('//patient/event_actions');
-?>
-
 <?php $this->renderPartial('//base/_messages'); ?>
 
 <?php if (!$operation->has_gp) {?>
@@ -32,5 +28,10 @@
 	?>
 	<div class="cleartall"></div>
 </div>
+
+<?php
+	// Event actions
+	$this->renderPartial('//patient/event_actions');
+?>
 
 <?php  $this->footer() ?>

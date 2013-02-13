@@ -55,15 +55,6 @@
 	<?php } ?>
 </div>
 
-<div class="metaData">
-	<span class="info">
-		Operation created by <span class="user"><?php echo $element->event->user->fullname ?></span> on <?php echo $element->event->NHSDate('created_date') ?> at <?php echo date('H:i', strtotime($element->event->created_date)) ?>
-	</span>
-	<span class="info">
-		Operation last modified by <span class="user"><?php echo $element->event->usermodified->fullname ?></span> on <?php echo $element->event->NHSDate('last_modified_date') ?> at <?php echo date('H:i', strtotime($element->event->last_modified_date)) ?>
-	</span>
-</div>
-
 <?php if ($element->booking) {?>
 	<h3 class="subsection">Booking Details</h3>
 
@@ -92,12 +83,12 @@
 	</div>
 
 	<div class="metaData">
-	<span class="info">
-	Booking created by <span class="user"><?php echo $element->booking->user->fullname ?></span> on <?php echo $element->booking->NHSDate('created_date') ?> at <?php echo date('H:i', strtotime($element->booking->created_date)) ?>
-	</span>
-	<span class="info">
-	Booking last modified by <span class="user"><?php echo $element->booking->usermodified->fullname ?></span> on <?php echo $element->booking->NHSDate('last_modified_date') ?> at <?php echo date('H:i', strtotime($element->booking->last_modified_date)) ?>
-	</span>
+		<span class="info">
+		Booking created by <span class="user"><?php echo $element->booking->user->fullname ?></span> on <?php echo $element->booking->NHSDate('created_date') ?> at <?php echo date('H:i', strtotime($element->booking->created_date)) ?>
+		</span>
+		<span class="info">
+		Booking last modified by <span class="user"><?php echo $element->booking->usermodified->fullname ?></span> on <?php echo $element->booking->NHSDate('last_modified_date') ?> at <?php echo date('H:i', strtotime($element->booking->last_modified_date)) ?>
+		</span>
 	</div>
 <?php } ?>
 
@@ -142,27 +133,38 @@
 	</div>
 <?php }?>
 
-<?php if ($element->status->name != 'Cancelled' && $this->event->editable) {?>
-	<div style="margin-top:40px; text-align:center;">
-		<?php
-		if (empty($element->booking)) {
-			if ($element->letterType) {
-				if ($element->has_gp && $element->has_address) {?>
-					<button type="submit" class="classy blue venti" value="submit" id="btn_print-letter"><span class="button-span button-span-blue">Print <?php echo $element->letterType ?> letter</span></button>
-				<?php }else{?>
-					<button type="submit" class="classy disabled venti" value="submit" disabled="disabled"><span class="button-span">Print <?php echo $element->letterType ?> letter</span></button>
-				<?php }?>
-			<?php }?>
-			<button type="submit" class="classy green venti auto" value="submit" id="btn_schedule-now"><a href="<?php echo Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/schedule/'.$element->event_id)?>"><span class="button-span button-span-green">Schedule now</span></a></button>
-		<?php }else{?>
-			<?php if ($element->has_address) {?>
-				<button type="submit" class="classy blue venti" value="submit" id="btn_print-letter"><span class="button-span">Print letter</span></button>
-			<?php }else{?>
-				<button type="submit" class="classy disabled venti" value="submit" disabled="disabled"><span class="button-span button-span-blue">Print letter</span></button>
-			<?php }?>
-			<button type="submit" class="classy green venti auto" value="submit" id="btn_reschedule-now"><a href="<?php echo Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/reschedule/'.$element->event_id)?>"><span class="button-span button-span-green">Reschedule now</span></a></button>
-			<button type="submit" class="classy green venti auto" value="submit" id="btn_reschedule-later"><a href="<?php echo Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/rescheduleLater/'.$element->event_id)?>"><span class="button-span button-span-green">Reschedule later</span></a></button>
-		<?php }?>
-		<button type="submit" class="classy red venti auto" value="submit" id="btn_cancel-operation"><a href="<?php echo Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/default/cancel/'.$element->event_id)?>"><span class="button-span button-span-red">Cancel operation</span></a></button>
-	</div>
-<?php }?>
+<?php
+if ($element->status->name != 'Cancelled' && $this->event->editable) {
+	if (empty($element->booking)) {
+		if ($element->letterType) {
+			$print_letter_options = null;
+			if (!$element->has_gp || !$element->has_address) {
+				$print_letter_options['disabled'] = true;
+			}
+			$this->event_actions[] = EventAction::button("Print ".$element->letterType." letter", 'print-letter', $print_letter_options, array('id' => 'btn_print-letter'));
+		}
+		$this->event_actions[] = EventAction::link("Schedule now",
+			Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/schedule/'.$element->event_id),
+			array('colour' => 'green'),
+			array('id' => 'btn_schedule-now'));
+	} else {
+		$print_letter_options = null;
+		if (!$element->has_address) {
+			$print_letter_options['disabled'] = true;
+		}
+		$this->event_actions[] = EventAction::button("Print letter", 'print-letter', $print_letter_options, array('id' => 'btn_print-letter'));
+		$this->event_actions[] = EventAction::link("Reschedule now",
+			Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/reschedule/'.$element->event_id),
+			array('colour' => 'green'),
+			array('id' => 'btn_reschedule-now'));
+		$this->event_actions[] = EventAction::link("Reschedule later",
+			Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/rescheduleLater/'.$element->event_id),
+			array('colour' => 'green'),
+			array('id' => 'btn_reschedule-later'));
+	}	
+	$this->event_actions[] = EventAction::link("Cancel operation",
+		Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/default/cancel/'.$element->event_id),
+		array('colour' => 'red'),
+		array('id' => 'btn_cancel-operation'));
+}	
+?>
