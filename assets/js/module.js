@@ -149,9 +149,9 @@ $(document).ready(function() {
 
 	$('#btn_print-letter').unbind('click').click(function() {
 		if (!$(this).hasClass('inactive')) {
-			m = window.location.href.match(/\/([0-9]+)/);
+			m = window.location.href.match(/\/([0-9]+)\/?$/);
 			disableButtons();
-			printPDF(baseUrl+'/OphTrOperation/waitingList/printLetters?event_id='+m[1],'');
+			printPDF(baseUrl+'/OphTrOperation/waitingList/printLetters',{'event_id': m[1]});
 			enableButtons();
 		}
 	});
