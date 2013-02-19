@@ -68,9 +68,6 @@
 			<?php }?>
 		</th>
 		<td>
-			<?php echo $firm->consultantName?>
-		</td>
-		<td>
 			<?php if ($emergencyList) {?>
 				Emergency List (<?php echo CHtml::encode($firm->consultantName)?>)
 			<?php }else{?>
