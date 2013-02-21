@@ -701,17 +701,17 @@
 		$service_subspecialty_assignment_id = $this->event->episode->firm->service_subspecialty_assignment_id;
 
 		if ($this->consultant_required) {
-			$where .= " and session.consultant = 1";
+			$where .= " and ophtroperation_operation_session.consultant = 1";
 		}
 
 		if ($this->event->episode->patient->isChild()) {
-			$where .= " and session.paediatric = 1";
+			$where .= " and ophtroperation_operation_session.paediatric = 1";
 
 			$service_subspecialty_assignment_id = $this->event->element_operation->booking->session->firm->serviceSubspecialtyAssignment->id;
 		}
 
 		if ($this->anaesthetist_required || $this->anaesthetic_type->code == 'GA') {
-			$where .= " and session.anaesthetist = 1 and session.general_anaesthetic = 1";
+			$where .= " and ophtroperation_operation_session.anaesthetist = 1 and ophtroperation_operation_session.general_anaesthetic = 1";
 		}
 
 		$lead_time_date = date('Y-m-d',strtotime($this->decision_date) + (86400 * 7 * Yii::app()->params['erod_lead_time_weeks']));
