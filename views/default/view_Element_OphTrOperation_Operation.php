@@ -4,7 +4,7 @@
 <div class="eventHighlight priority">
 	<h4><?php echo $element->eye->adjective?> 
 		<?php foreach ($element->procedures as $procedure) {
-			echo "{$procedure->procedure->term}<br />";
+			echo "{$procedure->term}<br />";
 		}
 	?></h4>
 </div>

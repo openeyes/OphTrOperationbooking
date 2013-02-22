@@ -111,7 +111,8 @@
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 			'eye' => array(self::BELONGS_TO, 'Eye', 'eye_id'),
-			'procedures' => array(self::HAS_MANY, 'OphTrOperation_Operation_Procedures', 'element_id'),
+			'procedureItems' => array(self::HAS_MANY, 'OphTrOperation_Operation_Procedures', 'element_id'),
+			'procedures' => array(self::MANY_MANY, 'Procedure', 'ophtroperation_operation_procedures_procedures(element_id, proc_id)'),
 			'anaesthetic_type' => array(self::BELONGS_TO, 'AnaestheticType', 'anaesthetic_type_id'),
 			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
 			'priority' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Priority', 'priority_id'),
@@ -210,7 +211,7 @@
 
 	protected function afterSave()
 	{
-		if (!empty($_POST['Procedures'])) {
+		if (!empty($_POST['Procedures_procs'])) {
 
 			$existing_ids = array();
 
@@ -218,7 +219,7 @@
 				$existing_ids[] = $item->proc_id;
 			}
 
-			foreach ($_POST['Procedures'] as $id) {
+			foreach ($_POST['Procedures_procs'] as $id) {
 				if (!in_array($id,$existing_ids)) {
 					$item = new OphTrOperation_Operation_Procedures;
 					$item->element_id = $this->id;
@@ -231,7 +232,7 @@
 			}
 
 			foreach ($existing_ids as $id) {
-				if (!in_array($id,$_POST['Procedures'])) {
+				if (!in_array($id,$_POST['Procedures_procs'])) {
 					$item = OphTrOperation_Operation_Procedures::model()->find('element_id = :elementId and proc_id = :lookupfieldId',array(':elementId' => $this->id, ':lookupfieldId' => $id));
 					if (!$item->delete()) {
 						throw new Exception('Unable to delete MultiSelect item: '.print_r($item->getErrors(),true));
@@ -249,7 +250,7 @@
 	}
 
 	protected function afterValidate() {
-		if (!empty($_POST['Element_OphTrOperation_Operation']) && empty($_POST['Procedures'])) {
+		if (!empty($_POST['Element_OphTrOperation_Operation']) && empty($_POST['Procedures_procs'])) {
 			$this->addError('procedures', 'At least one procedure must be entered');
 		}
 
@@ -979,7 +980,7 @@
 	public function getProceduresCommaSeparated() {
 		$procedures = array();
 		foreach ($this->procedures as $procedure) {
-			$procedures[] = $procedure->procedure->term;
+			$procedures[] = $procedure->term;
 		}
 		return empty($procedures) ? 'No procedures' : implode(', ',$procedures);
 	}
