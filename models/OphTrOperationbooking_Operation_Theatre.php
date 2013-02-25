@@ -17,17 +17,21 @@
  */
 
 /**
- * This is the model class for table "et_ophtroperation_operation_preop_assessment_rule".
+ * This is the model class for table "ophtroperationbooking_operation_theatre".
  *
  * The followings are the available columns in table:
  * @property integer $id
- * @property integer $parent_rule_id
- * @property integer $theatre_id
- * @property integer $subspecialty_id
- * @property boolean $show_warning
+ * @property string $name
+ * @property integer $site_id
+ * @property string $code
+ *
+ * The followings are the available model relations:
+ *
+ * @property Site $site
+ *
  */
 
-class OphTrOperation_Admission_Letter_Warning_Rule extends BaseActiveRecord
+class OphTrOperationbooking_Operation_Theatre extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -43,7 +47,7 @@ class OphTrOperation_Admission_Letter_Warning_Rule extends BaseActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ophtroperation_admission_letter_warning_rule';
+		return 'ophtroperationbooking_operation_theatre';
 	}
 
 	/**
@@ -54,10 +58,11 @@ class OphTrOperation_Admission_Letter_Warning_Rule extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('rule_type_id, parent_rule_id, rule_order, site_id, theatre_id, subspecialty_id, is_child, show_warning, warning_text, emphasis, strong', 'safe'),
+			array('name, site_id, code', 'safe'),
+			array('name, site_id, code', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, name', 'safe', 'on' => 'search'),
+			array('id, name, site_id, code', 'safe', 'on' => 'search'),
 		);
 	}
 	
@@ -69,9 +74,12 @@ class OphTrOperation_Admission_Letter_Warning_Rule extends BaseActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'element_type' => array(self::HAS_ONE, 'ElementType', 'id','on' => "element_type.class_name='".get_class($this)."'"),
+			'eventType' => array(self::BELONGS_TO, 'EventType', 'event_type_id'),
+			'event' => array(self::BELONGS_TO, 'Event', 'event_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
-			'children' => array(self::HAS_MANY, 'OphTrOperation_Admission_Letter_Warning_Rule', 'parent_rule_id'),
+			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
 		);
 	}
 
@@ -81,8 +89,6 @@ class OphTrOperation_Admission_Letter_Warning_Rule extends BaseActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'name' => 'Name',
 		);
 	}
 
@@ -105,40 +111,33 @@ class OphTrOperation_Admission_Letter_Warning_Rule extends BaseActiveRecord
 			));
 	}
 
-	static public function getRule($rule_type_name, $site_id, $is_child, $theatre_id, $subspecialty_id) {
-		if (!$rule_type = OphTrOperation_Admission_Letter_Warning_Rule_Type::model()->find('name=?',array($rule_type_name))) {
-			throw new Exception("We were asked for a rule type that doesn't exist: $rule_type_name");
-		}
-
-		$criteria = new CDbCriteria;
-		$criteria->addCondition("parent_rule_id is null and rule_type_id = $rule_type->id");
-		$criteria->addCondition("rule_type_id = $rule_type->id");
-		$criteria->order = 'rule_order asc';
-
-		foreach (OphTrOperation_Admission_Letter_Warning_Rule::model()->findAll($criteria) as $rule) {
-			if ($rule->applies($site_id, $is_child, $theatre_id, $subspecialty_id)) {
-				return $rule->parse($site_id, $is_child, $theatre_id, $subspecialty_id);
+	public static function findByDateAndFirmID($date, $firmId) {
+		if ($firmId === null) {
+			$firmSql = 's.firm_id IS NULL';
+		} else {
+			if (!$firm = Firm::model()->findByPk($firmId)) {
+				throw new Exception('Firm id is invalid.');
 			}
+			$firmSql = "s.firm_id = $firmId";
 		}
+
+		$sessions = Yii::app()->db->createCommand()
+			->select("t.*, s.start_time, s.end_time, s.id AS session_id, s.consultant, s.anaesthetist, s.paediatric, s.general_anaesthetic, TIMEDIFF(s.end_time, s.start_time) AS session_duration, COUNT(a.id) AS bookings, SUM(o.total_duration) AS bookings_duration")
+			->from("ophtroperationbooking_operation_session s")
+			->join("ophtroperationbooking_operation_theatre t","s.theatre_id = t.id")
+			->leftJoin("ophtroperationbooking_operation_booking a","s.id = a.session_id and a.cancellation_date is null")
+			->leftJoin("et_ophtroperationbooking_operation o","a.element_id = o.id")
+			->leftJoin("event e","o.event_id = e.id")
+			->where("s.available = 1 and s.date = :date and $firmSql and (e.deleted = 0 or e.deleted is null)",array(':date' => $date))
+			->group("s.id")
+			->order("s.start_time")
+			->queryAll();
+
+		return $sessions;
 	}
 
-	public function applies($site_id, $is_child, $theatre_id, $subspecialty_id) {
-		foreach (array('site_id', 'is_child', 'theatre_id','subspecialty_id') as $field) {
-			if ($this->{$field} !== null && $this->{$field} != ${$field}) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	public function parse($site_id, $is_child, $theatre_id, $subspecialty_id) {
-		foreach ($this->children as $rule) {
-			if ($rule->applies($site_id, $is_child, $theatre_id, $subspecialty_id)) {
-				return $rule->parse($site_id, $is_child, $theatre_id, $subspecialty_id);
-			}
-		}
-
-		return $this;
+	public function getNameWithSite() {
+		return $this->name . ' (' . $this->site->name . ')';
 	}
 }
+?>

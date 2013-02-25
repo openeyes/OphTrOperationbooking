@@ -4,12 +4,12 @@ return array(
 		'menu_bar_items' => array(
 			'theatre_diaries' => array(
 				'title' => 'Theatre Diaries',
-				'uri' => 'OphTrOperation/theatreDiary/index',
+				'uri' => 'OphTrOperationbooking/theatreDiary/index',
 				'position' => 10,
 			),
 			'partial_bookings' => array(
 				'title' => 'Partial bookings waiting list',
-				'uri' => 'OphTrOperation/waitingList/index',
+				'uri' => 'OphTrOperationbooking/waitingList/index',
 				'position' => 20,
 			),
 		),

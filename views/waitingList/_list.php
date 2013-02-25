@@ -47,7 +47,7 @@
 				<?php
 				$i = 0;
 				foreach ($operations as $id => $operation) {
-					$eo = Element_OphTrOperation_Operation::model()->findByPk($operation['eoid']);
+					$eo = Element_OphTrOperationbooking_Operation::model()->findByPk($operation['eoid']);
 					
 					$patient = NULL;
 					if(isset($operation['pid'])){
@@ -59,15 +59,15 @@
 						}
 					}?>
 
-					<?php if ($eo->getWaitingListStatus() == Element_OphTrOperation_Operation::STATUS_PURPLE) {
+					<?php if ($eo->getWaitingListStatus() == Element_OphTrOperationbooking_Operation::STATUS_PURPLE) {
 						$tablecolour = "Purple";
-					} elseif ($eo->getWaitingListStatus() == Element_OphTrOperation_Operation::STATUS_GREEN1) {
+					} elseif ($eo->getWaitingListStatus() == Element_OphTrOperationbooking_Operation::STATUS_GREEN1) {
 						$tablecolour = "Green";
-					} elseif ($eo->getWaitingListStatus() == Element_OphTrOperation_Operation::STATUS_GREEN2) {
+					} elseif ($eo->getWaitingListStatus() == Element_OphTrOperationbooking_Operation::STATUS_GREEN2) {
 						$tablecolour = "Green";
-					} elseif ($eo->getWaitingListStatus() == Element_OphTrOperation_Operation::STATUS_ORANGE) {
+					} elseif ($eo->getWaitingListStatus() == Element_OphTrOperationbooking_Operation::STATUS_ORANGE) {
 						$tablecolour = "Orange";
-					} elseif ($eo->getWaitingListStatus() == Element_OphTrOperation_Operation::STATUS_RED) {
+					} elseif ($eo->getWaitingListStatus() == Element_OphTrOperationbooking_Operation::STATUS_RED) {
 						$tablecolour = "Red";
 					} else {
 						$tablecolour = "White";
@@ -88,7 +88,7 @@
 							<?php }?>
 						</td>
 						<td class="patient">
-							<?php echo CHtml::link("<strong>" . trim(strtoupper($operation['last_name'])) . '</strong>, ' . $operation['first_name'], Yii::app()->createUrl('/OphTrOperation/default/view/'.$operation['evid']))?>
+							<?php echo CHtml::link("<strong>" . trim(strtoupper($operation['last_name'])) . '</strong>, ' . $operation['first_name'], Yii::app()->createUrl('/OphTrOperationbooking/default/view/'.$operation['evid']))?>
 						</td>
 						<td><?php echo $operation['hos_num'] ?></td>
 						<td><?php echo $eo->site->short_name?></td>
@@ -100,7 +100,7 @@
 						<td><?php echo ucfirst(preg_replace('/^Requires /','',$eo->status->name)) ?></td>
 						<td<?php if ($tablecolour == 'White' && Yii::app()->user->checkAccess('admin')) { ?> class="admin-td"<?php } ?>>
 
-							<?php if(($patient && $patient->address) && $operation['eoid'] && ($eo->getDueLetter() != Element_OphTrOperation_Operation::LETTER_GP || ($eo->getDueLetter() == Element_OphTrOperation_Operation::LETTER_GP && $operation['practice_id']))) { ?>
+							<?php if(($patient && $patient->address) && $operation['eoid'] && ($eo->getDueLetter() != Element_OphTrOperationbooking_Operation::LETTER_GP || ($eo->getDueLetter() == Element_OphTrOperationbooking_Operation::LETTER_GP && $operation['practice_id']))) { ?>
 							<div>	
 								<input<?php if ($tablecolour == 'White' && !Yii::app()->user->checkAccess('admin')) { ?> disabled="disabled"<?php } ?> type="checkbox" id="operation<?php echo $operation['eoid']?>" value="1" />
 							</div>

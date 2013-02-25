@@ -17,18 +17,33 @@
  */
 
 /**
- * This is the model class for table "et_ophtroperation_operation_status".
+ * This is the model class for table "ophtroperationbooking_operation_ward".
  *
  * The followings are the available columns in table:
- * @property string $id
+ * @property integer $id
+ * @property integer $site_id
  * @property string $name
+ * @property string $long_name
+ * @property string $directions
+ * @property integer $restriction
+ * @property string $code
+ * @property integer $theatre_id
  *
  * The followings are the available model relations:
  *
+ * @property Site $site
+ * @property Theatre $theatre
+ *
  */
 
-class OphTrOperation_Operation_Status extends BaseActiveRecord
+class OphTrOperationbooking_Operation_Ward extends BaseActiveRecord
 {
+	const RESTRICTION_MALE = 1;
+	const RESTRICTION_FEMALE = 2;
+	const RESTRICTION_CHILD = 4;
+	const RESTRICTION_ADULT = 8;
+	const RESTRICTION_OBSERVATION = 16;
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -43,7 +58,7 @@ class OphTrOperation_Operation_Status extends BaseActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ophtroperation_operation_status';
+		return 'ophtroperationbooking_operation_ward';
 	}
 
 	/**
@@ -54,11 +69,14 @@ class OphTrOperation_Operation_Status extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name', 'safe'),
-			array('name', 'required'),
+			array('site_id, name, long_name, directions', 'safe'),
+			array('site_id, name', 'required'),
+			array('restriction', 'numerical', 'integerOnly'=>true),
+			array('site_id', 'length', 'max'=>10),
+			array('name', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, name', 'safe', 'on' => 'search'),
+			array('id, site_id, name, long_name, restriction', 'safe', 'on'=>'search'),
 		);
 	}
 	
@@ -70,8 +88,13 @@ class OphTrOperation_Operation_Status extends BaseActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'element_type' => array(self::HAS_ONE, 'ElementType', 'id','on' => "element_type.class_name='".get_class($this)."'"),
+			'eventType' => array(self::BELONGS_TO, 'EventType', 'event_type_id'),
+			'event' => array(self::BELONGS_TO, 'Event', 'event_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
+			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
+			'theatre' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Theatre', 'theatre_id'),
 		);
 	}
 
@@ -81,8 +104,6 @@ class OphTrOperation_Operation_Status extends BaseActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'name' => 'Name',
 		);
 	}
 
@@ -103,6 +124,14 @@ class OphTrOperation_Operation_Status extends BaseActiveRecord
 		return new CActiveDataProvider(get_class($this), array(
 				'criteria' => $criteria,
 			));
+	}
+
+	public function getLongName() {
+		return $this->long_name ? $this->long_name : $this->name.' ward';
+	}
+
+	public function getDirectionsText() {
+		return $this->directions ? $this->directions : $this->getLongName();
 	}
 }
 ?>

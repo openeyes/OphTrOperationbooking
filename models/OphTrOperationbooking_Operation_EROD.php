@@ -17,17 +17,32 @@
  */
 
 /**
- * This is the model class for table "ophtroperation_operation_cancellation_reason".
+ * This is the model class for table "ophtroperationbooking_operation_erod".
  *
  * The followings are the available columns in table:
  * @property integer $id
- * @property string $text
- * @property integer $parent_id
- * @property integer $list_no
+ * @property integer $element_id
+ * @property integer $session_id
+ * @property date $session_date
+ * @property time $session_start_time
+ * @property time $session_end_time
+ * @property integer $firm_id
+ * @property boolean $consultant
+ * @property boolean $paediatric
+ * @property boolean $anaesthetist
+ * @property boolean $general_anaesthetic
+ * @property integer $session_duration
+ * @property integer $total_operations_time
+ * @property integer $available_time
+ *
+ * The followings are the available model relations:
+ *
+ * @property OphTrOperationbooking_Operation_Sequence $session
+ * @property OphTrOperationbooking_Operation_Theatre $theatre
  *
  */
 
-class OphTrOperation_Operation_Cancellation_Reason extends BaseActiveRecord
+class OphTrOperationbooking_Operation_EROD extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -43,7 +58,7 @@ class OphTrOperation_Operation_Cancellation_Reason extends BaseActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ophtroperation_operation_cancellation_reason';
+		return 'ophtroperationbooking_operation_erod';
 	}
 
 	/**
@@ -54,11 +69,7 @@ class OphTrOperation_Operation_Cancellation_Reason extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('text, parent_id, list_no', 'safe'),
-			array('text, list_no', 'required'),
-			// The following rule is used by search().
-			// Please remove those attributes that should not be searched.
-			array('id, text, parent_id, list_no', 'safe', 'on' => 'search'),
+			array('element_id, session_id, session_date, session_start_time, firm_id, consultant, paediatric, anaesthetist, general_anaesthetic, session_duration, total_operations_time, available_time', 'safe'),
 		);
 	}
 	
@@ -70,11 +81,10 @@ class OphTrOperation_Operation_Cancellation_Reason extends BaseActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'element_type' => array(self::HAS_ONE, 'ElementType', 'id','on' => "element_type.class_name='".get_class($this)."'"),
-			'eventType' => array(self::BELONGS_TO, 'EventType', 'event_type_id'),
-			'event' => array(self::BELONGS_TO, 'Event', 'event_id'),
+			'operation' => array(self::BELONGS_TO, 'Element_OphTrOperationbooking_Operation', 'element_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
+			'firm' => array(self::BELONGS_TO, 'Firm', 'firm_id'),
 		);
 	}
 
@@ -106,21 +116,12 @@ class OphTrOperation_Operation_Cancellation_Reason extends BaseActiveRecord
 			));
 	}
 
-	public static function getReasonsByListNumber($listNo = 2)
-	{
-		$options = Yii::app()->db->createCommand()
-			->select('t.id, t.text')
-			->from('ophtroperation_operation_cancellation_reason t')
-			->where('list_no = :no', array(':no'=>$listNo))
-			->order('text ASC')
-			->queryAll();
+	public function getFirmName() {
+		return $this->firm->name . ' (' . $this->firm->serviceSubspecialtyAssignment->subspecialty->name . ')';
+	}
 
-		$result = array();
-		foreach ($options as $value) {
-			$result[$value['id']] = $value['text'];
-		}
-
-		return $result;
+	public function getTimeSlot() {
+		return date('H:i',strtotime($this->session_start_time)) . ' - ' . date('H:i',strtotime($this->session_end_time));
 	}
 }
 ?>

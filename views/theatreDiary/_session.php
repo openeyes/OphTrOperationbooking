@@ -2,7 +2,7 @@
 	<strong>Session updated!</strong>
 </div>
 
-<?php $this->beginWidget('CActiveForm', array('id'=>'session_form'.$id, 'action'=>Yii::app()->createUrl('/OphTrOperation/theatreDiary/saveSession'), 'enableAjaxValidation'=>false))?>
+<?php $this->beginWidget('CActiveForm', array('id'=>'session_form'.$id, 'action'=>Yii::app()->createUrl('/OphTrOperationbooking/theatreDiary/saveSession'), 'enableAjaxValidation'=>false))?>
 	<div class="action_options diaryViewMode" data-id="<?php echo $id?>" style="float: right;">
 		<img id="loader_<?php echo $id?>" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="margin-right: 5px; margin-bottom: 4px; display: none;" />
 		<div class="session_options diaryViewMode" data-id="<?php echo $id?>">
@@ -96,7 +96,7 @@
 						<td class="td_sort diaryEditMode" data-id="<?php echo $id?>" style="display: none;">
 							<img src="<?php echo $assetPath?>/img/diaryIcons/draggable_row.png" alt="draggable_row" width="25" height="28" />
 						</td>
-						<td class="hospital"><?php echo CHtml::link($booking['hos_num'], Yii::app()->createUrl('/OphTrOperation/default/view/'.$booking['event_id']));
+						<td class="hospital"><?php echo CHtml::link($booking['hos_num'], Yii::app()->createUrl('/OphTrOperationbooking/default/view/'.$booking['event_id']));
 						?></td>
 						<td class="confirm"><input type="hidden" name="confirm_<?php echo $booking['operation_id']?>" value="0" /><input id="confirm_<?php echo $booking['operation_id']?>" type="checkbox" value="1" name="confirm_<?php echo $booking['operation_id']?>" disabled="disabled" <?php if ($booking['confirmed']) {?>checked="checked" <?php }?>/></td>
 						<td class="patient leftAlign"><?php echo $booking['patient_with_age']?></td>

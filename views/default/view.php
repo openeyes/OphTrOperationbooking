@@ -1,6 +1,6 @@
 <?php $this->header() ?>
 
-<h3 class="withEventIcon"><?php  echo $this->event_type->name ?> (<?php echo Element_OphTrOperation_Operation::model()->find('event_id=?',array($this->event->id))->status->name?>)</h3>
+<h3 class="withEventIcon"><?php  echo $this->event_type->name ?> (<?php echo Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($this->event->id))->status->name?>)</h3>
 
 <?php $this->renderPartial('//base/_messages'); ?>
 

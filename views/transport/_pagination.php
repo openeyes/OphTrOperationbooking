@@ -24,7 +24,7 @@ $uri_append = $this->getUriAppend();
 <div class="transport_pagination">
 	<span class="transport_pagination_back">
 		<?php if ($this->page >1) {?>
-			<?php echo CHtml::link('&laquo; back',Yii::app()->createUrl('/OphTrOperation/transport/index?page='.($this->page-1).$uri_append),array('class'=>'pagination-link','rel'=>'back'))?>
+			<?php echo CHtml::link('&laquo; back',Yii::app()->createUrl('/OphTrOperationbooking/transport/index?page='.($this->page-1).$uri_append),array('class'=>'pagination-link','rel'=>'back'))?>
 		<?php }else{?>
 			&laquo; back
 		<?php }?>
@@ -34,13 +34,13 @@ $uri_append = $this->getUriAppend();
 		<?php if ($i == $this->page) {?>
 			<span class="transport_pagination_selected">&nbsp;<?php echo $i?> </span>
 		<?php }else{?>
-			<?php echo CHtml::link($i,Yii::app()->createUrl('/OphTrOperation/transport/index?page='.$i.$uri_append),array('class'=>'pagination-link','rel'=>$i)) ?>
+			<?php echo CHtml::link($i,Yii::app()->createUrl('/OphTrOperationbooking/transport/index?page='.$i.$uri_append),array('class'=>'pagination-link','rel'=>$i)) ?>
 		<?php }?>
 		&nbsp;
 	<?php }?>
 	<span class="transport_pagination_next">
 		<?php if ($this->page < $this->pages) {?>
-			<?php echo CHtml::link('next &raquo;',Yii::app()->createUrl('/OphTrOperation/transport/index?page='.($this->page+1).$uri_append),array('class'=>'pagination-link','rel'=>'next'))?>
+			<?php echo CHtml::link('next &raquo;',Yii::app()->createUrl('/OphTrOperationbooking/transport/index?page='.($this->page+1).$uri_append),array('class'=>'pagination-link','rel'=>'next'))?>
 		<?php }else{?>
 			next &raquo;
 		<?php }?>

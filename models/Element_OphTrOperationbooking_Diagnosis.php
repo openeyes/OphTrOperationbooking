@@ -17,7 +17,7 @@
  */
 
 /**
- * This is the model class for table "et_ophtroperation_diagnosis".
+ * This is the model class for table "et_ophtroperationbooking_diagnosis".
  *
  * The followings are the available columns in table:
  * @property string $id
@@ -35,7 +35,7 @@
  * @property Eye $eye
  */
 
-class Element_OphTrOperation_Diagnosis extends BaseEventTypeElement
+class Element_OphTrOperationbooking_Diagnosis extends BaseEventTypeElement
 {
 	public $service;
 
@@ -53,7 +53,7 @@ class Element_OphTrOperation_Diagnosis extends BaseEventTypeElement
 	 */
 	public function tableName()
 	{
-		return 'et_ophtroperation_diagnosis';
+		return 'et_ophtroperationbooking_diagnosis';
 	}
 
 	/**

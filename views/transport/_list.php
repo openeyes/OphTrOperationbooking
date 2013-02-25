@@ -49,7 +49,7 @@
 					<tr class="waitinglist<?php echo $booking['colour']?>">
 						<td style="width: 53px;"><?php echo $booking['hos_num'] ?></td>
 						<td class="patient">
-							<?php echo CHtml::link("<strong>" . trim(strtoupper($booking['last_name'])) . '</strong>, ' . $booking['first_name'], Yii::app()->createUrl('OphTrOperation/default/view/' . $booking['evid']))?>
+							<?php echo CHtml::link("<strong>" . trim(strtoupper($booking['last_name'])) . '</strong>, ' . $booking['first_name'], Yii::app()->createUrl('OphTrOperationbooking/default/view/' . $booking['evid']))?>
 						</td>
 						<td style="width: 83px;"><?php echo date('j-M-Y',strtotime($booking['session_date']))?></td>
 						<td style="width: 73px;"><?php echo $booking['session_time']?></td>

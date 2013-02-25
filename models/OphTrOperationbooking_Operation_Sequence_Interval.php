@@ -17,23 +17,15 @@
  */
 
 /**
- * This is the model class for table "et_ophtroperation_operation_proc_defaults".
+ * This is the model class for table "ophtroperationbooking_operation_sequence_interval".
  *
  * The followings are the available columns in table:
- * @property string $id
+ * @property integer $id
  * @property string $name
- *
- * The followings are the available model relations:
- *
- * @property ElementType $element_type
- * @property EventType $eventType
- * @property Event $event
- * @property User $user
- * @property User $usermodified
  *
  */
 
-class OphTrOperation_Operation_Defaults extends BaseActiveRecord
+class OphTrOperationbooking_Operation_Sequence_Interval extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -49,7 +41,7 @@ class OphTrOperation_Operation_Defaults extends BaseActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ophtroperation_operation_proc_defaults';
+		return 'ophtroperationbooking_operation_sequence_interval';
 	}
 
 	/**
@@ -60,11 +52,6 @@ class OphTrOperation_Operation_Defaults extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('value_id', 'safe'),
-			array('value_id', 'required'),
-			// The following rule is used by search().
-			// Please remove those attributes that should not be searched.
-			array('id, name', 'safe', 'on' => 'search'),
 		);
 	}
 	
@@ -76,11 +63,6 @@ class OphTrOperation_Operation_Defaults extends BaseActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'element_type' => array(self::HAS_ONE, 'ElementType', 'id','on' => "element_type.class_name='".get_class($this)."'"),
-			'eventType' => array(self::BELONGS_TO, 'EventType', 'event_type_id'),
-			'event' => array(self::BELONGS_TO, 'Event', 'event_id'),
-			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
-			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 		);
 	}
 
@@ -112,26 +94,19 @@ class OphTrOperation_Operation_Defaults extends BaseActiveRecord
 			));
 	}
 
-	/**
-	 * Set default values for forms on create
-	 */
-	public function setDefaultOptions()
-	{
-	}
-
-	protected function beforeSave()
-	{
-		return parent::beforeSave();
-	}
-
-	protected function afterSave()
-	{
-		return parent::afterSave();
-	}
-
-	protected function beforeValidate()
-	{
-		return parent::beforeValidate();
+	public function getInteger($endTimestamp) {
+		switch ($this->id) {
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+				$interval = 60 * 60 * 24 * (($this->id-1) * 7);
+				break;
+			case 1:
+			case 6:
+				$interval = $endTimestamp + 1;
+				break;
+		}
+		return $interval;
 	}
 }
-?>

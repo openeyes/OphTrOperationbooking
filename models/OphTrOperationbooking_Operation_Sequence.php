@@ -17,7 +17,7 @@
  */
 
 /**
- * This is the model class for table "ophtroperation_operation_sequence".
+ * This is the model class for table "ophtroperationbooking_operation_sequence".
  *
  * The followings are the available columns in table:
  * @property integer $id
@@ -31,11 +31,11 @@
  * The followings are the available model relations:
  *
  * @property Site $site
- * @property OphTrOperation_Operation_Theatre $theatre
+ * @property OphTrOperationbooking_Operation_Theatre $theatre
  *
  */
 
-class OphTrOperation_Operation_Sequence extends BaseActiveRecord
+class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
 {
 	const SELECT_1STWEEK = 1;
 	const SELECT_2NDWEEK = 2;
@@ -57,7 +57,7 @@ class OphTrOperation_Operation_Sequence extends BaseActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ophtroperation_operation_sequence';
+		return 'ophtroperationbooking_operation_sequence';
 	}
 
 	/**
@@ -90,11 +90,11 @@ class OphTrOperation_Operation_Sequence extends BaseActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'theatre' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Theatre', 'theatre_id'),
+			'theatre' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Theatre', 'theatre_id'),
 			'firmAssignment' => array(self::HAS_ONE, 'SequenceFirmAssignment', 'sequence_id'),
 			'firm' => array(self::HAS_ONE, 'Firm', 'firm_id', 'through' => 'firmAssignment'),
-			'sessions' => array(self::HAS_MANY, 'OphTrOperation_Operation_Session', 'sequence_id'),
-			'interval' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Sequence_Interval', 'interval_id'),
+			'sessions' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Session', 'sequence_id'),
+			'interval' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Sequence_Interval', 'interval_id'),
 		);
 	}
 

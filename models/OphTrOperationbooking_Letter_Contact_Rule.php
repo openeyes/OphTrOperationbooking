@@ -17,7 +17,7 @@
  */
 
 /**
- * This is the model class for table "et_ophtroperation_letter_contact_rule".
+ * This is the model class for table "et_ophtroperationbooking_letter_contact_rule".
  *
  * The followings are the available columns in table:
  * @property integer $id
@@ -32,11 +32,11 @@
  *
  * @property Site $site
  * @property Subspecialty $subspecialty
- * @property OphTrOperation_Operation_Theatre $theatre
- * @property OphTrOperation_Operation_Firm $firm
+ * @property OphTrOperationbooking_Operation_Theatre $theatre
+ * @property OphTrOperationbooking_Operation_Firm $firm
  */
 
-class OphTrOperation_Letter_Contact_Rule extends BaseActiveRecord
+class OphTrOperationbooking_Letter_Contact_Rule extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -52,7 +52,7 @@ class OphTrOperation_Letter_Contact_Rule extends BaseActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ophtroperation_letter_contact_rule';
+		return 'ophtroperationbooking_letter_contact_rule';
 	}
 
 	/**
@@ -80,11 +80,11 @@ class OphTrOperation_Letter_Contact_Rule extends BaseActiveRecord
 		return array(
 			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
 			'subspecialty' => array(self::BELONGS_TO, 'Subspecialty', 'subspecialty_id'),
-			'theatre' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Theatre', 'theatre_id'),
+			'theatre' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Theatre', 'theatre_id'),
 			'firm' => array(self::BELONGS_TO, 'Firm', 'firm_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
-			'children' => array(self::HAS_MANY, 'OphTrOperation_Letter_Contact_Rule', 'parent_rule_id'),
+			'children' => array(self::HAS_MANY, 'OphTrOperationbooking_Letter_Contact_Rule', 'parent_rule_id'),
 		);
 	}
 

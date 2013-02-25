@@ -121,7 +121,7 @@ class TheatreDiaryController extends BaseEventTypeController
 	{
 		Audit::add('diary','search',serialize($_POST));
 
-		$this->renderPartial('_list', array('diary' => $this->getDiary(), 'assetPath'=>Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.OphTrOperation.assets'), false, -1, YII_DEBUG)), false, true);
+		$this->renderPartial('_list', array('diary' => $this->getDiary(), 'assetPath'=>Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.OphTrOperationbooking.assets'), false, -1, YII_DEBUG)), false, true);
 	}
 
 	public function getDiary() {
@@ -197,13 +197,13 @@ class TheatreDiaryController extends BaseEventTypeController
 					p.hos_num, w.name AS ward, b.display_order, b.confirmed, pr.name as priority, s.available, mu.first_name AS mu_fn,
 					mu.last_name AS mu_ln, cu.first_name as cu_fn, cu.last_name as cu_ln, s.last_modified_date,
 					su.first_name as session_first_name, su.last_name as session_last_name')
-			->from('ophtroperation_operation_session s')
-			->join('ophtroperation_operation_theatre t', 't.id = s.theatre_id')
+			->from('ophtroperationbooking_operation_session s')
+			->join('ophtroperationbooking_operation_theatre t', 't.id = s.theatre_id')
 			->leftJoin('site i', 'i.id = t.site_id')
-			->leftJoin('ophtroperation_operation_booking b', 'b.session_id = s.id and b.cancellation_date is null')
-			->leftJoin('et_ophtroperation_operation o', 'o.id = b.element_id')
+			->leftJoin('ophtroperationbooking_operation_booking b', 'b.session_id = s.id and b.cancellation_date is null')
+			->leftJoin('et_ophtroperationbooking_operation o', 'o.id = b.element_id')
 			->leftJoin('anaesthetic_type an','o.anaesthetic_type_id = an.id')
-			->leftJoin('ophtroperation_operation_priority pr','pr.id = o.priority_id')
+			->leftJoin('ophtroperationbooking_operation_priority pr','pr.id = o.priority_id')
 			->leftJoin('event e', 'e.id = o.event_id')
 			->leftJoin('episode ep', 'ep.id = e.episode_id')
 			->leftJoin('patient p', 'p.id = ep.patient_id')
@@ -214,7 +214,7 @@ class TheatreDiaryController extends BaseEventTypeController
 			->leftJoin('user mu','b.last_modified_user_id = mu.id')
 			->leftJoin('user cu','b.created_user_id = cu.id')
 			->leftJoin('user su','s.last_modified_user_id = su.id')
-			->leftJoin('ophtroperation_operation_ward w', 'w.id = b.ward_id')
+			->leftJoin('ophtroperationbooking_operation_ward w', 'w.id = b.ward_id')
 			->where($whereSql, $whereParams)
 			->order('t.name ASC, s.date ASC, s.start_time ASC, s.end_time ASC, b.display_order ASC')
 			->queryAll();
@@ -270,7 +270,7 @@ class TheatreDiaryController extends BaseEventTypeController
 					'priority' => $row['priority'],
 					'created_user' => $row['cu_fn'].' '.$row['cu_ln'],
 					'last_modified_user' => $row['mu_fn'].' '.$row['mu_ln'],
-					'procedures' => Element_OphTrOperation_Operation::model()->findByPk($row['operation_id'])->getProceduresCommaSeparated(),
+					'procedures' => Element_OphTrOperationbooking_Operation::model()->findByPk($row['operation_id'])->getProceduresCommaSeparated(),
 				);
 			}
 		}
@@ -295,7 +295,7 @@ class TheatreDiaryController extends BaseEventTypeController
 	public function getNextSessionDate($firmId) {
 		$date = Yii::app()->db->createCommand()
 			->select('date')
-			->from('ophtroperation_operation_session s')
+			->from('ophtroperationbooking_operation_session s')
 			->where('s.firm_id = :fid AND date >= CURDATE()', array(':fid' => $firmId))
 			->order('date ASC')
 			->limit(1)
@@ -334,18 +334,18 @@ class TheatreDiaryController extends BaseEventTypeController
 
 		return Yii::app()->db->createCommand()
 			->select('p.hos_num, c.first_name, c.last_name, p.dob, p.gender, s.date, w.code as ward_code, w.name as ward_name, f.pas_code as consultant, sp.ref_spec as subspecialty')
-			->from('ophtroperation_operation_booking b')
-			->join('ophtroperation_operation_session s','b.session_id = s.id')
-			->join('ophtroperation_operation_theatre t','s.theatre_id = t.id')
+			->from('ophtroperationbooking_operation_booking b')
+			->join('ophtroperationbooking_operation_session s','b.session_id = s.id')
+			->join('ophtroperationbooking_operation_theatre t','s.theatre_id = t.id')
 			->join('firm f','f.id = s.firm_id')
 			->join('service_subspecialty_assignment ssa','ssa.id = f.service_subspecialty_assignment_id')
 			->join('subspecialty sp','sp.id = ssa.subspecialty_id')
-			->join('et_ophtroperation_operation eo','b.element_id = eo.id')
+			->join('et_ophtroperationbooking_operation eo','b.element_id = eo.id')
 			->join('event e','eo.event_id = e.id')
 			->join('episode ep','e.episode_id = ep.id')
 			->join('patient p','ep.patient_id = p.id')
 			->join('contact c',"c.parent_id = p.id and c.parent_class = 'Patient'")
-			->join('ophtroperation_operation_ward w','b.ward_id = w.id')
+			->join('ophtroperationbooking_operation_ward w','b.ward_id = w.id')
 			->where($whereSql, $whereParams)
 			->order($order)
 			->queryAll();
@@ -403,7 +403,7 @@ class TheatreDiaryController extends BaseEventTypeController
 	}
 
 	public function actionSaveSession() {
-		if (!$session = OphTrOperation_Operation_Session::model()->findByPk(@$_POST['session_id'])) {
+		if (!$session = OphTrOperationbooking_Operation_Session::model()->findByPk(@$_POST['session_id'])) {
 			throw new Exception('Session not found: '.@$_POST['session_id']);
 		}
 
@@ -412,7 +412,7 @@ class TheatreDiaryController extends BaseEventTypeController
 
 		foreach ($_POST as $key => $value) {
 			if (preg_match('/^admitTime_([0-9]+)$/',$key,$m)) {
-				if (!$operation = Element_OphTrOperation_Operation::model()->findByPk($m[1])) {
+				if (!$operation = Element_OphTrOperationbooking_Operation::model()->findByPk($m[1])) {
 					throw new Exception('Operation not found: '.$m[1]);
 				}
 
@@ -503,7 +503,7 @@ class TheatreDiaryController extends BaseEventTypeController
 	{
 		$data = Yii::app()->db->createCommand()
 			->select('t.id, t.name')
-			->from('ophtroperation_operation_theatre t')
+			->from('ophtroperationbooking_operation_theatre t')
 			->where('t.site_id = :id',
 				array(':id'=>$siteId))
 			->queryAll();
@@ -527,7 +527,7 @@ class TheatreDiaryController extends BaseEventTypeController
 	{
 		$data = Yii::app()->db->createCommand()
 			->select('w.id, w.name')
-			->from('ophtroperation_operation_ward w')
+			->from('ophtroperationbooking_operation_ward w')
 			->where('w.site_id = :id',
 				array(':id'=>$siteId))
 			->order('w.name ASC')
@@ -560,7 +560,7 @@ class TheatreDiaryController extends BaseEventTypeController
 	}
 
 	public function actionCheckRequired() {
-		if (!$session = OphTrOperation_Operation_Session::model()->findByPk(@$_POST['session_id'])) {
+		if (!$session = OphTrOperationbooking_Operation_Session::model()->findByPk(@$_POST['session_id'])) {
 			throw new Exception('Session not found: '.$_POST['session_id']);
 		}
 
@@ -568,9 +568,9 @@ class TheatreDiaryController extends BaseEventTypeController
 			case 'consultant':
 				if (Yii::app()->db->createCommand()
 					->select("eo.consultant_required")
-					->from("et_ophtroperation_operation eo")
-					->join("ophtroperation_operation_booking b","b.element_id = eo.id")
-					->join("ophtroperation_operation_session s","b.session_id = s.id")
+					->from("et_ophtroperationbooking_operation eo")
+					->join("ophtroperationbooking_operation_booking b","b.element_id = eo.id")
+					->join("ophtroperationbooking_operation_session s","b.session_id = s.id")
 					->where("s.id = $session->id and eo.status_id in (2,4) and b.cancellation_date is null and eo.consultant_required = 1")
 					->queryRow()) {
 					echo "1";
@@ -587,9 +587,9 @@ class TheatreDiaryController extends BaseEventTypeController
 					->from("patient p")
 					->join("episode e","e.patient_id = p.id")
 					->join("event ev","ev.episode_id = e.id")
-					->join("et_ophtroperation_operation eo","eo.event_id = ev.id")
-					->join("ophtroperation_operation_booking b","b.element_id = eo.id")
-					->join("ophtroperation_operation_session s","b.session_id = s.id")
+					->join("et_ophtroperationbooking_operation eo","eo.event_id = ev.id")
+					->join("ophtroperationbooking_operation_booking b","b.element_id = eo.id")
+					->join("ophtroperationbooking_operation_session s","b.session_id = s.id")
 					->where("s.id = $session->id and eo.status_id in (2,4) and b.cancellation_date is null and p.dob >= '$age_limit'")
 					->queryRow()) { 
 					echo "1";
@@ -600,9 +600,9 @@ class TheatreDiaryController extends BaseEventTypeController
 			case 'anaesthetist':
 				if (Yii::app()->db->createCommand()
 					->select("eo.anaesthetist_required")
-					->from("et_ophtroperation_operation eo")
-					->join("ophtroperation_operation_booking b","b.element_id = eo.id")
-					->join("ophtroperation_operation_session s","b.session_id = s.id")
+					->from("et_ophtroperationbooking_operation eo")
+					->join("ophtroperationbooking_operation_booking b","b.element_id = eo.id")
+					->join("ophtroperationbooking_operation_session s","b.session_id = s.id")
 					->where("s.id = $session->id and eo.status_id in (2,4) and b.cancellation_date is null and eo.anaesthetist_required = 1")
 					->queryRow()) { 
 					echo "1";
@@ -613,9 +613,9 @@ class TheatreDiaryController extends BaseEventTypeController
 			case 'general_anaesthetic':
 				if (Yii::app()->db->createCommand()
 					->select("eo.anaesthetist_required")
-					->from("et_ophtroperation_operation eo")
-					->join("ophtroperation_operation_booking b","b.element_id = eo.id")
-					->join("ophtroperation_operation_session s","b.session_id = s.id")
+					->from("et_ophtroperationbooking_operation eo")
+					->join("ophtroperationbooking_operation_booking b","b.element_id = eo.id")
+					->join("ophtroperationbooking_operation_session s","b.session_id = s.id")
 					->where("s.id = $session->id and eo.status_id in (2,4) and b.cancellation_date is null and eo.anaesthetic_type_id = 5")
 					->queryRow()) {
 					echo "1";

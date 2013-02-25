@@ -17,20 +17,22 @@
  */
 
 /**
- * This is the model class for table "ophtroperation_waiting_list_contact_rule".
+ * This is the model class for table "ophtroperationbooking_scheduleope_schedule_options".
  *
  * The followings are the available columns in table:
- * @property integer $id
- * @property integer $parent_rule_id
- * @property integer $site_id
- * @property integer $service_id
- * @property integer $firm_id
- * @property boolean $is_child
+ * @property string $id
  * @property string $name
- * @property string $telephone
+ *
+ * The followings are the available model relations:
+ *
+ * @property ElementType $element_type
+ * @property EventType $eventType
+ * @property Event $event
+ * @property User $user
+ * @property User $usermodified
  */
 
-class OphTrOperation_Waiting_List_Contact_Rule extends BaseActiveRecord
+class OphTrOperationbooking_ScheduleOperation_Options extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -46,7 +48,7 @@ class OphTrOperation_Waiting_List_Contact_Rule extends BaseActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ophtroperation_waiting_list_contact_rule';
+		return 'ophtroperationbooking_scheduleope_schedule_options';
 	}
 
 	/**
@@ -57,10 +59,11 @@ class OphTrOperation_Waiting_List_Contact_Rule extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('parent_rule_id, site_id, service_id, firm_id, is_child, name, telephone', 'safe'),
+			array('name', 'safe'),
+			array('name', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, parent_rule_id, site_id, service_id, firm_id, is_child, name, telephone', 'safe', 'on' => 'search'),
+			array('id, name', 'safe', 'on' => 'search'),
 		);
 	}
 	
@@ -72,9 +75,11 @@ class OphTrOperation_Waiting_List_Contact_Rule extends BaseActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'element_type' => array(self::HAS_ONE, 'ElementType', 'id','on' => "element_type.class_name='".get_class($this)."'"),
+			'eventType' => array(self::BELONGS_TO, 'EventType', 'event_type_id'),
+			'event' => array(self::BELONGS_TO, 'Event', 'event_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
-			'children' => array(self::HAS_MANY, 'OphTrOperation_Waiting_List_Contact_Rule', 'parent_rule_id'),
 		);
 	}
 
@@ -84,6 +89,8 @@ class OphTrOperation_Waiting_List_Contact_Rule extends BaseActiveRecord
 	public function attributeLabels()
 	{
 		return array(
+			'id' => 'ID',
+			'name' => 'Name',
 		);
 	}
 
@@ -99,29 +106,33 @@ class OphTrOperation_Waiting_List_Contact_Rule extends BaseActiveRecord
 		$criteria = new CDbCriteria;
 
 		$criteria->compare('id', $this->id, true);
+		$criteria->compare('name', $this->name, true);
 
 		return new CActiveDataProvider(get_class($this), array(
 				'criteria' => $criteria,
 			));
 	}
 
-	public function applies($site_id, $service_id, $firm_id, $is_child) {
-		foreach (array('site_id','service_id','firm_id','is_child') as $field) {
-			if ($this->{$field} !== null && $this->{$field} != ${$field}) {
-				return false;
-			}
-		}
-
-		return true;
+	/**
+	 * Set default values for forms on create
+	 */
+	public function setDefaultOptions()
+	{
 	}
 
-	public function parse($site_id, $service_id, $firm_id, $is_child) {
-		foreach ($this->children as $child_rule) {
-			if ($child_rule->applies($site_id, $service_id, $firm_id, $is_child)) {
-				return $child_rule->parse($site_id, $service_id, $firm_id, $is_child);
-			}
-		}
+	protected function beforeSave()
+	{
+		return parent::beforeSave();
+	}
 
-		return $this;
+	protected function afterSave()
+	{
+		return parent::afterSave();
+	}
+
+	protected function beforeValidate()
+	{
+		return parent::beforeValidate();
 	}
 }
+?>

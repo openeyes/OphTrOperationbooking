@@ -101,7 +101,7 @@ class TransportController extends BaseEventTypeController
 		if (!$all) {
 			$this->total_items = Yii::app()->db->createCommand()
 				->select("count(*)")
-				->from("et_ophtroperation_operation eo")
+				->from("et_ophtroperationbooking_operation eo")
 				->join("event ev","eo.event_id = ev.id")
 				->join("episode e","ev.episode_id = e.id")
 				->join("firm f","e.firm_id = f.id")
@@ -109,12 +109,12 @@ class TransportController extends BaseEventTypeController
 				->join("subspecialty su","ssa.subspecialty_id = su.id")
 				->join("patient p","e.patient_id = p.id")
 				->join("contact c","c.parent_id = p.id and c.parent_class = 'Patient'")
-				->join("(select element_id,max(id) as maxid from ophtroperation_operation_booking group by element_id) as btmp","btmp.element_id = eo.id")
-				->join("ophtroperation_operation_booking b","b.id = btmp.maxid")
-				->join("ophtroperation_operation_session s","s.id = b.session_id and s.date >= '$today'")
-				->join("ophtroperation_operation_theatre t","t.id = s.theatre_id")
+				->join("(select element_id,max(id) as maxid from ophtroperationbooking_operation_booking group by element_id) as btmp","btmp.element_id = eo.id")
+				->join("ophtroperationbooking_operation_booking b","b.id = btmp.maxid")
+				->join("ophtroperationbooking_operation_session s","s.id = b.session_id and s.date >= '$today'")
+				->join("ophtroperationbooking_operation_theatre t","t.id = s.theatre_id")
 				->join("site si","si.id = t.site_id")
-				->join("ophtroperation_operation_ward w","w.id = b.ward_id")
+				->join("ophtroperationbooking_operation_ward w","w.id = b.ward_id")
 				->where("(ev.deleted = 0 or ev.deleted is null) and (e.deleted = 0 or e.deleted is null) and (b.transport_arranged = 0 or b.transport_arranged_date = '$today') $where")
 				->queryScalar();
 		}
@@ -126,7 +126,7 @@ class TransportController extends BaseEventTypeController
 				case isnull(b.cancellation_date) when 0 then 'Cancelled' else ( case status_id = 2 when 1 then 'Booked' else 'Rescheduled' end ) end as method,
 				case si.short_name != '' when 1 then si.short_name else si.name end as location, case eo.priority_id = 1 when 1 then 'Routine' else 'Urgent' end as priority,
 				case transport_arranged = 0 when 1 then ( case s.date <= now() + interval 1 day when 1 then 'Red' else 'Green' end ) else 'Grey' end as colour")
-			->from("et_ophtroperation_operation eo")
+			->from("et_ophtroperationbooking_operation eo")
 			->join("event ev","eo.event_id = ev.id")
 			->join("episode e","ev.episode_id = e.id")
 			->join("firm f","e.firm_id = f.id")
@@ -134,12 +134,12 @@ class TransportController extends BaseEventTypeController
 			->join("subspecialty su","ssa.subspecialty_id = su.id")
 			->join("patient p","e.patient_id = p.id")
 			->join("contact c","c.parent_id = p.id and c.parent_class = 'Patient'")
-			->join("(select element_id,max(id) as maxid from ophtroperation_operation_booking group by element_id) as btmp","btmp.element_id = eo.id")
-			->join("ophtroperation_operation_booking b","b.id = btmp.maxid")
-			->join("ophtroperation_operation_session s","s.id = b.session_id and s.date >= '$today'")
-			->join("ophtroperation_operation_theatre t","t.id = s.theatre_id")
+			->join("(select element_id,max(id) as maxid from ophtroperationbooking_operation_booking group by element_id) as btmp","btmp.element_id = eo.id")
+			->join("ophtroperationbooking_operation_booking b","b.id = btmp.maxid")
+			->join("ophtroperationbooking_operation_session s","s.id = b.session_id and s.date >= '$today'")
+			->join("ophtroperationbooking_operation_theatre t","t.id = s.theatre_id")
 			->join("site si","si.id = t.site_id")
-			->join("ophtroperation_operation_ward w","w.id = b.ward_id")
+			->join("ophtroperationbooking_operation_ward w","w.id = b.ward_id")
 			->where("(ev.deleted = 0 or ev.deleted is null) and (e.deleted = 0 or e.deleted is null) and (b.transport_arranged = 0 or b.transport_arranged_date = '$today') $where")
 			->order("timestamp asc");
 
@@ -167,7 +167,7 @@ class TransportController extends BaseEventTypeController
 		if (!is_array($booking_ids)) {
 			throw new CHttpException('400', 'Invalid booking list');
 		}
-		$bookings = OphTrOperation_Operation_Booking::model()->findAllByPk($booking_ids);
+		$bookings = OphTrOperationbooking_Operation_Booking::model()->findAllByPk($booking_ids);
 
 		// Print a letter for booking, separated by a page break
 		$break = false;
@@ -199,7 +199,7 @@ class TransportController extends BaseEventTypeController
 	public function actionConfirm() {
 		if (is_array(@$_POST['bookings'])) {
 			foreach ($_POST['bookings'] as $booking_id) {
-				if (!$booking = OphTrOperation_Operation_Booking::model()->findByPk($booking_id)) {
+				if (!$booking = OphTrOperationbooking_Operation_Booking::model()->findByPk($booking_id)) {
 					throw new Exception('Booking not found: '.$booking_id);
 				}
 

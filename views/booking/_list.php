@@ -18,9 +18,9 @@
  */
 
 if (!$reschedule) {
-	echo CHtml::form(Yii::app()->createUrl('/OphTrOperation/booking/schedule/'.$operation->event->id.'?firm_id='.$_GET['firm_id'].'&date='.$_GET['date'].'&day='.$_GET['day'].'&session_id='.$_GET['session_id']), 'post', array('id' => 'bookingForm'));
+	echo CHtml::form(Yii::app()->createUrl('/OphTrOperationbooking/booking/schedule/'.$operation->event->id.'?firm_id='.$_GET['firm_id'].'&date='.$_GET['date'].'&day='.$_GET['day'].'&session_id='.$_GET['session_id']), 'post', array('id' => 'bookingForm'));
 } else {
-	echo CHtml::form(Yii::app()->createUrl('/OphTrOperation/booking/reschedule/'.$operation->event->id.'?firm_id='.$_GET['firm_id'].'&date='.$_GET['date'].'&day='.$_GET['day'].'&session_id='.$_GET['session_id']), 'post', array('id' => 'bookingForm'));
+	echo CHtml::form(Yii::app()->createUrl('/OphTrOperationbooking/booking/reschedule/'.$operation->event->id.'?firm_id='.$_GET['firm_id'].'&date='.$_GET['date'].'&day='.$_GET['day'].'&session_id='.$_GET['session_id']), 'post', array('id' => 'bookingForm'));
 }
 ?>
 	<h4>Other operations in this session: <?php echo abs($session->availableMinutes) . " min {$session->minuteStatus}"; ?></h4>
@@ -114,7 +114,7 @@ if (!$reschedule) {
 			} ?>
 			<div class="data">
 			<?php echo CHtml::dropDownList('cancellation_reason', '',
-				OphTrOperation_Operation_Cancellation_Reason::getReasonsByListNumber($listIndex),
+				OphTrOperationbooking_Operation_Cancellation_Reason::getReasonsByListNumber($listIndex),
 				array('empty' => 'Select a reason')
 			); ?>
 			</div>

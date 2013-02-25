@@ -152,7 +152,7 @@ function getDiary() {
 		searchData = $('#theatre-filter').serialize();
 
 		$.ajax({
-			'url': baseUrl+'/OphTrOperation/theatreDiary/search',
+			'url': baseUrl+'/OphTrOperationbooking/theatreDiary/search',
 			'type': 'POST',
 			'data': searchData,
 			'success': function(data) {
@@ -181,7 +181,7 @@ function setDiaryFilter(values) {
 	}
 
 	$.ajax({
-		'url': baseUrl+'/OphTrOperation/theatreDiary/setDiaryFilter',
+		'url': baseUrl+'/OphTrOperationbooking/theatreDiary/setDiaryFilter',
 		'type': 'POST',
 		'data': data,
 		'success': function(html) {
@@ -189,7 +189,7 @@ function setDiaryFilter(values) {
 				loadTheatresAndWards(value);
 			} else if (field == 'subspecialty-id') {
 				$.ajax({
-					'url': baseUrl+'/OphTrOperation/theatreDiary/filterFirms',
+					'url': baseUrl+'/OphTrOperationbooking/theatreDiary/filterFirms',
 					'type': 'POST',
 					'data': 'subspecialty_id='+$('#subspecialty-id').val(),
 					'success': function(data) {
@@ -211,13 +211,13 @@ function loadTheatresAndWards(siteId) {
 	$.ajax({
 		'type': 'POST',
 		'data': {'site_id': siteId},
-		'url': baseUrl+'/OphTrOperation/theatreDiary/filterTheatres',
+		'url': baseUrl+'/OphTrOperationbooking/theatreDiary/filterTheatres',
 		'success':function(data) {
 			$('#theatre-id').html(data);
 			$.ajax({
 				'type': 'POST',
 				'data': {'site_id': siteId},
-				'url': baseUrl+'/OphTrOperation/theatreDiary/filterTheatres',
+				'url': baseUrl+'/OphTrOperationbooking/theatreDiary/filterTheatres',
 				'success':function(data) {
 					$('#ward-id').html(data);
 				}

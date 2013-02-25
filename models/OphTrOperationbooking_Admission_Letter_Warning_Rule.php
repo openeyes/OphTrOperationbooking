@@ -17,25 +17,17 @@
  */
 
 /**
- * This is the model class for table "ophtroperation_operation_date_letter_sent".
+ * This is the model class for table "et_ophtroperationbooking_operation_preop_assessment_rule".
  *
  * The followings are the available columns in table:
- *
  * @property integer $id
- * @property integer $element_id
- * @property datetime $date_invitation_letter_sent
- * @property datetime $date_1st_reminder_letter_sent
- * @property datetime $date_2nd_reminder_letter_sent
- * @property datetime $date_gp_letter_sent
- * @property datetime date_scheduling_letter_sent
- *
- * The followings are the available model relations:
- *
- * @property Element_OphTrOperation_Operation $element
- *
+ * @property integer $parent_rule_id
+ * @property integer $theatre_id
+ * @property integer $subspecialty_id
+ * @property boolean $show_warning
  */
 
-class OphTrOperation_Operation_Date_Letter_Sent extends BaseActiveRecord
+class OphTrOperationbooking_Admission_Letter_Warning_Rule extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -51,7 +43,7 @@ class OphTrOperation_Operation_Date_Letter_Sent extends BaseActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ophtroperation_operation_date_letter_sent';
+		return 'ophtroperationbooking_admission_letter_warning_rule';
 	}
 
 	/**
@@ -62,7 +54,10 @@ class OphTrOperation_Operation_Date_Letter_Sent extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id, element_id, date_invitation_letter_sent, date_1st_reminder_letter_sent, date_2nd_reminder_letter_sent, date_gp_letter_sent, date_scheduling_letter_sent', 'safe', 'on'=>'search'),
+			array('rule_type_id, parent_rule_id, rule_order, site_id, theatre_id, subspecialty_id, is_child, show_warning, warning_text, emphasis, strong', 'safe'),
+			// The following rule is used by search().
+			// Please remove those attributes that should not be searched.
+			array('id, name', 'safe', 'on' => 'search'),
 		);
 	}
 	
@@ -76,7 +71,7 @@ class OphTrOperation_Operation_Date_Letter_Sent extends BaseActiveRecord
 		return array(
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
-			'element' => array(self::BELONGS_TO, 'Element_OphTrOperation_Operation', 'element_id'),
+			'children' => array(self::HAS_MANY, 'OphTrOperationbooking_Admission_Letter_Warning_Rule', 'parent_rule_id'),
 		);
 	}
 
@@ -86,6 +81,8 @@ class OphTrOperation_Operation_Date_Letter_Sent extends BaseActiveRecord
 	public function attributeLabels()
 	{
 		return array(
+			'id' => 'ID',
+			'name' => 'Name',
 		);
 	}
 
@@ -107,5 +104,41 @@ class OphTrOperation_Operation_Date_Letter_Sent extends BaseActiveRecord
 				'criteria' => $criteria,
 			));
 	}
+
+	static public function getRule($rule_type_name, $site_id, $is_child, $theatre_id, $subspecialty_id) {
+		if (!$rule_type = OphTrOperationbooking_Admission_Letter_Warning_Rule_Type::model()->find('name=?',array($rule_type_name))) {
+			throw new Exception("We were asked for a rule type that doesn't exist: $rule_type_name");
+		}
+
+		$criteria = new CDbCriteria;
+		$criteria->addCondition("parent_rule_id is null and rule_type_id = $rule_type->id");
+		$criteria->addCondition("rule_type_id = $rule_type->id");
+		$criteria->order = 'rule_order asc';
+
+		foreach (OphTrOperationbooking_Admission_Letter_Warning_Rule::model()->findAll($criteria) as $rule) {
+			if ($rule->applies($site_id, $is_child, $theatre_id, $subspecialty_id)) {
+				return $rule->parse($site_id, $is_child, $theatre_id, $subspecialty_id);
+			}
+		}
+	}
+
+	public function applies($site_id, $is_child, $theatre_id, $subspecialty_id) {
+		foreach (array('site_id', 'is_child', 'theatre_id','subspecialty_id') as $field) {
+			if ($this->{$field} !== null && $this->{$field} != ${$field}) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	public function parse($site_id, $is_child, $theatre_id, $subspecialty_id) {
+		foreach ($this->children as $rule) {
+			if ($rule->applies($site_id, $is_child, $theatre_id, $subspecialty_id)) {
+				return $rule->parse($site_id, $is_child, $theatre_id, $subspecialty_id);
+			}
+		}
+
+		return $this;
+	}
 }
-?>

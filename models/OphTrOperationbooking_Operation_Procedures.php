@@ -17,14 +17,22 @@
  */
 
 /**
- * This is the model class for table "ophtroperation_admission_letter_warning_rule_type".
+ * This is the model class for table "et_ophtroperationbooking_operation_procedures_procedures".
  *
  * The followings are the available columns in table:
- * @property integer $id
- * @property string $name
+ * @property string $id
+ * @property integer $element_id
+ * @property integer $proc_id
+ *
+ * The followings are the available model relations:
+ *
+ * @property Element_OphTrOperationbooking_Operation $element
+ * @property Procedure $proc
+ * @property User $user
+ * @property User $usermodified 
  */
 
-class OphTrOperation_Admission_Letter_Warning_Rule_Type extends BaseActiveRecord
+class OphTrOperationbooking_Operation_Procedures extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -40,7 +48,7 @@ class OphTrOperation_Admission_Letter_Warning_Rule_Type extends BaseActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ophtroperation_admission_letter_warning_rule_type';
+		return 'ophtroperationbooking_operation_procedures_procedures';
 	}
 
 	/**
@@ -51,10 +59,11 @@ class OphTrOperation_Admission_Letter_Warning_Rule_Type extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name', 'safe'),
+			array('element_id, proc_id', 'safe'),
+			array('element_id, proc_id', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, name', 'safe', 'on' => 'search'),
+			array('id, element_id, proc_id', 'safe', 'on' => 'search'),
 		);
 	}
 	
@@ -66,6 +75,8 @@ class OphTrOperation_Admission_Letter_Warning_Rule_Type extends BaseActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'element' => array(self::BELONGS_TO, 'Element_OphTrOperationbooking_Operation', 'element_id'),
+			'procedure' => array(self::BELONGS_TO, 'Procedure', 'proc_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 		);
@@ -100,4 +111,27 @@ class OphTrOperation_Admission_Letter_Warning_Rule_Type extends BaseActiveRecord
 				'criteria' => $criteria,
 			));
 	}
+
+	/**
+	 * Set default values for forms on create
+	 */
+	public function setDefaultOptions()
+	{
+	}
+
+	protected function beforeSave()
+	{
+		return parent::beforeSave();
+	}
+
+	protected function afterSave()
+	{
+		return parent::afterSave();
+	}
+
+	protected function beforeValidate()
+	{
+		return parent::beforeValidate();
+	}
 }
+?>

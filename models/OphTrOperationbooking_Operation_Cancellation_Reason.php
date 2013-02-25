@@ -17,15 +17,17 @@
  */
 
 /**
- * This is the model class for table "ophtroperation_operation_erod_rule".
+ * This is the model class for table "ophtroperationbooking_operation_cancellation_reason".
  *
  * The followings are the available columns in table:
  * @property integer $id
- * @property integer $subspecialty_id
+ * @property string $text
+ * @property integer $parent_id
+ * @property integer $list_no
  *
  */
 
-class OphTrOperation_Operation_EROD_Rule extends BaseActiveRecord
+class OphTrOperationbooking_Operation_Cancellation_Reason extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -41,7 +43,7 @@ class OphTrOperation_Operation_EROD_Rule extends BaseActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ophtroperation_operation_erod_rule';
+		return 'ophtroperationbooking_operation_cancellation_reason';
 	}
 
 	/**
@@ -52,9 +54,11 @@ class OphTrOperation_Operation_EROD_Rule extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('subspecialty_id', 'safe'),
-			array('subspecialty_id', 'required'),
-			array('subspecialty_id', 'safe', 'on' => 'search'),
+			array('text, parent_id, list_no', 'safe'),
+			array('text, list_no', 'required'),
+			// The following rule is used by search().
+			// Please remove those attributes that should not be searched.
+			array('id, text, parent_id, list_no', 'safe', 'on' => 'search'),
 		);
 	}
 	
@@ -66,6 +70,9 @@ class OphTrOperation_Operation_EROD_Rule extends BaseActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'element_type' => array(self::HAS_ONE, 'ElementType', 'id','on' => "element_type.class_name='".get_class($this)."'"),
+			'eventType' => array(self::BELONGS_TO, 'EventType', 'event_type_id'),
+			'event' => array(self::BELONGS_TO, 'Event', 'event_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 		);
@@ -97,6 +104,23 @@ class OphTrOperation_Operation_EROD_Rule extends BaseActiveRecord
 		return new CActiveDataProvider(get_class($this), array(
 				'criteria' => $criteria,
 			));
+	}
+
+	public static function getReasonsByListNumber($listNo = 2)
+	{
+		$options = Yii::app()->db->createCommand()
+			->select('t.id, t.text')
+			->from('ophtroperationbooking_operation_cancellation_reason t')
+			->where('list_no = :no', array(':no'=>$listNo))
+			->order('text ASC')
+			->queryAll();
+
+		$result = array();
+		foreach ($options as $value) {
+			$result[$value['id']] = $value['text'];
+		}
+
+		return $result;
 	}
 }
 ?>

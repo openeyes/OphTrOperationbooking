@@ -85,7 +85,7 @@ $(document).ready(function() {
 				type: "POST",
 				data: $('#session_form'+session_id).serialize()+"&session_id="+session_id,
 				dataType: 'json',
-				url: baseUrl+'/OphTrOperation/theatreDiary/saveSession',
+				url: baseUrl+'/OphTrOperationbooking/theatreDiary/saveSession',
 				success: function(errors) {
 					var first = false;
 					for (var operation_id in errors) {
@@ -156,7 +156,7 @@ function checkRequired(type, session_id) {
 	$.ajax({
 		type: "POST",
 		data: 'type='+type+'&session_id='+session_id,
-		url: baseUrl+'/OphTrOperation/theatreDiary/checkRequired',
+		url: baseUrl+'/OphTrOperationbooking/theatreDiary/checkRequired',
 		success: function(html) {
 			if (html == "1") {
 				$('#'+type+'_'+session_id).attr('checked',true);

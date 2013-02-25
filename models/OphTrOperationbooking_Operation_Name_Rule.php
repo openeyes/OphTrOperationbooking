@@ -17,15 +17,20 @@
  */
 
 /**
- * This is the model class for table "ophtroperation_operation_sequence_interval".
+ * This is the model class for table "et_ophtroperationbooking_operation_name_rule".
  *
  * The followings are the available columns in table:
  * @property integer $id
+ * @property string $theatre_id
  * @property string $name
  *
+ * The followings are the available model relations:
+ *
+ * @property User $user
+ * @property User $usermodified
  */
 
-class OphTrOperation_Operation_Sequence_Interval extends BaseActiveRecord
+class OphTrOperationbooking_Operation_Name_Rule extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -41,7 +46,7 @@ class OphTrOperation_Operation_Sequence_Interval extends BaseActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ophtroperation_operation_sequence_interval';
+		return 'ophtroperationbooking_operation_name_rule';
 	}
 
 	/**
@@ -52,6 +57,11 @@ class OphTrOperation_Operation_Sequence_Interval extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
+			array('theatre_id, name', 'safe'),
+			array('theatre_id, name', 'required'),
+			// The following rule is used by search().
+			// Please remove those attributes that should not be searched.
+			array('id, name', 'safe', 'on' => 'search'),
 		);
 	}
 	
@@ -63,6 +73,8 @@ class OphTrOperation_Operation_Sequence_Interval extends BaseActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
+			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 		);
 	}
 
@@ -72,6 +84,8 @@ class OphTrOperation_Operation_Sequence_Interval extends BaseActiveRecord
 	public function attributeLabels()
 	{
 		return array(
+			'id' => 'ID',
+			'name' => 'Name',
 		);
 	}
 
@@ -93,20 +107,5 @@ class OphTrOperation_Operation_Sequence_Interval extends BaseActiveRecord
 				'criteria' => $criteria,
 			));
 	}
-
-	public function getInteger($endTimestamp) {
-		switch ($this->id) {
-			case 2:
-			case 3:
-			case 4:
-			case 5:
-				$interval = 60 * 60 * 24 * (($this->id-1) * 7);
-				break;
-			case 1:
-			case 6:
-				$interval = $endTimestamp + 1;
-				break;
-		}
-		return $interval;
-	}
 }
+?>

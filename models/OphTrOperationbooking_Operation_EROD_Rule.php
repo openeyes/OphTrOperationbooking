@@ -17,17 +17,15 @@
  */
 
 /**
- * This is the model class for table "ophtroperation_operation_erod_rule_item".
+ * This is the model class for table "ophtroperationbooking_operation_erod_rule".
  *
  * The followings are the available columns in table:
  * @property integer $id
- * @property integer $erod_rule_id
- * @property string $item_type
- * @property integer $item_id
+ * @property integer $subspecialty_id
  *
  */
 
-class OphTrOperation_Operation_EROD_Rule_Item extends BaseActiveRecord
+class OphTrOperationbooking_Operation_EROD_Rule extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -43,7 +41,7 @@ class OphTrOperation_Operation_EROD_Rule_Item extends BaseActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ophtroperation_operation_erod_rule_item';
+		return 'ophtroperationbooking_operation_erod_rule';
 	}
 
 	/**
@@ -54,9 +52,9 @@ class OphTrOperation_Operation_EROD_Rule_Item extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('erod_rule_id, item_type, item_id', 'safe'),
-			array('erod_rule_id, item_type, item_id', 'required'),
-			array('erod_rule_id, item_type, item_id', 'safe', 'on' => 'search'),
+			array('subspecialty_id', 'safe'),
+			array('subspecialty_id', 'required'),
+			array('subspecialty_id', 'safe', 'on' => 'search'),
 		);
 	}
 	

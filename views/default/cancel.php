@@ -33,7 +33,7 @@ echo CHtml::hiddenField('operation_id', $operation->id); ?>
 } else {
 	$listIndex = 2;
 } ?>
-<?php echo CHtml::dropDownList('cancellation_reason', '', OphTrOperation_Operation_Cancellation_Reason::getReasonsByListNumber($listIndex),
+<?php echo CHtml::dropDownList('cancellation_reason', '', OphTrOperationbooking_Operation_Cancellation_Reason::getReasonsByListNumber($listIndex),
 	array('empty'=>'Select a reason')
 ); ?>
 		<br/>

@@ -17,7 +17,7 @@
  */
 
 /**
- * This is the model class for table "ophtroperation_operation_booking".
+ * This is the model class for table "ophtroperationbooking_operation_booking".
  *
  * The followings are the available columns in table:
  * @property integer $id
@@ -31,14 +31,14 @@
  * The followings are the available model relations:
  *
  * @property Session $session
- * @property Element_OphTrOperation_Operation $operation
+ * @property Element_OphTrOperationbooking_Operation $operation
  * @property User $user
  * @property User $usermodified
- * @property OphTrOperation_Operation_Ward $ward
+ * @property OphTrOperationbooking_Operation_Ward $ward
  *
  */
 
-class OphTrOperation_Operation_Booking extends BaseActiveRecord
+class OphTrOperationbooking_Operation_Booking extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -54,7 +54,7 @@ class OphTrOperation_Operation_Booking extends BaseActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ophtroperation_operation_booking';
+		return 'ophtroperationbooking_operation_booking';
 	}
 
 	/**
@@ -90,11 +90,11 @@ class OphTrOperation_Operation_Booking extends BaseActiveRecord
 			'event' => array(self::BELONGS_TO, 'Event', 'event_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
-			'ward' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Ward', 'ward_id'),
-			'session' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Session', 'session_id'),
-			'operation' => array(self::BELONGS_TO, 'Element_OphTrOperation_Operation', 'element_id'),
-			'theatre' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Theatre', 'session_theatre_id'),
-			'cancellationReason' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Cancellation_Reason', 'cancellation_reason_id'),
+			'ward' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Ward', 'ward_id'),
+			'session' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Session', 'session_id'),
+			'operation' => array(self::BELONGS_TO, 'Element_OphTrOperationbooking_Operation', 'element_id'),
+			'theatre' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Theatre', 'session_theatre_id'),
+			'cancellationReason' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Cancellation_Reason', 'cancellation_reason_id'),
 		);
 	}
 
@@ -185,7 +185,7 @@ class OphTrOperation_Operation_Booking extends BaseActiveRecord
 
 			// we've just cancelled a booking and updated the element_operation status to 'needs rescheduling'
 			// any time we do that we need to add a new record to date_letter_sent
-			$date_letter_sent = new OphTrOperation_Operation_Date_Letter_Sent;
+			$date_letter_sent = new OphTrOperationbooking_Operation_Date_Letter_Sent;
 			$date_letter_sent->element_id = $this->element_id;
 			if (!$date_letter_sent->save()) {
 				throw new Exception('Unable to save date_letter_sent: '.print_r($date_letter_sent->getErrors(),true));
@@ -194,7 +194,7 @@ class OphTrOperation_Operation_Booking extends BaseActiveRecord
 	}
 
 	public function showWarning($type) {
-		if ($rule = OphTrOperation_Admission_Letter_Warning_Rule::getRule($type,$this->session->theatre->site_id,$this->operation->event->episode->patient->isChild(),$this->session->theatre_id,$this->session->firm->serviceSubspecialtyAssignment->subspecialty_id)) {
+		if ($rule = OphTrOperationbooking_Admission_Letter_Warning_Rule::getRule($type,$this->session->theatre->site_id,$this->operation->event->episode->patient->isChild(),$this->session->theatre_id,$this->session->firm->serviceSubspecialtyAssignment->subspecialty_id)) {
 			return $rule->show_warning;
 		}
 
@@ -204,7 +204,7 @@ class OphTrOperation_Operation_Booking extends BaseActiveRecord
 	public function getWarningHTML($type) {
 		$return = '';
 
-		if ($rule = OphTrOperation_Admission_Letter_Warning_Rule::getRule($type,$this->session->theatre->site_id,$this->operation->event->episode->patient->isChild(),$this->session->theatre_id,$this->session->firm->serviceSubspecialtyAssignment->subspecialty_id)) {
+		if ($rule = OphTrOperationbooking_Admission_Letter_Warning_Rule::getRule($type,$this->session->theatre->site_id,$this->operation->event->episode->patient->isChild(),$this->session->theatre_id,$this->session->firm->serviceSubspecialtyAssignment->subspecialty_id)) {
 			if ($rule->strong) {
 				$return .= '<strong>';
 			}

@@ -17,20 +17,17 @@
  */
 
 /**
- * This is the model class for table "et_ophtroperation_operation_name_rule".
+ * This is the model class for table "et_ophtroperationbooking_operation_status".
  *
  * The followings are the available columns in table:
- * @property integer $id
- * @property string $theatre_id
+ * @property string $id
  * @property string $name
  *
  * The followings are the available model relations:
  *
- * @property User $user
- * @property User $usermodified
  */
 
-class OphTrOperation_Operation_Name_Rule extends BaseActiveRecord
+class OphTrOperationbooking_Operation_Status extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -46,7 +43,7 @@ class OphTrOperation_Operation_Name_Rule extends BaseActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ophtroperation_operation_name_rule';
+		return 'ophtroperationbooking_operation_status';
 	}
 
 	/**
@@ -57,8 +54,8 @@ class OphTrOperation_Operation_Name_Rule extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('theatre_id, name', 'safe'),
-			array('theatre_id, name', 'required'),
+			array('name', 'safe'),
+			array('name', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, name', 'safe', 'on' => 'search'),

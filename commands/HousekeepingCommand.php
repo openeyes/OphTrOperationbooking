@@ -35,14 +35,14 @@ class HousekeepingCommand extends CConsoleCommand {
 		echo "Cancelling operations for deceased patients...";
 		
 		// TODO: This needs to be made more robust
-		$cancellation_reason = OphTrOperation_Operation_Cancellation_Reason::model()->find("text = 'Patient has died'");
+		$cancellation_reason = OphTrOperationbooking_Operation_Cancellation_Reason::model()->find("text = 'Patient has died'");
 		if(!$cancellation_reason) {
 			throw new CException('Cannot find cancellation code for "patient has died"');
 		}
 
 		foreach (Yii::app()->db->createCommand()
 			->select("eo.id")
-			->from("et_ophtroperation_operation eo")
+			->from("et_ophtroperationbooking_operation eo")
 			->join("event e","eo.event_id = event.id")
 			->join("episode ep","e.episode_id = ep.id")
 			->join("patient p","ep.patient_id = p.id")
@@ -51,7 +51,7 @@ class HousekeepingCommand extends CConsoleCommand {
 			->where("(s.date > NOW() or s.date is null) and eo.status_id != $cancellation_reason->id and p.date_of_death is not null and p.date_of_death < NOW()")
 			->queryAll() as $operation) {
 
-			$operation = Element_OphTrOperation_Operation::model()->findByPk($operation['id']);
+			$operation = Element_OphTrOperationbooking_Operation::model()->findByPk($operation['id']);
 			$operation->cancel($cancellation_reason->id, 'Booking cancelled automatically');
 		}
 

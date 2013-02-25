@@ -151,7 +151,7 @@ $(document).ready(function() {
 		if (!$(this).hasClass('inactive')) {
 			m = window.location.href.match(/\/([0-9]+)\/?$/);
 			disableButtons();
-			printPDF(baseUrl+'/OphTrOperation/waitingList/printLetters',{'event_id': m[1]});
+			printPDF(baseUrl+'/OphTrOperationbooking/waitingList/printLetters',{'event_id': m[1]});
 			enableButtons();
 		}
 	});
@@ -183,7 +183,7 @@ $(document).ready(function() {
 
 function printElem(method,options){
 	$.ajax({
-		'url': baseUrl+'/OphTrOperation/theatreDiary/'+method,
+		'url': baseUrl+'/OphTrOperationbooking/theatreDiary/'+method,
 		'type': 'POST',
 		'data': searchData,
 		'success': function(data) {

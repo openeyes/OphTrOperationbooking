@@ -17,22 +17,25 @@
  */
 
 /**
- * This is the model class for table "et_ophtroperation_operation_priority".
+ * This is the model class for table "ophtroperationbooking_operation_date_letter_sent".
  *
  * The followings are the available columns in table:
- * @property string $id
- * @property string $name
+ *
+ * @property integer $id
+ * @property integer $element_id
+ * @property datetime $date_invitation_letter_sent
+ * @property datetime $date_1st_reminder_letter_sent
+ * @property datetime $date_2nd_reminder_letter_sent
+ * @property datetime $date_gp_letter_sent
+ * @property datetime date_scheduling_letter_sent
  *
  * The followings are the available model relations:
  *
- * @property ElementType $element_type
- * @property EventType $eventType
- * @property Event $event
- * @property User $user
- * @property User $usermodified
+ * @property Element_OphTrOperationbooking_Operation $element
+ *
  */
 
-class OphTrOperation_Operation_Priority extends BaseActiveRecord
+class OphTrOperationbooking_Operation_Date_Letter_Sent extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -48,7 +51,7 @@ class OphTrOperation_Operation_Priority extends BaseActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ophtroperation_operation_priority';
+		return 'ophtroperationbooking_operation_date_letter_sent';
 	}
 
 	/**
@@ -59,11 +62,7 @@ class OphTrOperation_Operation_Priority extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name', 'safe'),
-			array('name', 'required'),
-			// The following rule is used by search().
-			// Please remove those attributes that should not be searched.
-			array('id, name', 'safe', 'on' => 'search'),
+			array('id, element_id, date_invitation_letter_sent, date_1st_reminder_letter_sent, date_2nd_reminder_letter_sent, date_gp_letter_sent, date_scheduling_letter_sent', 'safe', 'on'=>'search'),
 		);
 	}
 	
@@ -75,11 +74,9 @@ class OphTrOperation_Operation_Priority extends BaseActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'element_type' => array(self::HAS_ONE, 'ElementType', 'id','on' => "element_type.class_name='".get_class($this)."'"),
-			'eventType' => array(self::BELONGS_TO, 'EventType', 'event_type_id'),
-			'event' => array(self::BELONGS_TO, 'Event', 'event_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
+			'element' => array(self::BELONGS_TO, 'Element_OphTrOperationbooking_Operation', 'element_id'),
 		);
 	}
 
@@ -89,8 +86,6 @@ class OphTrOperation_Operation_Priority extends BaseActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'name' => 'Name',
 		);
 	}
 
@@ -111,28 +106,6 @@ class OphTrOperation_Operation_Priority extends BaseActiveRecord
 		return new CActiveDataProvider(get_class($this), array(
 				'criteria' => $criteria,
 			));
-	}
-
-	/**
-	 * Set default values for forms on create
-	 */
-	public function setDefaultOptions()
-	{
-	}
-
-	protected function beforeSave()
-	{
-		return parent::beforeSave();
-	}
-
-	protected function afterSave()
-	{
-		return parent::afterSave();
-	}
-
-	protected function beforeValidate()
-	{
-		return parent::beforeValidate();
 	}
 }
 ?>

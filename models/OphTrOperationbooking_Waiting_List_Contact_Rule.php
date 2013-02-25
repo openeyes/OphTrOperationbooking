@@ -17,32 +17,20 @@
  */
 
 /**
- * This is the model class for table "ophtroperation_operation_erod".
+ * This is the model class for table "ophtroperationbooking_waiting_list_contact_rule".
  *
  * The followings are the available columns in table:
  * @property integer $id
- * @property integer $element_id
- * @property integer $session_id
- * @property date $session_date
- * @property time $session_start_time
- * @property time $session_end_time
+ * @property integer $parent_rule_id
+ * @property integer $site_id
+ * @property integer $service_id
  * @property integer $firm_id
- * @property boolean $consultant
- * @property boolean $paediatric
- * @property boolean $anaesthetist
- * @property boolean $general_anaesthetic
- * @property integer $session_duration
- * @property integer $total_operations_time
- * @property integer $available_time
- *
- * The followings are the available model relations:
- *
- * @property OphTrOperation_Operation_Sequence $session
- * @property OphTrOperation_Operation_Theatre $theatre
- *
+ * @property boolean $is_child
+ * @property string $name
+ * @property string $telephone
  */
 
-class OphTrOperation_Operation_EROD extends BaseActiveRecord
+class OphTrOperationbooking_Waiting_List_Contact_Rule extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -58,7 +46,7 @@ class OphTrOperation_Operation_EROD extends BaseActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ophtroperation_operation_erod';
+		return 'ophtroperationbooking_waiting_list_contact_rule';
 	}
 
 	/**
@@ -69,7 +57,10 @@ class OphTrOperation_Operation_EROD extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('element_id, session_id, session_date, session_start_time, firm_id, consultant, paediatric, anaesthetist, general_anaesthetic, session_duration, total_operations_time, available_time', 'safe'),
+			array('parent_rule_id, site_id, service_id, firm_id, is_child, name, telephone', 'safe'),
+			// The following rule is used by search().
+			// Please remove those attributes that should not be searched.
+			array('id, parent_rule_id, site_id, service_id, firm_id, is_child, name, telephone', 'safe', 'on' => 'search'),
 		);
 	}
 	
@@ -81,10 +72,9 @@ class OphTrOperation_Operation_EROD extends BaseActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'operation' => array(self::BELONGS_TO, 'Element_OphTrOperation_Operation', 'element_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
-			'firm' => array(self::BELONGS_TO, 'Firm', 'firm_id'),
+			'children' => array(self::HAS_MANY, 'OphTrOperationbooking_Waiting_List_Contact_Rule', 'parent_rule_id'),
 		);
 	}
 
@@ -109,19 +99,29 @@ class OphTrOperation_Operation_EROD extends BaseActiveRecord
 		$criteria = new CDbCriteria;
 
 		$criteria->compare('id', $this->id, true);
-		$criteria->compare('name', $this->name, true);
 
 		return new CActiveDataProvider(get_class($this), array(
 				'criteria' => $criteria,
 			));
 	}
 
-	public function getFirmName() {
-		return $this->firm->name . ' (' . $this->firm->serviceSubspecialtyAssignment->subspecialty->name . ')';
+	public function applies($site_id, $service_id, $firm_id, $is_child) {
+		foreach (array('site_id','service_id','firm_id','is_child') as $field) {
+			if ($this->{$field} !== null && $this->{$field} != ${$field}) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
-	public function getTimeSlot() {
-		return date('H:i',strtotime($this->session_start_time)) . ' - ' . date('H:i',strtotime($this->session_end_time));
+	public function parse($site_id, $service_id, $firm_id, $is_child) {
+		foreach ($this->children as $child_rule) {
+			if ($child_rule->applies($site_id, $service_id, $firm_id, $is_child)) {
+				return $child_rule->parse($site_id, $service_id, $firm_id, $is_child);
+			}
+		}
+
+		return $this;
 	}
 }
-?>

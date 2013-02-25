@@ -16,7 +16,7 @@ class BookingController extends BaseEventTypeController {
 			$this->title = "Schedule operation";
 		}
 
-		if (!$operation = Element_OphTrOperation_Operation::model()->find('event_id=?',array($id))) {
+		if (!$operation = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($id))) {
 			throw new Exception('Operation not found');
 		}
 
@@ -49,12 +49,12 @@ class BookingController extends BaseEventTypeController {
 			$selectedDate = date('Y-m-d', mktime(0,0,0,date('m', $date), $_GET['day'], date('Y', $date)));
 			$theatres = $operation->getTheatres($selectedDate, $firm->id);
 
-			if ($session = OphTrOperation_Operation_Session::model()->findByPk(@$_GET['session_id'])) {
+			if ($session = OphTrOperationbooking_Operation_Session::model()->findByPk(@$_GET['session_id'])) {
 				$criteria = new CDbCriteria;
 				$criteria->compare('session_id', $session->id);
 				$criteria->addCondition('cancellation_date is null');
 				$criteria->order = 'display_order ASC';
-				$bookings = OphTrOperation_Operation_Booking::model()->findAll($criteria);
+				$bookings = OphTrOperationbooking_Operation_Booking::model()->findAll($criteria);
 
 				foreach ($theatres as $name => $list) {
 					foreach ($list as $theatre) {
@@ -65,14 +65,14 @@ class BookingController extends BaseEventTypeController {
 				}
 
 				if (!empty($_POST['Booking']['element_id'])) {
-					if (!$operation = Element_OphTrOperation_Operation::model()->findByPk($_POST['Booking']['element_id'])) {
+					if (!$operation = Element_OphTrOperationbooking_Operation::model()->findByPk($_POST['Booking']['element_id'])) {
 						throw new Exception('Operation not found: '.$_POST['Booking']['element_id']);
 					}
 
 					if (($result = $operation->schedule($_POST['Booking'], $_POST['Operation']['comments'], $_POST['Session']['comments'], $this->reschedule)) !== true) {
 						$errors = $result;
 					} else {
-						$this->redirect(array('/OphTrOperation/default/view/'.$operation->event_id));
+						$this->redirect(array('/OphTrOperationbooking/default/view/'.$operation->event_id));
 					}
 				} else {
 					$_POST['Booking']['admission_time'] = ($session['start_time'] == '13:30:00') ? '12:00' : date('H:i', strtotime('-1 hour', strtotime($session['start_time'])));
@@ -112,7 +112,7 @@ class BookingController extends BaseEventTypeController {
 			throw new Exception('Unable to find event: '.$id);
 		}
 
-		if (!$operation = Element_OphTrOperation_Operation::model()->find('event_id=?',array($id))) {
+		if (!$operation = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($id))) {
 			throw new Exception('Operation not found');
 		}
 
@@ -126,17 +126,17 @@ class BookingController extends BaseEventTypeController {
 		Yii::app()->clientScript->registerCSSFile(Yii::app()->createUrl('css/theatre_calendar.css'), 'all');
 
 		if (!empty($_POST)) {
-			if (!$reason = OphTrOperation_Operation_Cancellation_Reason::model()->findByPk($_POST['cancellation_reason'])) {
+			if (!$reason = OphTrOperationbooking_Operation_Cancellation_Reason::model()->findByPk($_POST['cancellation_reason'])) {
 				$errors = array("Please select a rescheduling reason");
 			} else if (isset($_POST['booking_id'])) {
-				if (!$booking = OphTrOperation_Operation_Booking::model()->findByPk($_POST['booking_id'])) {
+				if (!$booking = OphTrOperationbooking_Operation_Booking::model()->findByPk($_POST['booking_id'])) {
 					throw new Exception('Booking not found: '.@$_POST['booking_id']);
 				}
 
 				$booking->cancel($reason,$_POST['cancellation_comment'],false);
 				$operation->setStatus('Requires rescheduling');
 
-				$this->redirect(array('/OphTrOperation/default/view/'.$event->id));
+				$this->redirect(array('/OphTrOperationbooking/default/view/'.$event->id));
 			}
 		}
 

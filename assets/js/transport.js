@@ -29,7 +29,7 @@ $(document).ready(function() {
 
 			$.ajax({
 				type: "POST",
-				url: baseUrl+"/OphTrOperation/transport/confirm",
+				url: baseUrl+"/OphTrOperationbooking/transport/confirm",
 				data: $('input[name^="bookings"]:checked').serialize(),
 				success: function(html) {
 					if (html == "1") {
@@ -98,19 +98,19 @@ function transport_load_tcis(page) {
 		var currentPage = parseInt($('span.transport_pagination_selected').html().match(/[0-9]+/));
 
 		if (parseInt(page) != currentPage) {
-			$('span.transport_pagination_selected').replaceWith('<a class="pagination-link" rel='+currentPage+' href="'+baseUrl+'/OphTrOperation/transport/index?page='+currentPage+'">'+currentPage+'</a>');
+			$('span.transport_pagination_selected').replaceWith('<a class="pagination-link" rel='+currentPage+' href="'+baseUrl+'/OphTrOperationbooking/transport/index?page='+currentPage+'">'+currentPage+'</a>');
 			$('a.pagination-link[rel="'+page+'"]').replaceWith('<span class="transport_pagination_selected">&nbsp;'+page+' </span>');
 
 			if (parseInt(page) == 1) {
 				$('span.transport_pagination_back').html('&laquo; back');
 			} else if (currentPage == 1) {
-				$('span.transport_pagination_back').html('<a class="pagination-link" rel="back" href="'+baseUrl+'/OphTrOperation/transport/index?page='+currentPage+'">&laquo; back</a>');
+				$('span.transport_pagination_back').html('<a class="pagination-link" rel="back" href="'+baseUrl+'/OphTrOperationbooking/transport/index?page='+currentPage+'">&laquo; back</a>');
 			}
 
 			if (parseInt(page) == transport_last_page()) {
 				$('span.transport_pagination_next').html('next &raquo;');
 			} else if (currentPage == transport_last_page()) {
-				$('span.transport_pagination_next').html('<a class="pagination-link" rel="next" href="'+baseUrl+'/OphTrOperation/transport/index?page='+currentPage+'">next &raquo;</a>');
+				$('span.transport_pagination_next').html('<a class="pagination-link" rel="next" href="'+baseUrl+'/OphTrOperationbooking/transport/index?page='+currentPage+'">next &raquo;</a>');
 			}
 		}
 	}
@@ -129,7 +129,7 @@ function transport_load_tcis(page) {
 
 	$.ajax({
 		type: "GET",
-		url: baseUrl+"/OphTrOperation/transport/tcis?"+get,
+		url: baseUrl+"/OphTrOperationbooking/transport/tcis?"+get,
 		success: function(html) {
 			if (page == loadPage) {
 				$('#transport_data').html(html);

@@ -22,7 +22,7 @@ class DefaultController extends BaseEventTypeController {
 
 	public function actionView($id) {
 		$this->extraViewProperties = array(
-			'operation' => Element_OphTrOperation_Operation::model()->find('event_id=?',array($id)),
+			'operation' => Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($id)),
 		);
 
 		parent::actionView($id);
@@ -41,7 +41,7 @@ class DefaultController extends BaseEventTypeController {
 			throw new Exception('Unable to find event: '.$id);
 		} 
 
-		if (!$operation = Element_OphTrOperation_Operation::model()->find('event_id=?',array($event->id))) {
+		if (!$operation = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($event->id))) {
 			throw new CHttpException(500,'Operation not found');
 		}
 
@@ -74,7 +74,7 @@ class DefaultController extends BaseEventTypeController {
 			die(json_encode($errors));
 		}
 
-		if (!$operation = Element_OphTrOperation_Operation::model()->find('event_id=?',array($id))) {
+		if (!$operation = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($id))) {
 			throw new CHttpException(500,'Operation not found');
 		}
 
@@ -100,7 +100,7 @@ class DefaultController extends BaseEventTypeController {
 			return false;
 		}
 
-		if (!$operation = Element_OphTrOperation_Operation::model()->find('event_id = ?',array($id))) {
+		if (!$operation = Element_OphTrOperationbooking_Operation::model()->find('event_id = ?',array($id))) {
 			throw new Exception('Operation not found for event: '.$id);
 		}
 

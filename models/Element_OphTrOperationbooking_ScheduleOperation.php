@@ -17,11 +17,12 @@
  */
 
 /**
- * This is the model class for table "ophtroperation_scheduleope_schedule_options".
+ * This is the model class for table "et_ophtroperationbooking_scheduleope".
  *
  * The followings are the available columns in table:
  * @property string $id
- * @property string $name
+ * @property integer $event_id
+ * @property integer $schedule_options_id
  *
  * The followings are the available model relations:
  *
@@ -30,10 +31,13 @@
  * @property Event $event
  * @property User $user
  * @property User $usermodified
+ * @property Element_OphTrOperationbooking_ScheduleOperation_ScheduleOptions $schedule_options
  */
 
-class OphTrOperation_ScheduleOperation_Options extends BaseActiveRecord
+class Element_OphTrOperationbooking_ScheduleOperation extends BaseEventTypeElement
 {
+	public $service;
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -48,7 +52,7 @@ class OphTrOperation_ScheduleOperation_Options extends BaseActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ophtroperation_scheduleope_schedule_options';
+		return 'et_ophtroperationbooking_scheduleope';
 	}
 
 	/**
@@ -59,11 +63,11 @@ class OphTrOperation_ScheduleOperation_Options extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name', 'safe'),
-			array('name', 'required'),
+			array('event_id, schedule_options_id, ', 'safe'),
+			array('schedule_options_id, ', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, name', 'safe', 'on' => 'search'),
+			array('id, event_id, schedule_options_id, ', 'safe', 'on' => 'search'),
 		);
 	}
 	
@@ -80,6 +84,7 @@ class OphTrOperation_ScheduleOperation_Options extends BaseActiveRecord
 			'event' => array(self::BELONGS_TO, 'Event', 'event_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
+			'schedule_options' => array(self::BELONGS_TO, 'OphTrOperationbooking_ScheduleOperation_Options', 'schedule_options_id'),
 		);
 	}
 
@@ -90,7 +95,8 @@ class OphTrOperation_ScheduleOperation_Options extends BaseActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'name' => 'Name',
+			'event_id' => 'Event',
+'schedule_options_id' => 'Schedule options',
 		);
 	}
 
@@ -106,8 +112,10 @@ class OphTrOperation_ScheduleOperation_Options extends BaseActiveRecord
 		$criteria = new CDbCriteria;
 
 		$criteria->compare('id', $this->id, true);
-		$criteria->compare('name', $this->name, true);
+		$criteria->compare('event_id', $this->event_id, true);
 
+$criteria->compare('schedule_options_id', $this->schedule_options_id);
+		
 		return new CActiveDataProvider(get_class($this), array(
 				'criteria' => $criteria,
 			));
@@ -118,7 +126,12 @@ class OphTrOperation_ScheduleOperation_Options extends BaseActiveRecord
 	 */
 	public function setDefaultOptions()
 	{
+		if (Yii::app()->getController()->getAction()->id == 'create') {
+			$this->schedule_options_id = 1;
+		}
 	}
+
+
 
 	protected function beforeSave()
 	{
@@ -127,6 +140,7 @@ class OphTrOperation_ScheduleOperation_Options extends BaseActiveRecord
 
 	protected function afterSave()
 	{
+
 		return parent::afterSave();
 	}
 

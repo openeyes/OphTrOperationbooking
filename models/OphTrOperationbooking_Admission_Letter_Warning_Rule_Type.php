@@ -17,27 +17,15 @@
  */
 
 /**
- * This is the model class for table "et_ophtroperation_scheduleope".
+ * This is the model class for table "ophtroperationbooking_admission_letter_warning_rule_type".
  *
  * The followings are the available columns in table:
- * @property string $id
- * @property integer $event_id
- * @property integer $schedule_options_id
- *
- * The followings are the available model relations:
- *
- * @property ElementType $element_type
- * @property EventType $eventType
- * @property Event $event
- * @property User $user
- * @property User $usermodified
- * @property Element_OphTrOperation_ScheduleOperation_ScheduleOptions $schedule_options
+ * @property integer $id
+ * @property string $name
  */
 
-class Element_OphTrOperation_ScheduleOperation extends BaseEventTypeElement
+class OphTrOperationbooking_Admission_Letter_Warning_Rule_Type extends BaseActiveRecord
 {
-	public $service;
-
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -52,7 +40,7 @@ class Element_OphTrOperation_ScheduleOperation extends BaseEventTypeElement
 	 */
 	public function tableName()
 	{
-		return 'et_ophtroperation_scheduleope';
+		return 'ophtroperationbooking_admission_letter_warning_rule_type';
 	}
 
 	/**
@@ -63,11 +51,10 @@ class Element_OphTrOperation_ScheduleOperation extends BaseEventTypeElement
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('event_id, schedule_options_id, ', 'safe'),
-			array('schedule_options_id, ', 'required'),
+			array('name', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, event_id, schedule_options_id, ', 'safe', 'on' => 'search'),
+			array('id, name', 'safe', 'on' => 'search'),
 		);
 	}
 	
@@ -79,12 +66,8 @@ class Element_OphTrOperation_ScheduleOperation extends BaseEventTypeElement
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'element_type' => array(self::HAS_ONE, 'ElementType', 'id','on' => "element_type.class_name='".get_class($this)."'"),
-			'eventType' => array(self::BELONGS_TO, 'EventType', 'event_type_id'),
-			'event' => array(self::BELONGS_TO, 'Event', 'event_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
-			'schedule_options' => array(self::BELONGS_TO, 'OphTrOperation_ScheduleOperation_Options', 'schedule_options_id'),
 		);
 	}
 
@@ -95,8 +78,7 @@ class Element_OphTrOperation_ScheduleOperation extends BaseEventTypeElement
 	{
 		return array(
 			'id' => 'ID',
-			'event_id' => 'Event',
-'schedule_options_id' => 'Schedule options',
+			'name' => 'Name',
 		);
 	}
 
@@ -112,41 +94,10 @@ class Element_OphTrOperation_ScheduleOperation extends BaseEventTypeElement
 		$criteria = new CDbCriteria;
 
 		$criteria->compare('id', $this->id, true);
-		$criteria->compare('event_id', $this->event_id, true);
+		$criteria->compare('name', $this->name, true);
 
-$criteria->compare('schedule_options_id', $this->schedule_options_id);
-		
 		return new CActiveDataProvider(get_class($this), array(
 				'criteria' => $criteria,
 			));
 	}
-
-	/**
-	 * Set default values for forms on create
-	 */
-	public function setDefaultOptions()
-	{
-		if (Yii::app()->getController()->getAction()->id == 'create') {
-			$this->schedule_options_id = 1;
-		}
-	}
-
-
-
-	protected function beforeSave()
-	{
-		return parent::beforeSave();
-	}
-
-	protected function afterSave()
-	{
-
-		return parent::afterSave();
-	}
-
-	protected function beforeValidate()
-	{
-		return parent::beforeValidate();
-	}
 }
-?>

@@ -24,7 +24,7 @@
  * @property string $moduleShortSuffix
   */
 
-class OphTrOperationModule extends BaseEventTypeModule
+class OphTrOperationbookingModule extends BaseEventTypeModule
 {
 	// this property is really only relevant to gii auto-generation, specifically
 	// for updates to the module through gii
@@ -36,8 +36,8 @@ class OphTrOperationModule extends BaseEventTypeModule
 
 		// import the module-level models and components
 		$this->setImport(array(
-			'OphTrOperation.models.*',
-			'OphTrOperation.components.*',
+			'OphTrOperationbooking.models.*',
+			'OphTrOperationbooking.components.*',
 		));
 		
 		$this->moduleShortSuffix = "operation";

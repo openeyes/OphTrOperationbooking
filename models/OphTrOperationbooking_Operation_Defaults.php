@@ -17,22 +17,23 @@
  */
 
 /**
- * This is the model class for table "et_ophtroperation_operation_procedures_procedures".
+ * This is the model class for table "et_ophtroperationbooking_operation_proc_defaults".
  *
  * The followings are the available columns in table:
  * @property string $id
- * @property integer $element_id
- * @property integer $proc_id
+ * @property string $name
  *
  * The followings are the available model relations:
  *
- * @property Element_OphTrOperation_Operation $element
- * @property Procedure $proc
+ * @property ElementType $element_type
+ * @property EventType $eventType
+ * @property Event $event
  * @property User $user
- * @property User $usermodified 
+ * @property User $usermodified
+ *
  */
 
-class OphTrOperation_Operation_Procedures extends BaseActiveRecord
+class OphTrOperationbooking_Operation_Defaults extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -48,7 +49,7 @@ class OphTrOperation_Operation_Procedures extends BaseActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ophtroperation_operation_procedures_procedures';
+		return 'ophtroperationbooking_operation_proc_defaults';
 	}
 
 	/**
@@ -59,11 +60,11 @@ class OphTrOperation_Operation_Procedures extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('element_id, proc_id', 'safe'),
-			array('element_id, proc_id', 'required'),
+			array('value_id', 'safe'),
+			array('value_id', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, element_id, proc_id', 'safe', 'on' => 'search'),
+			array('id, name', 'safe', 'on' => 'search'),
 		);
 	}
 	
@@ -75,8 +76,9 @@ class OphTrOperation_Operation_Procedures extends BaseActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'element' => array(self::BELONGS_TO, 'Element_OphTrOperation_Operation', 'element_id'),
-			'procedure' => array(self::BELONGS_TO, 'Procedure', 'proc_id'),
+			'element_type' => array(self::HAS_ONE, 'ElementType', 'id','on' => "element_type.class_name='".get_class($this)."'"),
+			'eventType' => array(self::BELONGS_TO, 'EventType', 'event_type_id'),
+			'event' => array(self::BELONGS_TO, 'Event', 'event_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 		);
@@ -88,8 +90,6 @@ class OphTrOperation_Operation_Procedures extends BaseActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'name' => 'Name',
 		);
 	}
 

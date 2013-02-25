@@ -17,7 +17,7 @@
  */
 
 /**
- * This is the model class for table "ophtroperation_operation_session".
+ * This is the model class for table "ophtroperationbooking_operation_session".
  *
  * The followings are the available columns in table:
  * @property integer $id
@@ -35,12 +35,12 @@
  *
  * The followings are the available model relations:
  *
- * @property OphTrOperation_Operation_Sequence $sequence
- * @property OphTrOperation_Operation_Theatre $theatre
+ * @property OphTrOperationbooking_Operation_Sequence $sequence
+ * @property OphTrOperationbooking_Operation_Theatre $theatre
  *
  */
 
-class OphTrOperation_Operation_Session extends BaseActiveRecord
+class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -56,7 +56,7 @@ class OphTrOperation_Operation_Session extends BaseActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ophtroperation_operation_session';
+		return 'ophtroperationbooking_operation_session';
 	}
 
 	/**
@@ -90,7 +90,7 @@ class OphTrOperation_Operation_Session extends BaseActiveRecord
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
-			'theatre' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Theatre', 'theatre_id'),
+			'theatre' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Theatre', 'theatre_id'),
 			'firm' => array(self::BELONGS_TO, 'Firm', 'firm_id'),
 		);
 	}
@@ -145,10 +145,10 @@ class OphTrOperation_Operation_Session extends BaseActiveRecord
 
 		$sessions = Yii::app()->db->createCommand()
 			->select("s.*, TIMEDIFF(s.end_time, s.start_time) AS session_duration, COUNT(a.id) AS bookings, SUM(o.total_duration) AS bookings_duration")
-			->from("ophtroperation_operation_session s")
-			->join("ophtroperation_operation_theatre t","s.theatre_id = t.id")
-			->leftJoin("ophtroperation_operation_booking a","s.id = a.session_id and a.cancellation_date is null")
-			->leftJoin("et_ophtroperation_operation o","a.element_id = o.id")
+			->from("ophtroperationbooking_operation_session s")
+			->join("ophtroperationbooking_operation_theatre t","s.theatre_id = t.id")
+			->leftJoin("ophtroperationbooking_operation_booking a","s.id = a.session_id and a.cancellation_date is null")
+			->leftJoin("et_ophtroperationbooking_operation o","a.element_id = o.id")
 			->leftJoin("event e","o.event_id = e.id")
 			->where("s.available = 1 AND s.date BETWEEN CAST('$startDate' AS DATE) AND CAST('$monthEnd' AS DATE) AND $firmSql")
 			->group("s.id")
@@ -167,8 +167,8 @@ class OphTrOperation_Operation_Session extends BaseActiveRecord
 
 		foreach (Yii::app()->db->createCommand()
 			->select("o.total_duration")
-			->from("et_ophtroperation_operation o")
-			->join("ophtroperation_operation_booking b","b.element_id = o.id")
+			->from("et_ophtroperationbooking_operation o")
+			->join("ophtroperationbooking_operation_booking b","b.element_id = o.id")
 			->where("b.session_id = :sessionId and b.cancellation_date is null",array(':sessionId' => $this->id))
 			->queryAll() as $operation) {
 			$total += $operation['total_duration'];

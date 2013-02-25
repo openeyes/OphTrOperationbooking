@@ -17,13 +17,13 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class OphTrOperation_API {
+class OphTrOperationbooking_API {
 	public function getBookingsForEpisode($episode_id) {
 		$criteria = new CDbCriteria;
 		$criteria->order = 'datetime asc';
 		$criteria->addCondition('episode_id',$episode_id);
 
-		return OphTrOperation_Operation_Booking::model()
+		return OphTrOperationbooking_Operation_Booking::model()
 			->with('session')
 			->with(array(
 				'operation' => array(
@@ -41,10 +41,10 @@ class OphTrOperation_API {
 		$criteria->order = 'datetime asc';
 		$criteria->addCondition('episode_id',$episode_id);
 
-		$status_scheduled = OphTrOperation_Operation_Status::model()->find('name=?',array('Scheduled'));
-		$status_rescheduled = OphTrOperation_Operation_Status::model()->find('name=?',array('Rescheduled'));
+		$status_scheduled = OphTrOperationbooking_Operation_Status::model()->find('name=?',array('Scheduled'));
+		$status_rescheduled = OphTrOperationbooking_Operation_Status::model()->find('name=?',array('Rescheduled'));
 
-		return OphTrOperation_Operation_Booking::model()
+		return OphTrOperationbooking_Operation_Booking::model()
 			->with('session')
 			->with(array(
 				'operation' => array(
@@ -56,19 +56,19 @@ class OphTrOperation_API {
 	}
 
 	public function getOperationProcedures($operation_id) {
-		return OphTrOperation_Operation_Procedures::model()->findAll('element_id=?',array($operation_id));
+		return OphTrOperationbooking_Operation_Procedures::model()->findAll('element_id=?',array($operation_id));
 	}
 
 	public function getOperationForEvent($event_id) {
-		return Element_OphTrOperation_Operation::model()->find('event_id=?',array($event_id));
+		return Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($event_id));
 	}
 
 	public function setOperationStatus($event_id, $status_name) {
-		if (!$status = OphTrOperation_Operation_Status::model()->find('name=?',array($status_name))) {
+		if (!$status = OphTrOperationbooking_Operation_Status::model()->find('name=?',array($status_name))) {
 			throw new Exception("Unknown operation status: $status_name");
 		}
 
-		if (!$operation = Element_OphTrOperation_Operation::model()->find('event_id=?',array($event_id))) {
+		if (!$operation = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($event_id))) {
 			throw new Exception("Operation event not found: $event_id");
 		}
 
@@ -82,7 +82,7 @@ class OphTrOperation_API {
 	}
 
 	public function getProceduresForOperation($event_id) {
-		if (!$operation = Element_OphTrOperation_Operation::model()->find('event_id=?',array($event_id))) {
+		if (!$operation = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($event_id))) {
 			throw new Exception("Operation event not found: $event_id");
 		}
 
@@ -90,7 +90,7 @@ class OphTrOperation_API {
 	}
 
 	public function getEyeForOperation($event_id) {
-		if (!$operation = Element_OphTrOperation_Operation::model()->find('event_id=?',array($event_id))) {
+		if (!$operation = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($event_id))) {
 			throw new Exception("Operation event not found: $event_id");
 		}
 

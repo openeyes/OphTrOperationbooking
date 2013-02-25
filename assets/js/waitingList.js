@@ -12,7 +12,7 @@ $(document).ready(function() {
 			$('#searchResults').html('<div id="waitingList" class="grid-view-waitinglist"><table><tbody><tr><th>Letters sent</th><th>Patient</th><th>Hospital number</th><th>Location</th><th>Procedure</th><th>Eye</th><th>Firm</th><th>Decision date</th><th>Priority</th><th>Book status (requires...)</th><th><input style="margin-top: 0.4em;" type="checkbox" id="checkall" value=""></th></tr><tr><td colspan="7" style="border: none; padding-top: 10px;"><img src="'+baseUrl+'/img/ajax-loader.gif" /> Searching, please wait ...</td></tr></tbody></table></div>');
 
 			$.ajax({
-				'url': baseUrl+'/OphTrOperation/waitingList/search',
+				'url': baseUrl+'/OphTrOperationbooking/waitingList/search',
 				'type': 'POST',
 				'data': $('#waitingList-filter').serialize(),
 				'success': function(data) {
@@ -60,7 +60,7 @@ $(document).ready(function() {
 				disableButtons();
 
 				$.ajax({
-					url: baseUrl+'/OphTrOperation/waitingList/confirmPrinted',
+					url: baseUrl+'/OphTrOperationbooking/waitingList/confirmPrinted',
 					type: "POST",
 					data: data,
 					success: function(html) {
@@ -80,7 +80,7 @@ $(document).ready(function() {
 		var firm_id = $('#firm-id').val();
 
 		$.ajax({
-			url: baseUrl+'/OphTrOperation/waitingList/filterFirms',
+			url: baseUrl+'/OphTrOperationbooking/waitingList/filterFirms',
 			type: "POST",
 			data: "subspecialty_id="+$('#subspecialty-id').val(),
 			success: function(data) {
@@ -96,7 +96,7 @@ $(document).ready(function() {
 
 	$('#firm-id').bind('change',function() {
 		$.ajax({
-			url: baseUrl+'/OphTrOperation/waitingList/filterSetFirm',
+			url: baseUrl+'/OphTrOperationbooking/waitingList/filterSetFirm',
 			type: "POST",
 			data: "firm_id="+$('#firm-id').val(),
 			success: function(data) {
@@ -106,7 +106,7 @@ $(document).ready(function() {
 
 	$('#status').bind('change',function() {
 		$.ajax({
-			url: baseUrl+'/OphTrOperation/waitingList/filterSetStatus',
+			url: baseUrl+'/OphTrOperationbooking/waitingList/filterSetStatus',
 			type: "POST",
 			data: "status="+$('#status').val(),
 			success: function(data) {
@@ -116,7 +116,7 @@ $(document).ready(function() {
 
 	$('#site_id').bind('change',function() {
 		$.ajax({
-			url: baseUrl+'/OphTrOperation/waitingList/filterSetSiteId',
+			url: baseUrl+'/OphTrOperationbooking/waitingList/filterSetSiteId',
 			type: "POST",
 			data: "site_id="+$('#site_id').val(),
 			success: function(data) {
@@ -126,7 +126,7 @@ $(document).ready(function() {
 
 	$('#hos_num').bind('keyup',function() {
 		$.ajax({
-			url: baseUrl+'/OphTrOperation/waitingList/filterSetHosNum',
+			url: baseUrl+'/OphTrOperationbooking/waitingList/filterSetHosNum',
 			type: "POST",
 			data: "hos_num="+$('#hos_num').val(),
 			success: function(data) {
@@ -158,7 +158,7 @@ function print_items_from_selector(sel,all) {
 		}
 	} else {
 		show_letter_warnings(nogp);
-		printPDF(baseUrl+'/OphTrOperation/waitingList/printLetters', {'operations': operations, 'all': all});
+		printPDF(baseUrl+'/OphTrOperationbooking/waitingList/printLetters', {'operations': operations, 'all': all});
 	}
 }
 

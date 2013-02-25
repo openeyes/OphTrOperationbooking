@@ -17,7 +17,7 @@
 	 */
 
 	/**
-	 * This is the model class for table "et_ophtroperation_operation".
+	 * This is the model class for table "et_ophtroperationbooking_operation".
 	 *
 	 * The followings are the available columns in table:
 	 * @property string $id
@@ -39,13 +39,13 @@
 	 * @property User $user
 	 * @property User $usermodified
 	 * @property Eye $eye
-	 * @property OphTrOperation_Operation_Procedures $procedures
+	 * @property OphTrOperationbooking_Operation_Procedures $procedures
 	 * @property AnaestheticType $anaesthetic_type
 	 * @property Site $site
-	 * @property Element_OphTrOperation_Operation_Priority $priority
+	 * @property Element_OphTrOperationbooking_Operation_Priority $priority
 	 */
 
-	class Element_OphTrOperation_Operation extends BaseEventTypeElement
+	class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 	{
 		const LETTER_INVITE = 0;
 		const LETTER_REMINDER_1 = 1;
@@ -78,7 +78,7 @@
 		 */
 		public function tableName()
 		{
-			return 'et_ophtroperation_operation';
+			return 'et_ophtroperationbooking_operation';
 		}
 
 		/**
@@ -111,18 +111,18 @@
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 			'eye' => array(self::BELONGS_TO, 'Eye', 'eye_id'),
-			'procedureItems' => array(self::HAS_MANY, 'OphTrOperation_Operation_Procedures', 'element_id'),
-			'procedures' => array(self::MANY_MANY, 'Procedure', 'ophtroperation_operation_procedures_procedures(element_id, proc_id)'),
+			'procedureItems' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Procedures', 'element_id'),
+			'procedures' => array(self::MANY_MANY, 'Procedure', 'ophtroperationbooking_operation_procedures_procedures(element_id, proc_id)'),
 			'anaesthetic_type' => array(self::BELONGS_TO, 'AnaestheticType', 'anaesthetic_type_id'),
 			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
-			'priority' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Priority', 'priority_id'),
-			'status' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Status', 'status_id'),
-			'erod' => array(self::HAS_ONE, 'OphTrOperation_Operation_EROD', 'element_id'),
-			'date_letter_sent' => array(self::HAS_ONE, 'OphTrOperation_Operation_Date_Letter_Sent', 'element_id', 'order' => 'date_letter_sent.id DESC'),
+			'priority' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Priority', 'priority_id'),
+			'status' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Status', 'status_id'),
+			'erod' => array(self::HAS_ONE, 'OphTrOperationbooking_Operation_EROD', 'element_id'),
+			'date_letter_sent' => array(self::HAS_ONE, 'OphTrOperationbooking_Operation_Date_Letter_Sent', 'element_id', 'order' => 'date_letter_sent.id DESC'),
 			'cancellation_user' => array(self::BELONGS_TO, 'User', 'cancellation_user_id'),
-			'cancellation_reason' => array(self::BELONGS_TO, 'OphTrOperation_Operation_Cancellation_Reason', 'cancellation_reason_id'),
-			'cancelledBookings' => array(self::HAS_MANY, 'OphTrOperation_Operation_Booking', 'element_id', 'condition' => 'cancellation_date is not null', 'order' => 'cancellation_date'),
-			'booking' => array(self::HAS_ONE, 'OphTrOperation_Operation_Booking', 'element_id', 'condition' => 'cancellation_date is null'),
+			'cancellation_reason' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Cancellation_Reason', 'cancellation_reason_id'),
+			'cancelledBookings' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Booking', 'element_id', 'condition' => 'cancellation_date is not null', 'order' => 'cancellation_date'),
+			'booking' => array(self::HAS_ONE, 'OphTrOperationbooking_Operation_Booking', 'element_id', 'condition' => 'cancellation_date is null'),
 		);
 	}
 
@@ -189,7 +189,7 @@
 
 	public function getproc_defaults() {
 		$ids = array();
-		foreach (OphTrOperation_Operation_Defaults::model()->findAll() as $item) {
+		foreach (OphTrOperationbooking_Operation_Defaults::model()->findAll() as $item) {
 			$ids[] = $item->value_id;
 		}
 		return $ids;
@@ -215,13 +215,13 @@
 
 			$existing_ids = array();
 
-			foreach (OphTrOperation_Operation_Procedures::model()->findAll('element_id = :elementId', array(':elementId' => $this->id)) as $item) {
+			foreach (OphTrOperationbooking_Operation_Procedures::model()->findAll('element_id = :elementId', array(':elementId' => $this->id)) as $item) {
 				$existing_ids[] = $item->proc_id;
 			}
 
 			foreach ($_POST['Procedures_procs'] as $id) {
 				if (!in_array($id,$existing_ids)) {
-					$item = new OphTrOperation_Operation_Procedures;
+					$item = new OphTrOperationbooking_Operation_Procedures;
 					$item->element_id = $this->id;
 					$item->proc_id = $id;
 
@@ -233,7 +233,7 @@
 
 			foreach ($existing_ids as $id) {
 				if (!in_array($id,$_POST['Procedures_procs'])) {
-					$item = OphTrOperation_Operation_Procedures::model()->find('element_id = :elementId and proc_id = :lookupfieldId',array(':elementId' => $this->id, ':lookupfieldId' => $id));
+					$item = OphTrOperationbooking_Operation_Procedures::model()->find('element_id = :elementId and proc_id = :lookupfieldId',array(':elementId' => $this->id, ':lookupfieldId' => $id));
 					if (!$item->delete()) {
 						throw new Exception('Unable to delete MultiSelect item: '.print_r($item->getErrors(),true));
 					}
@@ -250,7 +250,7 @@
 	}
 
 	protected function afterValidate() {
-		if (!empty($_POST['Element_OphTrOperation_Operation']) && empty($_POST['Procedures_procs'])) {
+		if (!empty($_POST['Element_OphTrOperationbooking_Operation']) && empty($_POST['Procedures_procs'])) {
 			$this->addError('procedures', 'At least one procedure must be entered');
 		}
 
@@ -439,7 +439,7 @@
 	}
 
 	public function getSchedule_timeframe() {
-		return Element_OphTrOperation_ScheduleOperation::model()->find('event_id=?',array($this->event_id));
+		return Element_OphTrOperationbooking_ScheduleOperation::model()->find('event_id=?',array($this->event_id));
 	}
 
 	public function getFirmCalendarForMonth($firm, $timestamp) {
@@ -459,7 +459,7 @@
 		$days = array();
 		$sessiondata = array();
 
-		foreach (OphTrOperation_Operation_Session::model()->findAll($criteria) as $session) {
+		foreach (OphTrOperationbooking_Operation_Session::model()->findAll($criteria) as $session) {
 			$day = date('D',strtotime($session->date));
 
 			$sessiondata[$session->date][] = $session;
@@ -584,12 +584,12 @@
 			$firmId = $emergency;
 		}
 
-		$sessions = OphTrOperation_Operation_Theatre::findByDateAndFirmID($date, $firmId);
+		$sessions = OphTrOperationbooking_Operation_Theatre::findByDateAndFirmID($date, $firmId);
 
 		$results = array();
 		$names = array();
 		foreach ($sessions as $session) {
-			$theatre = OphTrOperation_Operation_Theatre::model()->findByPk($session['id']);
+			$theatre = OphTrOperationbooking_Operation_Theatre::model()->findByPk($session['id']);
 
 			$name = $session['name'] . ' (' . $theatre->site->short_name . ')';
 			$sessionTime = explode(':', $session['session_duration']);
@@ -652,7 +652,7 @@
 		$results = array();
 
 		if (!empty($theatreId)) {
-			if ($ward = OphTrOperation_Operation_Ward::model()->find('theatre_id=?',array($theatreId))) {
+			if ($ward = OphTrOperationbooking_Operation_Ward::model()->find('theatre_id=?',array($theatreId))) {
 				$results[$ward->id] = $ward->name;
 			}
 		}
@@ -662,8 +662,8 @@
 			$patient = $this->event->episode->patient;
 
 			$genderRestrict = $ageRestrict = 0;
-			$genderRestrict = ('M' == $patient->gender) ? OphTrOperation_Operation_Ward::RESTRICTION_MALE : OphTrOperation_Operation_Ward::RESTRICTION_FEMALE;
-			$ageRestrict = ($patient->isChild()) ? OphTrOperation_Operation_Ward::RESTRICTION_CHILD : OphTrOperation_Operation_Ward::RESTRICTION_ADULT;
+			$genderRestrict = ('M' == $patient->gender) ? OphTrOperationbooking_Operation_Ward::RESTRICTION_MALE : OphTrOperationbooking_Operation_Ward::RESTRICTION_FEMALE;
+			$ageRestrict = ($patient->isChild()) ? OphTrOperationbooking_Operation_Ward::RESTRICTION_CHILD : OphTrOperationbooking_Operation_Ward::RESTRICTION_ADULT;
 
 			$whereSql = 's.id = :id AND
 				(w.restriction & :r1 > 0) AND (w.restriction & :r2 > 0)';
@@ -675,7 +675,7 @@
 
 			$wards = Yii::app()->db->createCommand()
 				->select('w.id, w.name')
-				->from('ophtroperation_operation_ward w')
+				->from('ophtroperationbooking_operation_ward w')
 				->join('site s', 's.id = w.site_id')
 				->where($whereSql, $whereParams)
 				->queryAll();
@@ -702,22 +702,22 @@
 		$service_subspecialty_assignment_id = $this->event->episode->firm->service_subspecialty_assignment_id;
 
 		if ($this->consultant_required) {
-			$where .= " and ophtroperation_operation_session.consultant = 1";
+			$where .= " and ophtroperationbooking_operation_session.consultant = 1";
 		}
 
 		if ($this->event->episode->patient->isChild()) {
-			$where .= " and ophtroperation_operation_session.paediatric = 1";
+			$where .= " and ophtroperationbooking_operation_session.paediatric = 1";
 
 			$service_subspecialty_assignment_id = $this->event->element_operation->booking->session->firm->serviceSubspecialtyAssignment->id;
 		}
 
 		if ($this->anaesthetist_required || $this->anaesthetic_type->code == 'GA') {
-			$where .= " and ophtroperation_operation_session.anaesthetist = 1 and ophtroperation_operation_session.general_anaesthetic = 1";
+			$where .= " and ophtroperationbooking_operation_session.anaesthetist = 1 and ophtroperationbooking_operation_session.general_anaesthetic = 1";
 		}
 
 		$lead_time_date = date('Y-m-d',strtotime($this->decision_date) + (86400 * 7 * Yii::app()->params['erod_lead_time_weeks']));
 
-		if ($rule = OphTrOperation_Operation_EROD_Rule::model()->find('subspecialty_id=?',array($this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty_id))) {
+		if ($rule = OphTrOperationbooking_Operation_EROD_Rule::model()->find('subspecialty_id=?',array($this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty_id))) {
 			$firm_ids = array();
 			foreach ($rule->items as $item) {
 				if ($item->item_type == 'firm') {
@@ -730,21 +730,21 @@
 			$where .= " and firm.service_subspecialty_assignment_id = $service_subspecialty_assignment_id";
 		}
 
-		foreach ($erod = Yii::app()->db->createCommand()->select("ophtroperation_operation_session.id as session_id, date, start_time, end_time, firm.name as firm_name, firm.id as firm_id, subspecialty.name as subspecialty_name, consultant, paediatric, anaesthetist, general_anaesthetic")
-			->from("ophtroperation_operation_session")
-			->join("firm","firm.id = ophtroperation_operation_session.firm_id")
-			->join("ophtroperation_operation_booking","ophtroperation_operation_booking.session_id = ophtroperation_operation_session.id")
-			->join("et_ophtroperation_operation","ophtroperation_operation_booking.element_id = et_ophtroperation_operation.id")
+		foreach ($erod = Yii::app()->db->createCommand()->select("ophtroperationbooking_operation_session.id as session_id, date, start_time, end_time, firm.name as firm_name, firm.id as firm_id, subspecialty.name as subspecialty_name, consultant, paediatric, anaesthetist, general_anaesthetic")
+			->from("ophtroperationbooking_operation_session")
+			->join("firm","firm.id = ophtroperationbooking_operation_session.firm_id")
+			->join("ophtroperationbooking_operation_booking","ophtroperationbooking_operation_booking.session_id = ophtroperationbooking_operation_session.id")
+			->join("et_ophtroperationbooking_operation","ophtroperationbooking_operation_booking.element_id = et_ophtroperationbooking_operation.id")
 			->join("service_subspecialty_assignment ssa","ssa.id = firm.service_subspecialty_assignment_id")
 			->join("subspecialty","subspecialty.id = ssa.subspecialty_id")
-			->join("ophtroperation_operation_theatre","ophtroperation_operation_session.theatre_id = ophtroperation_operation_theatre.id")
-			->where("ophtroperation_operation_session.date > '$lead_time_date' and ophtroperation_operation_session.available = 1 $where")
-			->group("ophtroperation_operation_session.id")
-			->order("ophtroperation_operation_session.date, ophtroperation_operation_session.start_time")
+			->join("ophtroperationbooking_operation_theatre","ophtroperationbooking_operation_session.theatre_id = ophtroperationbooking_operation_theatre.id")
+			->where("ophtroperationbooking_operation_session.date > '$lead_time_date' and ophtroperationbooking_operation_session.available = 1 $where")
+			->group("ophtroperationbooking_operation_session.id")
+			->order("ophtroperationbooking_operation_session.date, ophtroperationbooking_operation_session.start_time")
 			->queryAll() as $row) {
 			// removed this from the theatre join: and theatre.id != 10")		~chrisr
 
-			$session = OphTrOperation_Operation_Session::model()->findByPk($row['session_id']);
+			$session = OphTrOperationbooking_Operation_Session::model()->findByPk($row['session_id']);
 			// if the session has no firm, under the existing booking logic it is an emergency session
 			if (!$session->firm) {
 				continue;
@@ -757,7 +757,7 @@
 			}
 
 			if ($available_time >= $this->total_duration) {
-				$erod = new OphTrOperation_Operation_EROD;
+				$erod = new OphTrOperationbooking_Operation_EROD;
 				$erod->element_id = $this->id;
 				$erod->session_id = $row['session_id'];
 				$erod->session_date = $row['date'];
@@ -790,7 +790,7 @@
 	}
 
 	public function cancel($reason_id, $comment = null) {
-		if (!$reason = OphTrOperation_Operation_Cancellation_Reason::model()->findByPk($reason_id)) {
+		if (!$reason = OphTrOperationbooking_Operation_Cancellation_Reason::model()->findByPk($reason_id)) {
 			return array(
 				'result' => false,
 				'errors' => array(array('Please select a cancellation reason')),
@@ -802,7 +802,7 @@
 		$this->cancellation_comment = $comment;
 		$this->cancellation_user_id = Yii::app()->session['user']->id;
 
-		$this->status_id = OphTrOperation_Operation_Status::model()->find('name=?',array('Cancelled'))->id;
+		$this->status_id = OphTrOperationbooking_Operation_Status::model()->find('name=?',array('Cancelled'))->id;
 
 		if (!$this->save()) {
 			return array(
@@ -869,7 +869,7 @@
 	}
 
 	public function schedule($booking_attributes, $operation_comments, $session_comments, $reschedule=false) {
-		$booking = new OphTrOperation_Operation_Booking;
+		$booking = new OphTrOperationbooking_Operation_Booking;
 		$booking->attributes = $booking_attributes;
 
 		$reschedule = in_array($this->status_id,array(2,3,4));
@@ -884,11 +884,11 @@
 
 		if ($this->booking && !$reschedule) {
 			// race condition, two users attempted to book the same operation at the same time
-			return Yii::app()->getController()->redirect(array('/OphTrOperation/default/view/'.$this->event_id));
+			return Yii::app()->getController()->redirect(array('/OphTrOperationbooking/default/view/'.$this->event_id));
 		}
 
 		if ($reschedule && $this->booking) {
-			if (!$reason = OphTrOperation_Operation_Cancellation_Reason::model()->findByPk($_POST['cancellation_reason'])) {
+			if (!$reason = OphTrOperationbooking_Operation_Cancellation_Reason::model()->findByPk($_POST['cancellation_reason'])) {
 				return array(array('Please select a rescheduling reason'));
 			}
 
@@ -906,7 +906,7 @@
 		$criteria->order = 'display_order desc';
 		$criteria->limit = 1;
 
-		$booking->display_order = ($booking2 = OphTrOperation_Operation_Booking::model()->find($criteria)) ? $booking2->display_order+1 : 1;
+		$booking->display_order = ($booking2 = OphTrOperationbooking_Operation_Booking::model()->find($criteria)) ? $booking2->display_order+1 : 1;
 
 		if (!$booking->save()) {
 			return $booking->getErrors();
@@ -967,7 +967,7 @@
 	}
 
 	public function setStatus($name) {
-		if (!$status = OphTrOperation_Operation_Status::model()->find('name=?',array($name))) {
+		if (!$status = OphTrOperationbooking_Operation_Status::model()->find('name=?',array($name))) {
 			throw new Exception('Invalid status: '.$name);
 		}
 
@@ -1011,7 +1011,7 @@
 		$criteria->addCondition('parent_rule_id is null');
 		$criteria->order = 'rule_order asc';
 
-		foreach (OphTrOperation_Letter_Contact_Rule::model()->findAll($criteria) as $rule) {
+		foreach (OphTrOperationbooking_Letter_Contact_Rule::model()->findAll($criteria) as $rule) {
 			if ($rule->applies($site_id,$subspecialty_id,$theatre_id,$firm_id)) {
 				return $rule->parse($site_id,$subspecialty_id,$theatre_id,$firm_id);
 			}
@@ -1030,7 +1030,7 @@
 		$criteria->addCondition('parent_rule_id is null');
 		$criteria->order = 'rule_order asc';
 
-		foreach (OphTrOperation_Waiting_List_Contact_Rule::model()->findAll($criteria) as $rule) {
+		foreach (OphTrOperationbooking_Waiting_List_Contact_Rule::model()->findAll($criteria) as $rule) {
 			if ($rule->applies($site_id,$service_id,$firm_id,$is_child)) {
 				$rule = $rule->parse($site_id,$service_id,$firm_id,$is_child);
 				return $rule->name.' on '.$rule->telephone;
@@ -1041,15 +1041,15 @@
 	}
 
 	public function getDiagnosis() {
-		return Element_OphTrOperation_Diagnosis::model()->find('event_id=?',array($this->event_id));
+		return Element_OphTrOperationbooking_Diagnosis::model()->find('event_id=?',array($this->event_id));
 	}
 
 	public function getTextOperationName() {
-		if ($rule = OphTrOperation_Operation_Name_Rule::model()->find('theatre_id=?',array($this->booking->session->theatre_id))) {
+		if ($rule = OphTrOperationbooking_Operation_Name_Rule::model()->find('theatre_id=?',array($this->booking->session->theatre_id))) {
 			return $this->event->episode->patient->childPrefix.$rule->name;
 		}
 
-		if ($rule = OphTrOperation_Operation_Name_Rule::model()->find('theatre_id is null')) {
+		if ($rule = OphTrOperationbooking_Operation_Name_Rule::model()->find('theatre_id is null')) {
 			return $this->event->episode->patient->childPrefix.$rule->name;
 		}
 
@@ -1060,7 +1060,7 @@
 		// admin users can set confirmto and confirm up to a specific point, steamrollering whatever else is in there
 		if (!is_null($confirmto)) {
 			if (!$dls = $this->date_letter_sent) {
-				$dls = new OphTrOperation_Operation_Date_Letter_Sent;
+				$dls = new OphTrOperationbooking_Operation_Date_Letter_Sent;
 				$dls->element_id = $this->id;
 			}
 			if ($confirmto == self::LETTER_GP) {
@@ -1118,7 +1118,7 @@
 				OELog::log("Letter print confirmed, datelettersent=$dls->id");
 
 			} else {
-				$dls = new OphTrOperation_Operation_Date_Letter_Sent;
+				$dls = new OphTrOperationbooking_Operation_Date_Letter_Sent;
 				$dls->element_id = $this->id;
 				$dls->date_invitation_letter_sent = date('Y-m-d H:i:s');
 				if (!$dls->save()) {
@@ -1131,7 +1131,7 @@
 	}
 
 	public function getDisorderText() {
-		if (!$diagnosis = Element_OphTrOperation_Diagnosis::model()->find('event_id=?',array($this->event_id))) {
+		if (!$diagnosis = Element_OphTrOperationbooking_Diagnosis::model()->find('event_id=?',array($this->event_id))) {
 			throw new Exception("Unable to find diagnosis element for event_id $this->event_id");
 		}
 		return $diagnosis->disorder->term;
@@ -1141,10 +1141,10 @@
 		if (is_null($last_letter = $this->lastLetter)) return false;
 
 		return in_array($last_letter,array(
-			Element_OphTrOperation_Operation::LETTER_INVITE,
-			Element_OphTrOperation_Operation::LETTER_REMINDER_1,
-			Element_OphTrOperation_Operation::LETTER_REMINDER_2,
-			Element_OphTrOperation_Operation::LETTER_GP
+			Element_OphTrOperationbooking_Operation::LETTER_INVITE,
+			Element_OphTrOperationbooking_Operation::LETTER_REMINDER_1,
+			Element_OphTrOperationbooking_Operation::LETTER_REMINDER_2,
+			Element_OphTrOperationbooking_Operation::LETTER_GP
 		));
 	}
 
@@ -1152,9 +1152,9 @@
 		if (is_null($last_letter = $this->lastLetter)) return false;
 
 		return in_array($last_letter,array(
-			Element_OphTrOperation_Operation::LETTER_REMINDER_1,
-			Element_OphTrOperation_Operation::LETTER_REMINDER_2,
-			Element_OphTrOperation_Operation::LETTER_GP
+			Element_OphTrOperationbooking_Operation::LETTER_REMINDER_1,
+			Element_OphTrOperationbooking_Operation::LETTER_REMINDER_2,
+			Element_OphTrOperationbooking_Operation::LETTER_GP
 		));
 	}
 
@@ -1162,8 +1162,8 @@
 		if (is_null($last_letter = $this->lastLetter)) return false;
 
 		return in_array($last_letter,array(
-			Element_OphTrOperation_Operation::LETTER_REMINDER_2,
-			Element_OphTrOperation_Operation::LETTER_GP
+			Element_OphTrOperationbooking_Operation::LETTER_REMINDER_2,
+			Element_OphTrOperationbooking_Operation::LETTER_GP
 		));
 	}
 
@@ -1171,7 +1171,7 @@
 		if (is_null($last_letter = $this->lastLetter)) return false;
 
 		return in_array($last_letter,array(
-			Element_OphTrOperation_Operation::LETTER_GP
+			Element_OphTrOperationbooking_Operation::LETTER_GP
 		));
 	}
 }
