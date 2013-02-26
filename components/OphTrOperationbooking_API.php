@@ -96,4 +96,19 @@ class OphTrOperationbooking_API {
 
 		return $operation->eye;
 	}
+
+	public function getMostRecentBookingForEpisode($episode_id) {
+		$criteria = new CDbCriteria;
+		$criteria->compare('episode_id', $episode_id);
+		$criteria->order = 'datetime desc';
+
+		return OphTrOperationbooking_Operation_Booking::model()
+			->with(array(
+				'operation' => array(
+					'condition' => "episode_id = $episode_id",
+					'with' => 'event'
+				),
+			))
+			->find($criteria);
+	}
 }
