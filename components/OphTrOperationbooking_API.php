@@ -17,7 +17,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class OphTrOperationbooking_API {
+class OphTrOperationbooking_API extends BaseAPI {
 	public function getBookingsForEpisode($episode_id) {
 		$criteria = new CDbCriteria;
 		$criteria->order = 'datetime asc';
@@ -97,18 +97,32 @@ class OphTrOperationbooking_API {
 		return $operation->eye;
 	}
 
-	public function getMostRecentBookingForEpisode($episode_id) {
-		$criteria = new CDbCriteria;
-		$criteria->compare('episode_id', $episode_id);
-		$criteria->order = 'datetime desc';
+	public function getMostRecentBookingForCurrentEpisode($patient) {
+		if ($episode = $patient->getEpisodeForCurrentSubspecialty()) {
+			$criteria = new CDbCriteria;
+			$criteria->compare('episode_id', $episode->id);
+			$criteria->order = 'datetime desc';
 
-		return OphTrOperationbooking_Operation_Booking::model()
-			->with(array(
-				'operation' => array(
-					'condition' => "episode_id = $episode_id",
-					'with' => 'event'
-				),
-			))
-			->find($criteria);
+			return OphTrOperationbooking_Operation_Booking::model()
+				->with(array(
+					'operation' => array(
+						'with' => 'event'
+					),
+				))
+				->find($criteria);
+		}
+	}
+
+	public function getLetterProcedures($patient) {
+		$return = '';
+
+		if ($operation = $this->getElementForLatestEventInEpisode($patient,'Element_OphTrOperationbooking_Operation')) {
+			foreach ($operation->procedures as $i => $procedure) {
+				if ($i) $return .= ', ';
+				$return .= $operation->eye->adjective.' '.$procedure->term;
+			}
+		}
+
+		return strtolower($return);
 	}
 }
