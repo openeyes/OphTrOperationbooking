@@ -270,11 +270,8 @@ class WaitingListController extends BaseEventTypeController {
 	 * @return string
 	 */
 	protected function getConsultantName($operation) {
-		if ($consultant = $operation->event->episode->firm->getConsultant()) {
-			return $consultant->contact->title . ' ' . $consultant->contact->first_name . ' ' . $consultant->contact->last_name;
-		} else {
-			return 'CONSULTANT';
-		}
+		$firm = $operation->event->episode->firm;
+		return $firm->getConsultantName();
 	}
 
 	/**
