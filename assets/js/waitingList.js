@@ -1,77 +1,65 @@
 $(document).ready(function() {
-	$('#waitingList-filter button[type="submit"]').click(function() {
-		if (!$(this).hasClass('inactive')) {
-			if ($('#hos_num').val().length <1 || $('#hos_num').val().match(/^[0-9]+$/)) {
-				$('#hos_num_error').hide();
-			} else {
-				$('#hos_num_error').show();
-				return false;
-			}
+	handleButton($('#waitingList-filter button[type="submit"]'),function(e) {
+		if ($('#hos_num').val().length <1 || $('#hos_num').val().match(/^[0-9]+$/)) {
+			$('#hos_num_error').hide();
+		} else {
+			$('#hos_num_error').show();
+			return false;
+		}
 
+		$('#searchResults').html('<div id="waitingList" class="grid-view-waitinglist"><table><tbody><tr><th>Letters sent</th><th>Patient</th><th>Hospital number</th><th>Location</th><th>Procedure</th><th>Eye</th><th>Firm</th><th>Decision date</th><th>Priority</th><th>Book status (requires...)</th><th><input style="margin-top: 0.4em;" type="checkbox" id="checkall" value=""></th></tr><tr><td colspan="7" style="border: none; padding-top: 10px;"><img src="'+baseUrl+'/img/ajax-loader.gif" /> Searching, please wait ...</td></tr></tbody></table></div>');
+
+		$.ajax({
+			'url': baseUrl+'/OphTrOperationbooking/waitingList/search',
+			'type': 'POST',
+			'data': $('#waitingList-filter').serialize(),
+			'success': function(data) {
+				$('#searchResults').html(data);
+				enableButtons();
+			}
+		});
+		e.preventDefault();
+	});
+
+	handleButton($('#btn_print'),function() {
+		print_items_from_selector('input[id^="operation"]:checked',false);
+		enableButtons();
+	});
+
+	handleButton($('#btn_print_all'),function() {
+		print_items_from_selector('input[id^="operation"]:enabled',true);
+		enableButtons();
+	});
+
+	handleButton($('#btn_confirm_selected'),function(e) {
+		var data = '';
+		var operations = 0;
+		data += "adminconfirmto=" + $('#adminconfirmto').val() + "&adminconfirmdate=" + $('#adminconfirmdate').val();
+		$('input[id^="operation"]:checked').map(function() {
+			if (data.length >0) {
+				data += '&';
+			}
+			data += "operations[]=" + $(this).attr('id').replace(/operation/,'');
+			operations += 1;
+		});
+
+		if (operations == 0) {
+			alert('No items selected.');
+		} else {
 			disableButtons();
-			$('#searchResults').html('<div id="waitingList" class="grid-view-waitinglist"><table><tbody><tr><th>Letters sent</th><th>Patient</th><th>Hospital number</th><th>Location</th><th>Procedure</th><th>Eye</th><th>Firm</th><th>Decision date</th><th>Priority</th><th>Book status (requires...)</th><th><input style="margin-top: 0.4em;" type="checkbox" id="checkall" value=""></th></tr><tr><td colspan="7" style="border: none; padding-top: 10px;"><img src="'+baseUrl+'/img/ajax-loader.gif" /> Searching, please wait ...</td></tr></tbody></table></div>');
 
 			$.ajax({
-				'url': baseUrl+'/OphTrOperationbooking/waitingList/search',
-				'type': 'POST',
-				'data': $('#waitingList-filter').serialize(),
-				'success': function(data) {
-					$('#searchResults').html(data);
+				url: baseUrl+'/OphTrOperationbooking/waitingList/confirmPrinted',
+				type: "POST",
+				data: data,
+				success: function(html) {
 					enableButtons();
-					return false;
+					$('#waitingList-filter button[type="submit"]').click();
 				}
 			});
 		}
-		return false;
-	});
-
-	$('#btn_print').click(function() {
-		if (!$(this).hasClass('inactive')) {
-			disableButtons();
-			print_items_from_selector('input[id^="operation"]:checked',false);
-			enableButtons();
-		}
-	});
-
-	$('#btn_print_all').click(function() {
-		if (!$(this).hasClass('inactive')) {
-			disableButtons();
-			print_items_from_selector('input[id^="operation"]:enabled',true);
-			enableButtons();
-		}
-	});
-
-	$('#btn_confirm_selected').click(function() {
-		if (!$(this).hasClass('inactive')) {
-			var data = '';
-			var operations = 0;
-			data += "adminconfirmto=" + $('#adminconfirmto').val() + "&adminconfirmdate=" + $('#adminconfirmdate').val();
-			$('input[id^="operation"]:checked').map(function() {
-				if (data.length >0) {
-					data += '&';
-				}
-				data += "operations[]=" + $(this).attr('id').replace(/operation/,'');
-				operations += 1;
-			});
-
-			if (operations == 0) {
-				alert('No items selected.');
-			} else {
-				disableButtons();
-
-				$.ajax({
-					url: baseUrl+'/OphTrOperationbooking/waitingList/confirmPrinted',
-					type: "POST",
-					data: data,
-					success: function(html) {
-						enableButtons();
-						$('#waitingList-filter button[type="submit"]').click();
-					}
-				});
-			}
-		}
-
-		return false;
+		
+		e.preventDefault();
 	});
 
 	$('#hos_num').focus();

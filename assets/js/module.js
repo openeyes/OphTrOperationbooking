@@ -2,56 +2,36 @@
 /* Module-specific javascript can be placed here */
 
 $(document).ready(function() {
-	$('#et_save').unbind('click').click(function() {
-		if (!$(this).hasClass('inactive')) {
-			$('#schedule_now').val(0);
-			disableButtons();
-			return true;
-		}
-		return false;
+	handleButton($('#et_schedulelater'),function() {
+		$('#schedule_now').val(0);
 	});
 
-	$('#et_save_and_schedule').unbind('click').click(function() {
-		if (!$(this).hasClass('inactive')) {
-			$('#schedule_now').val(1);
-			disableButtons();
-			return true;
-		}
-		return false;
+	handleButton($('#et_schedulenow'),function() {
+		$('#schedule_now').val(1);
 	});
 
-	$('#et_cancel').unbind('click').click(function() {
-		if (!$(this).hasClass('inactive')) {
-			disableButtons();
-
-			if (m = window.location.href.match(/\/update\/[0-9]+/)) {
-				window.location.href = window.location.href.replace('/update/','/view/');
-			} else {
-				window.location.href = baseUrl+'/patient/episodes/'+et_patient_id;
-			}
+	handleButton($('#et_cancel'),function(e) {
+		if (m = window.location.href.match(/\/update\/[0-9]+/)) {
+			window.location.href = window.location.href.replace('/update/','/view/');
+		} else {
+			window.location.href = baseUrl+'/patient/episodes/'+et_patient_id;
 		}
-		return false;
+		e.preventDefault();
 	});
 
-	$('#et_deleteevent').unbind('click').click(function() {
-		if (!$(this).hasClass('inactive')) {
-			disableButtons();
-			return true;
+	handleButton($('#et_deleteevent'));
+
+	handleButton($('#btn_reschedule-now'));
+
+	handleButton($('#btn_cancel-operation'));
+
+	handleButton($('#et_canceldelete'),function(e) {
+		if (m = window.location.href.match(/\/delete\/[0-9]+/)) {
+			window.location.href = window.location.href.replace('/delete/','/view/');
+		} else {
+			window.location.href = baseUrl+'/patient/episodes/'+et_patient_id;
 		}
-		return false;
-	});
-
-	$('#et_canceldelete').unbind('click').click(function() {
-		if (!$(this).hasClass('inactive')) {
-			disableButtons();
-
-			if (m = window.location.href.match(/\/delete\/[0-9]+/)) {
-				window.location.href = window.location.href.replace('/delete/','/view/');
-			} else {
-				window.location.href = baseUrl+'/patient/episodes/'+et_patient_id;
-			}
-		} 
-		return false;
+		e.preventDefault();
 	});
 
 	$('select.populate_textarea').unbind('change').change(function() {
@@ -69,37 +49,32 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#cancel').click(function() {
-		if (!$(this).hasClass('inactive')) {
-			disableButtons();
+	handleButton($('#cancel'),function(e) {
+		e.preventDefault();
 
-			$.ajax({
-				type: 'POST',
-				url: window.location.href,
-				data: $('#cancelForm').serialize(),
-				dataType: 'json',
-				success: function(data) {
-					var n=0;
-					var html = '';
-					$.each(data, function(key, value) {
-						html += '<ul><li>'+value+'</li></ul>';
-						n += 1;
-					});
+		$.ajax({
+			type: 'POST',
+			url: window.location.href,
+			data: $('#cancelForm').serialize(),
+			dataType: 'json',
+			success: function(data) {
+				var n=0;
+				var html = '';
+				$.each(data, function(key, value) {
+					html += '<ul><li>'+value+'</li></ul>';
+					n += 1;
+				});
 
-					if (n == 0) {
-						window.location.href = window.location.href.replace(/\/cancel\//,'/view/');
-					} else {
-						$('div.alertBox').show();
-						$('div.alertBox').html(html);
-					}
-
-					enableButtons();
-					return false;
+				if (n == 0) {
+					window.location.href = window.location.href.replace(/\/cancel\//,'/view/');
+				} else {
+					$('div.alertBox').show();
+					$('div.alertBox').html(html);
 				}
-			});
-		}
 
-		return false;
+				enableButtons();
+			}
+		});
 	});
 
 	$('#calendar table td').click(function() {
@@ -118,19 +93,13 @@ $(document).ready(function() {
 		return false;
 	});
 
-	$('button#cancel_scheduling').click(function() {
-		if (!$(this).hasClass('inactive')) {
-			disableButtons();
-			document.location.href = baseUrl + '/patient/episodes/' + patient_id;
-		}
-		return false;
+	handleButton($('button#cancel_scheduling'),function(e) {
+		document.location.href = baseUrl + '/patient/episodes/' + patient_id;
+		e.preventDefault();
 	});
 
-	$('#bookingForm button#confirm_slot').click(function() {
-		if (!$(this).hasClass('inactive')) {
-			disableButtons();
-			return true;
-		}
+	handleButton($('#bookingForm button#confirm_slot'),function() {
+		$('#bookingForm').submit();
 	});
 
 	$(this).undelegate('#firmSelect #firm_id','change').delegate('#firmSelect #firm_id','change',function() {
@@ -147,13 +116,10 @@ $(document).ready(function() {
 		window.location.href = href;
 	});
 
-	$('#btn_print-letter').unbind('click').click(function() {
-		if (!$(this).hasClass('inactive')) {
-			m = window.location.href.match(/\/([0-9]+)\/?$/);
-			disableButtons();
-			printPDF(baseUrl+'/OphTrOperationbooking/waitingList/printLetters',{'event_id': m[1]});
-			enableButtons();
-		}
+	handleButton($('#btn_print-letter'),function() {
+		var m = window.location.href.match(/\/view\/([0-9]+)$/);
+		printPDF(baseUrl+'/OphTrOperationbooking/waitingList/printLetters',{'event_id': m[1]});
+		enableButtons();
 	});
 
 	$("#btn_print_diary").click(function() {

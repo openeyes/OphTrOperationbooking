@@ -2,66 +2,49 @@
 /* Module-specific javascript can be placed here */
 
 $(document).ready(function() {
-	$('button.btn_transport_viewall').click(function() {
-		if (!$(this).hasClass('inactive')) {
-			disableButtons();
-			$('#transport_date_from').val('');
-			$('#transport_date_to').val('');
-			$('#include_bookings').attr('checked','checked');
-			$('#include_reschedules').attr('checked','checked');
-			$('#include_cancellations').attr('checked','checked');
-			transport_load_tcis();
-		}
-		return false;
+	handleButton($('button.btn_transport_viewall'),function(e) {
+		$('#transport_date_from').val('');
+		$('#transport_date_to').val('');
+		$('#include_bookings').attr('checked','checked');
+		$('#include_reschedules').attr('checked','checked');
+		$('#include_cancellations').attr('checked','checked');
+		transport_load_tcis();
+		e.preventDefault();
 	});
 
-	$('button.btn_transport_filter').click(function() {
-		if (!$(this).hasClass('inactive')) {
-			disableButtons();
-			transport_load_tcis();
-		}
-		return false;
+	handleButton($('button.btn_transport_filter'),function(e) {
+		transport_load_tcis();
+		e.preventDefault();
 	});
 
-	$('button.btn_transport_confirm').click(function() {
-		if (!$(this).hasClass('inactive')) {
-			disableButtons();
-
-			$.ajax({
-				type: "POST",
-				url: baseUrl+"/OphTrOperationbooking/transport/confirm",
-				data: $('input[name^="bookings"]:checked').serialize(),
-				success: function(html) {
-					if (html == "1") {
-						$('input[name^="bookings"]:checked').map(function() {
-							$(this).parent().parent().attr('class','waitinglistGrey');
-							$(this).attr('checked',false);
-						});
-					} else {
-						alert("Something went wrong trying to confirm the transport item.\n\nPlease try again or contact OpenEyes support.");
-					}
-					enableButtons();
-					return false;
+	handleButton($('button.btn_transport_confirm'),function(e) {
+		$.ajax({
+			type: "POST",
+			url: baseUrl+"/OphTrOperationbooking/transport/confirm",
+			data: $('input[name^="bookings"]:checked').serialize(),
+			success: function(html) {
+				if (html == "1") {
+					$('input[name^="bookings"]:checked').map(function() {
+						$(this).parent().parent().attr('class','waitinglistGrey');
+						$(this).attr('checked',false);
+					});
+				} else {
+					alert("Something went wrong trying to confirm the transport item.\n\nPlease try again or contact OpenEyes support.");
 				}
-			});
-		}
-
-		return false;
+				enableButtons();
+			}
+		});
+		e.preventDefault();
 	});
 
-	$('button.btn_transport_print').click(function() {
-		if (!$(this).hasClass('inactive')) {
-			disableButtons();
-			printUrl(window.location.href.replace(/\/index/,'/printList'));
-			setTimeout('enableButtons();',3000);
-		}
-		return false;
+	handleButton($('button.btn_transport_print'),function(e) {
+		printUrl(window.location.href.replace(/\/index/,'/printList'));
+		setTimeout('enableButtons();',3000);
+		e.preventDefault();
 	});
 
-	$('button.btn_transport_download').click(function() {
-		if (!$(this).hasClass('inactive')) {
-			$('#csvform').submit();
-		}
+	handleButton($('button.btn_transport_download'),function() {
+		$('#csvform').submit();
 	});
 
 	$('#transport_checkall').click(function() {
