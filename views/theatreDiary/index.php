@@ -133,5 +133,4 @@
 	$(document).ready(function() {
 		return getDiary();
 	});
-	var NHSDateFormat = '<?php echo Helper::NHS_DATE_FORMAT?>';
 </script>
