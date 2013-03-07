@@ -152,7 +152,7 @@ if ($element->status->name != 'Cancelled' && $this->event->editable) {
 		if (!$element->has_address) {
 			$print_letter_options['disabled'] = true;
 		}
-		$this->event_actions[] = EventAction::button("Print letter", 'print-letter', $print_letter_options, array('id' => 'btn_print-letter'));
+		$this->event_actions[] = EventAction::button("Print letter", 'print-letter', $print_letter_options, array('id' => 'btn_print-admissionletter'));
 		$this->event_actions[] = EventAction::link("Reschedule now",
 			Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/reschedule/'.$element->event_id),
 			array('colour' => 'green'),

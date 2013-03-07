@@ -987,6 +987,8 @@
 
 	public function getRefuseContact() {
 		if (!$contact = $this->letterContact) {
+			# FIXME: need to handle problems with letters more gracefully than throwing unhandled exceptions.
+			return 'N/A';
 			throw new Exception('Unable to find letter contact for operation '.$this->id);
 		}
 
