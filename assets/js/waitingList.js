@@ -146,7 +146,7 @@ function print_items_from_selector(sel,all) {
 		}
 	} else {
 		show_letter_warnings(nogp);
-		printPDF(baseUrl+'/OphTrOperationbooking/waitingList/printLetters', {'operations': operations, 'all': all});
+		printIFrameUrl(baseUrl+'/OphTrOperationbooking/waitingList/printLetters', {'operations': operations, 'all': all});
 	}
 }
 

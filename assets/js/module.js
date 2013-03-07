@@ -118,8 +118,8 @@ $(document).ready(function() {
 
 	handleButton($('#btn_print-letter'),function() {
 		var m = window.location.href.match(/\/view\/([0-9]+)$/);
-		printPDF(baseUrl+'/OphTrOperationbooking/waitingList/printLetters',{'event_id': m[1]});
-		enableButtons();
+		printIFrameUrl(baseUrl+'/OphTrOperationbooking/waitingList/printLetters',{'event_id': m[1]});
+		//enableButtons();
 	});
 
 	$("#btn_print_diary").click(function() {
