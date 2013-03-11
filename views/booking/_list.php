@@ -160,8 +160,4 @@ if (!$reschedule) {
 			<?php }?>
 		</ul>
 	</div>
-
-	<script type="text/javascript">
-		var patient_id = <?php echo $operation->event->episode->patient_id?>;
-	</script>
 <?php }?>
