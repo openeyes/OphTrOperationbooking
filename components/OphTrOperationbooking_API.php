@@ -64,12 +64,20 @@ class OphTrOperationbooking_API extends BaseAPI {
 	}
 
 	public function setOperationStatus($event_id, $status_name) {
-		if (!$status = OphTrOperationbooking_Operation_Status::model()->find('name=?',array($status_name))) {
-			throw new Exception("Unknown operation status: $status_name");
-		}
-
 		if (!$operation = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($event_id))) {
 			throw new Exception("Operation event not found: $event_id");
+		}
+
+		if ($status_name == 'Scheduled or Rescheduled') {
+			if (OphTrOperationbooking_Operation_Booking::model()->find('element_id=? and cancellation_date is not null',array($operation->id))) {
+				$status_name = 'Rescheduled';
+			} else {
+				$status_name = 'Scheduled';
+			}
+		}
+
+		if (!$status = OphTrOperationbooking_Operation_Status::model()->find('name=?',array($status_name))) {
+			throw new Exception("Unknown operation status: $status_name");
 		}
 
 		If ($operation->status_id != $status->id) {
