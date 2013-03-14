@@ -206,6 +206,10 @@
 			$this->status_id = 1;
 		}
 
+		if (isset($_POST['Element_OphTrOperationbooking_Operation']['total_duration_procs'])) {
+			$this->total_duration = $_POST['Element_OphTrOperationbooking_Operation']['total_duration_procs'];
+		}
+
 		return parent::beforeSave();
 	}
 
