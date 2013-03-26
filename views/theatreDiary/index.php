@@ -123,10 +123,12 @@
 		<div id="theatreList"></div>
 		<div class="printable" id="printable"></div>
 	</div>
+	<?php if($this->canPrint()) { ?>
 	<div style="text-align:right; margin-right:10px;">
 		<button type="submit" class="classy blue tall diaryViewMode" id="btn_print_diary"><span class="button-span button-span-blue">Print</span></button>
 		<button type="submit" class="classy blue tall diaryViewMode" id="btn_print_diary_list"><span class="button-span button-span-blue">Print list</span></button>
 	</div>
+	<?php } ?>
 </div>
 <div id="iframeprintholder" style="display: none;"></div>
 <script type="text/javascript">

@@ -22,9 +22,13 @@
 <div class="fullWidth fullBox clearfix">
 	<div id="waitinglist_display">
 		<h3>TCIs for today onwards.</h3>
+		<?php if($this->canPrint()) { ?>
 		<button type="submit" class="classy blue venti btn_transport_download" style="margin-right: 10px; margin-top: 20px; margin-bottom: 20px; float: right; z-index: 1"><span class="button-span button-span-blue">Download CSV</span></button>
 		<button type="submit" class="classy blue tall btn_transport_print" style="margin-right: 10px; margin-top: 20px; margin-bottom: 20px; float: right; z-index: 1"><span class="button-span button-span-blue">Print list</span></button>
+		<?php } ?>
+		<?php if(BaseController::checkUserLevel(3)) { ?>
 		<button type="submit" class="classy blue tall btn_transport_confirm" style="margin-right: 10px; margin-top: 20px; margin-bottom: 20px; float: right; z-index: 1"><span class="button-span button-span-blue">Confirm</span></button>
+		<?php } ?>
 
 		<div id="searchResults" class="whiteBox">
 			<form id="transport_form" method="post" action="<?php echo Yii::app()->createUrl('/OphTrOperationbooking/transport/index')?>">
@@ -77,8 +81,12 @@
 				<?php echo $this->renderPartial('/transport/_list_header')?>
 			</div>
 		</div>
+		<?php if($this->canPrint()) { ?>
 		<button type="submit" class="classy blue venti btn_transport_download" style="margin-right: 10px; margin-top: 20px; margin-bottom: 20px; float: right;"><span class="button-span button-span-blue">Download CSV</span></button>
 		<button type="submit" class="classy blue tall btn_transport_print" style="margin-right: 10px; margin-top: 20px; margin-bottom: 20px; float: right;"><span class="button-span button-span-blue">Print list</span></button>
+		<?php } ?>
+		<?php if(BaseController::checkUserLevel(3)) { ?>
 		<button type="submit" class="classy blue tall btn_transport_confirm" style="margin-right: 10px; margin-top: 20px; margin-bottom: 20px; float: right;"><span class="button-span button-span-blue">Confirm</span></button>
+		<?php } ?>
 	</div>
 </div>

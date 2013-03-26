@@ -26,9 +26,11 @@
 		<img id="loader_<?php echo $id?>" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="margin-right: 5px; margin-bottom: 4px; display: none;" />
 		<div class="session_options diaryViewMode" data-id="<?php echo $id?>">
 			<span class="aBtn_inactive">View</span>
+			<?php if(BaseController::checkUserLevel(3)) { ?>
 			<span class="aBtn edit-event">
 				<a href="#" rel="<?php echo $id?>" class="edit-session">Edit</a>
 			</span>
+			<?php } ?>
 		</div>
 		<div class="session_options diaryEditMode" data-id="<?php echo $id?>" style="display: none;">
 			<span class="aBtn view-event">
