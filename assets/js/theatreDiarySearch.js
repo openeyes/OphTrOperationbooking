@@ -134,7 +134,7 @@ $(document).ready(function() {
 		$('#date-start').datepicker('option','maxDate',$('#date-end').datepicker('getDate'));
 	});
 
-	$('select').change(function() {
+	$('#theatre_display #search-options select').change(function() {
 		var hash = {};
 		hash[$(this).attr('id')] = $(this).val();
 		setDiaryFilter(hash);
