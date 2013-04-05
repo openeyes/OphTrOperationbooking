@@ -152,9 +152,9 @@
 <?php }?>
 
 <?php
-if ($element->status->name != 'Cancelled' && $this->event->editable) {
+if (BaseController::checkUserLevel(3) && $element->status->name != 'Cancelled' && $this->event->editable) {
 	if (empty($element->booking)) {
-		if ($element->letterType) {
+		if ($element->letterType && $this->canPrint()) {
 			$print_letter_options = null;
 			if (!$element->has_gp || !$element->has_address) {
 				$print_letter_options['disabled'] = true;
@@ -166,11 +166,13 @@ if ($element->status->name != 'Cancelled' && $this->event->editable) {
 			array('colour' => 'green'),
 			array('id' => 'btn_schedule-now'));
 	} else {
-		$print_letter_options = null;
-		if (!$element->has_address) {
-			$print_letter_options['disabled'] = true;
+		if($this->canPrint()) {
+			$print_letter_options = null;
+			if (!$element->has_address) {
+				$print_letter_options['disabled'] = true;
+			}
+			$this->event_actions[] = EventAction::button("Print letter", 'print-letter', $print_letter_options, array('id' => 'btn_print-admissionletter'));
 		}
-		$this->event_actions[] = EventAction::button("Print letter", 'print-letter', $print_letter_options, array('id' => 'btn_print-admissionletter'));
 		$this->event_actions[] = EventAction::link("Reschedule now",
 			Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/reschedule/'.$element->event_id),
 			array('colour' => 'green'),

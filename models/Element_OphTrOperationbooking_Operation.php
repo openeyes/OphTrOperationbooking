@@ -90,6 +90,7 @@
 			// will receive user inputs.
 			return array(
 				array('event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments, anaesthetist_required, total_duration, status_id, cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id', 'safe'),
+				array('eye_id', 'matchDiagnosisEye'),
 				array('eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
@@ -1180,6 +1181,20 @@
 		return in_array($last_letter,array(
 			Element_OphTrOperationbooking_Operation::LETTER_GP
 		));
+	}
+
+	public function matchDiagnosisEye() {
+		if (isset($_POST['Element_OphTrOperationbooking_Diagnosis']['eye_id']) &&
+			isset($_POST['Element_OphTrOperationbooking_Operation']['eye_id'])
+		) {
+			$diagnosis = $_POST['Element_OphTrOperationbooking_Diagnosis']['eye_id'];
+			$operation = $_POST['Element_OphTrOperationbooking_Operation']['eye_id'];
+			if ($diagnosis != 3 &&
+				$diagnosis != $operation
+			) {
+				$this->addError('eye_id', 'Operation eye must match diagnosis eye!');
+			}
+		}
 	}
 }
 ?>

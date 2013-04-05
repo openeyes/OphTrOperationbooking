@@ -24,6 +24,16 @@ class BookingController extends BaseEventTypeController {
 		'js/additional-validators.js',
 	);
 
+	public function accessRules() {
+		return array(
+			// Level 3 or above can do anything
+			array('allow',
+				'expression' => 'BaseController::checkUserLevel(3)',
+			),
+			array('deny'),
+		);
+	}
+	
 	public function actionSchedule($id) {
 		if (!$event = Event::model()->findByPk($id)) {
 			throw new Exception('Unable to find event: '.$id);

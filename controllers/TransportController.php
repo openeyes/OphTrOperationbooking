@@ -29,20 +29,21 @@ class TransportController extends BaseEventTypeController
 		'js/additional-validators.js',
 	);
 
-	public function filters()
-	{
-		return array('accessControl');
-	}
-
-	public function accessRules()
-	{
+	public function accessRules() {
 		return array(
-			array('allow', 'users'=>array('@')),
-			// non-logged in can't view anything
-			array('deny', 'users'=>array('?')),
+			// Level 2 or below can't change anything
+			array('deny',
+				'actions' => array('confirm', 'print', 'printlist'),
+				'expression' => '!BaseController::checkUserLevel(3)',
+			),
+			// Level 2 or above can do anything else
+			array('allow',
+				'expression' => 'BaseController::checkUserLevel(2)',
+			),
+			array('deny'),
 		);
 	}
-
+	
 	public function actionIndex()
 	{
 		!isset($_GET['include_bookings']) and $_GET['include_bookings'] = 1;

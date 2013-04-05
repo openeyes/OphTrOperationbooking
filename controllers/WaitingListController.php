@@ -18,11 +18,27 @@
  */
 
 class WaitingListController extends BaseEventTypeController {
+	
 	public $js = array(
 		'js/jquery.validate.min.js',
 		'js/additional-validators.js',
 	);
 
+	public function accessRules() {
+		return array(
+			// Level 2 or below can't change anything
+			array('deny',
+				'actions' => array('confirmprinted', 'printletters'),
+				'expression' => '!BaseController::checkUserLevel(3)',
+			),
+			// Level 2 or above can do anything else
+			array('allow',
+				'expression' => 'BaseController::checkUserLevel(2)',
+			),
+			array('deny'),
+		);
+	}
+	
 	public function printActions() {
 		return array(
 			'printLetters',
