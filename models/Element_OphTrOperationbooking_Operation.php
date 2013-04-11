@@ -660,13 +660,13 @@
 		$results = array();
 
 		if($session->sequence_id == 328 // Allan Bruce (External) Saturday, CR9
-				&& $ward = Ward::model()->find('code = ?', array('CL4'))) {
+				&& $ward = OphTrOperationbooking_Operation_Ward::model()->find('code = ?', array('CL4'))) {
 			// FIXME: ANOTHER TEMPORARY FIX FOR THEATRE 9 AND NEW WARD (CL4)
 			$results[$ward->id] = $ward->name;
 		} else if($session->theatre->code == 'CR9'
 				&& strtotime($session->date) >= strtotime('2013-04-08')
 				&& strtotime($session->date) <= strtotime('2013-06-02')
-				&& $ward = Ward::model()->find('code = ?', array('OW4'))) {
+				&& $ward = OphTrOperationbooking_Operation_Ward::model()->find('code = ?', array('OW4'))) {
 			// FIXME: TEMPORARY FIX FOR THEATRE 9 MAINTAINANCE (USING OW4 INSTEAD)
 			$results[$ward->id] = $ward->name;
 		} else if (!empty($theatreId)) {
