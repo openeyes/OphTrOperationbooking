@@ -649,15 +649,28 @@
 		return $results;
 	}
 
-	public function getWardOptions($siteId, $theatreId = null) {
-		if (!$site = Site::model()->findByPk($siteId)) {
-			throw new Exception('Invalid site id');
+	public function getWardOptions($session) {
+		if (!$session || !$session->id) {
+			throw new Exception('Session is required.');
 		}
-
+		
+		$siteId = $session->theatre->site_id;
+		$theatreId = $session->theatre_id;
+		
 		$results = array();
 
-		if (!empty($theatreId)) {
-			if ($ward = OphTrOperationbooking_Operation_Ward::model()->find('theatre_id=?',array($theatreId))) {
+		if($session->sequence_id == 328 // Allan Bruce (External) Saturday, CR9
+				&& $ward = Ward::model()->find('code = ?', array('CL4'))) {
+			// FIXME: ANOTHER TEMPORARY FIX FOR THEATRE 9 AND NEW WARD (CL4)
+			$results[$ward->id] = $ward->name;
+		} else if($session->theatre->code == 'CR9'
+				&& strtotime($session->date) >= strtotime('2013-04-08')
+				&& strtotime($session->date) <= strtotime('2013-06-02')
+				&& $ward = Ward::model()->find('code = ?', array('OW4'))) {
+			// FIXME: TEMPORARY FIX FOR THEATRE 9 MAINTAINANCE (USING OW4 INSTEAD)
+			$results[$ward->id] = $ward->name;
+		} else if (!empty($theatreId)) {
+					if ($ward = OphTrOperationbooking_Operation_Ward::model()->find('theatre_id=?',array($theatreId))) {
 				$results[$ward->id] = $ward->name;
 			}
 		}
@@ -905,7 +918,7 @@
 			$booking->{'session_'.$field} = $booking->session->$field;
 		}
 
-		$booking->ward_id = key($this->getWardOptions($session->theatre->site_id, $session->theatre_id));
+		$booking->ward_id = key($this->getWardOptions($session));
 
 		$criteria = new CDbCriteria;
 		$criteria->compare('session_id',$session->id);
