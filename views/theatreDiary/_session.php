@@ -135,7 +135,7 @@
 							<?php if (!$booking['comments'] && preg_match('/\w/', $booking['comments'])) {?>
 								<img src="<?php echo $assetPath?>/img/diaryIcons/comment.png" alt="<?php echo htmlentities($booking['comments']) ?>" title="<?php echo htmlentities($booking['comments']) ?>" width="17" height="17" />
 							<?php }?>
-							<?php if (!$booking['overnight_stay']) {?>
+							<?php if ($booking['overnight_stay']) {?>
 								<img src="<?php echo $assetPath?>/img/diaryIcons/overnight.png" alt="Overnight stay required" title="Overnight stay required" width="17" height="17" />
 							<?php }?>
 							<?php if (!$booking['consultant_required']) {?>
