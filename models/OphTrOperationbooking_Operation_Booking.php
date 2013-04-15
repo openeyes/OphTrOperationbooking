@@ -222,5 +222,15 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecord
 
 		return $return;
 	}
+
+	protected function afterValidate() {
+		if (preg_match('/^([0-9]{1,2}).*?([0-9]{2})$/',$this->admission_time,$m)) {
+			if ((integer)$m[1] > 23 || (integer)$m[2] > 59) {
+				$this->addError('admission_time','Please enter a valid admission time in the 24-hour clock format');
+			}
+		}
+
+		return parent::afterValidate();
+	}
 }
 ?>
