@@ -87,6 +87,8 @@ class TheatreDiaryController extends BaseEventTypeController
 			Audit::add('diary','search',serialize($_POST));
 		}
 
+		$this->jsVars['NHSDateFormat'] = Helper::NHS_DATE_FORMAT;
+
 		$this->render('index', array('wards'=>$wards, 'theatres'=>$theatres));
 	}
 
