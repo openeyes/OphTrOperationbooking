@@ -187,6 +187,7 @@
 		if($episode && $episode->diagnosis) {
 			$this->eye_id = $episode->eye_id;
 		}
+		$this->site_id = Yii::app()->session['selected_site_id'];
 	}
 
 	public function getproc_defaults() {
