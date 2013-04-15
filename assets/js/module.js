@@ -164,6 +164,15 @@ $(document).ready(function() {
 			overrideElementCSS:['css/style.css',{href:'css/style.css',media:'print'}]
 		});
 	});
+
+	$('input[name="Element_OphTrOperationbooking_Diagnosis[eye_id]"]').change(function() {
+		if ($(this).val() == 2) {
+			$('#Element_OphTrOperationbooking_Operation_eye_id_2').click();
+		}
+		if ($(this).val() == 1) {
+			$('#Element_OphTrOperationbooking_Operation_eye_id_1').click();
+		}
+	});
 });
 
 function printElem(method,options){
