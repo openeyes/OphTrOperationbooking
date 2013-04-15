@@ -91,6 +91,7 @@
 			return array(
 				array('event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments, anaesthetist_required, total_duration, status_id, cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id', 'safe'),
 				array('eye_id', 'matchDiagnosisEye'),
+				array('cancellation_comment', 'length', 'max' => 200),
 				array('eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
@@ -260,15 +261,19 @@
 		}
 
 		if ($this->booking) {
-			if (@$_POST['Element_OphTrOperationbooking_Operation']['consultant_required'] && !$this->booking->session->consultant) {
-				$this->addError('consultant', 'The booked session does not have a consultant present, you must change the session or cancel the booking before making this change');
+			if (isset($_POST['Element_OphTrOperationbooking_Operation']['consultant_required'])) {
+				if ($_POST['Element_OphTrOperationbooking_Operation']['consultant_required'] && !$this->booking->session->consultant) {
+					$this->addError('consultant', 'The booked session does not have a consultant present, you must change the session or cancel the booking before making this change');
+				}
 			}
-			$anaesthetic = AnaestheticType::model()->findByPk($_POST['Element_OphTrOperationbooking_Operation']['anaesthetic_type_id'])->name;
-			if (in_array($anaesthetic,array('LAC','LAS','GA')) && !$this->booking->session->anaesthetist) {
-				$this->addError('anaesthetist', 'The booked session does not have an anaesthetist present, you must change the session or cancel the booking before making this change');
-			}
-			if ($anaesthetic == 'GA' && !$this->booking->session->general_anaesthetic) {
-				$this->addError('ga','General anaesthetic is not available for the booked session, you must change the session or cancel the booking before making this change');
+			if (isset($_POST['Element_OphTrOperationbooking_Operation']['anaesthetic_type_id'])) {
+				$anaesthetic = AnaestheticType::model()->findByPk($_POST['Element_OphTrOperationbooking_Operation']['anaesthetic_type_id'])->name;
+				if (in_array($anaesthetic,array('LAC','LAS','GA')) && !$this->booking->session->anaesthetist) {
+					$this->addError('anaesthetist', 'The booked session does not have an anaesthetist present, you must change the session or cancel the booking before making this change');
+				}
+				if ($anaesthetic == 'GA' && !$this->booking->session->general_anaesthetic) {
+					$this->addError('ga','General anaesthetic is not available for the booked session, you must change the session or cancel the booking before making this change');
+				}
 			}
 		}
 
