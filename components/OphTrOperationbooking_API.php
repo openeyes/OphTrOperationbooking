@@ -34,8 +34,13 @@ class OphTrOperationbooking_API extends BaseAPI {
 			->findAll($criteria);
 	}
 
-	/* Gets 'open' bookings for the specified episode
-	 * A booking is deemed open if it has no operation note linked to it */
+	/**
+	 *  Gets 'open' bookings for the specified episode
+	 * A booking is deemed open if it has no operation note linked to it
+	 * 
+	 *  @params integer $episode_id
+	 *  @return OphTrOperationbooking_Operation_Booking[]
+	 */
 	public function getOpenBookingsForEpisode($episode_id) {
 		$criteria = new CDbCriteria;
 		$criteria->order = 'datetime asc';
@@ -105,27 +110,39 @@ class OphTrOperationbooking_API extends BaseAPI {
 
 		return $operation->eye;
 	}
+	
+	/**
+	 * Get the most recent booking for the patient in the given episode
+	 * 
+	 * @param Patient $patient
+	 * @param Episode $episode
+	 * @return OphTrOperationbooking_Operation_Booking
+	 */
+	public function getMostRecentBookingForEpisode($patient, $episode) {
+		$criteria = new CDbCriteria;
+		$criteria->compare('episode_id', $episode->id);
+		$criteria->order = 'datetime desc';
 
-	public function getMostRecentBookingForCurrentEpisode($patient) {
-		if ($episode = $patient->getEpisodeForCurrentSubspecialty()) {
-			$criteria = new CDbCriteria;
-			$criteria->compare('episode_id', $episode->id);
-			$criteria->order = 'datetime desc';
-
-			return OphTrOperationbooking_Operation_Booking::model()
-				->with(array(
-					'operation' => array(
-						'with' => 'event'
-					),
-				))
-				->find($criteria);
-		}
+		return OphTrOperationbooking_Operation_Booking::model()
+			->with(array(
+				'operation' => array(
+					'with' => 'event'
+				),
+			))
+			->find($criteria);
 	}
 
-	public function getLetterProcedures($patient) {
+	/**
+	 * get the procedures for this patient and episode as a string for use in correspondence
+	 * 
+	 * @param Patient $patient
+	 * @param Episode $episode
+	 * @return string
+	 */
+	public function getLetterProcedures($patient, $episode) {
 		$return = '';
 
-		if ($operation = $this->getElementForLatestEventInEpisode($patient,'Element_OphTrOperationbooking_Operation')) {
+		if ($operation = $this->getElementForLatestEventInEpisode($patient, $episode, 'Element_OphTrOperationbooking_Operation')) {
 			foreach ($operation->procedures as $i => $procedure) {
 				if ($i) $return .= ', ';
 				$return .= $operation->eye->adjective.' '.$procedure->term;
