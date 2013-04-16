@@ -166,11 +166,20 @@ $(document).ready(function() {
 	});
 
 	$('input[name="Element_OphTrOperationbooking_Diagnosis[eye_id]"]').change(function() {
-		if ($(this).val() == 2) {
-			$('#Element_OphTrOperationbooking_Operation_eye_id_2').click();
-		}
-		if ($(this).val() == 1) {
-			$('#Element_OphTrOperationbooking_Operation_eye_id_1').click();
+		switch (parseInt($(this).val())) {
+			case 2:
+				$('#Element_OphTrOperationbooking_Operation_eye_id_2').click();
+				break;
+			case 1:
+				$('#Element_OphTrOperationbooking_Operation_eye_id_1').click();
+				break;
+			case 3:
+				if (!$('#Element_OphTrOperationbooking_Operation_eye_id_3').is(':checked')) {
+					$('#Element_OphTrOperationbooking_Operation_eye_id_2').attr('checked',false);
+					$('#Element_OphTrOperationbooking_Operation_eye_id_1').attr('checked',false);
+					$('#Element_OphTrOperationbooking_Operation_eye_id_3').attr('checked',false);
+				}
+				break;
 		}
 	});
 });
