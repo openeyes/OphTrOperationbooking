@@ -46,7 +46,7 @@
 			Address
 		</th>
 		<td rowspan="2">
-			<?php echo $patient->correspondAddress->letterhtml?>
+			<?php echo $patient->getLetterAddress(array('delimiter'=>'<br/>'))?>
 		</td>
 	</tr>
 

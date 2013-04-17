@@ -100,7 +100,7 @@
 						<td><?php echo ucfirst(preg_replace('/^Requires /','',$eo->status->name)) ?></td>
 						<td<?php if ($tablecolour == 'White' && Yii::app()->user->checkAccess('admin')) { ?> class="admin-td"<?php } ?>>
 
-							<?php if(($patient && $patient->address) && $operation['eoid'] && ($eo->getDueLetter() != Element_OphTrOperationbooking_Operation::LETTER_GP || ($eo->getDueLetter() == Element_OphTrOperationbooking_Operation::LETTER_GP && $operation['practice_id']))) { ?>
+							<?php if(($patient && $patient->contact->address) && $operation['eoid'] && ($eo->getDueLetter() != Element_OphTrOperationbooking_Operation::LETTER_GP || ($eo->getDueLetter() == Element_OphTrOperationbooking_Operation::LETTER_GP && $operation['practice_id']))) { ?>
 							<div>	
 								<input<?php if ($tablecolour == 'White' && !Yii::app()->user->checkAccess('admin')) { ?> disabled="disabled"<?php } ?> type="checkbox" id="operation<?php echo $operation['eoid']?>" value="1" />
 							</div>
@@ -114,7 +114,7 @@
 								<span class="no-GP">No GP</span>
 							<?php } ?>
 							
-							<?php if($patient && !$patient->address){ ?>
+							<?php if($patient && !$patient->contact->address){ ?>
 								<script type="text/javascript">
 									$('#pas_warnings').show();
 									$('#pas_warnings .no_address').show();

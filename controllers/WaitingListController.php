@@ -112,7 +112,7 @@ class WaitingListController extends BaseEventTypeController {
 			->join("firm f","ep.firm_id = f.id")
 			->join("service_subspecialty_assignment ssa","f.service_subspecialty_assignment_id = ssa.id")
 			->join("patient pat","ep.patient_id = pat.id")
-			->join("contact co","co.parent_id = pat.id AND co.parent_class = 'Patient'")
+			->join("contact co","pat.contact_id = co.id")
 			->join("ophtroperationbooking_operation_procedures_procedures opa","opa.element_id = eo.id")
 			->join("proc p","opa.proc_id = p.id")
 			->leftJoin("address pad","pad.parent_id = pat.practice_id AND pad.parent_class = 'Practice'")
@@ -245,7 +245,7 @@ class WaitingListController extends BaseEventTypeController {
 			$waitingListContact = $operation->waitingListContact;
 			
 			// Don't print GP letter if practice address is not defined
-			if ($letter_status != Element_OphTrOperationbooking_Operation::LETTER_GP || ($patient->practice && $patient->practice->address)) {
+			if ($letter_status != Element_OphTrOperationbooking_Operation::LETTER_GP || ($patient->practice && $patient->practice->contact->address)) {
 				Yii::log("Printing letter: ".$letter_template, 'trace');
 
 				call_user_func(array($this, 'print_'.$letter_template), $pdf_print, $operation);
@@ -270,7 +270,10 @@ class WaitingListController extends BaseEventTypeController {
 	 * @return string
 	 */
 	protected function getFromAddress($operation) {
-		$from_address = implode("\n",$operation->site->getLetterArray(false,false));
+		$from_address = $operation->site->getLetterAddress(array(
+			'include_name' => true,
+			'delimiter' => "\n",
+		));
 		$from_address .= "\nTel: " . $operation->site->telephone;
 		if ($operation->site->fax) {
 			$from_address .= "\nFax: " . $operation->site->fax;
@@ -284,7 +287,10 @@ class WaitingListController extends BaseEventTypeController {
 	 */
 	protected function print_admission_form($pdf, $operation) {
 		$patient = $operation->event->episode->patient;
-		$to_address = $patient->addressname . "\n" . implode("\n", $patient->correspondAddress->getLetterArray());
+		$to_address = $patient->getLetterAddress(array(
+			'include_name' => true,
+			'delimiter' => "\n",
+		));
 		$site = $operation->site;
 		$firm = $operation->event->episode->firm;
 		$body = $this->render('../letters/admission_form', array(
@@ -307,7 +313,10 @@ class WaitingListController extends BaseEventTypeController {
 	 */
 	protected function print_invitation_letter($pdf, $operation) {
 		$patient = $operation->event->episode->patient;
-		$to_address = $patient->addressname . "\n" . implode("\n", $patient->correspondAddress->getLetterArray());
+		$to_address = $patient->getLetterAddress(array(
+			'include_name' => true,
+			'delimiter' => "\n",
+		));
 		$body = $this->render('../letters/invitation_letter', array(
 				'to' => $patient->salutationname,
 				'consultantName' => $operation->event->episode->firm->consultant->fullName,
@@ -326,7 +335,10 @@ class WaitingListController extends BaseEventTypeController {
 	 */
 	protected function print_reminder_letter($pdf, $operation) {
 		$patient = $operation->event->episode->patient;
-		$to_address = $patient->addressname . "\n" . implode("\n", $patient->correspondAddress->getLetterArray());
+		$to_address = $patient->getLetterAddress(array(
+			'include_name' => true,
+			'delimiter' => "\n",
+		));
 		$body = $this->render('../letters/reminder_letter', array(
 				'to' => $patient->salutationname,
 				'consultantName' => $operation->event->episode->firm->consultant->fullName,
@@ -354,7 +366,7 @@ class WaitingListController extends BaseEventTypeController {
 			$to_name = Gp::UNKNOWN_NAME;
 			$salutation = Gp::UNKNOWN_SALUTATION;
 		}
-		if ($patient->practice && $practice_address = $patient->practice->address) {
+		if ($patient->practice && $practice_address = $patient->practice->contact->address) {
 			$to_address = $to_name . "\n" . implode("\n",$practice_address->getLetterArray());
 		} else {
 			throw new CException('Patient has no practice address');
@@ -369,7 +381,10 @@ class WaitingListController extends BaseEventTypeController {
 		$pdf->addLetter($letter);
 
 		// Patient letter
-		$to_address = $patient->addressname . "\n" . implode("\n", $patient->correspondAddress->getLetterArray());
+		$to_address = $patient->getLetterAddress(array(
+			'include_name' => true,
+			'delimiter' => "\n",
+		));
 		$body = $this->render('../letters/gp_letter_patient', array(
 				'to' => $patient->salutationname,
 				'patient' => $patient,
