@@ -101,7 +101,7 @@ class WaitingListController extends BaseEventTypeController {
 		if ($firm_id) {
 			$whereSql .= ' AND f.id = :firm_id';
 			$whereParams[":firm_id"] = $firm_id;
-		} elseif (!empty($subspecialtyId)) {
+		} elseif (!empty($subspecialty_id)) {
 			$whereSql .= ' AND ssa.subspecialty_id = :subspecialty_id';
 			$whereParams[":subspecialty_id"] = $subspecialty_id;
 		}
