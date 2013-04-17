@@ -116,6 +116,7 @@ $(document).ready(function() {
 
 					if (first) {
 						alert("One or more admission times were entered incorrectly, please correct the entries highlighted in red.");
+						enableButtons();
 						return false;
 					}
 
