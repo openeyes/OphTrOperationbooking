@@ -128,11 +128,19 @@ $(document).ready(function() {
 
 					$('div.comments_ro[data-id="'+session_id+'"]').text($('textarea[name="comments_'+session_id+'"]').val());
 
-					$('#available_'+session_id).is(':checked') ? $('#session_unavailable_'+session_id).hide() : $('#session_unavailable_'+session_id).show();
-					$('#consultant_'+session_id).is(':checked') ? $('#consultant_icon_'+session_id).show() : $('#consultant_icon_'+session_id).hide();
-					$('#anaesthetist_'+session_id).is(':checked') ? $('#anaesthetist_icon_'+session_id).show() : $('#anaesthetist_icon_'+session_id).hide();
-					$('#anaesthetist_icon_'+session_id).html($('#general_anaesthetic_'+session_id).is(':checked') ? 'Anaesthetist (GA)' : 'Anaesthetist');
-					$('#paediatric_'+session_id).is(':checked') ? $('#paediatric_icon_'+session_id).show() : $('#paediatric_icon_'+session_id).hide();
+					function checkedOrOne(field) {
+						if($(field).prop('type') == 'checkbox') {
+							return $(field).is(':checked');
+						} else if($(field).prop('type') == 'hidden') {
+							return ($(field).val() == 1);
+						}
+					}
+					
+					checkedOrOne($('#available_'+session_id)) ? $('#session_unavailable_'+session_id).hide() : $('#session_unavailable_'+session_id).show();
+					checkedOrOne($('#consultant_'+session_id)) ? $('#consultant_icon_'+session_id).show() : $('#consultant_icon_'+session_id).hide();
+					checkedOrOne($('#anaesthetist_'+session_id)) ? $('#anaesthetist_icon_'+session_id).show() : $('#anaesthetist_icon_'+session_id).hide();
+					$('#anaesthetist_icon_'+session_id).html(checkedOrOne($('#general_anaesthetic_'+session_id)) ? 'Anaesthetist (GA)' : 'Anaesthetist');
+					checkedOrOne($('#paediatric_'+session_id)) ? $('#paediatric_icon_'+session_id).show() : $('#paediatric_icon_'+session_id).hide();
 
 					cancel_edit(true);
 					$('#infoBox_'+session_id).show();
