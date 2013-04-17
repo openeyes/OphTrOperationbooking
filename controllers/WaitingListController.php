@@ -115,7 +115,9 @@ class WaitingListController extends BaseEventTypeController {
 			->join("contact co","pat.contact_id = co.id")
 			->join("ophtroperationbooking_operation_procedures_procedures opa","opa.element_id = eo.id")
 			->join("proc p","opa.proc_id = p.id")
-			->leftJoin("address pad","pad.parent_id = pat.practice_id AND pad.parent_class = 'Practice'")
+			->leftJoin("practice pra","pra.id = pat.practice_id")
+			->leftJoin("contact prac","pra.contact_id = prac.id")
+			->leftJoin("address pad","pad.parent_id = prac.id AND pad.parent_class = 'Contact'")
 			->where("ep.end_date IS NULL and eo.status_id in (1,3) $whereSql and ev.deleted = 0 group by opa.element_id",$whereParams)
 			->order("decision_date asc")
 			->queryAll();
