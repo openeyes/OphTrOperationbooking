@@ -131,7 +131,7 @@
 	public function getProcedureList() {
 		$procedures = array();
 		foreach($this->procedures as $procedure) {
-			$return[] = $procedure->short_format;
+			$procedures[] = $procedure->short_format;
 		}
 		return implode(',', $procedures);
 	}

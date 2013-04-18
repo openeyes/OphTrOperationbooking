@@ -135,6 +135,7 @@ class WaitingListController extends BaseEventTypeController {
 					'priority',
 					'status',
 					'date_letter_sent',
+					'procedures'
 				)
 			)->findAll(array(
 					'condition' => 'episode.end_date IS NULL AND t.status_id IN (1,3) '.$whereSql,
