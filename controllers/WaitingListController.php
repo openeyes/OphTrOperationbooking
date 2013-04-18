@@ -99,10 +99,10 @@ class WaitingListController extends BaseEventTypeController {
 		$whereParams = array();
 
 		if ($firm_id) {
-			$whereSql .= ' AND f.id = :firm_id';
+			$whereSql .= ' AND firm.id = :firm_id';
 			$whereParams[":firm_id"] = $firm_id;
-		} elseif (!empty($subspecialtyId)) {
-			$whereSql .= ' AND ssa.subspecialty_id = :subspecialty_id';
+		} elseif (!empty($subspecialty_id)) {
+			$whereSql .= ' AND serviceSubspecialtyAssignment.subspecialty_id = :subspecialty_id';
 			$whereParams[":subspecialty_id"] = $subspecialty_id;
 		}
 
@@ -110,31 +110,38 @@ class WaitingListController extends BaseEventTypeController {
 			if (Yii::app()->params['pad_hos_num']) {
 				$hos_num = sprintf(Yii::app()->params['pad_hos_num'],$hos_num);
 			}
-			$whereSql .= " AND pat.hos_num = :hos_num";
+			$whereSql .= " AND patient.hos_num = :hos_num";
 			$whereParams[":hos_num"] = $hos_num;
 		}
 
 		if ($site_id && ctype_digit($site_id)) {
-			$whereSql .= " AND eo.site_id = :site_id";
+			$whereSql .= " AND t.site_id = :site_id";
 			$whereParams[":site_id"] = $site_id;
 		}
 
-		return Yii::app()->db->createCommand()
-			->select("eo.id AS eoid, eo.decision_date as decision_date, ev.id AS evid, ep.id AS epid, pat.id AS pid, co.first_name, co.last_name, pat.hos_num, pat.gp_id,
-				pat.practice_id, pad.id AS practice_address_id, GROUP_CONCAT(p.short_format SEPARATOR \", \") AS List")
-			->from("et_ophtroperationbooking_operation eo")
-			->join("event ev","eo.event_id = ev.id")
-			->join("episode ep","ev.episode_id = ep.id")
-			->join("firm f","ep.firm_id = f.id")
-			->join("service_subspecialty_assignment ssa","f.service_subspecialty_assignment_id = ssa.id")
-			->join("patient pat","ep.patient_id = pat.id")
-			->join("contact co","co.parent_id = pat.id AND co.parent_class = 'Patient'")
-			->join("ophtroperationbooking_operation_procedures_procedures opa","opa.element_id = eo.id")
-			->join("proc p","opa.proc_id = p.id")
-			->leftJoin("address pad","pad.parent_id = pat.practice_id AND pad.parent_class = 'Practice'")
-			->where("ep.end_date IS NULL and eo.status_id in (1,3) $whereSql and ev.deleted = 0 group by opa.element_id",$whereParams)
-			->order("decision_date asc")
-			->queryAll();
+		return Element_OphTrOperationbooking_Operation::model()
+			->with(array(
+					'event',
+					'event.episode',
+					'event.episode.firm',
+					'event.episode.firm.serviceSubspecialtyAssignment',
+					'event.episode.firm.serviceSubspecialtyAssignment.subspecialty',
+					'event.episode.patient',
+					'event.episode.patient.contact',
+					'event.episode.patient.practice',
+					'event.episode.patient.address',
+					'site',
+					'eye',
+					'priority',
+					'status',
+					'date_letter_sent',
+				)
+			)->findAll(array(
+					'condition' => 'episode.end_date IS NULL AND t.status_id IN (1,3) '.$whereSql,
+					'params' => $whereParams,
+					'order' => 'decision_date asc',
+				)
+			);
 	}
 
 	/**

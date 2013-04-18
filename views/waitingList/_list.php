@@ -46,13 +46,9 @@
 			<?php }else{?>
 				<?php
 				$i = 0;
-				foreach ($operations as $id => $operation) {
-					$eo = Element_OphTrOperationbooking_Operation::model()->findByPk($operation['eoid']);
-					
-					$patient = NULL;
-					if(isset($operation['pid'])){
-						$patient = Patient::model()->noPas()->findByPk($operation['pid']);
-					}
+				foreach ($operations as $eo) {
+					$patient = $eo->event->episode->patient;
+					$contact = $patient->contact;
 					if (isset($_POST['status']) and $_POST['status'] != '') {
 						if ($eo->getNextLetter() != $_POST['status']) {
 							continue;
@@ -88,11 +84,11 @@
 							<?php }?>
 						</td>
 						<td class="patient">
-							<?php echo CHtml::link("<strong>" . trim(strtoupper($operation['last_name'])) . '</strong>, ' . $operation['first_name'], Yii::app()->createUrl('/OphTrOperationbooking/default/view/'.$operation['evid']))?>
+							<?php echo CHtml::link("<strong>" . trim(strtoupper($contact->last_name)) . '</strong>, ' . $contact->first_name, Yii::app()->createUrl('/OphTrOperationbooking/default/view/'.$eo->event_id))?>
 						</td>
-						<td><?php echo $operation['hos_num'] ?></td>
+						<td><?php echo $patient->hos_num ?></td>
 						<td><?php echo $eo->site->short_name?></td>
-						<td><?php echo $operation['List'] ?></td>
+						<td><?php echo $eo->getProcedureList() ?></td>
 						<td><?php echo $eo->eye->name ?></td>
 						<td><?php echo $eo->event->episode->firm->name ?> (<?php echo $eo->event->episode->firm->serviceSubspecialtyAssignment->subspecialty->name?>)</td>
 						<td><?php echo $eo->NHSDate('decision_date') ?></td>
@@ -100,13 +96,13 @@
 						<td><?php echo ucfirst(preg_replace('/^Requires /','',$eo->status->name)) ?></td>
 						<td<?php if ($tablecolour == 'White' && Yii::app()->user->checkAccess('admin')) { ?> class="admin-td"<?php } ?>>
 
-							<?php if(($patient && $patient->address) && $operation['eoid'] && ($eo->getDueLetter() != Element_OphTrOperationbooking_Operation::LETTER_GP || ($eo->getDueLetter() == Element_OphTrOperationbooking_Operation::LETTER_GP && $operation['practice_id']))) { ?>
+							<?php if(($patient && $patient->address) && $eo->id && ($eo->getDueLetter() != Element_OphTrOperationbooking_Operation::LETTER_GP || ($eo->getDueLetter() == Element_OphTrOperationbooking_Operation::LETTER_GP && $patient->practice_id))) { ?>
 							<div>	
-								<input<?php if ($tablecolour == 'White' && !Yii::app()->user->checkAccess('admin')) { ?> disabled="disabled"<?php } ?> type="checkbox" id="operation<?php echo $operation['eoid']?>" value="1" />
+								<input<?php if ($tablecolour == 'White' && !Yii::app()->user->checkAccess('admin')) { ?> disabled="disabled"<?php } ?> type="checkbox" id="operation<?php echo $eo->id ?>" value="1" />
 							</div>
 							<?php }?>
 							
-							<?php if(!$operation['practice_address_id'] ) { ?>
+							<?php if(!$patient->practice || !$patient->practice->address ) { ?>
 								<script type="text/javascript">
 									$('#pas_warnings').show();
 									$('#pas_warnings .no_gp').show();
@@ -114,7 +110,7 @@
 								<span class="no-GP">No GP</span>
 							<?php } ?>
 							
-							<?php if($patient && !$patient->address){ ?>
+							<?php if(!$patient->address){ ?>
 								<script type="text/javascript">
 									$('#pas_warnings').show();
 									$('#pas_warnings .no_address').show();
