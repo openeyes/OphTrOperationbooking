@@ -25,7 +25,7 @@
 	</div>
 
 	<div id="waitinglist_display">
-		<form method="post" action="<?php echo Yii::app()->createUrl('waitingList/search')?>" id="waitingList-filter">
+		<form method="post" action="<?php echo Yii::app()->createUrl('/OphTrOperationbooking/waitingList/search')?>" id="waitingList-filter">
 			<div id="search-options">
 				<div id="main-search" class="grid-view">
 					<h3>Search partial bookings waiting lists by:</h3>
@@ -44,7 +44,7 @@
 										array('empty'=>'All specialties', 'ajax'=>array(
 											'type'=>'POST',
 											'data'=>array('subspecialty_id'=>'js:this.value'),
-											'url'=>Yii::app()->createUrl('waitingList/filterFirms'),
+											'url'=>Yii::app()->createUrl('/OphTrOperationbooking/waitingList/filterFirms'),
 											'success'=>"js:function(data) {
 												if ($('#subspecialty-id').val() != '') {
 													$('#firm-id').attr('disabled', false);

@@ -99,7 +99,7 @@ class BookingController extends BaseEventTypeController {
 					if (($result = $operation->schedule($_POST['Booking'], $_POST['Operation']['comments'], $_POST['Session']['comments'], $this->reschedule)) !== true) {
 						$errors = $result;
 					} else {
-						$this->redirect(array('/OphTrOperationbooking/default/view/'.$operation->event_id));
+						$this->redirect(array('default/view/'.$operation->event_id));
 					}
 				} else {
 					$_POST['Booking']['admission_time'] = ($session['start_time'] == '13:30:00') ? '12:00' : date('H:i', strtotime('-1 hour', strtotime($session['start_time'])));
@@ -163,7 +163,7 @@ class BookingController extends BaseEventTypeController {
 				$booking->cancel($reason,$_POST['cancellation_comment'],false);
 				$operation->setStatus('Requires rescheduling');
 
-				$this->redirect(array('/OphTrOperationbooking/default/view/'.$event->id));
+				$this->redirect(array('default/view/'.$event->id));
 			}
 		}
 

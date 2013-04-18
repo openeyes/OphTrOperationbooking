@@ -82,6 +82,7 @@
 				<input type="hidden" id="consultant_<?php echo $id?>" name="consultant_<?php echo $id?>" value="<?php echo $session['consultant']?>" />
 				<input type="hidden" id="paediatric_<?php echo $id?>" name="paediatric_<?php echo $id?>" value="<?php echo $session['paediatric']?>" />
 				<input type="hidden" id="anaesthetist_<?php echo $id?>" name="anaesthetist_<?php echo $id?>" value="<?php echo $session['anaesthetist']?>" />
+				<input type="hidden" id="general_anaesthetic_<?php echo $id?>" name="general_anaesthetic_<?php echo $id?>" value="<?php echo $session['general_anaesthetic']?>" />
 				<input type="hidden" id="available_<?php echo $id?>" name="available_<?php echo $id?>" value="<?php echo $session['available']?>" />
 			<?php }?>
 			<div class="sessionComments" style="display:block; width:205px;">

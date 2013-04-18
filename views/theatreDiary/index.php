@@ -26,7 +26,7 @@
 	</div>
 
 	<div id="theatre_display">
-		<?php $this->beginWidget('CActiveForm', array('id'=>'theatre-filter', 'action'=>Yii::app()->createUrl('theatre/search'), 'enableAjaxValidation'=>false))?>
+		<?php $this->beginWidget('CActiveForm', array('id'=>'theatre-filter', 'action'=>Yii::app()->createUrl('/OphTrOperationbooking/theatre/search'), 'enableAjaxValidation'=>false))?>
 		<div id="search-options">
 			<div id="main-search" class="grid-view">
 				<h3>Search schedules by:</h3>
