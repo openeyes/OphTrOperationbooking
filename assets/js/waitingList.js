@@ -82,22 +82,23 @@ $(document).ready(function() {
 
 	$('#hos_num').focus();
 
-	if ($('#subspecialty-id').val() != '') {
-		var firm_id = $('#firm-id').val();
-
-		$.ajax({
-			url: baseUrl+'/OphTrOperationbooking/waitingList/filterFirms',
-			type: "POST",
-			data: "subspecialty_id="+$('#subspecialty-id').val(),
-			success: function(data) {
-				$('#firm-id').attr('disabled', false);
-				$('#firm-id').html(data);
-				$('#firm-id').val(firm_id);
-				$('#waitingList-filter button[type="submit"]').click();
-			}
-		});
-	} else {
-		$('#waitingList-filter button[type="submit"]').click();
+	if ($('#subspecialty-id').length) {
+		if ($('#subspecialty-id').val() != '') {
+			var firm_id = $('#firm-id').val();
+			$.ajax({
+				url: baseUrl+'/OphTrOperationbooking/waitingList/filterFirms',
+				type: "POST",
+				data: "subspecialty_id="+$('#subspecialty-id').val(),
+				success: function(data) {
+					$('#firm-id').attr('disabled', false);
+					$('#firm-id').html(data);
+					$('#firm-id').val(firm_id);
+					$('#waitingList-filter button[type="submit"]').click();
+				}
+			});
+		} else {
+			$('#waitingList-filter button[type="submit"]').click();
+		}
 	}
 
 	$('#firm-id').bind('change',function() {
