@@ -128,14 +128,6 @@
 		);
 	}
 
-	public function getProcedureList() {
-		$procedures = array();
-		foreach($this->procedures as $procedure) {
-			$procedures[] = $procedure->short_format;
-		}
-		return implode(',', $procedures);
-	}
-	
 	/**
 	 * @return array customized attribute labels (name=>label)
 	 */
@@ -1023,12 +1015,12 @@
 		}
 	}
 
-	public function getProceduresCommaSeparated() {
+	public function getProceduresCommaSeparated($field = 'term') {
 		$procedures = array();
 		foreach ($this->procedures as $procedure) {
-			$procedures[] = $procedure->term;
+			$procedures[] = $procedure->$field;
 		}
-		return empty($procedures) ? 'No procedures' : implode(', ',$procedures);
+		return empty($procedures) ? 'No procedures' : implode(', ', $procedures);
 	}
 
 	public function getRefuseContact() {

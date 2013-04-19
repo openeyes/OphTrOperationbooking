@@ -47,10 +47,6 @@
 				<?php
 				$i = 0;
 				foreach ($operations as $eo) {
-					if(!$eo->event) {
-						// Orphan element FIXME
-						continue;
-					}
 					$patient = $eo->event->episode->patient;
 					$contact = $patient->contact;
 					if (isset($_POST['status']) and $_POST['status'] != '') {
@@ -92,7 +88,7 @@
 						</td>
 						<td><?php echo $patient->hos_num ?></td>
 						<td><?php echo $eo->site->short_name?></td>
-						<td><?php echo $eo->getProcedureList() ?></td>
+						<td><?php echo $eo->getProceduresCommaSeparated('short_format') ?></td>
 						<td><?php echo $eo->eye->name ?></td>
 						<td><?php echo $eo->event->episode->firm->name ?> (<?php echo $eo->event->episode->firm->serviceSubspecialtyAssignment->subspecialty->name?>)</td>
 						<td><?php echo $eo->NHSDate('decision_date') ?></td>
