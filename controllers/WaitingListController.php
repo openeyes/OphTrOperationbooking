@@ -119,14 +119,15 @@ class WaitingListController extends BaseEventTypeController {
 			$whereParams[":site_id"] = $site_id;
 		}
 
-		return Element_OphTrOperationbooking_Operation::model()
+		Yii::app()->event->dispatch('start_batch_mode');
+		$operations = Element_OphTrOperationbooking_Operation::model()
 			->with(array(
 					'event',
 					'event.episode',
 					'event.episode.firm',
 					'event.episode.firm.serviceSubspecialtyAssignment',
 					'event.episode.firm.serviceSubspecialtyAssignment.subspecialty',
-					'event.episode.patient',
+					'event.episode.patient' => array('use_pas' => false),
 					'event.episode.patient.contact',
 					'event.episode.patient.practice',
 					'event.episode.patient.correspondAddress',
@@ -144,6 +145,8 @@ class WaitingListController extends BaseEventTypeController {
 					'order' => 'decision_date asc',
 				)
 			);
+		Yii::app()->event->dispatch('end_batch_mode');
+		return $operations;
 	}
 
 	/**
