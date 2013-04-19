@@ -127,7 +127,7 @@ class WaitingListController extends BaseEventTypeController {
 					'event.episode.firm',
 					'event.episode.firm.serviceSubspecialtyAssignment',
 					'event.episode.firm.serviceSubspecialtyAssignment.subspecialty',
-					'event.episode.patient' => array('use_pas' => false),
+					'event.episode.patient',
 					'event.episode.patient.contact',
 					'event.episode.patient.practice',
 					'event.episode.patient.correspondAddress',
