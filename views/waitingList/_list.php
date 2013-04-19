@@ -47,6 +47,10 @@
 				<?php
 				$i = 0;
 				foreach ($operations as $eo) {
+					if(!$eo->event) {
+						// Orphan element FIXME
+						continue;
+					}
 					$patient = $eo->event->episode->patient;
 					$contact = $patient->contact;
 					if (isset($_POST['status']) and $_POST['status'] != '') {
