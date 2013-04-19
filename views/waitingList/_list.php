@@ -96,7 +96,7 @@
 						<td><?php echo ucfirst(preg_replace('/^Requires /','',$eo->status->name)) ?></td>
 						<td<?php if ($tablecolour == 'White' && Yii::app()->user->checkAccess('admin')) { ?> class="admin-td"<?php } ?>>
 
-							<?php if(($patient && $patient->address) && $eo->id && ($eo->getDueLetter() != Element_OphTrOperationbooking_Operation::LETTER_GP || ($eo->getDueLetter() == Element_OphTrOperationbooking_Operation::LETTER_GP && $patient->practice_id))) { ?>
+							<?php if(($patient && $patient->correspondAddress) && $eo->id && ($eo->getDueLetter() != Element_OphTrOperationbooking_Operation::LETTER_GP || ($eo->getDueLetter() == Element_OphTrOperationbooking_Operation::LETTER_GP && $patient->practice_id))) { ?>
 							<div>	
 								<input<?php if ($tablecolour == 'White' && !Yii::app()->user->checkAccess('admin')) { ?> disabled="disabled"<?php } ?> type="checkbox" id="operation<?php echo $eo->id ?>" value="1" />
 							</div>
@@ -110,7 +110,7 @@
 								<span class="no-GP">No GP</span>
 							<?php } ?>
 							
-							<?php if(!$patient->address){ ?>
+							<?php if(!$patient->correspondAddress){ ?>
 								<script type="text/javascript">
 									$('#pas_warnings').show();
 									$('#pas_warnings .no_address').show();
