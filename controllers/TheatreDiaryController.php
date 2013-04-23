@@ -215,7 +215,7 @@ class TheatreDiaryController extends BaseEventTypeController
 			->leftJoin('user su','s.last_modified_user_id = su.id')
 			->leftJoin('ophtroperationbooking_operation_ward w', 'w.id = b.ward_id')
 			->where($whereSql, $whereParams)
-			->order('i.name ASC, t.display_order ASC, t.name ASC, s.date ASC, s.start_time ASC, s.end_time ASC, b.display_order ASC')
+			->order('i.short_name ASC, t.display_order ASC, t.code ASC, s.date ASC, s.start_time ASC, s.end_time ASC, b.display_order ASC')
 			->queryAll();
 
 		$diary = array();
