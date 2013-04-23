@@ -29,7 +29,8 @@ $(document).ready(function() {
 			"available": $('#available_'+theatre_edit_session_id).is(':checked')
 		};
 
-		$('.diaryViewMode').hide();
+		$('#tbody_'+theatre_edit_session_id+' .diaryViewMode').hide();
+		$('div.session_options.diaryViewMode').hide();
 		$('.diaryEditMode[data-id="'+theatre_edit_session_id+'"]').show();
 		$('.action_options[data-id="'+theatre_edit_session_id+'"]').show();
 
