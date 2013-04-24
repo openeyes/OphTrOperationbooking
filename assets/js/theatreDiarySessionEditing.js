@@ -21,13 +21,27 @@ $(document).ready(function() {
 		cancel_edit();
 
 		theatre_edit_session_id = $(this).attr('rel');
-		theatre_edit_session_data = {
-			"consultant": $('#consultant_'+theatre_edit_session_id).is(':checked'),
-			"paediatric": $('#paediatric_'+theatre_edit_session_id).is(':checked'),
-			"anaesthetist": $('#anaesthetist_'+theatre_edit_session_id).is(':checked'),
-			"general_anaesthetic": $('#general_anaesthetic_'+theatre_edit_session_id).is(':checked'),
-			"available": $('#available_'+theatre_edit_session_id).is(':checked')
-		};
+
+		theatre_edit_session_data = {};
+
+		if ($('div.purpleUser').length >0) {
+			theatre_edit_session_data["purple_rinse"] = {
+				"consultant": $('#consultant_'+theatre_edit_session_id).is(':checked'),
+				"paediatric": $('#paediatric_'+theatre_edit_session_id).is(':checked'),
+				"anaesthetist": $('#anaesthetist_'+theatre_edit_session_id).is(':checked'),
+				"general_anaesthetic": $('#general_anaesthetic_'+theatre_edit_session_id).is(':checked'),
+				"available": $('#available_'+theatre_edit_session_id).is(':checked')
+			};
+		}
+
+		theatre_edit_session_data["row_order"] = [];
+		theatre_edit_session_data["confirm"] = {};
+
+		$('#tbody_'+theatre_edit_session_id).children('tr').map(function(){
+			theatre_edit_session_data["row_order"].push($(this).attr('id'));
+			var id = $(this).attr('id').match(/[0-9]+/);
+			theatre_edit_session_data["confirm"][id] = $('#confirm_'+id).is(':checked');
+		});
 
 		$('#tbody_'+theatre_edit_session_id+' .diaryViewMode').hide();
 		$('div.session_options.diaryViewMode').hide();
@@ -163,8 +177,24 @@ $(document).ready(function() {
 
 function cancel_edit(dont_reset_checkboxes) {
 	if (!dont_reset_checkboxes && theatre_edit_session_id != null) {
-		for (var i in theatre_edit_session_data) {
-			$('#'+i+'_'+theatre_edit_session_id).attr('checked',(theatre_edit_session_data[i] ? 'checked' : 'false'));
+		for (var i in theatre_edit_session_data["purple_rinse"]) {
+			$('#'+i+'_'+theatre_edit_session_id).attr('checked',(theatre_edit_session_data[i] ? 'checked' : false));
+		}
+	}
+
+	if (theatre_edit_session_data) {
+		var rows = '';
+
+		for (var i in theatre_edit_session_data["row_order"]) {
+			rows += '<tr id="'+theatre_edit_session_data["row_order"][i]+'">'+$('#'+theatre_edit_session_data["row_order"][i]).html()+'</tr>';
+		}
+
+		$('#tbody_'+theatre_edit_session_id).html(rows);
+
+		for (var i in theatre_edit_session_data["row_order"]) {
+			var id = theatre_edit_session_data["row_order"][i].match(/[0-9]+/);
+
+			$('#confirm_'+id).attr('checked',(theatre_edit_session_data["confirm"][id] ? 'checked' : false));
 		}
 	}
 
