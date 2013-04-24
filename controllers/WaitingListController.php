@@ -3,7 +3,7 @@
  * OpenEyes
  *
  * (C) Moorfields Eye Hospital NHS Foundation Trust, 2008-2011
- * (C) OpenEyes Foundation, 2011-2012
+ * (C) OpenEyes Foundation, 2011-2013
  * This file is part of OpenEyes.
  * OpenEyes is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * OpenEyes is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -13,16 +13,32 @@
  * @link http://www.openeyes.org.uk
  * @author OpenEyes <info@openeyes.org.uk>
  * @copyright Copyright (c) 2008-2011, Moorfields Eye Hospital NHS Foundation Trust
- * @copyright Copyright (c) 2011-2012, OpenEyes Foundation
+ * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
 class WaitingListController extends BaseEventTypeController {
+	
 	public $js = array(
 		'js/jquery.validate.min.js',
 		'js/additional-validators.js',
 	);
 
+	public function accessRules() {
+		return array(
+			// Level 2 or below can't change anything
+			array('deny',
+				'actions' => array('confirmprinted', 'printletters'),
+				'expression' => '!BaseController::checkUserLevel(3)',
+			),
+			// Level 2 or above can do anything else
+			array('allow',
+				'expression' => 'BaseController::checkUserLevel(2)',
+			),
+			array('deny'),
+		);
+	}
+	
 	public function printActions() {
 		return array(
 			'printLetters',
@@ -83,10 +99,10 @@ class WaitingListController extends BaseEventTypeController {
 		$whereParams = array();
 
 		if ($firm_id) {
-			$whereSql .= ' AND f.id = :firm_id';
+			$whereSql .= ' AND firm.id = :firm_id';
 			$whereParams[":firm_id"] = $firm_id;
-		} elseif (!empty($subspecialtyId)) {
-			$whereSql .= ' AND ssa.subspecialty_id = :subspecialty_id';
+		} elseif (!empty($subspecialty_id)) {
+			$whereSql .= ' AND serviceSubspecialtyAssignment.subspecialty_id = :subspecialty_id';
 			$whereParams[":subspecialty_id"] = $subspecialty_id;
 		}
 
@@ -94,33 +110,44 @@ class WaitingListController extends BaseEventTypeController {
 			if (Yii::app()->params['pad_hos_num']) {
 				$hos_num = sprintf(Yii::app()->params['pad_hos_num'],$hos_num);
 			}
-			$whereSql .= " AND pat.hos_num = :hos_num";
+			$whereSql .= " AND patient.hos_num = :hos_num";
 			$whereParams[":hos_num"] = $hos_num;
 		}
 
 		if ($site_id && ctype_digit($site_id)) {
-			$whereSql .= " AND eo.site_id = :site_id";
+			$whereSql .= " AND t.site_id = :site_id";
 			$whereParams[":site_id"] = $site_id;
 		}
 
-		return Yii::app()->db->createCommand()
-			->select("eo.id AS eoid, eo.decision_date as decision_date, ev.id AS evid, ep.id AS epid, pat.id AS pid, co.first_name, co.last_name, pat.hos_num, pat.gp_id,
-				pat.practice_id, pad.id AS practice_address_id, GROUP_CONCAT(p.short_format SEPARATOR \", \") AS List")
-			->from("et_ophtroperationbooking_operation eo")
-			->join("event ev","eo.event_id = ev.id")
-			->join("episode ep","ev.episode_id = ep.id")
-			->join("firm f","ep.firm_id = f.id")
-			->join("service_subspecialty_assignment ssa","f.service_subspecialty_assignment_id = ssa.id")
-			->join("patient pat","ep.patient_id = pat.id")
-			->join("contact co","pat.contact_id = co.id")
-			->join("ophtroperationbooking_operation_procedures_procedures opa","opa.element_id = eo.id")
-			->join("proc p","opa.proc_id = p.id")
-			->leftJoin("practice pra","pra.id = pat.practice_id")
-			->leftJoin("contact prac","pra.contact_id = prac.id")
-			->leftJoin("address pad","pad.parent_id = prac.id AND pad.parent_class = 'Contact'")
-			->where("ep.end_date IS NULL and eo.status_id in (1,3) $whereSql and ev.deleted = 0 group by opa.element_id",$whereParams)
-			->order("decision_date asc")
-			->queryAll();
+		Yii::app()->event->dispatch('start_batch_mode');
+		$operations = Element_OphTrOperationbooking_Operation::model()
+			->with(array(
+					'event',
+					'event.episode',
+					'event.episode.firm',
+					'event.episode.firm.serviceSubspecialtyAssignment',
+					'event.episode.firm.serviceSubspecialtyAssignment.subspecialty',
+					'event.episode.patient',
+					'event.episode.patient.contact',
+					'event.episode.patient.practice',
+					'event.episode.patient.contact.correspondAddress',
+					'event.episode.patient.practice.contact',
+					'event.episode.patient.practice.contact.address',
+					'site',
+					'eye',
+					'priority',
+					'status',
+					'date_letter_sent',
+					'procedures'
+				)
+			)->findAll(array(
+					'condition' => 'event.id IS NOT NULL AND episode.end_date IS NULL AND t.status_id IN (1,3) '.$whereSql,
+					'params' => $whereParams,
+					'order' => 'decision_date asc',
+				)
+			);
+		Yii::app()->event->dispatch('end_batch_mode');
+		return $operations;
 	}
 
 	/**

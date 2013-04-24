@@ -1,3 +1,20 @@
+/**
+ * OpenEyes
+*
+* (C) Moorfields Eye Hospital NHS Foundation Trust, 2008-2011
+* (C) OpenEyes Foundation, 2011-2013
+* This file is part of OpenEyes.
+* OpenEyes is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+* OpenEyes is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+* You should have received a copy of the GNU General Public License along with OpenEyes in a file titled COPYING. If not, see <http://www.gnu.org/licenses/>.
+*
+* @package OpenEyes
+* @link http://www.openeyes.org.uk
+* @author OpenEyes <info@openeyes.org.uk>
+* @copyright Copyright (c) 2008-2011, Moorfields Eye Hospital NHS Foundation Trust
+* @copyright Copyright (c) 2011-2013, OpenEyes Foundation
+* @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
+*/
 
 $(document).ready(function() {
 	$(this).undelegate('a.edit-session','click').delegate('a.edit-session','click',function() {
@@ -99,6 +116,7 @@ $(document).ready(function() {
 
 					if (first) {
 						alert("One or more admission times were entered incorrectly, please correct the entries highlighted in red.");
+						enableButtons();
 						return false;
 					}
 
@@ -110,11 +128,19 @@ $(document).ready(function() {
 
 					$('div.comments_ro[data-id="'+session_id+'"]').text($('textarea[name="comments_'+session_id+'"]').val());
 
-					$('#available_'+session_id).is(':checked') ? $('#session_unavailable_'+session_id).hide() : $('#session_unavailable_'+session_id).show();
-					$('#consultant_'+session_id).is(':checked') ? $('#consultant_icon_'+session_id).show() : $('#consultant_icon_'+session_id).hide();
-					$('#anaesthetist_'+session_id).is(':checked') ? $('#anaesthetist_icon_'+session_id).show() : $('#anaesthetist_icon_'+session_id).hide();
-					$('#anaesthetist_icon_'+session_id).html($('#general_anaesthetic_'+session_id).is(':checked') ? 'Anaesthetist (GA)' : 'Anaesthetist');
-					$('#paediatric_'+session_id).is(':checked') ? $('#paediatric_icon_'+session_id).show() : $('#paediatric_icon_'+session_id).hide();
+					function checkedOrOne(field) {
+						if($(field).prop('type') == 'checkbox') {
+							return $(field).is(':checked');
+						} else if($(field).prop('type') == 'hidden') {
+							return ($(field).val() == 1);
+						}
+					}
+					
+					checkedOrOne($('#available_'+session_id)) ? $('#session_unavailable_'+session_id).hide() : $('#session_unavailable_'+session_id).show();
+					checkedOrOne($('#consultant_'+session_id)) ? $('#consultant_icon_'+session_id).show() : $('#consultant_icon_'+session_id).hide();
+					checkedOrOne($('#anaesthetist_'+session_id)) ? $('#anaesthetist_icon_'+session_id).show() : $('#anaesthetist_icon_'+session_id).hide();
+					$('#anaesthetist_icon_'+session_id).html(checkedOrOne($('#general_anaesthetic_'+session_id)) ? 'Anaesthetist (GA)' : 'Anaesthetist');
+					checkedOrOne($('#paediatric_'+session_id)) ? $('#paediatric_icon_'+session_id).show() : $('#paediatric_icon_'+session_id).hide();
 
 					cancel_edit(true);
 					$('#infoBox_'+session_id).show();

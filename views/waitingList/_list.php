@@ -3,7 +3,7 @@
  * OpenEyes
  *
  * (C) Moorfields Eye Hospital NHS Foundation Trust, 2008-2011
- * (C) OpenEyes Foundation, 2011-2012
+ * (C) OpenEyes Foundation, 2011-2013
  * This file is part of OpenEyes.
  * OpenEyes is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * OpenEyes is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -13,7 +13,7 @@
  * @link http://www.openeyes.org.uk
  * @author OpenEyes <info@openeyes.org.uk>
  * @copyright Copyright (c) 2008-2011, Moorfields Eye Hospital NHS Foundation Trust
- * @copyright Copyright (c) 2011-2012, OpenEyes Foundation
+ * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
@@ -46,13 +46,9 @@
 			<?php }else{?>
 				<?php
 				$i = 0;
-				foreach ($operations as $id => $operation) {
-					$eo = Element_OphTrOperationbooking_Operation::model()->findByPk($operation['eoid']);
-					
-					$patient = NULL;
-					if(isset($operation['pid'])){
-						$patient = Patient::model()->noPas()->findByPk($operation['pid']);
-					}
+				foreach ($operations as $eo) {
+					$patient = $eo->event->episode->patient;
+					$contact = $patient->contact;
 					if (isset($_POST['status']) and $_POST['status'] != '') {
 						if ($eo->getNextLetter() != $_POST['status']) {
 							continue;
@@ -88,11 +84,11 @@
 							<?php }?>
 						</td>
 						<td class="patient">
-							<?php echo CHtml::link("<strong>" . trim(strtoupper($operation['last_name'])) . '</strong>, ' . $operation['first_name'], Yii::app()->createUrl('/OphTrOperationbooking/default/view/'.$operation['evid']))?>
+							<?php echo CHtml::link("<strong>" . trim(strtoupper($contact->last_name)) . '</strong>, ' . $contact->first_name, Yii::app()->createUrl('/OphTrOperationbooking/default/view/'.$eo->event_id))?>
 						</td>
-						<td><?php echo $operation['hos_num'] ?></td>
+						<td><?php echo $patient->hos_num ?></td>
 						<td><?php echo $eo->site->short_name?></td>
-						<td><?php echo $operation['List'] ?></td>
+						<td><?php echo $eo->getProceduresCommaSeparated('short_format') ?></td>
 						<td><?php echo $eo->eye->name ?></td>
 						<td><?php echo $eo->event->episode->firm->name ?> (<?php echo $eo->event->episode->firm->serviceSubspecialtyAssignment->subspecialty->name?>)</td>
 						<td><?php echo $eo->NHSDate('decision_date') ?></td>
@@ -100,27 +96,27 @@
 						<td><?php echo ucfirst(preg_replace('/^Requires /','',$eo->status->name)) ?></td>
 						<td<?php if ($tablecolour == 'White' && Yii::app()->user->checkAccess('admin')) { ?> class="admin-td"<?php } ?>>
 
-							<?php if(($patient && $patient->contact->address) && $operation['eoid'] && ($eo->getDueLetter() != Element_OphTrOperationbooking_Operation::LETTER_GP || ($eo->getDueLetter() == Element_OphTrOperationbooking_Operation::LETTER_GP && $operation['practice_id']))) { ?>
+							<?php if (($patient && $patient->contact->correspondAddress) && $eo->id && ($eo->getDueLetter() != Element_OphTrOperationbooking_Operation::LETTER_GP || ($eo->getDueLetter() == Element_OphTrOperationbooking_Operation::LETTER_GP && $patient->practice_id))) {?>
 							<div>	
-								<input<?php if ($tablecolour == 'White' && !Yii::app()->user->checkAccess('admin')) { ?> disabled="disabled"<?php } ?> type="checkbox" id="operation<?php echo $operation['eoid']?>" value="1" />
+								<input<?php if ($tablecolour == 'White' && !Yii::app()->user->checkAccess('admin')) { ?> disabled="disabled"<?php } ?> type="checkbox" id="operation<?php echo $eo->id ?>" value="1" />
 							</div>
 							<?php }?>
 							
-							<?php if(!$operation['practice_address_id'] ) { ?>
+							<?php if (!$patient->practice || !$patient->practice->contact->address ) { ?>
 								<script type="text/javascript">
 									$('#pas_warnings').show();
 									$('#pas_warnings .no_gp').show();
 								</script>
 								<span class="no-GP">No GP</span>
-							<?php } ?>
+							<?php }?>
 							
-							<?php if($patient && !$patient->contact->address){ ?>
+							<?php if ($patient && !$patient->contact->correspondAddress){ ?>
 								<script type="text/javascript">
 									$('#pas_warnings').show();
 									$('#pas_warnings .no_address').show();
 								</script>
 								<span class="no-Address">No Address</span>
-							<?php } ?>
+							<?php }?>
 						</td>
 					</tr>
 				<?php

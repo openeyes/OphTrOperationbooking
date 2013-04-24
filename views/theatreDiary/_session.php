@@ -1,3 +1,22 @@
+<?php
+/**
+ * OpenEyes
+*
+* (C) Moorfields Eye Hospital NHS Foundation Trust, 2008-2011
+* (C) OpenEyes Foundation, 2011-2013
+* This file is part of OpenEyes.
+* OpenEyes is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+* OpenEyes is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+* You should have received a copy of the GNU General Public License along with OpenEyes in a file titled COPYING. If not, see <http://www.gnu.org/licenses/>.
+*
+* @package OpenEyes
+* @link http://www.openeyes.org.uk
+* @author OpenEyes <info@openeyes.org.uk>
+* @copyright Copyright (c) 2008-2011, Moorfields Eye Hospital NHS Foundation Trust
+* @copyright Copyright (c) 2011-2013, OpenEyes Foundation
+* @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
+*/
+?>
 <div class="infoBox diaryViewMode" id="infoBox_<?php echo $id?>" style="display: none;">
 	<strong>Session updated!</strong>
 </div>
@@ -7,9 +26,11 @@
 		<img id="loader_<?php echo $id?>" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="margin-right: 5px; margin-bottom: 4px; display: none;" />
 		<div class="session_options diaryViewMode" data-id="<?php echo $id?>">
 			<span class="aBtn_inactive">View</span>
+			<?php if(BaseController::checkUserLevel(3)) { ?>
 			<span class="aBtn edit-event">
 				<a href="#" rel="<?php echo $id?>" class="edit-session">Edit</a>
 			</span>
+			<?php } ?>
 		</div>
 		<div class="session_options diaryEditMode" data-id="<?php echo $id?>" style="display: none;">
 			<span class="aBtn view-event">
@@ -61,6 +82,7 @@
 				<input type="hidden" id="consultant_<?php echo $id?>" name="consultant_<?php echo $id?>" value="<?php echo $session['consultant']?>" />
 				<input type="hidden" id="paediatric_<?php echo $id?>" name="paediatric_<?php echo $id?>" value="<?php echo $session['paediatric']?>" />
 				<input type="hidden" id="anaesthetist_<?php echo $id?>" name="anaesthetist_<?php echo $id?>" value="<?php echo $session['anaesthetist']?>" />
+				<input type="hidden" id="general_anaesthetic_<?php echo $id?>" name="general_anaesthetic_<?php echo $id?>" value="<?php echo $session['general_anaesthetic']?>" />
 				<input type="hidden" id="available_<?php echo $id?>" name="available_<?php echo $id?>" value="<?php echo $session['available']?>" />
 			<?php }?>
 			<div class="sessionComments" style="display:block; width:205px;">
@@ -114,10 +136,10 @@
 							<?php if (!$booking['comments'] && preg_match('/\w/', $booking['comments'])) {?>
 								<img src="<?php echo $assetPath?>/img/diaryIcons/comment.png" alt="<?php echo htmlentities($booking['comments']) ?>" title="<?php echo htmlentities($booking['comments']) ?>" width="17" height="17" />
 							<?php }?>
-							<?php if (!$booking['overnight_stay']) {?>
+							<?php if ($booking['overnight_stay']) {?>
 								<img src="<?php echo $assetPath?>/img/diaryIcons/overnight.png" alt="Overnight stay required" title="Overnight stay required" width="17" height="17" />
 							<?php }?>
-							<?php if (!$booking['consultant_required']) {?>
+							<?php if ($booking['consultant_required']) {?>
 								<img src="<?php echo $assetPath?>/img/diaryIcons/consultant.png" alt="Consultant required" title="Consultant required" width="17" height="17" />
 							<?php }?>
 							<img src="<?php echo $assetPath?>/img/diaryIcons/booked_user.png" alt="Created by: <?php echo $booking['created_user']."\n"?>Last modified by: <?php echo $booking['last_modified_user']?>" title="Created by: <?php echo $booking['created_user']."\n"?>Last modified by: <?php echo $booking['last_modified_user']?>" width="17" height="17" />

@@ -2,7 +2,7 @@
 	 * OpenEyes
 	 *
 	 * (C) Moorfields Eye Hospital NHS Foundation Trust, 2008-2011
-	 * (C) OpenEyes Foundation, 2011-2012
+	 * (C) OpenEyes Foundation, 2011-2013
 	 * This file is part of OpenEyes.
 	 * OpenEyes is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 	 * OpenEyes is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -12,7 +12,7 @@
 	 * @link http://www.openeyes.org.uk
 	 * @author OpenEyes <info@openeyes.org.uk>
 	 * @copyright Copyright (c) 2008-2011, Moorfields Eye Hospital NHS Foundation Trust
-	 * @copyright Copyright (c) 2011-2012, OpenEyes Foundation
+	 * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
 	 * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
 	 */
 
@@ -90,6 +90,8 @@
 			// will receive user inputs.
 			return array(
 				array('event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments, anaesthetist_required, total_duration, status_id, cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id', 'safe'),
+				array('eye_id', 'matchDiagnosisEye'),
+				array('cancellation_comment', 'length', 'max' => 200),
 				array('eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
@@ -185,6 +187,7 @@
 		if($episode && $episode->diagnosis) {
 			$this->eye_id = $episode->eye_id;
 		}
+		$this->site_id = Yii::app()->session['selected_site_id'];
 	}
 
 	public function getproc_defaults() {
@@ -204,6 +207,10 @@
 
 		if (!$this->status_id) {
 			$this->status_id = 1;
+		}
+
+		if (isset($_POST['Element_OphTrOperationbooking_Operation']['total_duration_procs'])) {
+			$this->total_duration = $_POST['Element_OphTrOperationbooking_Operation']['total_duration_procs'];
 		}
 
 		return parent::beforeSave();
@@ -252,6 +259,23 @@
 	protected function afterValidate() {
 		if (!empty($_POST['Element_OphTrOperationbooking_Operation']) && empty($_POST['Procedures_procs'])) {
 			$this->addError('procedures', 'At least one procedure must be entered');
+		}
+
+		if ($this->booking) {
+			if (isset($_POST['Element_OphTrOperationbooking_Operation']['consultant_required'])) {
+				if ($_POST['Element_OphTrOperationbooking_Operation']['consultant_required'] && !$this->booking->session->consultant) {
+					$this->addError('consultant', 'The booked session does not have a consultant present, you must change the session or cancel the booking before making this change');
+				}
+			}
+			if (isset($_POST['Element_OphTrOperationbooking_Operation']['anaesthetic_type_id'])) {
+				$anaesthetic = AnaestheticType::model()->findByPk($_POST['Element_OphTrOperationbooking_Operation']['anaesthetic_type_id'])->name;
+				if (in_array($anaesthetic,array('LAC','LAS','GA')) && !$this->booking->session->anaesthetist) {
+					$this->addError('anaesthetist', 'The booked session does not have an anaesthetist present, you must change the session or cancel the booking before making this change');
+				}
+				if ($anaesthetic == 'GA' && !$this->booking->session->general_anaesthetic) {
+					$this->addError('ga','General anaesthetic is not available for the booked session, you must change the session or cancel the booking before making this change');
+				}
+			}
 		}
 
 		return parent::afterValidate();
@@ -644,15 +668,28 @@
 		return $results;
 	}
 
-	public function getWardOptions($siteId, $theatreId = null) {
-		if (!$site = Site::model()->findByPk($siteId)) {
-			throw new Exception('Invalid site id');
+	public function getWardOptions($session) {
+		if (!$session || !$session->id) {
+			throw new Exception('Session is required.');
 		}
-
+		
+		$siteId = $session->theatre->site_id;
+		$theatreId = $session->theatre_id;
+		
 		$results = array();
 
-		if (!empty($theatreId)) {
-			if ($ward = OphTrOperationbooking_Operation_Ward::model()->find('theatre_id=?',array($theatreId))) {
+		if($session->sequence_id == 328 // Allan Bruce (External) Saturday, CR9
+				&& $ward = OphTrOperationbooking_Operation_Ward::model()->find('code = ?', array('CL4'))) {
+			// FIXME: ANOTHER TEMPORARY FIX FOR THEATRE 9 AND NEW WARD (CL4)
+			$results[$ward->id] = $ward->name;
+		} else if($session->theatre->code == 'CR9'
+				&& strtotime($session->date) >= strtotime('2013-04-08')
+				&& strtotime($session->date) <= strtotime('2013-06-02')
+				&& $ward = OphTrOperationbooking_Operation_Ward::model()->find('code = ?', array('OW4'))) {
+			// FIXME: TEMPORARY FIX FOR THEATRE 9 MAINTAINANCE (USING OW4 INSTEAD)
+			$results[$ward->id] = $ward->name;
+		} else if (!empty($theatreId)) {
+					if ($ward = OphTrOperationbooking_Operation_Ward::model()->find('theatre_id=?',array($theatreId))) {
 				$results[$ward->id] = $ward->name;
 			}
 		}
@@ -815,10 +852,11 @@
 
 		$this->audit('operation','cancel');
 
-		$this->event->episode->episode_status_id = 5;
+		$episode = $this->event->episode;
+		$episode->episode_status_id = 5;
 
-		if (!$this->event->episode->save()) {
-			throw new Exception('Unable to change episode status for episode '.$this->event->episode->id);
+		if (!$episode->save()) {
+			throw new Exception('Unable to change episode status for episode '.$episode->id);
 		}
 
 		$event = $this->event;
@@ -853,7 +891,7 @@
 							$email,
 							"[OpenEyes] Urgent cancellation made","A cancellation was made with a TCI date within the next 24 hours.\n\nDisorder: "
 								. $this->getDisorderText() . "\n\nPlease see: http://" . @$_SERVER['SERVER_NAME']
-								. Yii::app()->createUrl('transport')."\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.",
+								. Yii::app()->createUrl('/OphTrOperationbooking/transport')."\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.",
 							"From: " . Yii::app()->params['urgent_booking_notify_email_from']."\r\n"
 						);
 					}
@@ -899,7 +937,7 @@
 			$booking->{'session_'.$field} = $booking->session->$field;
 		}
 
-		$booking->ward_id = key($this->getWardOptions($session->theatre->site_id, $session->theatre_id));
+		$booking->ward_id = key($this->getWardOptions($session));
 
 		$criteria = new CDbCriteria;
 		$criteria->compare('session_id',$session->id);
@@ -977,12 +1015,12 @@
 		}
 	}
 
-	public function getProceduresCommaSeparated() {
+	public function getProceduresCommaSeparated($field = 'term') {
 		$procedures = array();
 		foreach ($this->procedures as $procedure) {
-			$procedures[] = $procedure->term;
+			$procedures[] = $procedure->$field;
 		}
-		return empty($procedures) ? 'No procedures' : implode(', ',$procedures);
+		return empty($procedures) ? 'No procedures' : implode(', ', $procedures);
 	}
 
 	public function getRefuseContact() {
@@ -1175,6 +1213,20 @@
 		return in_array($last_letter,array(
 			Element_OphTrOperationbooking_Operation::LETTER_GP
 		));
+	}
+
+	public function matchDiagnosisEye() {
+		if (isset($_POST['Element_OphTrOperationbooking_Diagnosis']['eye_id']) &&
+			isset($_POST['Element_OphTrOperationbooking_Operation']['eye_id'])
+		) {
+			$diagnosis = $_POST['Element_OphTrOperationbooking_Diagnosis']['eye_id'];
+			$operation = $_POST['Element_OphTrOperationbooking_Operation']['eye_id'];
+			if ($diagnosis != 3 &&
+				$diagnosis != $operation
+			) {
+				$this->addError('eye_id', 'Operation eye must match diagnosis eye!');
+			}
+		}
 	}
 }
 ?>

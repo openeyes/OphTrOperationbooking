@@ -1,4 +1,21 @@
 <?php
+/**
+ * OpenEyes
+*
+* (C) Moorfields Eye Hospital NHS Foundation Trust, 2008-2011
+* (C) OpenEyes Foundation, 2011-2013
+* This file is part of OpenEyes.
+* OpenEyes is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+* OpenEyes is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+* You should have received a copy of the GNU General Public License along with OpenEyes in a file titled COPYING. If not, see <http://www.gnu.org/licenses/>.
+*
+* @package OpenEyes
+* @link http://www.openeyes.org.uk
+* @author OpenEyes <info@openeyes.org.uk>
+* @copyright Copyright (c) 2008-2011, Moorfields Eye Hospital NHS Foundation Trust
+* @copyright Copyright (c) 2011-2013, OpenEyes Foundation
+* @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
+*/
 
 class BookingController extends BaseEventTypeController {
 	public $reschedule = false;
@@ -7,6 +24,16 @@ class BookingController extends BaseEventTypeController {
 		'js/additional-validators.js',
 	);
 
+	public function accessRules() {
+		return array(
+			// Level 3 or above can do anything
+			array('allow',
+				'expression' => 'BaseController::checkUserLevel(3)',
+			),
+			array('deny'),
+		);
+	}
+	
 	public function actionSchedule($id) {
 		if (!$event = Event::model()->findByPk($id)) {
 			throw new Exception('Unable to find event: '.$id);
@@ -72,7 +99,7 @@ class BookingController extends BaseEventTypeController {
 					if (($result = $operation->schedule($_POST['Booking'], $_POST['Operation']['comments'], $_POST['Session']['comments'], $this->reschedule)) !== true) {
 						$errors = $result;
 					} else {
-						$this->redirect(array('/OphTrOperationbooking/default/view/'.$operation->event_id));
+						$this->redirect(array('default/view/'.$operation->event_id));
 					}
 				} else {
 					$_POST['Booking']['admission_time'] = ($session['start_time'] == '13:30:00') ? '12:00' : date('H:i', strtotime('-1 hour', strtotime($session['start_time'])));
@@ -136,7 +163,7 @@ class BookingController extends BaseEventTypeController {
 				$booking->cancel($reason,$_POST['cancellation_comment'],false);
 				$operation->setStatus('Requires rescheduling');
 
-				$this->redirect(array('/OphTrOperationbooking/default/view/'.$event->id));
+				$this->redirect(array('default/view/'.$event->id));
 			}
 		}
 
