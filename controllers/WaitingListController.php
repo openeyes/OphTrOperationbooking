@@ -131,8 +131,6 @@ class WaitingListController extends BaseEventTypeController {
 					'event.episode.patient.contact',
 					'event.episode.patient.practice',
 					'event.episode.patient.contact.correspondAddress',
-					'event.episode.patient.practice.contact',
-					'event.episode.patient.practice.contact.address',
 					'site',
 					'eye',
 					'priority',
