@@ -83,6 +83,14 @@ $(document).ready(function() {
 
 		return false;
 	});
+
+	$('#transport_date_from').bind('change',function() {
+		$('#transport_date_to').datepicker('option','minDate',$('#transport_date_from').datepicker('getDate'));
+	});
+
+	$('#transport_date_to').bind('change',function() {
+		$('#transport_date_from').datepicker('option','maxDate',$('#transport_date_to').datepicker('getDate'));
+	});
 });
 
 var loadPage = null;
