@@ -152,7 +152,7 @@ class DefaultController extends BaseEventTypeController {
 				'include_telephone' => true,
 				'include_fax' => true,
 				'delimiter' => "\n",
-			)),
+			))
 		);
 
 		$oeletter->setBarcode('E:'.$operation->event_id);
