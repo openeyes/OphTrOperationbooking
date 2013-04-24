@@ -62,8 +62,8 @@ $(document).ready(function() {
 		$('#csvform').submit();
 	});
 
-	$('#transport_checkall').click(function() {
-		$('input[name^="bookings"]').attr('checked',$('#transport_checkall').is(':checked'));
+	$('#transport_checkall').die('click').live('click',function() {
+		$('input[name^="bookings"]').attr('checked',$('#transport_checkall').is(':checked') ? 'checked' : false);
 	});
 
 	$('a.pagination-link').die('click').live('click',function() {
