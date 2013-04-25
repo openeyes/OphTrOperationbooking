@@ -18,13 +18,16 @@
 */
 
 class DefaultController extends BaseEventTypeController {
-	public $jsFiles = array(
-		'core/js/jquery.validate.min.js',
-		'core/js/additional-validators.js',
-		'module/js/module.js',
-	);
-
 	public $eventIssueCreate = 'Operation requires scheduling';
+
+	protected function beforeAction($action) {
+		$this->assetPath = Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.'.$this->getModule()->name.'.assets'), false, -1, YII_DEBUG);
+		Yii::app()->clientScript->registerScriptFile($this->assetPath.'/js/booking.js');
+		Yii::app()->clientScript->registerScriptFile('js/jquery.validate.min.js');
+		Yii::app()->clientScript->registerScriptFile('js/additional-validators.js');
+
+		return parent::beforeAction($action);
+	}
 
 	public function actionCreate() {
 		if (@$_POST['schedule_now']) {
