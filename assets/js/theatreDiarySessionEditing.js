@@ -110,6 +110,9 @@ $(document).ready(function() {
 			$('input[name^="admitTime_"]').map(function() {
 				var m = $(this).val().match(/^([0-9]{1,2}).*?([0-9]{2})$/);
 				if (m) {
+					if (m[1].length == 1) {
+						m[1] = '0'+m[1];
+					}
 					$(this).val(m[1]+':'+m[2]);
 				}
 			});
