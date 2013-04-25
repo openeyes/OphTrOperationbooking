@@ -24,11 +24,6 @@ class TransportController extends BaseEventTypeController
 	public $page = 1;
 	public $total_items = 0;
 	public $pages = 1;
-	public $jsFiles = array(
-		'core/js/jquery.validate.min.js',
-		'core/js/additional-validators.js',
-		'module/js/transport.js',
-	);
 
 	public function accessRules() {
 		return array(
