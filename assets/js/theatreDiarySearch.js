@@ -251,3 +251,28 @@ function clearBoundaries() {
 function returnDateWithInterval(d, interval) {
 	return new Date(d.getTime() + (86400000 * interval));
 }
+
+function theatreDiaryIconHovers() {
+	var offsetY = 28;
+	var offsetX = 10;
+	var tipWidth = 0;
+
+	$('.alerts img').hover(function(e){
+		var titleText = $(this).attr('title');
+		$(this).data('tipText',titleText).removeAttr('title');
+
+		$('<p class="alertIconHelp"></p>').text(titleText).appendTo('body');
+		$('<img />').attr({width:'17',height:'17',src:$(this).attr('src')}).prependTo('.alertIconHelp');
+		tipWidth = $('.alertIconHelp').outerWidth();
+		$('.alertIconHelp').css('top', (e.pageY - offsetY) + 'px').css('left', (e.pageX - (tipWidth + offsetX)) + 'px').fadeIn('fast');
+
+	},function(e){
+		$(this).attr('title',$(this).data('tipText'));
+		$('.alertIconHelp').remove();
+
+	}).mousemove(function(e) {
+		$('.alertIconHelp')
+			.css('top', (e.pageY - offsetY) + 'px')
+			.css('left', (e.pageX - (tipWidth + offsetX)) + 'px');
+	});
+}
