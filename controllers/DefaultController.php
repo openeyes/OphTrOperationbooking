@@ -18,9 +18,10 @@
 */
 
 class DefaultController extends BaseEventTypeController {
-	public $js = array(
-		'js/jquery.validate.min.js',
-		'js/additional-validators.js',
+	public $jsFiles = array(
+		'core/js/jquery.validate.min.js',
+		'core/js/additional-validators.js',
+		'module/js/module.js',
 	);
 
 	public $eventIssueCreate = 'Operation requires scheduling';

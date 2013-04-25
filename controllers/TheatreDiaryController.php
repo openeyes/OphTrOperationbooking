@@ -20,9 +20,11 @@
 class TheatreDiaryController extends BaseEventTypeController
 {
 	public $layout='//layouts/main';
-	public $js = array(
-		'js/jquery.validate.min.js',
-		'js/additional-validators.js',
+	public $jsFiles = array(
+		'core/js/jquery.validate.min.js',
+		'core/js/additional-validators.js',
+		'module/js/theatreDiarySearch.js',
+		'module/js/theatreDiarySessionEditing.js',
 	);
 
 	public function accessRules() {
