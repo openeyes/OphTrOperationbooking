@@ -95,16 +95,7 @@ $(document).ready(function() {
 	$('#calendar table td').click(function() {
 		var day = $(this).text().match(/[0-9]+/);
 		if (day == null) return false;
-
-		if (window.location.href.match(/day=/)) {
-			var href = window.location.href.replace(/day=[0-9]+/,'day='+day);
-		} else if (window.location.href.match(/\?/)) {
-			var href = window.location.href + '&day='+day;
-		} else {
-			var href = window.location.href + '?day='+day;
-		}
-		href = href.replace(/(&|\?)session_id=[0-9]+/,'');
-		window.location.href = href;
+		window.location.href = URI(window.location.href).setSearch('day',day).removeSearch('session_id');
 		return false;
 	});
 
@@ -120,15 +111,7 @@ $(document).ready(function() {
 	$(this).undelegate('#firmSelect #firm_id','change').delegate('#firmSelect #firm_id','change',function() {
 		var firm_id = $(this).val();
 		var operation = $('input[id=operation]').val();
-		if (window.location.href.match(/firm_id=/)) {
-			var href = window.location.href.replace(/firm_id=([0-9]+|EMG)/,'firm_id='+firm_id);
-		} else if (window.location.href.match(/\?/)) {
-			var href = window.location.href + '&firm_id='+firm_id;
-		} else {
-			var href = window.location.href + '?firm_id='+firm_id;
-		}
-		href = href.replace(/(&|\?)day=[0-9]+/,'').replace(/(&|\?)session_id=[0-9]+/,'');
-		window.location.href = href;
+		window.location.href = URI(window.location.href).setSearch('firm_id',firm_id).removeSearch(['session_id', 'day']);
 	});
 
 	handleButton($('#btn_print-letter'),function() {
