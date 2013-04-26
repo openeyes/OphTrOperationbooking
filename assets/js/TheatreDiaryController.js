@@ -482,7 +482,7 @@ function cancel_edit(dont_reset_checkboxes) {
 		}
 	}
 
-	if (theatre_edit_session_data) {
+	if (theatre_edit_session_data && !dont_reset_checkboxes) {
 		var rows = '';
 
 		for (var i in theatre_edit_session_data["row_order"]) {
