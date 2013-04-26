@@ -60,6 +60,7 @@ $(document).ready(function() {
 
 	handleButton($('button.btn_transport_download'),function() {
 		$('#csvform').submit();
+		enableButtons();
 	});
 
 	$('#transport_checkall').die('click').live('click',function() {
