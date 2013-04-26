@@ -325,7 +325,7 @@ class TheatreDiaryController extends BaseEventTypeController
 			$whereParams[':firmId'] = $_POST['firm-id'];
 		}
 
-		$whereSql .= ' and (ep.deleted = 0 or ep.deleted is null) and (e.deleted = 0 or e.deleted is null)';
+		$whereSql .= ' and (ep.deleted = 0 or ep.deleted is null) and (e.deleted = 0 or e.deleted is null) and b.cancellation_date is null';
 
 		return Yii::app()->db->createCommand()
 			->select('p.hos_num, c.first_name, c.last_name, p.dob, p.gender, s.date, w.code as ward_code, w.name as ward_name, f.pas_code as consultant, sp.ref_spec as subspecialty')
