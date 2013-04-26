@@ -419,7 +419,7 @@ function loadTheatresAndWards(siteId) {
 			$.ajax({
 				'type': 'POST',
 				'data': {'site_id': siteId},
-				'url': baseUrl+'/OphTrOperationbooking/theatreDiary/filterTheatres',
+				'url': baseUrl+'/OphTrOperationbooking/theatreDiary/filterWards',
 				'success':function(data) {
 					$('#ward-id').html(data);
 				}
