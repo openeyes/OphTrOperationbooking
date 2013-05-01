@@ -158,6 +158,8 @@ class TheatreDiaryController extends BaseEventTypeController
 		if (@$_POST['emergency_list']) {
 			$whereSql .= ' and f.id is null';
 		} else {
+			$whereSql .= ' and f.id is not null';
+
 			if (@$_POST['site-id']) {
 				$whereSql .= ' AND t.site_id = :siteId';
 				$whereParams[':siteId'] = $_POST['site-id'];
