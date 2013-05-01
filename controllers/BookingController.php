@@ -157,10 +157,16 @@ class BookingController extends BaseEventTypeController {
 
 		Yii::app()->clientScript->registerCSSFile(Yii::app()->createUrl('css/theatre_calendar.css'), 'all');
 
+		$errors = array();
+
+		if (strlen($_POST['cancellation_comment']) >200) {
+			$errors[] = "Comments must be 200 characters max";
+		}
+
 		if (!empty($_POST)) {
 			if (!$reason = OphTrOperationbooking_Operation_Cancellation_Reason::model()->findByPk($_POST['cancellation_reason'])) {
-				$errors = array("Please select a rescheduling reason");
-			} else if (isset($_POST['booking_id'])) {
+				$errors[] = "Please select a rescheduling reason";
+			} else if (isset($_POST['booking_id']) && empty($errors)) {
 				if (!$booking = OphTrOperationbooking_Operation_Booking::model()->findByPk($_POST['booking_id'])) {
 					throw new Exception('Booking not found: '.@$_POST['booking_id']);
 				}
@@ -176,7 +182,7 @@ class BookingController extends BaseEventTypeController {
 				'operation' => $operation,
 				'date' => $operation->minDate,
 				'patient' => $operation->event->episode->patient,
-				'errors' => @$errors,
+				'errors' => $errors,
 			),
 			false,
 			true
