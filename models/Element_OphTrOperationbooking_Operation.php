@@ -745,7 +745,7 @@
 		if ($this->event->episode->patient->isChild()) {
 			$where .= " and ophtroperationbooking_operation_session.paediatric = 1";
 
-			$service_subspecialty_assignment_id = $this->event->element_operation->booking->session->firm->serviceSubspecialtyAssignment->id;
+			$service_subspecialty_assignment_id = $this->booking->session->firm->serviceSubspecialtyAssignment->id;
 		}
 
 		if ($this->anaesthetist_required || $this->anaesthetic_type->code == 'GA') {

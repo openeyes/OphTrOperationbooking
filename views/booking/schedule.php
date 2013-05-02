@@ -19,6 +19,21 @@
 
 $this->header();
 ?>
+	<div class="alertBox" style="margin-top: 10px;<?php if (!is_array($errors)) {?> display:none<?php }?>">
+		<p>Please fix the following input errors:</p>
+		<ul>
+			<?php if (is_array($errors)) {
+				foreach ($errors as $errors2) {
+					foreach ($errors2 as $error) {?>
+						<li><?php echo $error?></li>
+					<?php }
+				}
+			}else{?>
+				<li>&nbsp;</li></ul>
+			<?php }?>
+		</ul>
+	</div>
+
 <div id="schedule">
 	<div class="patientReminder">
 		<span class="patient"><?php echo $this->patient->getDisplayName()?> (<?php echo $this->patient->hos_num ?>)</span>
