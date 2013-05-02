@@ -477,8 +477,8 @@ function printElem(method,options){
 
 function cancel_edit(dont_reset_checkboxes) {
 	if (!dont_reset_checkboxes && theatre_edit_session_id != null) {
-		for (var i in theatre_edit_session_data["purple_rinse"]) {
-			$('#'+i+'_'+theatre_edit_session_id).attr('checked',(theatre_edit_session_data[i] ? 'checked' : false));
+		for (var i in theatre_edit_session_data.purple_rinse) {
+			$('#'+i+'_'+theatre_edit_session_id).attr('checked',(theatre_edit_session_data.purple_rinse[i] ? 'checked' : false));
 		}
 	}
 
