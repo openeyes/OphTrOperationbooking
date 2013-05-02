@@ -61,7 +61,7 @@ $this->header()?>
 		echo CHtml::endForm(); ?>
 	</div>
 </div>
-<?php if (is_array($errors)) {?>
+<?php if (!empty($errors)) {?>
 	<div class="alertBox" style="margin-top: 10px;"><p>Please fix the following input errors:</p>
 		<ul>
 			<?php foreach ($errors as $error) {?>

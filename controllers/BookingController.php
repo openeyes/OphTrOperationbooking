@@ -160,11 +160,10 @@ class BookingController extends BaseEventTypeController {
 
 		$errors = array();
 
-		if (strlen($_POST['cancellation_comment']) >200) {
-			$errors[] = "Comments must be 200 characters max";
-		}
-
 		if (!empty($_POST)) {
+			if (strlen($_POST['cancellation_comment']) >200) {
+				$errors[] = "Comments must be 200 characters max";
+			}
 			if (!$reason = OphTrOperationbooking_Operation_Cancellation_Reason::model()->findByPk($_POST['cancellation_reason'])) {
 				$errors[] = "Please select a rescheduling reason";
 			} else if (isset($_POST['booking_id']) && empty($errors)) {
