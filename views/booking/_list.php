@@ -145,19 +145,4 @@ if (!$reschedule) {
 	<?php
 	echo CHtml::endForm();
 	?>
-
-	<div class="alertBox" style="margin-top: 10px;<?php if (!is_array($errors)) {?> display:none<?php }?>">
-		<p>Please fix the following input errors:</p>
-		<ul>
-			<?php if (is_array($errors)) {
-				foreach ($errors as $errors2) {
-					foreach ($errors2 as $error) {?>
-						<li><?php echo $error?></li>
-					<?php }
-				}
-			}else{?>
-				<li>&nbsp;</li></ul>
-			<?php }?>
-		</ul>
-	</div>
 <?php }?>
