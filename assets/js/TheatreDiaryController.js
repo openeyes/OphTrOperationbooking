@@ -201,6 +201,7 @@ $(document).ready(function() {
 
 		theatre_edit_session_data["row_order"] = [];
 		theatre_edit_session_data["confirm"] = {};
+		theatre_edit_session_data["comments"] = $('div.comments_ro[data-id="'+theatre_edit_session_id+'"]').text();
 
 		$('#tbody_'+theatre_edit_session_id).children('tr').map(function(){
 			theatre_edit_session_data["row_order"].push($(this).attr('id'));
@@ -497,6 +498,9 @@ function cancel_edit(dont_reset_checkboxes) {
 
 				$('#confirm_'+id).attr('checked',(theatre_edit_session_data["confirm"][id] ? 'checked' : false));
 			}
+
+			$('textarea[name="comments_'+theatre_edit_session_id+'"]').val(theatre_edit_session_data['comments']);
+
 		} else {
 			for (var i in theatre_edit_session_data["row_order"]) {
 				var id = theatre_edit_session_data["row_order"][i].match(/[0-9]+/);
