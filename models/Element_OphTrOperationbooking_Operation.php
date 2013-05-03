@@ -1228,5 +1228,15 @@
 			}
 		}
 	}
+	
+	public function delete() {
+	
+		// Delete related records
+		OphTrOperationbooking_Operation_Date_Letter_Sent::model()->deleteAll('element_id = ?', array($this->id));
+		OphTrOperationbooking_Operation_Procedures::model()->deleteAll('element_id = ?', array($this->id));
+		OphTrOperationbooking_Operation_Booking::model()->deleteAll('element_id = ?', array($this->id));
+		OphTrOperationbooking_Operation_EROD::model()->deleteAll('element_id = ?', array($this->id));
+		parent::delete();
+	}
+	
 }
-?>
