@@ -291,6 +291,8 @@ $(document).ready(function() {
 				url: baseUrl+'/OphTrOperationbooking/theatreDiary/saveSession',
 				success: function(errors) {
 					var first = false;
+					$('#tbody_'+session_id).children('tr').attr('style','');
+
 					for (var operation_id in errors) {
 						$('#oprow_'+operation_id).attr('style','background-color: #f00;');
 
