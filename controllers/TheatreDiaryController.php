@@ -20,10 +20,6 @@
 class TheatreDiaryController extends BaseEventTypeController
 {
 	public $layout='//layouts/main';
-	public $js = array(
-		'js/jquery.validate.min.js',
-		'js/additional-validators.js',
-	);
 
 	public function accessRules() {
 		return array(
@@ -162,6 +158,8 @@ class TheatreDiaryController extends BaseEventTypeController
 		if (@$_POST['emergency_list']) {
 			$whereSql .= ' and f.id is null';
 		} else {
+			$whereSql .= ' and f.id is not null';
+
 			if (@$_POST['site-id']) {
 				$whereSql .= ' AND t.site_id = :siteId';
 				$whereParams[':siteId'] = $_POST['site-id'];
@@ -215,7 +213,7 @@ class TheatreDiaryController extends BaseEventTypeController
 			->leftJoin('user su','s.last_modified_user_id = su.id')
 			->leftJoin('ophtroperationbooking_operation_ward w', 'w.id = b.ward_id')
 			->where($whereSql, $whereParams)
-			->order('t.name ASC, s.date ASC, s.start_time ASC, s.end_time ASC, b.display_order ASC')
+			->order('i.short_name ASC, t.display_order ASC, t.code ASC, s.date ASC, s.start_time ASC, s.end_time ASC, b.display_order ASC')
 			->queryAll();
 
 		$diary = array();
@@ -329,7 +327,7 @@ class TheatreDiaryController extends BaseEventTypeController
 			$whereParams[':firmId'] = $_POST['firm-id'];
 		}
 
-		$whereSql .= ' and (ep.deleted = 0 or ep.deleted is null) and (e.deleted = 0 or e.deleted is null)';
+		$whereSql .= ' and (ep.deleted = 0 or ep.deleted is null) and (e.deleted = 0 or e.deleted is null) and b.cancellation_date is null';
 
 		return Yii::app()->db->createCommand()
 			->select('p.hos_num, c.first_name, c.last_name, p.dob, p.gender, s.date, w.code as ward_code, w.name as ward_name, f.pas_code as consultant, sp.ref_spec as subspecialty')

@@ -18,10 +18,13 @@
 
 $(document).ready(function() {
 	handleButton($('#waitingList-filter button[type="submit"]'),function(e) {
+		e.preventDefault();
+
 		if ($('#hos_num').val().length <1 || $('#hos_num').val().match(/^[0-9]+$/)) {
 			$('#hos_num_error').hide();
 		} else {
 			$('#hos_num_error').show();
+			enableButtons();
 			return false;
 		}
 
@@ -36,7 +39,6 @@ $(document).ready(function() {
 				enableButtons();
 			}
 		});
-		e.preventDefault();
 	});
 
 	handleButton($('#btn_print'),function() {

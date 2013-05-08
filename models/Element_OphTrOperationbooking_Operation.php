@@ -745,7 +745,7 @@
 		if ($this->event->episode->patient->isChild()) {
 			$where .= " and ophtroperationbooking_operation_session.paediatric = 1";
 
-			$service_subspecialty_assignment_id = $this->event->element_operation->booking->session->firm->serviceSubspecialtyAssignment->id;
+			$service_subspecialty_assignment_id = OphTrOperationbooking_Operation_Session::model()->findByPk($booking_session_id)->firm->serviceSubspecialtyAssignment->id;
 		}
 
 		if ($this->anaesthetist_required || $this->anaesthetic_type->code == 'GA') {
@@ -1228,5 +1228,15 @@
 			}
 		}
 	}
+	
+	public function delete() {
+	
+		// Delete related records
+		OphTrOperationbooking_Operation_Date_Letter_Sent::model()->deleteAll('element_id = ?', array($this->id));
+		OphTrOperationbooking_Operation_Procedures::model()->deleteAll('element_id = ?', array($this->id));
+		OphTrOperationbooking_Operation_Booking::model()->deleteAll('element_id = ?', array($this->id));
+		OphTrOperationbooking_Operation_EROD::model()->deleteAll('element_id = ?', array($this->id));
+		parent::delete();
+	}
+	
 }
-?>

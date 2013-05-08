@@ -19,11 +19,6 @@
 
 class WaitingListController extends BaseEventTypeController {
 	
-	public $js = array(
-		'js/jquery.validate.min.js',
-		'js/additional-validators.js',
-	);
-
 	public function accessRules() {
 		return array(
 			// Level 2 or below can't change anything

@@ -133,7 +133,7 @@
 								<img src="<?php echo $assetPath?>/img/diaryIcons/female.png" alt="female" title="female" width="17" height="17" />
 							<?php }?>
 							<img src="<?php echo $assetPath?>/img/diaryIcons/confirmed.png" alt="confirmed" width="17" height="17" class="confirmed" title="confirmed"<?php if (!$booking['confirmed']) {?> style="display: none;"<?php }?>>
-							<?php if (!$booking['comments'] && preg_match('/\w/', $booking['comments'])) {?>
+							<?php if ($booking['comments'] && preg_match('/\w/', $booking['comments'])) { ?>
 								<img src="<?php echo $assetPath?>/img/diaryIcons/comment.png" alt="<?php echo htmlentities($booking['comments']) ?>" title="<?php echo htmlentities($booking['comments']) ?>" width="17" height="17" />
 							<?php }?>
 							<?php if ($booking['overnight_stay']) {?>
