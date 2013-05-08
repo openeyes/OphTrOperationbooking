@@ -194,23 +194,25 @@ class WaitingListController extends BaseEventTypeController {
 		*/
 	protected function getFilteredFirms($subspecialtyId)
 	{
+		$sp_surgical = SpecialtyType::model()->find('name=?',array('Surgical'));
+		$sp_medical = SpecialtyType::model()->find('name=?',array('Medical'));
+
 		// remove any firms that aren't part of a medical specialty
 		$data = Yii::app()->db->createCommand()
-		->select('f.id, f.name')
-		->from('firm f')
-		->join('service_subspecialty_assignment ssa', 'f.service_subspecialty_assignment_id = ssa.id')
-		->join('subspecialty s', 'ssa.subspecialty_id = s.id')
-		->join('specialty sp', 's.specialty_id = sp.id')
-		->order('f.name asc')
-		->where('ssa.subspecialty_id=:id AND sp.medical = :ismedical',
-				array(':id'=>$subspecialtyId, ':ismedical' => true))
-				->queryAll();
+			->select('f.id, f.name')
+			->from('firm f')
+			->join('service_subspecialty_assignment ssa', 'f.service_subspecialty_assignment_id = ssa.id')
+			->join('subspecialty s', 'ssa.subspecialty_id = s.id')
+			->join('specialty sp', 's.specialty_id = sp.id')
+			->order('f.name asc')
+			->where("ssa.subspecialty_id=:id AND sp.specialty_type_id in ($sp_surgical->id,$sp_medical->id)",
+				array(':id'=>$subspecialtyId))
+			->queryAll();
 
 		$firms = array();
 		foreach ($data as $values) {
 			$firms[$values['id']] = $values['name'];
 		}
-		
 
 		return $firms;
 	}
