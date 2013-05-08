@@ -52,7 +52,7 @@ $this->header()?>
 		<?php
 		echo CHtml::label('Comments: ', 'cancellation_comment')?>
 		<div style="height: 0.4em;"></div>
-		<textarea name="cancellation_comment" rows=6 cols=40></textarea>
+		<?php echo CHtml::textArea('cancellation_comment',@$_POST['cancellation_comment'],array('rows'=>6,'cols'=>40))?>
 		<div style="height: 0.4em;"></div>
 		<div class="clear"></div>
 		<button type="submit" class="classy red venti auto"><span class="button-span button-span-red">Confirm reschedule later</span></button>
@@ -61,7 +61,7 @@ $this->header()?>
 		echo CHtml::endForm(); ?>
 	</div>
 </div>
-<?php if (is_array($errors)) {?>
+<?php if (!empty($errors)) {?>
 	<div class="alertBox" style="margin-top: 10px;"><p>Please fix the following input errors:</p>
 		<ul>
 			<?php foreach ($errors as $error) {?>

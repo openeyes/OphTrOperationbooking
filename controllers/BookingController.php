@@ -19,10 +19,15 @@
 
 class BookingController extends BaseEventTypeController {
 	public $reschedule = false;
-	public $js = array(
-		'js/jquery.validate.min.js',
-		'js/additional-validators.js',
-	);
+
+	protected function beforeAction($action) {
+		$this->assetPath = Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.'.$this->getModule()->name.'.assets'), false, -1, YII_DEBUG);
+		Yii::app()->clientScript->registerScriptFile($this->assetPath.'/js/booking.js');
+		Yii::app()->clientScript->registerScriptFile('/js/jquery.validate.min.js');
+		Yii::app()->clientScript->registerScriptFile('/js/additional-validators.js');
+
+		return parent::beforeAction($action);
+	}
 
 	public function accessRules() {
 		return array(
@@ -79,9 +84,10 @@ class BookingController extends BaseEventTypeController {
 			if ($session = OphTrOperationbooking_Operation_Session::model()->findByPk(@$_GET['session_id'])) {
 				$criteria = new CDbCriteria;
 				$criteria->compare('session_id', $session->id);
-				$criteria->addCondition('cancellation_date is null');
+				$criteria->addCondition('`t`.cancellation_date is null');
+				$criteria->addCondition('event.deleted = 0');
 				$criteria->order = 'display_order ASC';
-				$bookings = OphTrOperationbooking_Operation_Booking::model()->findAll($criteria);
+				$bookings = OphTrOperationbooking_Operation_Booking::model()->with(array('operation'=>array('with'=>'event')))->findAll($criteria);
 
 				foreach ($theatres as $name => $list) {
 					foreach ($list as $theatre) {
@@ -152,10 +158,15 @@ class BookingController extends BaseEventTypeController {
 
 		Yii::app()->clientScript->registerCSSFile(Yii::app()->createUrl('css/theatre_calendar.css'), 'all');
 
+		$errors = array();
+
 		if (!empty($_POST)) {
+			if (strlen($_POST['cancellation_comment']) >200) {
+				$errors[] = "Comments must be 200 characters max";
+			}
 			if (!$reason = OphTrOperationbooking_Operation_Cancellation_Reason::model()->findByPk($_POST['cancellation_reason'])) {
-				$errors = array("Please select a rescheduling reason");
-			} else if (isset($_POST['booking_id'])) {
+				$errors[] = "Please select a rescheduling reason";
+			} else if (isset($_POST['booking_id']) && empty($errors)) {
 				if (!$booking = OphTrOperationbooking_Operation_Booking::model()->findByPk($_POST['booking_id'])) {
 					throw new Exception('Booking not found: '.@$_POST['booking_id']);
 				}
@@ -171,7 +182,7 @@ class BookingController extends BaseEventTypeController {
 				'operation' => $operation,
 				'date' => $operation->minDate,
 				'patient' => $operation->event->episode->patient,
-				'errors' => @$errors,
+				'errors' => $errors,
 			),
 			false,
 			true

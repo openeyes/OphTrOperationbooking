@@ -53,17 +53,18 @@ $(document).ready(function() {
 	});
 
 	handleButton($('button.btn_transport_print'),function(e) {
-		printUrl(window.location.href.replace(/\/index/,'/printList'));
+		printIFrameUrl(window.location.href.replace(/\/index/,'/printList'),null);
 		setTimeout('enableButtons();',3000);
 		e.preventDefault();
 	});
 
 	handleButton($('button.btn_transport_download'),function() {
 		$('#csvform').submit();
+		enableButtons();
 	});
 
-	$('#transport_checkall').click(function() {
-		$('input[name^="bookings"]').attr('checked',$('#transport_checkall').is(':checked'));
+	$('#transport_checkall').die('click').live('click',function() {
+		$('input[name^="bookings"]').attr('checked',$('#transport_checkall').is(':checked') ? 'checked' : false);
 	});
 
 	$('a.pagination-link').die('click').live('click',function() {
@@ -82,6 +83,14 @@ $(document).ready(function() {
 		transport_load_tcis(page);
 
 		return false;
+	});
+
+	$('#transport_date_from').bind('change',function() {
+		$('#transport_date_to').datepicker('option','minDate',$('#transport_date_from').datepicker('getDate'));
+	});
+
+	$('#transport_date_to').bind('change',function() {
+		$('#transport_date_from').datepicker('option','maxDate',$('#transport_date_to').datepicker('getDate'));
 	});
 });
 

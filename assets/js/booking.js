@@ -95,16 +95,7 @@ $(document).ready(function() {
 	$('#calendar table td').click(function() {
 		var day = $(this).text().match(/[0-9]+/);
 		if (day == null) return false;
-
-		if (window.location.href.match(/day=/)) {
-			var href = window.location.href.replace(/day=[0-9]+/,'day='+day);
-		} else if (window.location.href.match(/\?/)) {
-			var href = window.location.href + '&day='+day;
-		} else {
-			var href = window.location.href + '?day='+day;
-		}
-		href = href.replace(/(&|\?)session_id=[0-9]+/,'');
-		window.location.href = href;
+		window.location.href = URI(window.location.href).setSearch('day',day).removeSearch('session_id');
 		return false;
 	});
 
@@ -120,15 +111,7 @@ $(document).ready(function() {
 	$(this).undelegate('#firmSelect #firm_id','change').delegate('#firmSelect #firm_id','change',function() {
 		var firm_id = $(this).val();
 		var operation = $('input[id=operation]').val();
-		if (window.location.href.match(/firm_id=/)) {
-			var href = window.location.href.replace(/firm_id=([0-9]+|EMG)/,'firm_id='+firm_id);
-		} else if (window.location.href.match(/\?/)) {
-			var href = window.location.href + '&firm_id='+firm_id;
-		} else {
-			var href = window.location.href + '?firm_id='+firm_id;
-		}
-		href = href.replace(/(&|\?)day=[0-9]+/,'').replace(/(&|\?)session_id=[0-9]+/,'');
-		window.location.href = href;
+		window.location.href = URI(window.location.href).setSearch('firm_id',firm_id).removeSearch(['session_id', 'day']);
 	});
 
 	handleButton($('#btn_print-letter'),function() {
@@ -139,30 +122,6 @@ $(document).ready(function() {
 	handleButton($('#btn_print-admissionletter'),function() {
 		var m = window.location.href.match(/\/view\/([0-9]+)$/);
 		printIFrameUrl(baseUrl+'/OphTrOperationbooking/default/admissionLetter/'+m[1]);
-	});
-
-	$("#btn_print_diary").click(function() {
-		printElem('printDiary', {
-			pageTitle:'openeyes printout',
-			printBodyOptions:{styleToAdd:'width:auto !important; margin: 0.75em !important;',classNameToAdd:'openeyesPrintout'},overrideElementCSS:['css/style.css',{href:'css/style.css',media:'print'}]
-		});
-	});
-
-	$('#btn_print_diary_list').click(function() {
-		if ($('#site-id').val() == '' || $('#subspecialty-id').val() == '' || $('#date-start').val() == '' || $('#date-end').val() == '') {
-			alert('To print the booking list you must select a site, a subspecialty and a date range.');
-			scrollTo(0,0);
-			return false;
-		}
-
-		printElem('printList',{
-			pageTitle:'openeyes printout',
-			printBodyOptions:{
-				styleToAdd:'width:auto !important; margin: 0.75em !important;',
-				classNameToAdd:'openeyesPrintout'
-			},
-			overrideElementCSS:['css/style.css',{href:'css/style.css',media:'print'}]
-		});
 	});
 
 	$('input[name="Element_OphTrOperationbooking_Diagnosis[eye_id]"]').change(function() {
@@ -183,41 +142,3 @@ $(document).ready(function() {
 		}
 	});
 });
-
-function printElem(method,options){
-	$.ajax({
-		'url': baseUrl+'/OphTrOperationbooking/theatreDiary/'+method,
-		'type': 'POST',
-		'data': searchData,
-		'success': function(data) {
-			$('#printable').html(data);
-			$('#printable').printElement(options);
-			return false;
-		}
-	});
-}
-
-function theatreDiaryIconHovers() {
-	var offsetY = 28;
-	var offsetX = 10;
-	var tipWidth = 0;
-
-	$('.alerts img').hover(function(e){
-		var titleText = $(this).attr('title');
-		$(this).data('tipText',titleText).removeAttr('title');
-
-		$('<p class="alertIconHelp"></p>').text(titleText).appendTo('body');
-		$('<img />').attr({width:'17',height:'17',src:$(this).attr('src')}).prependTo('.alertIconHelp');
-		tipWidth = $('.alertIconHelp').outerWidth();
-		$('.alertIconHelp').css('top', (e.pageY - offsetY) + 'px').css('left', (e.pageX - (tipWidth + offsetX)) + 'px').fadeIn('fast');
-
-	},function(e){
-		$(this).attr('title',$(this).data('tipText'));
-		$('.alertIconHelp').remove();
-
-	}).mousemove(function(e) {
-		$('.alertIconHelp')
-			.css('top', (e.pageY - offsetY) + 'px')
-			.css('left', (e.pageX - (tipWidth + offsetX)) + 'px');
-	});
-}
