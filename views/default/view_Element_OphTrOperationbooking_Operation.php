@@ -119,7 +119,7 @@
 			<?php echo date('H:i',strtotime($booking->session_start_time)); ?> -
 			<?php echo date('H:i',strtotime($booking->session_end_time)); ?></strong>,
 			in <strong><?php echo $booking->theatre->nameWithSite; ?></strong>.
-			Cancelled on <?php echo $booking->NHSDate('cancellation_date'); ?>
+			Cancelled on <?php echo $booking->NHSDate('booking_cancellation_date'); ?>
 			by <strong><?php echo $booking->usermodified->FullName; ?></strong>
 			due to <?php echo $booking->cancellationReasonWithComment; ?>
 		</li>
@@ -127,10 +127,10 @@
 	</ul>
 <?php }?>
 
-<?php if ($element->status->name == 'Cancelled' && $element->cancellation_date) {?>
+<?php if ($element->status->name == 'Cancelled' && $element->operation_cancellation_date) {?>
 	<h3 class="subsection">Cancellation details</h3>
 		<div class="eventHighlight">
-			<h4>Cancelled on <?php echo $element->NHSDate('cancellation_date') . ' by user ' . $element->cancellation_user->username . ' for reason: ' . $element->cancellation_reason->text?>
+			<h4>Cancelled on <?php echo $element->NHSDate('operation_cancellation_date') . ' by user ' . $element->cancellation_user->username . ' for reason: ' . $element->cancellation_reason->text?>
 			</h4>
 		</div>
 

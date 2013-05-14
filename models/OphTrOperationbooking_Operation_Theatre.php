@@ -80,6 +80,7 @@ class OphTrOperationbooking_Operation_Theatre extends BaseActiveRecord
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
+			'sessions' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Session', 'theatre_id'),
 		);
 	}
 
@@ -125,7 +126,7 @@ class OphTrOperationbooking_Operation_Theatre extends BaseActiveRecord
 			->select("t.*, s.start_time, s.end_time, s.id AS session_id, s.consultant, s.anaesthetist, s.paediatric, s.general_anaesthetic, TIMEDIFF(s.end_time, s.start_time) AS session_duration, COUNT(a.id) AS bookings, SUM(o.total_duration) AS bookings_duration")
 			->from("ophtroperationbooking_operation_session s")
 			->join("ophtroperationbooking_operation_theatre t","s.theatre_id = t.id")
-			->leftJoin("ophtroperationbooking_operation_booking a","s.id = a.session_id and a.cancellation_date is null")
+			->leftJoin("ophtroperationbooking_operation_booking a","s.id = a.session_id and a.booking_cancellation_date is null")
 			->leftJoin("et_ophtroperationbooking_operation o","a.element_id = o.id")
 			->leftJoin("event e","o.event_id = e.id")
 			->where("s.available = 1 and s.date = :date and $firmSql and (e.deleted = 0 or e.deleted is null)",array(':date' => $date))

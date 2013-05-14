@@ -91,9 +91,9 @@ class TransportController extends BaseEventTypeController
 		!empty(Yii::app()->params['transport_exclude_sites']) and $where .= ' and si.id not in ('.implode(',',Yii::app()->params['transport_exclude_sites']).') ';
 		!empty(Yii::app()->params['transport_exclude_theatres']) and $where .= ' and s.theatre_id not in ('.implode(',',Yii::app()->params['transport_exclude_theatres']).') ';
 
-		!$include_bookings and $where .= ' and (b.cancellation_date is not null or status_id != 2)';
-		!$include_reschedules and $where .= ' and (b.cancellation_date is not null or status_id = 2)';
-		!$include_cancellations and $where .= ' and (b.cancellation_date is null)';
+		!$include_bookings and $where .= ' and (b.booking_cancellation_date is not null or status_id != 2)';
+		!$include_reschedules and $where .= ' and (b.booking_cancellation_date is not null or status_id = 2)';
+		!$include_cancellations and $where .= ' and (b.booking_cancellation_date is null)';
 
 		if (!$all) {
 			$this->total_items = Yii::app()->db->createCommand()
@@ -119,8 +119,8 @@ class TransportController extends BaseEventTypeController
 		$data = Yii::app()->db->createCommand()
 			->select("eo.id as eoid, eo.priority_id, b.id as booking_id, p.id as pid, ev.id as evid, c.first_name, c.last_name, p.hos_num, eo.eye_id, f.pas_code as firm,
 				eo.decision_date, su.ref_spec as subspecialty, s.date as session_date, s.start_time as session_time, eo.status_id, b.created_date, w.name as ward_name,
-				s.theatre_id, s.id as session_id, b.cancellation_date, b.transport_arranged, unix_timestamp(str_to_date(concat(date,' ',start_time),'%Y-%m-%d %H:%i:%s')) as timestamp,
-				case isnull(b.cancellation_date) when 0 then 'Cancelled' else ( case status_id = 2 when 1 then 'Booked' else 'Rescheduled' end ) end as method,
+				s.theatre_id, s.id as session_id, b.booking_cancellation_date, b.transport_arranged, unix_timestamp(str_to_date(concat(date,' ',start_time),'%Y-%m-%d %H:%i:%s')) as timestamp,
+				case isnull(b.booking_cancellation_date) when 0 then 'Cancelled' else ( case status_id = 2 when 1 then 'Booked' else 'Rescheduled' end ) end as method,
 				case si.short_name != '' when 1 then si.short_name else si.name end as location, case eo.priority_id = 1 when 1 then 'Routine' else 'Urgent' end as priority,
 				case transport_arranged = 0 when 1 then ( case s.date <= now() + interval 1 day when 1 then 'Red' else 'Green' end ) else 'Grey' end as colour")
 			->from("et_ophtroperationbooking_operation eo")

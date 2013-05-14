@@ -34,15 +34,15 @@
 		</tr>
 		<?php foreach ($bookings as $booking) { ?>
 			<tr>
-				<td><?php echo $booking['hos_num']?></td>
-				<td><strong><?php echo strtoupper($booking['last_name']) ?></strong>, <?php echo $booking['first_name']?></td>
-				<td><?php echo Helper::convertMySQL2NHS($booking['dob'])?></td>
-				<td><?php echo Helper::getAge($booking['dob'])?></td>
-				<td><?php echo $booking['gender']?></td>
-				<td><?php echo Helper::convertMySQL2NHS($booking['date'])?></td>
-				<td><?php echo $booking['ward_name']?></td>
-				<td><?php echo $booking['consultant']?></td>
-				<td><?php echo $booking['subspecialty']?></td>
+				<td><?php echo $booking->operation->event->episode->patient->hos_num?></td>
+				<td><strong><?php echo strtoupper($booking->operation->event->episode->patient->last_name) ?></strong>, <?php echo $booking->operation->event->episode->patient->first_name?></td>
+				<td><?php echo $booking->operation->event->episode->patient->NHSDate('dob')?></td>
+				<td><?php echo $booking->operation->event->episode->patient->age?></td>
+				<td><?php echo $booking->operation->event->episode->patient->gender?></td>
+				<td><?php echo $booking->NHSDate('session_date')?></td>
+				<td><?php echo $booking->ward->name?></td>
+				<td><?php echo $booking->session->firm->pas_code?></td>
+				<td><?php echo $booking->session->firm->serviceSubspecialtyAssignment->subspecialty->name?></td>
 			</tr>
 		<?php } ?>
 	</table>

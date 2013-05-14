@@ -152,200 +152,180 @@ class TheatreDiaryController extends BaseEventTypeController
 			}
 		}
 
-		$whereSql = 's.date BETWEEN :start AND :end';
-		$whereParams = array(':start' => $startDate, ':end' => $endDate);
+		$criteria = new CDbCriteria;
+
+		$criteria->addCondition("date >= :startDate");
+		$criteria->addCondition("date <= :endDate");
+
+		$criteria->params = array(
+			':startDate' => $startDate,
+			':endDate' => $endDate,
+		);
 
 		if (@$_POST['emergency_list']) {
-			$whereSql .= ' and f.id is null';
+			$criteria->addCondition("firm.id is null");
 		} else {
-			$whereSql .= ' and f.id is not null';
+			$criteria->addCondition("firm.id is not null");
 
 			if (@$_POST['site-id']) {
-				$whereSql .= ' AND t.site_id = :siteId';
-				$whereParams[':siteId'] = $_POST['site-id'];
+				$criteria->addCondition("`t`.site_id = :siteId");
+				$criteria->params[':siteId'] = $_POST['site-id'];
 			}
 			if (@$_POST['theatre-id']) {
-				$whereSql .= ' AND t.id = :theatreId';
-				$whereParams[':theatreId'] = $_POST['theatre-id'];
+				$criteria->addCondition("theatre.id = :theatreId");
+				$criteria->params[':theatreId'] = $_POST['theatre-id'];
 			}
 			if (@$_POST['subspecialty-id']) {
-				$whereSql .= ' AND spec.id = :subspecialtyId';
-				$whereParams[':subspecialtyId'] = $_POST['subspecialty-id'];
+				$criteria->addCondition("subspecialty_id = :subspecialtyId");
+				$criteria->params[':subspecialtyId'] = $_POST['subspecialty-id'];
 			}
 			if (@$_POST['firm-id']) {
-				$whereSql .= ' AND f.id = :firmId';
-				$whereParams[':firmId'] = $_POST['firm-id'];
+				$criteria->addCondition("firm.id = :firmId");
+				$criteria->params[':firmId'] = $_POST['firm-id'];
 			}
 			if (@$_POST['ward-id']) {
-				$whereSql .= ' AND w.id = :wardId';
-				$whereParams[':wardId'] = $_POST['ward-id'];
+				$criteria->addCondition("ward.id = :wardId");
+				$criteria->params[':wardId'] = $_POST['ward-id'];
 			}
 		}
 
-		$whereSql .= ' AND ( e.deleted = 0 OR e.deleted is null ) AND ( ep.deleted = 0 OR ep.deleted is null) ';
+		$criteria->addCondition("(event.deleted = :deleted or event.deleted is null) and (episode.deleted = :deleted or episode.deleted is null)");
+		$criteria->params[':deleted'] = 0;
+		$criteria->order = 'site.short_name, `t`.display_order, `t`.code, sessions.date, sessions.start_time, sessions.end_time, activeBookings.display_order';
 
-		$data = Yii::app()->db->createCommand()
-			->select('DISTINCT(o.id) AS operation_id, t.name, i.short_name as site_name, s.date, s.start_time, s.end_time,
-					s.id AS session_id, TIMEDIFF(s.end_time, s.start_time) AS session_duration, s.comments AS session_comments,
-					s.consultant as session_consultant, s.anaesthetist as session_anaesthetist, s.paediatric as session_paediatric,
-					s.general_anaesthetic as session_general_anaesthetic, f.name AS firm_name, spec.name AS subspecialty_name, o.eye_id,
-					an.name as anaesthetic_type, o.comments, b.admission_time, o.consultant_required, o.overnight_stay, e.id AS event_id,
-					ep.id AS episode_id, p.id AS patient_id, o.total_duration AS duration, c.first_name, c.last_name, p.dob, p.gender,
-					p.hos_num, w.name AS ward, b.display_order, b.confirmed, pr.name as priority, s.available, mu.first_name AS mu_fn,
-					mu.last_name AS mu_ln, cu.first_name as cu_fn, cu.last_name as cu_ln, s.last_modified_date,
-					su.first_name as session_first_name, su.last_name as session_last_name')
-			->from('ophtroperationbooking_operation_session s')
-			->join('ophtroperationbooking_operation_theatre t', 't.id = s.theatre_id')
-			->leftJoin('site i', 'i.id = t.site_id')
-			->leftJoin('ophtroperationbooking_operation_booking b', 'b.session_id = s.id and b.cancellation_date is null')
-			->leftJoin('et_ophtroperationbooking_operation o', 'o.id = b.element_id')
-			->leftJoin('anaesthetic_type an','o.anaesthetic_type_id = an.id')
-			->leftJoin('ophtroperationbooking_operation_priority pr','pr.id = o.priority_id')
-			->leftJoin('event e', 'e.id = o.event_id')
-			->leftJoin('episode ep', 'ep.id = e.episode_id')
-			->leftJoin('patient p', 'p.id = ep.patient_id')
-			->leftJoin('contact c', "c.parent_id = p.id and c.parent_class = 'Patient'")
-			->leftJoin('firm f', 'f.id = s.firm_id')
-			->leftJoin('service_subspecialty_assignment ssa', 'ssa.id = f.service_subspecialty_assignment_id')
-			->leftJoin('subspecialty spec', 'spec.id = ssa.subspecialty_id')
-			->leftJoin('user mu','b.last_modified_user_id = mu.id')
-			->leftJoin('user cu','b.created_user_id = cu.id')
-			->leftJoin('user su','s.last_modified_user_id = su.id')
-			->leftJoin('ophtroperationbooking_operation_ward w', 'w.id = b.ward_id')
-			->where($whereSql, $whereParams)
-			->order('i.short_name ASC, t.display_order ASC, t.code ASC, s.date ASC, s.start_time ASC, s.end_time ASC, b.display_order ASC')
-			->queryAll();
-
-		$diary = array();
-
-		foreach ($data as $row) {
-			if (!isset($diary[$row['site_name']][$row['name']][$row['date']][$row['session_id']])) {
-				$sessionTime = explode(':', $row['session_duration']);
-
-				$diary[$row['site_name']][$row['name']][$row['date']][$row['session_id']] = array(
-					'id' => $row['session_id'],
-					'timestamp' => strtotime($row['date']),
-					'site_name' => $row['site_name'],
-					'theatre_name' => $row['name'],
-					'firm_name' => $row['firm_name'],
-					'subspecialty_name' => $row['subspecialty_name'],
-					'start_time' => $row['start_time'],
-					'end_time' => $row['end_time'],
-					'duration' => ($sessionTime[0] * 60) + $sessionTime[1],
-					'comments' => $row['session_comments'],
-					'available' => $row['available'],
-					'consultant' => $row['session_consultant'],
-					'anaesthetist' => $row['session_anaesthetist'],
-					'paediatric' => $row['session_paediatric'],
-					'general_anaesthetic' => $row['session_general_anaesthetic'],
-					'last_modified_date' => preg_replace('/ .*$/','',$row['last_modified_date']),
-					'last_modified_time' => preg_replace('/^.* /','',$row['last_modified_date']),
-					'session_first_name' => $row['session_first_name'],
-					'session_last_name' => $row['session_last_name'],
-					'bookings' => array(),
-				);
-			}
-
-			if ($row['operation_id']) {
-				$diary[$row['site_name']][$row['name']][$row['date']][$row['session_id']]['bookings'][] = array(
-					'patient' => strtoupper($row['last_name']).', '.$row['first_name'],
-					'patient_with_age' => strtoupper($row['last_name']).', '.$row['first_name'].' ('.Helper::getAge($row['dob']).')',
-					'age' => Helper::getAge($row['dob']),
-					'hos_num' => $row['hos_num'],
-					'gender' => $row['gender'],
-					'operation_id' => $row['operation_id'],
-					'eye' => Eye::model()->findByPk($row['eye_id'])->name,
-					'anaesthetic_type' => $row['anaesthetic_type'],
-					'comments' => $row['comments'],
-					'admission_time' => substr($row['admission_time'],0,5),
-					'consultant_required' => $row['consultant_required'],
-					'overnight_stay' => $row['overnight_stay'],
-					'event_id' => $row['event_id'],
-					'duration' => $row['duration'],
-					'ward' => $row['ward'],
-					'confirmed' => $row['confirmed'],
-					'priority' => $row['priority'],
-					'created_user' => $row['cu_fn'].' '.$row['cu_ln'],
-					'last_modified_user' => $row['mu_fn'].' '.$row['mu_ln'],
-					'procedures' => Element_OphTrOperationbooking_Operation::model()->findByPk($row['operation_id'])->getProceduresCommaSeparated(),
-				);
-			}
-		}
-
-		foreach ($diary as $site_name => $theatres) {
-			foreach ($theatres as $theatre_name => $dates) {
-				foreach ($dates as $date => $sessions) {
-					foreach ($sessions as $session_id => $session) {
-						$totalBookings = 0;
-						foreach ($session['bookings'] as $booking) {
-							$totalBookings += $booking['duration'];
-						}
-						$diary[$site_name][$theatre_name][$date][$session_id]['available_time'] = $session['duration'] - $totalBookings;
-					}
-				}
-			}
-		}
-
-		return $diary;
+		return OphTrOperationbooking_Operation_Theatre::model()
+			->with(array(
+				'site',
+				'sessions' => array(
+					'with' => array(
+						'activeBookings' => array(
+							'with' => array(
+								'operation' => array(
+									'with' => array(
+										'anaesthetic_type',
+										'priority',
+										'event' => array(
+											'with' => array(
+												'episode' => array(
+													'with' => array(
+														'patient' => array(
+															'with' => 'contact',
+														),
+													),
+												),
+											),
+										),
+										'procedures',
+										'op_usermodified',
+										'op_user',
+										'eye',
+									),
+								),
+								'ward',
+							),
+						),
+						'firm' => array(
+							'with' => array(
+								'serviceSubspecialtyAssignment' => array(
+									'with' => 'subspecialty',
+								),
+							),
+						),
+						'session_user',
+						'session_usermodified',
+						'theatre',
+					),
+				),
+			))
+			->findAll($criteria);
 	}
 	
 	public function getNextSessionDate($firmId) {
-		$date = Yii::app()->db->createCommand()
-			->select('date')
-			->from('ophtroperationbooking_operation_session s')
-			->where('s.firm_id = :fid AND date >= CURDATE()', array(':fid' => $firmId))
-			->order('date ASC')
-			->limit(1)
-			->queryRow();
+		$criteria = new CDbCriteria;
+		$criteria->addCondition("firm_id = :firmId and date >= :date");
+		$criteria->params = array(
+			'firmId' => $firmId,
+			'date' => date('Y-m-d'),
+		);
+		$criteria->order = 'date asc';
 
-		if (empty($date)) {
-			// No sessions, return today
-			return date('Y-m-d');
+		if ($session = OphTrOperationbooking_Operation_Session::model()->find($criteria)) {
+			return $session->date;
 		} else {
-			return $date['date'];
+			return date('Y-m-d');
 		}
 	}
 
 	public function getBookingList() {
+		$_POST = array(
+			'date-start' => '2013-05-01',
+			'date-end' => '2013-05-31',
+			'subspecialty-id' => 4,
+			'site-id' => 1,
+			'firm-id' => '',
+			'ward-id' => '',
+			'firm-id' => '',
+		);
+
 		$from = Helper::convertNHS2MySQL($_POST['date-start']);
 		$to = Helper::convertNHS2MySQL($_POST['date-end']);
 
-		$whereSql = 't.site_id = :siteId and sp.id = :subspecialtyId and eo.status_id in (2,4) and date >= :dateFrom and date <= :dateTo';
-		$whereParams = array(':siteId' => $_POST['site-id'], ':subspecialtyId' => $_POST['subspecialty-id'], ':dateFrom' => $from, ':dateTo' => $to);
-		$order = 'w.name ASC, p.hos_num ASC';
+		$criteria = new CDbCriteria;
+
+		$criteria->addCondition('theatre.site_id = :siteId and subspecialty_id = :subspecialtyId and session.date >= :dateFrom and session.date <= :dateTo');
+		$criteria->addInCondition('operation.status_id',array(2,4));
+
+		$criteria->params[':siteId'] = $_POST['site-id'];
+		$criteria->params[':subspecialtyId'] = $_POST['subspecialty-id'];
+		$criteria->params[':dateFrom'] = $_POST['date-start'];
+		$criteria->params[':dateTo'] = $_POST['date-end'];
 
 		if ($_POST['ward-id']) {
-			$whereSql .= ' and w.id = :wardId';
-			$whereParams[':wardId'] = $_POST['ward-id'];
-			$order = 'p.hos_num ASC';
-		}else{
-			$order = 'w.code ASC, p.hos_num ASC';
+			$criteria->addCondition('ward.id = :wardId');
+			$criteria->params[':wardId'] = $_POST['ward-id'];
 		}
 
 		if ($_POST['firm-id']) {
-			$whereSql .= ' and f.id = :firmId';
-			$whereParams[':firmId'] = $_POST['firm-id'];
+			$criteria->addCondition('firm.id = :firmId');
+			$criteria->params[':firmId'] = $_POST['firm-id'];
 		}
 
-		$whereSql .= ' and (ep.deleted = 0 or ep.deleted is null) and (e.deleted = 0 or e.deleted is null) and b.cancellation_date is null';
+		$criteria->addCondition('`t`.booking_cancellation_date is null');
 
-		return Yii::app()->db->createCommand()
-			->select('p.hos_num, c.first_name, c.last_name, p.dob, p.gender, s.date, w.code as ward_code, w.name as ward_name, f.pas_code as consultant, sp.ref_spec as subspecialty')
-			->from('ophtroperationbooking_operation_booking b')
-			->join('ophtroperationbooking_operation_session s','b.session_id = s.id')
-			->join('ophtroperationbooking_operation_theatre t','s.theatre_id = t.id')
-			->join('firm f','f.id = s.firm_id')
-			->join('service_subspecialty_assignment ssa','ssa.id = f.service_subspecialty_assignment_id')
-			->join('subspecialty sp','sp.id = ssa.subspecialty_id')
-			->join('et_ophtroperationbooking_operation eo','b.element_id = eo.id')
-			->join('event e','eo.event_id = e.id')
-			->join('episode ep','e.episode_id = ep.id')
-			->join('patient p','ep.patient_id = p.id')
-			->join('contact c',"c.parent_id = p.id and c.parent_class = 'Patient'")
-			->join('ophtroperationbooking_operation_ward w','b.ward_id = w.id')
-			->where($whereSql, $whereParams)
-			->order($order)
-			->queryAll();
+		$criteria->order = 'ward.code, patient.hos_num';
+
+		return OphTrOperationbooking_Operation_Booking::model()
+			->with(array(
+				'session' => array(
+					'with' => array(
+						'theatre',
+						'firm' => array(
+							'with' => array(
+								'serviceSubspecialtyAssignment' => array(
+									'with' => 'subspecialty',
+								),
+							),
+						),
+					),
+				),
+				'operation' => array(
+					'with' => array(
+						'event' => array(
+							'with' => array(
+								'episode' => array(
+									'with' => array(
+										'patient' => array(
+											'with' => 'contact',
+										),
+									),
+								),
+							),
+						),
+					),
+				),
+				'ward',
+			))
+			->findAll($criteria);
 	}
 
 	/**
@@ -470,21 +450,12 @@ class TheatreDiaryController extends BaseEventTypeController
 		*/
 	protected function getFilteredFirms($subspecialtyId)
 	{
-		$data = Yii::app()->db->createCommand()
-			->select('f.id, f.name')
-			->from('firm f')
-			->join('service_subspecialty_assignment ssa', 'f.service_subspecialty_assignment_id = ssa.id')
-			->join('subspecialty s', 'ssa.service_id = s.id')
-			->where('ssa.subspecialty_id=:id',
-				array(':id'=>$subspecialtyId))
-			->queryAll();
+		$criteria = new CDbCriteria;
+		$criteria->addCondition('subspecialty_id = :subspecialtyId');
+		$criteria->params[':subspecialtyId'] = $subspecialtyId;
+		$criteria->order = 'name';
 
-		$firms = array();
-		foreach ($data as $values) {
-			$firms[$values['id']] = $values['name'];
-		}
-
-		natcasesort($firms);
+		$firms = CHtml::listData(Firm::model()->with('serviceSubspecialtyAssignment')->findAll($criteria),'id','name');
 
 		return $firms;
 	}
@@ -498,19 +469,12 @@ class TheatreDiaryController extends BaseEventTypeController
 		*/
 	protected function getFilteredTheatres($siteId)
 	{
-		$data = Yii::app()->db->createCommand()
-			->select('t.id, t.name')
-			->from('ophtroperationbooking_operation_theatre t')
-			->where('t.site_id = :id',
-				array(':id'=>$siteId))
-			->queryAll();
+		$criteria = new CDbCriteria;
+		$criteria->addCondition('site_id = :siteId');
+		$criteria->params[':siteId'] = $siteId;
+		$criteria->order = 'display_order';
 
-		$theatres = array();
-		foreach ($data as $values) {
-			$theatres[$values['id']] = $values['name'];
-		}
-
-		return $theatres;
+		return CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll($criteria),'id','name');
 	}
 
 	/**
@@ -522,20 +486,12 @@ class TheatreDiaryController extends BaseEventTypeController
 		*/
 	protected function getFilteredWards($siteId)
 	{
-		$data = Yii::app()->db->createCommand()
-			->select('w.id, w.name')
-			->from('ophtroperationbooking_operation_ward w')
-			->where('w.site_id = :id',
-				array(':id'=>$siteId))
-			->order('w.name ASC')
-			->queryAll();
+		$criteria = new CDbCriteria;
+		$criteria->addCondition('site_id = :siteId');
+		$criteria->params[':siteId'] = $siteId;
+		$criteria->order = 'name';
 
-		$wards = array();
-		foreach ($data as $values) {
-			$wards[$values['id']] = $values['name'];
-		}
-
-		return $wards;
+		return CHtml::listData(OphTrOperationbooking_Operation_Ward::model()->findAll($criteria),'id','name');
 	}
 
 	public function actionSetDiaryFilter() {
@@ -563,13 +519,13 @@ class TheatreDiaryController extends BaseEventTypeController
 
 		switch (@$_POST['type']) {
 			case 'consultant':
-				if (Yii::app()->db->createCommand()
-					->select("eo.consultant_required")
-					->from("et_ophtroperationbooking_operation eo")
-					->join("ophtroperationbooking_operation_booking b","b.element_id = eo.id")
-					->join("ophtroperationbooking_operation_session s","b.session_id = s.id")
-					->where("s.id = $session->id and eo.status_id in (2,4) and b.cancellation_date is null and eo.consultant_required = 1")
-					->queryRow()) {
+				$criteria = new CDbCriteria;
+				$criteria->addInCondition('`t`.status_id',array(2,4));
+				$criteria->addCondition('session.id = :sessionId and booking.booking_cancellation_date is null and `t`.consultant_required = :required');
+				$criteria->params[':sessionId'] = $session->id;
+				$criteria->params[':required'] = 1;
+
+				if (Element_OphTrOperationbooking_Operation::model()->with(array('booking'=>array('with'=>'session')))->find($criteria)) {
 					echo "1";
 				} else {
 					echo "0";
@@ -577,44 +533,69 @@ class TheatreDiaryController extends BaseEventTypeController
 				return;
 			case 'paediatric':
 				$child_age = isset(Yii::app()->params['child_age_limit']) ? Yii::app()->params['child_age_limit'] : Patient::CHILD_AGE_LIMIT;
-				$age_limit = date('Y')-$child_age.date('-m-d',time()+86400);
 
-				if (Yii::app()->db->createCommand()
-					->select("p.id")
-					->from("patient p")
-					->join("episode e","e.patient_id = p.id")
-					->join("event ev","ev.episode_id = e.id")
-					->join("et_ophtroperationbooking_operation eo","eo.event_id = ev.id")
-					->join("ophtroperationbooking_operation_booking b","b.element_id = eo.id")
-					->join("ophtroperationbooking_operation_session s","b.session_id = s.id")
-					->where("s.id = $session->id and eo.status_id in (2,4) and b.cancellation_date is null and p.dob >= '$age_limit'")
-					->queryRow()) { 
+				$criteria = new CDbCriteria;
+				$criteria->addCondition('booking.booking_cancellation_date is null and patient.dob >= :ageLimitDate');
+				$criteria->params[':ageLimitDate'] = date('Y')-$child_age.date('-m-d',time()+86400);
+				$criteria->addInCondition('`t`.status_id',array(2,4));
+
+				if (Element_OphTrOperationbooking_Operation::model()->with(array(
+						'booking' => array(
+							'with' => array(
+								'session',
+								'operation' => array(
+									'with' => array(
+										'event' => array(
+											'with' => array(
+												'episode' => array(
+													'with' => 'patient',
+												),
+											),
+										),
+									),
+								),
+							),
+						),
+					))
+					->find($criteria)) {
 					echo "1";
 				} else {
 					echo "0";
 				}
 				return;
 			case 'anaesthetist':
-				if (Yii::app()->db->createCommand()
-					->select("eo.anaesthetist_required")
-					->from("et_ophtroperationbooking_operation eo")
-					->join("ophtroperationbooking_operation_booking b","b.element_id = eo.id")
-					->join("ophtroperationbooking_operation_session s","b.session_id = s.id")
-					->where("s.id = $session->id and eo.status_id in (2,4) and b.cancellation_date is null and eo.anaesthetist_required = 1")
-					->queryRow()) { 
+				$criteria = new CDbCriteria;
+				$criteria->addCondition('session.id = :sessionId and booking.booking_cancellation_date is null and `t`.anaesthetist_required = :required');
+				$criteria->addInCondition('`t`.status_id',array(2,4));
+				$criteria->params[':sessionId'] = $session->id;
+				$criteria->params[':required'] = 1;
+
+				if (Element_OphTrOperationbooking_Operation::model()
+					->with(array(
+						'booking' => array(
+							'with' => 'session',
+						),
+					))
+					->find($criteria)) {
 					echo "1";
 				} else {
 					echo "0";
 				}
 				return;
 			case 'general_anaesthetic':
-				if (Yii::app()->db->createCommand()
-					->select("eo.anaesthetist_required")
-					->from("et_ophtroperationbooking_operation eo")
-					->join("ophtroperationbooking_operation_booking b","b.element_id = eo.id")
-					->join("ophtroperationbooking_operation_session s","b.session_id = s.id")
-					->where("s.id = $session->id and eo.status_id in (2,4) and b.cancellation_date is null and eo.anaesthetic_type_id = 5")
-					->queryRow()) {
+				$criteria = new CDbCriteria;
+				$criteria->addCondition('session.id = :sessionId and booking.booking_cancellation_date is null and `t`.anaesthetic_type_id = :anaestheticType');
+				$criteria->addInCondition('`t`.status_id',array(2,4));
+				$criteria->params[':sessionId'] = $session->id;
+				$criteria->params[':anaestheticType'] = 5;
+
+				if (Element_OphTrOperationbooking_Operation::model()
+						->with(array(
+							'booking' => array(
+								'with' => 'session',
+							),
+						))
+					->find($criteria)) {
 					echo "1";
 				} else {
 					echo "0";

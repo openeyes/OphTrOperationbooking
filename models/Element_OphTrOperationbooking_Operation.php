@@ -89,7 +89,7 @@
 			// NOTE: you should only define rules for those attributes that
 			// will receive user inputs.
 			return array(
-				array('event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments, anaesthetist_required, total_duration, status_id, cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id', 'safe'),
+				array('event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments, anaesthetist_required, total_duration, status_id, operation_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id', 'safe'),
 				array('eye_id', 'matchDiagnosisEye'),
 				array('cancellation_comment', 'length', 'max' => 200),
 				array('eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date', 'required'),
@@ -110,8 +110,8 @@
 			'element_type' => array(self::HAS_ONE, 'ElementType', 'id','on' => "element_type.class_name='".get_class($this)."'"),
 			'eventType' => array(self::BELONGS_TO, 'EventType', 'event_type_id'),
 			'event' => array(self::BELONGS_TO, 'Event', 'event_id'),
-			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
-			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
+			'op_user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
+			'op_usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 			'eye' => array(self::BELONGS_TO, 'Eye', 'eye_id'),
 			'procedureItems' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Procedures', 'element_id'),
 			'procedures' => array(self::MANY_MANY, 'Procedure', 'ophtroperationbooking_operation_procedures_procedures(element_id, proc_id)'),
@@ -123,8 +123,8 @@
 			'date_letter_sent' => array(self::HAS_ONE, 'OphTrOperationbooking_Operation_Date_Letter_Sent', 'element_id', 'order' => 'date_letter_sent.id DESC'),
 			'cancellation_user' => array(self::BELONGS_TO, 'User', 'cancellation_user_id'),
 			'cancellation_reason' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Cancellation_Reason', 'cancellation_reason_id'),
-			'cancelledBookings' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Booking', 'element_id', 'condition' => 'cancellation_date is not null', 'order' => 'cancellation_date'),
-			'booking' => array(self::HAS_ONE, 'OphTrOperationbooking_Operation_Booking', 'element_id', 'condition' => 'cancellation_date is null'),
+			'cancelledBookings' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Booking', 'element_id', 'condition' => 'booking_cancellation_date is not null', 'order' => 'booking_cancellation_date'),
+			'booking' => array(self::HAS_ONE, 'OphTrOperationbooking_Operation_Booking', 'element_id', 'condition' => 'booking_cancellation_date is null'),
 		);
 	}
 
@@ -834,7 +834,7 @@
 			);
 		}
 
-		$this->cancellation_date = date('Y-m-d H:i:s');
+		$this->operation_cancellation_date = date('Y-m-d H:i:s');
 		$this->cancellation_reason_id = $reason_id;
 		$this->cancellation_comment = $comment;
 		$this->cancellation_user_id = Yii::app()->session['user']->id;
@@ -864,7 +864,7 @@
 		$event->save();
 
 		if ($this->booking) {
-			$this->booking->cancellation_date = date('Y-m-d H:i:s');
+			$this->booking->booking_cancellation_date = date('Y-m-d H:i:s');
 			$this->booking->cancellation_reason_id = $reason_id;
 			$this->booking->cancellation_comment = $comment;
 			$this->booking->cancellation_user_id = Yii::app()->session['user']->id;

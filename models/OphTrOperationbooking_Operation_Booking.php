@@ -65,7 +65,7 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('element_id, session_id, display_order, ward_id, admission_time, confirmed, session_date, session_start_time, session_end_time, session_theatre_id, transport_arranged, transport_arranged_date, cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id', 'safe'),
+			array('element_id, session_id, display_order, ward_id, admission_time, confirmed, session_date, session_start_time, session_end_time, session_theatre_id, transport_arranged, transport_arranged_date, booking_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id', 'safe'),
 			array('element_id', 'required'),
 			array('display_order', 'numerical', 'integerOnly'=>true),
 			array('ward_id', 'numerical', 'integerOnly'=>true),
@@ -147,7 +147,7 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecord
 	}
 
 	public function cancel($reason, $cancellation_comment, $reschedule=false) {
-		$this->cancellation_date = date('Y-m-d H:i:s');
+		$this->booking_cancellation_date = date('Y-m-d H:i:s');
 		$this->cancellation_reason_id = $reason->id;
 		$this->cancellation_comment = $cancellation_comment;
 		$this->cancellation_user_id = Yii::app()->session['user']->id;

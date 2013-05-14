@@ -20,14 +20,10 @@
 if (empty($diary)) {?>
 	<p class="fullBox"><strong>No theatre schedules match your search criteria.</strong></p>
 <?php }else{
-	foreach ($diary as $site_name => $theatres) {
-		foreach ($theatres as $theatre_name => $dates) {?>
-			<h3 class="theatre"><strong><?php echo $theatre_name?> (<?php echo $site_name?>)</strong></h3>
-			<?php foreach ($dates as $date => $sessions) {
-				foreach ($sessions as $session_id => $session) {
-					$this->renderPartial('_session',array('id' => $session_id, 'session'=>$session, 'bookings'=>$session['bookings'], 'assetPath'=>$assetPath));
-				}
-			}
+	foreach ($diary as $theatre) {?>
+		<h3 class="theatre"><strong><?php echo $theatre->name?> (<?php echo $theatre->site->name?>)</strong></h3>
+		<?php foreach ($theatre->sessions as $session) {
+			$this->renderPartial('_session',array('session'=>$session, 'theatre'=>$theatre, 'assetPath'=>$assetPath));
 		}
 	}
 }

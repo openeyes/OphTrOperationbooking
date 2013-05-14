@@ -87,11 +87,12 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 			'element_type' => array(self::HAS_ONE, 'ElementType', 'id','on' => "element_type.class_name='".get_class($this)."'"),
 			'eventType' => array(self::BELONGS_TO, 'EventType', 'event_type_id'),
 			'event' => array(self::BELONGS_TO, 'Event', 'event_id'),
-			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
-			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
+			'session_user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
+			'session_usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
 			'theatre' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Theatre', 'theatre_id'),
 			'firm' => array(self::BELONGS_TO, 'Firm', 'firm_id'),
+			'activeBookings' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Booking', 'session_id', 'condition' => 'booking_cancellation_date is null'),
 		);
 	}
 
@@ -147,7 +148,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 			->select("s.*, TIMEDIFF(s.end_time, s.start_time) AS session_duration, COUNT(a.id) AS bookings, SUM(o.total_duration) AS bookings_duration")
 			->from("ophtroperationbooking_operation_session s")
 			->join("ophtroperationbooking_operation_theatre t","s.theatre_id = t.id")
-			->leftJoin("ophtroperationbooking_operation_booking a","s.id = a.session_id and a.cancellation_date is null")
+			->leftJoin("ophtroperationbooking_operation_booking a","s.id = a.session_id and a.booking_cancellation_date is null")
 			->leftJoin("et_ophtroperationbooking_operation o","a.element_id = o.id")
 			->leftJoin("event e","o.event_id = e.id")
 			->where("s.available = 1 AND s.date BETWEEN CAST('$startDate' AS DATE) AND CAST('$monthEnd' AS DATE) AND $firmSql")
@@ -165,13 +166,8 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 	public function getBookedMinutes() {
 		$total = 0;
 
-		foreach (Yii::app()->db->createCommand()
-			->select("o.total_duration")
-			->from("et_ophtroperationbooking_operation o")
-			->join("ophtroperationbooking_operation_booking b","b.element_id = o.id")
-			->where("b.session_id = :sessionId and b.cancellation_date is null",array(':sessionId' => $this->id))
-			->queryAll() as $operation) {
-			$total += $operation['total_duration'];
+		foreach ($this->activeBookings as $booking) {
+			$total += $booking->operation->total_duration;
 		}
 
 		return $total;

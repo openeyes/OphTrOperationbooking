@@ -45,7 +45,7 @@ class OphTrOperationbooking_API extends BaseAPI {
 		$criteria = new CDbCriteria;
 		$criteria->order = 'datetime asc';
 		$criteria->addCondition('episode_id',$episode_id);
-		$criteria->addCondition('`t`.cancellation_date is null');
+		$criteria->addCondition('`t`.booking_cancellation_date is null');
 
 		$status_scheduled = OphTrOperationbooking_Operation_Status::model()->find('name=?',array('Scheduled'));
 		$status_rescheduled = OphTrOperationbooking_Operation_Status::model()->find('name=?',array('Rescheduled'));
@@ -75,7 +75,7 @@ class OphTrOperationbooking_API extends BaseAPI {
 		}
 
 		if ($status_name == 'Scheduled or Rescheduled') {
-			if (OphTrOperationbooking_Operation_Booking::model()->find('element_id=? and cancellation_date is not null',array($operation->id))) {
+			if (OphTrOperationbooking_Operation_Booking::model()->find('element_id=? and booking_cancellation_date is not null',array($operation->id))) {
 				$status_name = 'Rescheduled';
 			} else {
 				$status_name = 'Scheduled';
