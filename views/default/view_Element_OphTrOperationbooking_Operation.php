@@ -183,7 +183,7 @@ if (BaseController::checkUserLevel(3) && $element->status->name != 'Cancelled' &
 			array('id' => 'btn_reschedule-later'));
 	}	
 }
-if ($element->event->episode->editable) {
+if (BaseController::checkUserLevel(3) && $element->status->name != 'Cancelled' && $element->event->episode->editable) {
 	$this->event_actions[] = EventAction::link("Cancel operation",
 		Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/default/cancel/'.$element->event_id),
 		array('colour' => 'red'),
