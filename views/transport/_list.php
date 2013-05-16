@@ -38,29 +38,29 @@
 			</tr>
 		</thead>
 		<tbody>
-			<?php if (empty($bookings)) {?>
+			<?php if (empty($operations)) {?>
 				<tr>
 					<td colspan="12">
 						No items matched your search criteria.
 					</td>
 				</tr>
 			<?php }else{?>
-				<?php foreach ($bookings as $id => $booking) {?>
-					<tr class="waitinglist<?php echo $booking['colour']?>">
-						<td style="width: 53px;"><?php echo $booking['hos_num'] ?></td>
+				<?php foreach ($operations as $operation) {?>
+					<tr class="waitinglist<?php echo $operation->transportColour?>">
+						<td style="width: 53px;"><?php echo $operation->event->episode->patient->hos_num?></td>
 						<td class="patient">
-							<?php echo CHtml::link("<strong>" . trim(strtoupper($booking['last_name'])) . '</strong>, ' . $booking['first_name'], Yii::app()->createUrl('OphTrOperationbooking/default/view/' . $booking['evid']))?>
+							<?php echo CHtml::link("<strong>" . trim(strtoupper($operation->event->episode->patient->last_name)) . '</strong>, ' . $operation->event->episode->patient->first_name, Yii::app()->createUrl('OphTrOperationbooking/default/view/'.$operation->event_id))?>
 						</td>
-						<td style="width: 83px;"><?php echo date('j-M-Y',strtotime($booking['session_date']))?></td>
-						<td style="width: 73px;"><?php echo $booking['session_time']?></td>
-						<td style="width: 95px;"><?php echo $booking['location']?></td>
-						<td style="width: 170px;"><?php echo $booking['ward_name']?></td>
-						<td style="width: 53px;"><?php echo $booking['method']?></td>
-						<td style="width: 43px;"><?php echo $booking['firm'] ?></td>
-						<td style="width: 53px;"><?php echo $booking['subspecialty']?></td>
-						<td style="width: 80px;"><?php echo Helper::convertMySQL2NHS($booking['decision_date']) ?></td>
-						<td><?php echo $booking['priority']?></td>
-						<td style="width: 20px;"><input type="checkbox" name="bookings[]" value="<?php echo $booking['booking_id']?>" /></td>
+						<td style="width: 83px;"><?php echo date('j-M-Y',strtotime($operation->latestBooking->session_date))?></td>
+						<td style="width: 73px;"><?php echo $operation->latestBooking->session_start_time?></td>
+						<td style="width: 95px;"><?php echo $operation->latestBooking->theatre->site->shortName?></td>
+						<td style="width: 170px;"><?php echo $operation->latestBooking->ward->name?></td>
+						<td style="width: 53px;"><?php echo $operation->transportStatus?></td>
+						<td style="width: 43px;"><?php echo $operation->event->episode->firm->pas_code?></td>
+						<td style="width: 53px;"><?php echo $operation->event->episode->firm->serviceSubspecialtyAssignment->subspecialty->ref_spec?></td>
+						<td style="width: 80px;"><?php echo $operation->NHSDate('decision_date')?></td>
+						<td><?php echo $operation->priority->name?></td>
+						<td style="width: 20px;"><input type="checkbox" name="operations[]" value="<?php echo $operation->id?>" /></td>
 					</tr>
 				<?php }?>
 			<?php }?>

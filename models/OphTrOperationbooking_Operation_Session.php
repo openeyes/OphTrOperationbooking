@@ -124,41 +124,6 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 			));
 	}
 
-	public static function findByDateAndFirmID($monthStart, $minDate, $firmId) {
-		if ($firmId !== null) {
-			$firm = Firm::model()->findByPk($firmId);
-			if (empty($firm)) {
-				throw new Exception('Firm id is invalid.');
-			}
-		}
-		if (substr($minDate,0,8) == substr($monthStart,0,8)) {
-			$startDate = $minDate;
-		} else {
-			$startDate = $monthStart;
-		}
-		$monthEnd = substr($monthStart,0,8) . date('t', strtotime($monthStart));
-
-		if ($firmId === null) {
-			$firmSql = 's.firm_id IS NULL';
-		} else {
-			$firmSql = "s.firm_id = $firmId";
-		}
-
-		$sessions = Yii::app()->db->createCommand()
-			->select("s.*, TIMEDIFF(s.end_time, s.start_time) AS session_duration, COUNT(a.id) AS bookings, SUM(o.total_duration) AS bookings_duration")
-			->from("ophtroperationbooking_operation_session s")
-			->join("ophtroperationbooking_operation_theatre t","s.theatre_id = t.id")
-			->leftJoin("ophtroperationbooking_operation_booking a","s.id = a.session_id and a.booking_cancellation_date is null")
-			->leftJoin("et_ophtroperationbooking_operation o","a.element_id = o.id")
-			->leftJoin("event e","o.event_id = e.id")
-			->where("s.available = 1 AND s.date BETWEEN CAST('$startDate' AS DATE) AND CAST('$monthEnd' AS DATE) AND $firmSql")
-			->group("s.id")
-			->order("WEEKDAY(DATE) ASC")
-			->queryAll();
-
-		return $sessions;
-	}
-
 	public function getDuration() {
 		return (mktime(substr($this->end_time,0,2),substr($this->end_time,3,2),0,1,1,date('Y')) - mktime(substr($this->start_time,0,2),substr($this->start_time,3,2),0,1,1,date('Y'))) / 60;
 	}
@@ -181,6 +146,10 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		return $this->availableMinutes >= 0 ? 'available' : 'overbooked';
 	}
 
+	public function getStatus() {
+		return $this->availableMinutes >= 0 ? 'available' : 'full';
+	}
+
 	public function getTimeSlot() {
 		return date('H:i',strtotime($this->start_time)) . ' - ' . date('H:i',strtotime($this->end_time));
 	}
@@ -198,6 +167,52 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 			return $this->theatre->name . ' (' . $this->theatre->site->short_name . ')';
 		} else {
 			return 'None';
+		}
+	}
+
+	public function operationBookable($operation) {
+		if ($operation->anaesthetist_required && !$this->anaesthetist) {
+			return false;
+		}
+
+		if ($operation->consultant_required && !$this->consultant) {
+			return false;
+		}
+
+		if ($operation->event->episode->patient->isChild() && !$this->paediatric) {
+			return false;
+		}
+
+		if ($operation->anaesthetic_type->name == 'GA' && !$this->general_anaesthetic) {
+			return false;
+		}
+
+		if ($this->date < date('Y-m-d')) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public function unbookableReason($operation) {
+		if ($operation->anaesthetist_required && !$this->anaesthetist) {
+			return "The operation requires an anaesthetist, this session doesn't have one and so cannot be booked into.";
+		}
+
+		if ($operation->consultant_required && !$this->consultant) {
+			return "The operation requires a consultant, this session doesn't have one and so cannot be booked into.";
+		}
+
+		if ($operation->event->episode->patient->isChild() && !$this->paediatric) {
+			return "The operation is for a paediatric patient, this session isn't paediatric and so cannot be booked into.";
+		}
+
+		if ($operation->anaesthetic_type->name == 'GA' && !$this->general_anaesthetic) {
+			return "The operation requires general anaesthetic, this session doesn't have this and so cannot be booked into.";
+		}
+
+		if ($this->date < date('Y-m-d')) {
+			return "This session is in the past and so cannot be booked into.";
 		}
 	}
 }

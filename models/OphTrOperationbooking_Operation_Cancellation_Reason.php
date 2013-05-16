@@ -108,19 +108,12 @@ class OphTrOperationbooking_Operation_Cancellation_Reason extends BaseActiveReco
 
 	public static function getReasonsByListNumber($listNo = 2)
 	{
-		$options = Yii::app()->db->createCommand()
-			->select('t.id, t.text')
-			->from('ophtroperationbooking_operation_cancellation_reason t')
-			->where('list_no = :no', array(':no'=>$listNo))
-			->order('text ASC')
-			->queryAll();
+		$criteria = new CDbCriteria;
+		$criteria->addCondition('list_no = :listNo');
+		$criteria->params[':listNo'] = $listNo;
+		$criteria->order = 'text asc';
 
-		$result = array();
-		foreach ($options as $value) {
-			$result[$value['id']] = $value['text'];
-		}
-
-		return $result;
+		return CHtml::listData(OphTrOperationbooking_Operation_Cancellation_Reason::model()->findAll($criteria),'id','text');
 	}
 }
 ?>

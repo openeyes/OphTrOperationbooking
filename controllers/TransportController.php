@@ -51,7 +51,7 @@ class TransportController extends BaseEventTypeController
 
 	public function actionTCIs() {
 		if (ctype_digit(@$_GET['page'])) $this->page = $_GET['page'];
-		$this->renderPartial('_list',array('bookings'=>$this->getTransportList()));
+		$this->renderPartial('_list',array('operations'=>$this->getTransportList()));
 	}
 
 	public function getTransportList($all=false) {
@@ -70,85 +70,94 @@ class TransportController extends BaseEventTypeController
 			$_GET['include_bookings'] = 1;
 		}
 
-		return $this->getTransportEvents(@$date_from, @$date_to, $all, (boolean)@$_GET['include_bookings'], (boolean)@$_GET['include_reschedules'], (boolean)@$_GET['include_cancellations']);
-	}
-
-	public function getTransportEvents($from, $to, $all=false, $include_bookings, $include_reschedules, $include_cancellations) {
-		$today = date('Y-m-d');
-
-		if (!$include_bookings && !$include_reschedules && !$include_cancellations) {
-			$this->total_items = $this->pages = 0;
-			return array('bookings' => array(), 'bookings_all' => array());
-		}
-
-		$where = ($from && $to) ? " and s.date >= '$from' and s.date <= '$to' " : "";
-
-		$offset = ($this->items_per_page * ($this->page-1));
-
 		$data = array();
 		$data_all = array();
 
-		!empty(Yii::app()->params['transport_exclude_sites']) and $where .= ' and si.id not in ('.implode(',',Yii::app()->params['transport_exclude_sites']).') ';
-		!empty(Yii::app()->params['transport_exclude_theatres']) and $where .= ' and s.theatre_id not in ('.implode(',',Yii::app()->params['transport_exclude_theatres']).') ';
+		$criteria = new CDbCriteria;
 
-		!$include_bookings and $where .= ' and (b.booking_cancellation_date is not null or status_id != 2)';
-		!$include_reschedules and $where .= ' and (b.booking_cancellation_date is not null or status_id = 2)';
-		!$include_cancellations and $where .= ' and (b.booking_cancellation_date is null)';
+		$criteria->addCondition('transport_arranged = :zero or transport_arranged = :today');
+		$criteria->params[':zero'] = 0;
+		$criteria->params[':today'] = date('Y-m-d');
 
-		if (!$all) {
-			$this->total_items = Yii::app()->db->createCommand()
-				->select("count(*)")
-				->from("et_ophtroperationbooking_operation eo")
-				->join("event ev","eo.event_id = ev.id")
-				->join("episode e","ev.episode_id = e.id")
-				->join("firm f","e.firm_id = f.id")
-				->join("service_subspecialty_assignment ssa","f.service_subspecialty_assignment_id = ssa.id")
-				->join("subspecialty su","ssa.subspecialty_id = su.id")
-				->join("patient p","e.patient_id = p.id")
-				->join("contact c","c.parent_id = p.id and c.parent_class = 'Patient'")
-				->join("(select element_id,max(id) as maxid from ophtroperationbooking_operation_booking group by element_id) as btmp","btmp.element_id = eo.id")
-				->join("ophtroperationbooking_operation_booking b","b.id = btmp.maxid")
-				->join("ophtroperationbooking_operation_session s","s.id = b.session_id and s.date >= '$today'")
-				->join("ophtroperationbooking_operation_theatre t","t.id = s.theatre_id")
-				->join("site si","si.id = t.site_id")
-				->join("ophtroperationbooking_operation_ward w","w.id = b.ward_id")
-				->where("(ev.deleted = 0 or ev.deleted is null) and (e.deleted = 0 or e.deleted is null) and (b.transport_arranged = 0 or b.transport_arranged_date = '$today') $where")
-				->queryScalar();
+		if (@$date_from && @$date_to) {
+			$criteria->addCondition('session_date >= :fromDate and session_date <= :toDate');
+			$criteria->params[':fromDate'] = $date_from;
+			$criteria->params[':toDate'] = $date_to;
 		}
 
-		$data = Yii::app()->db->createCommand()
-			->select("eo.id as eoid, eo.priority_id, b.id as booking_id, p.id as pid, ev.id as evid, c.first_name, c.last_name, p.hos_num, eo.eye_id, f.pas_code as firm,
-				eo.decision_date, su.ref_spec as subspecialty, s.date as session_date, s.start_time as session_time, eo.status_id, b.created_date, w.name as ward_name,
-				s.theatre_id, s.id as session_id, b.booking_cancellation_date, b.transport_arranged, unix_timestamp(str_to_date(concat(date,' ',start_time),'%Y-%m-%d %H:%i:%s')) as timestamp,
-				case isnull(b.booking_cancellation_date) when 0 then 'Cancelled' else ( case status_id = 2 when 1 then 'Booked' else 'Rescheduled' end ) end as method,
-				case si.short_name != '' when 1 then si.short_name else si.name end as location, case eo.priority_id = 1 when 1 then 'Routine' else 'Urgent' end as priority,
-				case transport_arranged = 0 when 1 then ( case s.date <= now() + interval 1 day when 1 then 'Red' else 'Green' end ) else 'Grey' end as colour")
-			->from("et_ophtroperationbooking_operation eo")
-			->join("event ev","eo.event_id = ev.id")
-			->join("episode e","ev.episode_id = e.id")
-			->join("firm f","e.firm_id = f.id")
-			->join("service_subspecialty_assignment ssa","f.service_subspecialty_assignment_id = ssa.id")
-			->join("subspecialty su","ssa.subspecialty_id = su.id")
-			->join("patient p","e.patient_id = p.id")
-			->join("contact c","c.parent_id = p.id and c.parent_class = 'Patient'")
-			->join("(select element_id,max(id) as maxid from ophtroperationbooking_operation_booking group by element_id) as btmp","btmp.element_id = eo.id")
-			->join("ophtroperationbooking_operation_booking b","b.id = btmp.maxid")
-			->join("ophtroperationbooking_operation_session s","s.id = b.session_id and s.date >= '$today'")
-			->join("ophtroperationbooking_operation_theatre t","t.id = s.theatre_id")
-			->join("site si","si.id = t.site_id")
-			->join("ophtroperationbooking_operation_ward w","w.id = b.ward_id")
-			->where("(ev.deleted = 0 or ev.deleted is null) and (e.deleted = 0 or e.deleted is null) and (b.transport_arranged = 0 or b.transport_arranged_date = '$today') $where")
-			->order("timestamp asc");
-
-		if ($all) {
-			$this->total_items = count($data = $data->queryAll());
-		} else {
-			$data = $data->offset($offset)->limit($this->items_per_page)->queryAll();
+		if (!$_GET['include_bookings']) {
+			$criteria->addCondition('latestBooking.cancellation_date is not null or status_id != :two');
+			$criteria->params[':two'] = 2;
 		}
+
+		if (!$_GET['include_reschedules']) {
+			$criteria->addCondition('latestBooking.cancellation_date is not null or status_id = :two');
+			$criteria->params[':two'] = 2;
+		}
+
+		if (!$_GET['include_cancellations']) {
+			$criteria->addCondition('latestBooking.cancellation_date is null');
+		}
+
+		if (!empty(Yii::app()->params['transport_exclude_sites'])) {
+			$criteria->addNotInCondition('site.id',Yii::app()->params['transport_exclude_sites']);
+		}
+
+		if (!empty(Yii::app()->params['transport_exclude_theatres'])) {
+			$criteria->addNotInCondition('theatre_id',Yii::app()->params['transport_exclude_theatres']);
+		}
+
+		$criteria->addCondition('session.date >= :today');
+
+		$this->total_items = Element_OphTrOperationbooking_Operation::model()
+			->with(array(
+				'latestBooking' => array(
+					'with' => array(
+						'session',
+					),
+				),
+			))
+			->count($criteria);
 
 		$this->pages = ceil($this->total_items / $this->items_per_page);
 
-		return $data;
+		if (!$all) {
+			$criteria->limit = $this->items_per_page;
+			$criteria->offset = ($this->items_per_page * ($this->page-1));
+		}
+
+		$criteria->order = 'session_date, session_start_time, decision_date';
+
+		return Element_OphTrOperationbooking_Operation::model()
+			->with(array(
+				'latestBooking' => array(
+					'with' => array(
+						'session' => array(
+							'with' => array(
+								'firm' => array(
+									'with' => array(
+										'serviceSubspecialtyAssignment' => array(
+											'subspecialty',
+										),
+									),
+								),
+							),
+						),
+					),
+				),
+				'event' => array(
+					'with' => array(
+						'episode' => array(
+							'with' => array(
+								'patient' => array(
+									'with' => 'contact',
+								),
+							),
+						),
+					),
+				),
+			))
+			->findAll($criteria);
 	}
 
 	public function actionPrintList() {
