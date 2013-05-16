@@ -36,10 +36,10 @@ $(document).ready(function() {
 		$.ajax({
 			type: "POST",
 			url: baseUrl+"/OphTrOperationbooking/transport/confirm",
-			data: $('input[name^="bookings"]:checked').serialize(),
+			data: $('input[name^="operations"]:checked').serialize(),
 			success: function(html) {
 				if (html == "1") {
-					$('input[name^="bookings"]:checked').map(function() {
+					$('input[name^="operations"]:checked').map(function() {
 						$(this).parent().parent().attr('class','waitinglistGrey');
 						$(this).attr('checked',false);
 					});
@@ -64,7 +64,7 @@ $(document).ready(function() {
 	});
 
 	$('#transport_checkall').die('click').live('click',function() {
-		$('input[name^="bookings"]').attr('checked',$('#transport_checkall').is(':checked') ? 'checked' : false);
+		$('input[name^="operations"]').attr('checked',$('#transport_checkall').is(':checked') ? 'checked' : false);
 	});
 
 	$('a.pagination-link').die('click').live('click',function() {

@@ -35,21 +35,21 @@
 			</tr>
 		</thead>
 		<tbody>
-			<?php foreach ($bookings as $booking) {?>
+			<?php foreach ($operations as $operation) {?>
 				<tr>
-					<td style="width: 53px;"><?php echo $booking['hos_num'] ?></td>
+					<td style="width: 53px;"><?php echo $operation->event->episode->patient->hos_num?></td>
 					<td>
-						<?php echo "<strong>" . trim(strtoupper($booking['last_name'])) . '</strong>, ' . trim($booking['first_name'])?>
+						<?php echo "<strong>" . trim(strtoupper($operation->event->episode->patient->last_name)) . '</strong>, ' . trim($operation->event->episode->patient->first_name)?>
 					</td>
-					<td style="width: 83px;"><?php echo date('j-M-Y',strtotime($booking['session_date']))?></td>
-					<td style="width: 73px;"><?php echo $booking['session_time']?></td>
-					<td style="width: 95px;"><?php echo $booking['location']?></td>
-					<td style="width: 170px;"><?php echo $booking['ward_name']?></td>
-					<td style="width: 53px;"><?php echo $booking['method']?></td>
-					<td style="width: 43px;"><?php echo $booking['firm'] ?></td>
-					<td style="width: 53px;"><?php echo $booking['subspecialty']?></td>
-					<td style="width: 80px;"><?php echo Helper::convertMySQL2NHS($booking['decision_date']) ?></td>
-					<td><?php echo $booking['priority_id'] == 1 ? 'Routine' : 'Urgent'?></td>
+					<td style="width: 83px;"><?php echo date('j-M-Y',strtotime($operation->latestBooking->session_date))?></td>
+					<td style="width: 73px;"><?php echo $operation->latestBooking->session_start_time?></td>
+					<td style="width: 95px;"><?php echo $operation->latestBooking->theatre->site->shortName?></td>
+					<td style="width: 170px;"><?php echo $operation->latestBooking->ward->name?></td>
+					<td style="width: 53px;"><?php echo $operation->transportStatus?></td>
+					<td style="width: 43px;"><?php echo $operation->event->episode->firm->pas_code?></td>
+					<td style="width: 53px;"><?php echo $operation->event->episode->firm->serviceSubspecialtyAssignment->subspecialty->ref_spec?></td>
+					<td style="width: 80px;"><?php echo $operation->NHSDate('decision_date')?></td>
+					<td><?php echo $operation->priority->name?></td>
 				</tr>
 			<?php }?>
 		</tbody>

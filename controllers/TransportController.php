@@ -70,12 +70,9 @@ class TransportController extends BaseEventTypeController
 			$_GET['include_bookings'] = 1;
 		}
 
-		$data = array();
-		$data_all = array();
-
 		$criteria = new CDbCriteria;
 
-		$criteria->addCondition('transport_arranged = :zero or transport_arranged = :today');
+		$criteria->addCondition('transport_arranged = :zero or transport_arranged_date = :today');
 		$criteria->params[':zero'] = 0;
 		$criteria->params[':today'] = date('Y-m-d');
 
@@ -109,11 +106,21 @@ class TransportController extends BaseEventTypeController
 
 		$criteria->addCondition('session.date >= :today');
 
+		$criteria->addCondition('event.deleted = 0 and episode.deleted = 0');
+
 		$this->total_items = Element_OphTrOperationbooking_Operation::model()
 			->with(array(
 				'latestBooking' => array(
 					'with' => array(
 						'session',
+					),
+				),
+				'event' => array(
+					'joinType' => 'JOIN',
+					'with' => array(
+						'episode' => array(
+							'joinType' => 'JOIN',
+						),
 					),
 				),
 			))
@@ -132,12 +139,26 @@ class TransportController extends BaseEventTypeController
 			->with(array(
 				'latestBooking' => array(
 					'with' => array(
-						'session' => array(
+						'session',
+						'theatre' => array(
+							'with' => 'site',
+						),
+						'ward',
+					),
+				),
+				'event' => array(
+					'joinType' => 'JOIN',
+					'with' => array(
+						'episode' => array(
+							'joinType' => 'JOIN',
 							'with' => array(
+								'patient' => array(
+									'with' => 'contact',
+								),
 								'firm' => array(
 									'with' => array(
 										'serviceSubspecialtyAssignment' => array(
-											'subspecialty',
+											'with' => 'subspecialty',
 										),
 									),
 								),
@@ -145,33 +166,23 @@ class TransportController extends BaseEventTypeController
 						),
 					),
 				),
-				'event' => array(
-					'with' => array(
-						'episode' => array(
-							'with' => array(
-								'patient' => array(
-									'with' => 'contact',
-								),
-							),
-						),
-					),
-				),
+				'priority',
 			))
 			->findAll($criteria);
 	}
 
 	public function actionPrintList() {
 		if (ctype_digit(@$_GET['page'])) $this->page = $_GET['page'];
-		$this->renderPartial('_printList',array('bookings' => $this->getTransportList(true)));
+		$this->renderPartial('_printList',array('operations' => $this->getTransportList(true)));
 	}
 
 	/**
 	 * Print transport letters for bookings
 	 */
 	public function actionPrint($id) {
-		$booking_ids = (isset($_GET['booked'])) ? $_GET['booked'] : null;
+		$operation_ids = (isset($_GET['operations'])) ? $_GET['operations'] : null;
 		if (!is_array($booking_ids)) {
-			throw new CHttpException('400', 'Invalid booking list');
+			throw new CHttpException('400', 'Invalid operation list');
 		}
 		$bookings = OphTrOperationbooking_Operation_Booking::model()->findAllByPk($booking_ids);
 
@@ -203,15 +214,17 @@ class TransportController extends BaseEventTypeController
 	}
 
 	public function actionConfirm() {
-		if (is_array(@$_POST['bookings'])) {
-			foreach ($_POST['bookings'] as $booking_id) {
-				if (!$booking = OphTrOperationbooking_Operation_Booking::model()->findByPk($booking_id)) {
-					throw new Exception('Booking not found: '.$booking_id);
+		if (is_array(@$_POST['operations'])) {
+			foreach ($_POST['operations'] as $operation_id) {
+				if (!$operation = Element_OphTrOperationbooking_Operation::model()->with('latestBooking')->findByPk($operation_id)) {
+					throw new Exception('Operation not found: '.$operation_id);
 				}
+
+				$booking = $operation->latestBooking;
 
 				if (!$booking->transport_arranged) {
 					$booking->transport_arranged = 1;
-					$booking->transport_arranged_date = date('Y-m-d H:i:s');
+					$booking->transport_arranged_date = date('Y-m-d');
 					if (!$booking->save()) {
 						throw new Exception('Unable to save booking: '.print_r($booking->getErrors(),true));
 					}
@@ -230,10 +243,10 @@ class TransportController extends BaseEventTypeController
 
 		echo "Hospital number,First name,Last name,TCI date,Admission time,Site,Ward,Method,Firm,Specialty,DTA,Priority\n";
 
-		$data = $this->getTransportList(true);
+		$operations = $this->getTransportList(true);
 
-		foreach ($data as $row) {
-			echo '"'.$row['hos_num'].'","'.trim($row['first_name']).'","'.trim($row['last_name']).'","'.$row['session_date'].'","'.$row['session_time'].'","'.$row['location'].'","'.$row['ward_name'].'","'.$row['method'].'","'.$row['firm'].'","'.$row['subspecialty'].'","'.$row['decision_date'].'","'.$row['priority'].'"'."\n";
+		foreach ($operations as $operation) {
+			echo '"'.$operation->event->episode->patient->hos_num.'","'.trim($operation->event->episode->patient->first_name).'","'.trim($operation->event->episode->patient->last_name).'","'.date('j-M-Y',strtotime($operation->latestBooking->session_date)).'","'.substr($operation->latestBooking->session_start_time,0,5).'","'.$operation->latestBooking->theatre->site->shortName.'","'.$operation->latestBooking->ward->name.'","'.$operation->transportStatus.'","'.$operation->event->episode->firm->pas_code.'","'.$operation->event->episode->firm->serviceSubspecialtyAssignment->subspecialty->ref_spec.'","'.$operation->NHSDate('decision_date').'","'.$operation->priority->name.'"'."\n";
 		}
 	}
 
