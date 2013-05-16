@@ -725,11 +725,14 @@
 
 		$criteria->order = '`t`.date, `t`.start_time';
 
-		foreach (OphTrOperationbooking_Operation_Session::model()->with('firm')->findAll($criteria) as $row) {
-			// if the session has no firm, under the existing booking logic it is an emergency session
-			if (!$session->firm) {
-				continue;
-			}
+		foreach (OphTrOperationbooking_Operation_Session::model()
+			->with(array(
+				'firm' => array(
+					'joinType' => 'JOIN',
+				),
+			))
+			->findAll($criteria) as $session) {
+
 			$available_time = $session->availableMinutes;
 
 			if ($session->id == $booking_session_id) {
