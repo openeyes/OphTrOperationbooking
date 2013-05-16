@@ -18,6 +18,21 @@
 */
 
 return array(
+	'import' => array(
+		'application.modules.OphTrOperationbooking.components.OphTrOperationbookingObserver',
+	),
+	'components' => array(
+		'event' => array(
+			'observers' => array(
+				'firm_changed' => array(
+					'ophtroperationbooking_resetsearch' => array(
+						'class' => 'OphTrOperationbookingObserver',
+						'method' => 'resetSearch',
+					),
+				),
+			),
+		),
+	),
 	'params' => array(
 		'menu_bar_items' => array(
 			'theatre_diaries' => array(
@@ -33,4 +48,4 @@ return array(
 		),
 	)
 );
-		
+
