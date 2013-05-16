@@ -89,10 +89,10 @@ class BookingController extends BaseEventTypeController {
 				$criteria->order = 'display_order ASC';
 				$bookings = OphTrOperationbooking_Operation_Booking::model()->with(array('operation'=>array('with'=>'event')))->findAll($criteria);
 
-				foreach ($theatres as $name => $list) {
-					foreach ($list as $theatre) {
-						if ($theatre['session_id'] == $session->id) {
-							$bookable = $theatre['bookable'];
+				foreach ($theatres as $theatre) {
+					foreach ($theatre->sessions as $_session) {
+						if ($session->id == $_session->id) {
+							$bookable = $_session->operationBookable($operation);
 						}
 					}
 				}
