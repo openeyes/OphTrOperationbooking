@@ -3,7 +3,7 @@
  * OpenEyes
  *
  * (C) Moorfields Eye Hospital NHS Foundation Trust, 2008-2011
- * (C) OpenEyes Foundation, 2011-2012
+ * (C) OpenEyes Foundation, 2011-2013
  * This file is part of OpenEyes.
  * OpenEyes is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * OpenEyes is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -13,7 +13,7 @@
  * @link http://www.openeyes.org.uk
  * @author OpenEyes <info@openeyes.org.uk>
  * @copyright Copyright (c) 2008-2011, Moorfields Eye Hospital NHS Foundation Trust
- * @copyright Copyright (c) 2011-2012, OpenEyes Foundation
+ * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
@@ -47,7 +47,7 @@
 				<?php
 				$i = 0;
 				foreach ($operations as $id => $operation) {
-					$eo = Element_OphTrOperation_Operation::model()->findByPk($operation['eoid']);
+					$eo = Element_OphTrOperationbooking_Operation::model()->findByPk($operation['eoid']);
 					
 					$patient = NULL;
 					if(isset($operation['pid'])){
@@ -59,15 +59,15 @@
 						}
 					}?>
 
-					<?php if ($eo->getWaitingListStatus() == Element_OphTrOperation_Operation::STATUS_PURPLE) {
+					<?php if ($eo->getWaitingListStatus() == Element_OphTrOperationbooking_Operation::STATUS_PURPLE) {
 						$tablecolour = "Purple";
-					} elseif ($eo->getWaitingListStatus() == Element_OphTrOperation_Operation::STATUS_GREEN1) {
+					} elseif ($eo->getWaitingListStatus() == Element_OphTrOperationbooking_Operation::STATUS_GREEN1) {
 						$tablecolour = "Green";
-					} elseif ($eo->getWaitingListStatus() == Element_OphTrOperation_Operation::STATUS_GREEN2) {
+					} elseif ($eo->getWaitingListStatus() == Element_OphTrOperationbooking_Operation::STATUS_GREEN2) {
 						$tablecolour = "Green";
-					} elseif ($eo->getWaitingListStatus() == Element_OphTrOperation_Operation::STATUS_ORANGE) {
+					} elseif ($eo->getWaitingListStatus() == Element_OphTrOperationbooking_Operation::STATUS_ORANGE) {
 						$tablecolour = "Orange";
-					} elseif ($eo->getWaitingListStatus() == Element_OphTrOperation_Operation::STATUS_RED) {
+					} elseif ($eo->getWaitingListStatus() == Element_OphTrOperationbooking_Operation::STATUS_RED) {
 						$tablecolour = "Red";
 					} else {
 						$tablecolour = "White";
@@ -88,7 +88,7 @@
 							<?php }?>
 						</td>
 						<td class="patient">
-							<?php echo CHtml::link("<strong>" . trim(strtoupper($operation['last_name'])) . '</strong>, ' . $operation['first_name'], Yii::app()->createUrl('/OphTrOperation/default/view/'.$operation['evid']))?>
+							<?php echo CHtml::link("<strong>" . trim(strtoupper($operation['last_name'])) . '</strong>, ' . $operation['first_name'], Yii::app()->createUrl('/OphTrOperationbooking/default/view/'.$operation['evid']))?>
 						</td>
 						<td><?php echo $operation['hos_num'] ?></td>
 						<td><?php echo $eo->site->short_name?></td>
@@ -100,7 +100,7 @@
 						<td><?php echo ucfirst(preg_replace('/^Requires /','',$eo->status->name)) ?></td>
 						<td<?php if ($tablecolour == 'White' && Yii::app()->user->checkAccess('admin')) { ?> class="admin-td"<?php } ?>>
 
-							<?php if(($patient && $patient->address) && $operation['eoid'] && ($eo->getDueLetter() != Element_OphTrOperation_Operation::LETTER_GP || ($eo->getDueLetter() == Element_OphTrOperation_Operation::LETTER_GP && $operation['practice_id']))) { ?>
+							<?php if(($patient && $patient->address) && $operation['eoid'] && ($eo->getDueLetter() != Element_OphTrOperationbooking_Operation::LETTER_GP || ($eo->getDueLetter() == Element_OphTrOperationbooking_Operation::LETTER_GP && $operation['practice_id']))) { ?>
 							<div>	
 								<input<?php if ($tablecolour == 'White' && !Yii::app()->user->checkAccess('admin')) { ?> disabled="disabled"<?php } ?> type="checkbox" id="operation<?php echo $operation['eoid']?>" value="1" />
 							</div>

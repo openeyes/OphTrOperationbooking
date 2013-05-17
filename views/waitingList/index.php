@@ -3,7 +3,7 @@
  * OpenEyes
  *
  * (C) Moorfields Eye Hospital NHS Foundation Trust, 2008-2011
- * (C) OpenEyes Foundation, 2011-2012
+ * (C) OpenEyes Foundation, 2011-2013
  * This file is part of OpenEyes.
  * OpenEyes is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * OpenEyes is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -13,7 +13,7 @@
  * @link http://www.openeyes.org.uk
  * @author OpenEyes <info@openeyes.org.uk>
  * @copyright Copyright (c) 2008-2011, Moorfields Eye Hospital NHS Foundation Trust
- * @copyright Copyright (c) 2011-2012, OpenEyes Foundation
+ * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
@@ -25,7 +25,7 @@
 	</div>
 
 	<div id="waitinglist_display">
-		<form method="post" action="<?php echo Yii::app()->createUrl('waitingList/search')?>" id="waitingList-filter">
+		<form method="post" action="<?php echo Yii::app()->createUrl('/OphTrOperationbooking/waitingList/search')?>" id="waitingList-filter">
 			<div id="search-options">
 				<div id="main-search" class="grid-view">
 					<h3>Search partial bookings waiting lists by:</h3>
@@ -44,7 +44,7 @@
 										array('empty'=>'All specialties', 'ajax'=>array(
 											'type'=>'POST',
 											'data'=>array('subspecialty_id'=>'js:this.value'),
-											'url'=>Yii::app()->createUrl('waitingList/filterFirms'),
+											'url'=>Yii::app()->createUrl('/OphTrOperationbooking/waitingList/filterFirms'),
 											'success'=>"js:function(data) {
 												if ($('#subspecialty-id').val() != '') {
 													$('#firm-id').attr('disabled', false);
@@ -60,7 +60,7 @@
 									<?php echo CHtml::dropDownList('firm-id', @$_POST['firm-id'], $this->getFilteredFirms(@$_POST['subspecialty-id']), array('empty'=>'All firms', 'disabled'=>!@$_POST['firm-id']))?>
 								</td>
 								<td>
-									<?php echo CHtml::dropDownList('status', @$_POST['status'], Element_OphTrOperation_Operation::getLetterOptions())?>
+									<?php echo CHtml::dropDownList('status', @$_POST['status'], Element_OphTrOperationbooking_Operation::getLetterOptions())?>
 								</td>
 								<td>
 									<?php echo CHtml::dropDownList('site_id',@$_POST['site_id'],Site::model()->getListForCurrentInstitution(),array('empty'=>'All sites'))?>
@@ -88,8 +88,10 @@
 		</div>
 	</div>
 	<div style="float: right; margin-right: 18px;">
+		<?php if($this->canPrint()) { ?>
 		<button style="margin-right: 15px;" type="submit" class="classy blue tall" id="btn_print_all"><span class="button-span button-span-blue">Print all</span></button>
 		<button style="margin-right: 15px;" type="submit" class="classy blue grande" id="btn_print"><span class="button-span button-span-blue">Print selected</span></button>
+		<?php } ?>
 		<?php if (Yii::app()->user->checkAccess('admin')) {?>
 			<span class="data admin-confirmto">Set latest letter sent to be:
 				<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
@@ -116,6 +118,8 @@
 				</select>
 			</span>
 		<?php }?>
+		<?php if(BaseController::checkUserLevel(3)) { ?>
 		<button type="submit" class="classy green venti" id="btn_confirm_selected"><span class="button-span button-span-green">Confirm selected</span></button>
+		<?php } ?>
 	</div>
 </div>

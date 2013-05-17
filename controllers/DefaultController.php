@@ -1,12 +1,33 @@
 <?php
+/**
+ * OpenEyes
+*
+* (C) Moorfields Eye Hospital NHS Foundation Trust, 2008-2011
+* (C) OpenEyes Foundation, 2011-2013
+* This file is part of OpenEyes.
+* OpenEyes is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+* OpenEyes is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+* You should have received a copy of the GNU General Public License along with OpenEyes in a file titled COPYING. If not, see <http://www.gnu.org/licenses/>.
+*
+* @package OpenEyes
+* @link http://www.openeyes.org.uk
+* @author OpenEyes <info@openeyes.org.uk>
+* @copyright Copyright (c) 2008-2011, Moorfields Eye Hospital NHS Foundation Trust
+* @copyright Copyright (c) 2011-2013, OpenEyes Foundation
+* @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
+*/
 
 class DefaultController extends BaseEventTypeController {
-	public $js = array(
-		'js/jquery.validate.min.js',
-		'js/additional-validators.js',
-	);
-
 	public $eventIssueCreate = 'Operation requires scheduling';
+
+	protected function beforeAction($action) {
+		$this->assetPath = Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.'.$this->getModule()->name.'.assets'), false, -1, YII_DEBUG);
+		Yii::app()->clientScript->registerScriptFile($this->assetPath.'/js/booking.js');
+		Yii::app()->clientScript->registerScriptFile('/js/jquery.validate.min.js');
+		Yii::app()->clientScript->registerScriptFile('/js/additional-validators.js');
+
+		return parent::beforeAction($action);
+	}
 
 	public function actionCreate() {
 		if (@$_POST['schedule_now']) {
@@ -22,7 +43,7 @@ class DefaultController extends BaseEventTypeController {
 
 	public function actionView($id) {
 		$this->extraViewProperties = array(
-			'operation' => Element_OphTrOperation_Operation::model()->find('event_id=?',array($id)),
+			'operation' => Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($id)),
 		);
 
 		parent::actionView($id);
@@ -41,7 +62,7 @@ class DefaultController extends BaseEventTypeController {
 			throw new Exception('Unable to find event: '.$id);
 		} 
 
-		if (!$operation = Element_OphTrOperation_Operation::model()->find('event_id=?',array($event->id))) {
+		if (!$operation = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($event->id))) {
 			throw new CHttpException(500,'Operation not found');
 		}
 
@@ -74,7 +95,7 @@ class DefaultController extends BaseEventTypeController {
 			die(json_encode($errors));
 		}
 
-		if (!$operation = Element_OphTrOperation_Operation::model()->find('event_id=?',array($id))) {
+		if (!$operation = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($id))) {
 			throw new CHttpException(500,'Operation not found');
 		}
 
@@ -100,7 +121,7 @@ class DefaultController extends BaseEventTypeController {
 			return false;
 		}
 
-		if (!$operation = Element_OphTrOperation_Operation::model()->find('event_id = ?',array($id))) {
+		if (!$operation = Element_OphTrOperationbooking_Operation::model()->find('event_id = ?',array($id))) {
 			throw new Exception('Operation not found for event: '.$id);
 		}
 
@@ -125,7 +146,7 @@ class DefaultController extends BaseEventTypeController {
 			'operation' => $operation,
 		), true);
 
-		$oeletter = new OELetter($event->episode->patient->addressname."\n".implode("\n",$event->episode->patient->correspondAddress->letterarray),$site->name."\n".implode("\n",$site->letterarray)."\nTel: ".$site->telephone.($site->fax ? "\nFax: ".$site->fax : ''));
+		$oeletter = new OELetter($event->episode->patient->addressname."\n".implode("\n",$event->episode->patient->correspondAddress->letterarray),$site->name."\n".implode("\n",$site->getLetterArray(false,false))."\nTel: ".$site->telephone.($site->fax ? "\nFax: ".$site->fax : ''));
 		$oeletter->setBarcode('E:'.$operation->event_id);
 		$oeletter->addBody($body);
 

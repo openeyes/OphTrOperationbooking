@@ -3,7 +3,7 @@
  * OpenEyes
  *
  * (C) Moorfields Eye Hospital NHS Foundation Trust, 2008-2011
- * (C) OpenEyes Foundation, 2011-2012
+ * (C) OpenEyes Foundation, 2011-2013
  * This file is part of OpenEyes.
  * OpenEyes is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * OpenEyes is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -13,14 +13,14 @@
  * @link http://www.openeyes.org.uk
  * @author OpenEyes <info@openeyes.org.uk>
  * @copyright Copyright (c) 2008-2011, Moorfields Eye Hospital NHS Foundation Trust
- * @copyright Copyright (c) 2011-2012, OpenEyes Foundation
+ * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
 if (!$reschedule) {
-	echo CHtml::form(Yii::app()->createUrl('/OphTrOperation/booking/schedule/'.$operation->event->id.'?firm_id='.$_GET['firm_id'].'&date='.$_GET['date'].'&day='.$_GET['day'].'&session_id='.$_GET['session_id']), 'post', array('id' => 'bookingForm'));
+	echo CHtml::form(Yii::app()->createUrl('/OphTrOperationbooking/booking/schedule/'.$operation->event->id.'?firm_id='.$_GET['firm_id'].'&date='.$_GET['date'].'&day='.$_GET['day'].'&session_id='.$_GET['session_id']), 'post', array('id' => 'bookingForm'));
 } else {
-	echo CHtml::form(Yii::app()->createUrl('/OphTrOperation/booking/reschedule/'.$operation->event->id.'?firm_id='.$_GET['firm_id'].'&date='.$_GET['date'].'&day='.$_GET['day'].'&session_id='.$_GET['session_id']), 'post', array('id' => 'bookingForm'));
+	echo CHtml::form(Yii::app()->createUrl('/OphTrOperationbooking/booking/reschedule/'.$operation->event->id.'?firm_id='.$_GET['firm_id'].'&date='.$_GET['date'].'&day='.$_GET['day'].'&session_id='.$_GET['session_id']), 'post', array('id' => 'bookingForm'));
 }
 ?>
 	<h4>Other operations in this session: <?php echo abs($session->availableMinutes) . " min {$session->minuteStatus}"; ?></h4>
@@ -114,7 +114,7 @@ if (!$reschedule) {
 			} ?>
 			<div class="data">
 			<?php echo CHtml::dropDownList('cancellation_reason', '',
-				OphTrOperation_Operation_Cancellation_Reason::getReasonsByListNumber($listIndex),
+				OphTrOperationbooking_Operation_Cancellation_Reason::getReasonsByListNumber($listIndex),
 				array('empty' => 'Select a reason')
 			); ?>
 			</div>
@@ -145,23 +145,4 @@ if (!$reschedule) {
 	<?php
 	echo CHtml::endForm();
 	?>
-
-	<div class="alertBox" style="margin-top: 10px;<?php if (!is_array($errors)) {?> display:none<?php }?>">
-		<p>Please fix the following input errors:</p>
-		<ul>
-			<?php if (is_array($errors)) {
-				foreach ($errors as $errors2) {
-					foreach ($errors2 as $error) {?>
-						<li><?php echo $error?></li>
-					<?php }
-				}
-			}else{?>
-				<li>&nbsp;</li></ul>
-			<?php }?>
-		</ul>
-	</div>
-
-	<script type="text/javascript">
-		var patient_id = <?php echo $operation->event->episode->patient_id?>;
-	</script>
 <?php }?>
