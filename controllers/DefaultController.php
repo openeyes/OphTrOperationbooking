@@ -146,7 +146,19 @@ class DefaultController extends BaseEventTypeController {
 			'operation' => $operation,
 		), true);
 
-		$oeletter = new OELetter($event->episode->patient->addressname."\n".implode("\n",$event->episode->patient->correspondAddress->letterarray),$site->name."\n".implode("\n",$site->getLetterArray(false,false))."\nTel: ".$site->telephone.($site->fax ? "\nFax: ".$site->fax : ''));
+		$oeletter = new OELetter(
+			$event->episode->patient->getLetterAddress(array(
+				'include_name' => true,
+				'delimiter' => "\n",
+			)),
+			$site->getLetterAddress(array(
+				'include_name' => true,
+				'include_telephone' => true,
+				'include_fax' => true,
+				'delimiter' => "\n",
+			))
+		);
+
 		$oeletter->setBarcode('E:'.$operation->event_id);
 		$oeletter->addBody($body);
 

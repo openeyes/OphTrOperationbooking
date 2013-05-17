@@ -308,11 +308,11 @@
 	}
 
 	public function getHas_gp() {
-		return ($this->getDueLetter() != self::LETTER_GP || ($this->event->episode->patient->practice && $this->event->episode->patient->practice->address));
+		return ($this->getDueLetter() != self::LETTER_GP || ($this->event->episode->patient->practice && $this->event->episode->patient->practice->contact->address));
 	}
 
 	public function getHas_address() {
-		return (bool)$this->event->episode->patient->correspondAddress;
+		return (bool)$this->event->episode->patient->contact->correspondAddress;
 	}
 
 	public function getLastLetter()

@@ -38,7 +38,7 @@
 <p class="centered">
 		<strong>Request for non-urgent transport</strong>
 		<br /><?php echo $patient->id ?> - <?php echo $patient->fullname ?>
-		<br />Area: <?php echo $patient->address->postcode ?>
+		<br />Area: <?php echo $patient->contact->address->postcode ?>
 		<br />Date: <?php echo date(Helper::NHS_DATE_FORMAT, strtotime($booking->session->date)) ?>
 </p>
 <p>
@@ -46,7 +46,7 @@
 </p>
 <p>
 	<?php echo $patient->fullname ?>
-	<br /><?php echo $patient->address->letterhtml ?>
+	<br /><?php echo $patient->getLetterAddress(array('delimiter'=>'<br/>'))?>
 	<br />Telephone: <?php echo $patient->primary_phone ?>
 </p>
 <p>

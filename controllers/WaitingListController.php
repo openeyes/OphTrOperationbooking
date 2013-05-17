@@ -125,8 +125,7 @@ class WaitingListController extends BaseEventTypeController {
 					'event.episode.patient',
 					'event.episode.patient.contact',
 					'event.episode.patient.practice',
-					'event.episode.patient.correspondAddress',
-					'event.episode.patient.practice.address',
+					'event.episode.patient.contact.correspondAddress',
 					'site',
 					'eye',
 					'priority',
@@ -195,6 +194,11 @@ class WaitingListController extends BaseEventTypeController {
 		$criteria->params[':subspecialtyId'] = $subspecialtyId;
 		$criteria->params[':medical'] = true;
 		$criteria->order = '`t`.name asc';
+
+		$sp_surgical = SpecialtyType::model()->find('name=?',array('Surgical'));
+		$sp_medical = SpecialtyType::model()->find('name=?',array('Medical'));
+
+		$criteria->addInCondition('specialty_type_id',array($sp_surgical->id,$sp_medical->id));
 
 		return CHtml::listData(Firm::model()
 			->with(array(
@@ -266,7 +270,7 @@ class WaitingListController extends BaseEventTypeController {
 			$waitingListContact = $operation->waitingListContact;
 			
 			// Don't print GP letter if practice address is not defined
-			if ($letter_status != Element_OphTrOperationbooking_Operation::LETTER_GP || ($patient->practice && $patient->practice->address)) {
+			if ($letter_status != Element_OphTrOperationbooking_Operation::LETTER_GP || ($patient->practice && $patient->practice->contact->address)) {
 				Yii::log("Printing letter: ".$letter_template, 'trace');
 
 				call_user_func(array($this, 'print_'.$letter_template), $pdf_print, $operation);
@@ -286,22 +290,15 @@ class WaitingListController extends BaseEventTypeController {
 	}
 
 	/**
-	 * Get consultant name for letter
-	 * @param Element_OphTrOperationbooking_Operation $operation
-	 * @return string
-	 */
-	protected function getConsultantName($operation) {
-		$firm = $operation->event->episode->firm;
-		return $firm->getConsultantName();
-	}
-
-	/**
 	 * Get letter from address for letter
 	 * @param Element_OphTrOperationbooking_Operation $operation
 	 * @return string
 	 */
 	protected function getFromAddress($operation) {
-		$from_address = implode("\n",$operation->site->getLetterArray(false,false));
+		$from_address = $operation->site->getLetterAddress(array(
+			'include_name' => true,
+			'delimiter' => "\n",
+		));
 		$from_address .= "\nTel: " . $operation->site->telephone;
 		if ($operation->site->fax) {
 			$from_address .= "\nFax: " . $operation->site->fax;
@@ -315,7 +312,10 @@ class WaitingListController extends BaseEventTypeController {
 	 */
 	protected function print_admission_form($pdf, $operation) {
 		$patient = $operation->event->episode->patient;
-		$to_address = $patient->addressname . "\n" . implode("\n", $patient->correspondAddress->getLetterArray());
+		$to_address = $patient->getLetterAddress(array(
+			'include_name' => true,
+			'delimiter' => "\n",
+		));
 		$site = $operation->site;
 		$firm = $operation->event->episode->firm;
 		$body = $this->render('../letters/admission_form', array(
@@ -338,10 +338,13 @@ class WaitingListController extends BaseEventTypeController {
 	 */
 	protected function print_invitation_letter($pdf, $operation) {
 		$patient = $operation->event->episode->patient;
-		$to_address = $patient->addressname . "\n" . implode("\n", $patient->correspondAddress->getLetterArray());
+		$to_address = $patient->getLetterAddress(array(
+			'include_name' => true,
+			'delimiter' => "\n",
+		));
 		$body = $this->render('../letters/invitation_letter', array(
 				'to' => $patient->salutationname,
-				'consultantName' => $this->getConsultantName($operation),
+				'consultantName' => $operation->event->episode->firm->consultant->fullName,
 				'overnightStay' => $operation->overnight_stay,
 				'patient' => $patient,
 				'changeContact' => $operation->waitingListContact,
@@ -357,10 +360,13 @@ class WaitingListController extends BaseEventTypeController {
 	 */
 	protected function print_reminder_letter($pdf, $operation) {
 		$patient = $operation->event->episode->patient;
-		$to_address = $patient->addressname . "\n" . implode("\n", $patient->correspondAddress->getLetterArray());
+		$to_address = $patient->getLetterAddress(array(
+			'include_name' => true,
+			'delimiter' => "\n",
+		));
 		$body = $this->render('../letters/reminder_letter', array(
 				'to' => $patient->salutationname,
-				'consultantName' => $this->getConsultantName($operation),
+				'consultantName' => $operation->event->episode->firm->consultant->fullName,
 				'overnightStay' => $operation->overnight_stay,
 				'patient' => $patient,
 				'changeContact' => $operation->waitingListContact,
@@ -379,32 +385,38 @@ class WaitingListController extends BaseEventTypeController {
 		// GP Letter
 		$patient = $operation->event->episode->patient;
 		if ($gp = $patient->gp) {
+			if ($patient->practice && $patient->practice->contact->address) {
+				$to_address = $patient->gp->getLetterAddress(array(
+					'patient' => $patient,
+					'include_name' => true,
+				));
+			} else {
+				throw new CException('Patient has no practice address');
+			}
 			$to_name = $gp->contact->fullname;
-			$salutation = $gp->contact->salutationname;
+			$salutation = $gp->getLetterIntroduction();
 		} else {
 			$to_name = Gp::UNKNOWN_NAME;
 			$salutation = Gp::UNKNOWN_SALUTATION;
 		}
-		if ($patient->practice && $practice_address = $patient->practice->address) {
-			$to_address = $to_name . "\n" . implode("\n",$practice_address->getLetterArray());
-		} else {
-			throw new CException('Patient has no practice address');
-		}
 		$body = $this->render('../letters/gp_letter', array(
 				'to' => $salutation,
 				'patient' => $patient,
-				'consultantName' => $this->getConsultantName($operation),
+				'consultantName' => $operation->event->episode->firm->fullName,
 		), true);
 		$letter = new OELetter($to_address, $this->getFromAddress($operation), $body);
 		$letter->setBarcode('E:'.$operation->event_id);
 		$pdf->addLetter($letter);
 
 		// Patient letter
-		$to_address = $patient->addressname . "\n" . implode("\n", $patient->correspondAddress->getLetterArray());
+		$to_address = $patient->getLetterAddress(array(
+			'include_name' => true,
+			'delimiter' => "\n",
+		));
 		$body = $this->render('../letters/gp_letter_patient', array(
 				'to' => $patient->salutationname,
 				'patient' => $patient,
-				'consultantName' => $this->getConsultantName($operation),
+				'consultantName' => $operation->event->episode->firm->fullName,
 		), true);
 		$letter = new OELetter($to_address, $this->getFromAddress($operation), $body);
 		$letter->setBarcode('E:'.$operation->event_id);
