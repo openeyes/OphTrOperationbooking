@@ -124,7 +124,7 @@
 			'cancellation_user' => array(self::BELONGS_TO, 'User', 'cancellation_user_id'),
 			'cancellation_reason' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Cancellation_Reason', 'cancellation_reason_id'),
 			'cancelledBookings' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Booking', 'element_id', 'condition' => 'cancellation_date is not null', 'order' => 'cancellation_date'),
-			'booking' => array(self::HAS_ONE, 'OphTrOperationbooking_Operation_Booking', 'element_id', 'condition' => 'cancellation_date is null'),
+			'booking' => array(self::HAS_ONE, 'OphTrOperationbooking_Operation_Booking', 'element_id', 'condition' => 'booking.cancellation_date is null'),
 		);
 	}
 
