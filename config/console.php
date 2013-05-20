@@ -22,5 +22,8 @@ return array(
 		'deceased_patient_housekeeping' => array(
 			'class' => 'application.modules.OphTrOperationbooking.commands.HousekeepingCommand',
 		),
+		'generatesessions' => array(
+			'class' => 'application.modules.OphTrOperationbooking.commands.GenerateSessionsCommand',
+		),
 	),
 );
