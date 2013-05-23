@@ -118,7 +118,7 @@
 				</select>
 			</span>
 		<?php }?>
-		<?php if(BaseController::checkUserLevel(3)) { ?>
+		<?php if(BaseController::checkUserLevel(4)) { ?>
 		<button type="submit" class="classy green venti" id="btn_confirm_selected"><span class="button-span button-span-green">Confirm selected</span></button>
 		<?php } ?>
 	</div>

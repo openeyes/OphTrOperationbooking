@@ -33,7 +33,7 @@ class BookingController extends BaseEventTypeController {
 		return array(
 			// Level 3 or above can do anything
 			array('allow',
-				'expression' => 'BaseController::checkUserLevel(3)',
+				'expression' => 'BaseController::checkUserLevel(4)',
 			),
 			array('deny'),
 		);
