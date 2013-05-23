@@ -41,17 +41,15 @@ class GenerateSessionsCommand extends CConsoleCommand {
 		);
 
 		foreach($sequences as $sequence) {
+			$criteria = new CDbCriteria;
+			$criteria->addCondition('sequence_id = :sequence_id');
+			$criteria->params[':sequence_id'] = $sequence->id;
+			$criteria->order = 'date desc';
 
-			// Find most recent session for sequence
-			$session = Yii::app()->db->createCommand()
-			->select('date')
-			->from('ophtroperationbooking_operation_session')
-			->where('sequence_id=:id', array(':id' => $sequence->id))
-			->order('date DESC')
-			->queryRow();
+			$session = OphTrOperationbooking_Operation_Session::model()->find($criteria);
 
 			// The date of the most recent session for this sequence plus one day, or the sequence start date if no sessions for this sequence yet
-			$startDate = empty($session) ? strtotime($sequence->start_date) : strtotime($session['date']) + (60 * 60 * 24);
+			$startDate = empty($session) ? strtotime($sequence->start_date) : strtotime($session->date) + (60 * 60 * 24);
 
 			// Sessions should be generated up to the smaller of initialEndDate (+13 months or command line) and sequence end_date
 			if($sequence->end_date && strtotime($sequence->end_date) < $initialEndDate) {
