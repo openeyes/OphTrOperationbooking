@@ -100,7 +100,6 @@
 	<ul>
 		<?php if ($operation->booking->showWarning('Admission Instruction')) {?>
 			<li>
-				test
 				<?php echo $operation->booking->getWarningHTML('Admission Instruction')?>
 			</li>
 		<?php }?>
