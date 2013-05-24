@@ -78,16 +78,19 @@
 				<?php echo $operation->booking->getWarningHTML('Preop Assessment')?>
 			</p>
 		<?php }?>
+	<?php }?>
 
-		<?php if ($patient->isChild()) {?>
-			<p>			 If there has been any change in your child's general health, such as a cough or cold, any infectious disease, or any other condition which might affect their fitness for operation, please telephone <?php echo $operation->letterContact->refuse_telephone?> for advice. If you do not speak English, please arrange for an English speaking adult to stay with you until you reach the ward and have been seen by a doctor and anaesthetist.
-			</p>
-		<?php }else{?>
-			<p>
-				If you are unwell the day before admission, please contact us to ensure that it is still safe and appropriate to do the procedure. If you do not speak English, please arrange for an English speaking adult to stay with you until you reach the ward and have been seen by a doctor and anaesthetist.
-			</p>
-		<?php }?>
+	<?php if ($patient->isChild()) {?>
+		<p>
+			If there has been any change in your child's general health, such as a cough or cold, any infectious disease, or any other condition which might affect their fitness for operation, please telephone <?php echo $operation->letterContact->refuse_telephone?> for advice. If you do not speak English, please arrange for an English speaking adult to stay with you until you reach the ward and have been seen by a doctor and anaesthetist.
+		</p>
+	<?php }else{?>
+		<p>
+			If you are unwell the day before admission, please contact us to ensure that it is still safe and appropriate to do the procedure. If you do not speak English, please arrange for an English speaking adult to stay with you until you reach the ward and have been seen by a doctor and anaesthetist.
+		</p>
+	<?php }?>
 
+	<?php if (!$patient->isChild()) {?>
 		<?php if ($operation->booking->showWarning('Prescription')) {?>
 			<p>
 				<?php echo $operation->booking->getWarningHTML('Prescription')?>
