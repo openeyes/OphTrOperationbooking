@@ -113,11 +113,6 @@
 					<?php echo $operation->booking->getWarningHTML('Seating')?>
 				</li>
 			<?php }?>
-			<?php if ($operation->booking->showWarning('Prescription')) {?>
-				<li>
-					<?php echo $operation->booking->getWarningHTML('Prescription')?>
-				</li>
-			<?php }?>
 		<?php }?>
 	</ul>
 
