@@ -194,7 +194,7 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecord
 	}
 
 	public function showWarning($type) {
-		if ($rule = OphTrOperationbooking_Admission_Letter_Warning_Rule::getRule($type,$this->session->theatre->site_id,$this->operation->event->episode->patient->isChild(),$this->session->theatre_id,$this->session->firm->serviceSubspecialtyAssignment->subspecialty_id)) {
+		if ($rule = OphTrOperationbooking_Admission_Letter_Warning_Rule::getRule($type,$this->session->theatre->site_id,$this->operation->event->episode->patient->isChild(),$this->session->theatre_id,$this->session->firm->serviceSubspecialtyAssignment->subspecialty_id,$this->session->firm_id)) {
 			return $rule->show_warning;
 		}
 
@@ -204,7 +204,7 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecord
 	public function getWarningHTML($type) {
 		$return = '';
 
-		if ($rule = OphTrOperationbooking_Admission_Letter_Warning_Rule::getRule($type,$this->session->theatre->site_id,$this->operation->event->episode->patient->isChild(),$this->session->theatre_id,$this->session->firm->serviceSubspecialtyAssignment->subspecialty_id)) {
+		if ($rule = OphTrOperationbooking_Admission_Letter_Warning_Rule::getRule($type,$this->session->theatre->site_id,$this->operation->event->episode->patient->isChild(),$this->session->theatre_id,$this->session->firm->serviceSubspecialtyAssignment->subspecialty_id,$this->session->firm_id)) {
 			if ($rule->strong) {
 				$return .= '<strong>';
 			}
