@@ -78,7 +78,18 @@
 				<?php echo $operation->booking->getWarningHTML('Preop Assessment')?>
 			</p>
 		<?php }?>
+	<?php }?>
 
+	<?php if (!$patient->isChild()) {?>
+		<p>
+			If you are unwell the day before admission, please contact us to ensure that it is still safe and appropriate to do the procedure.
+		</p>
+		<p>
+			If you do not speak English, please arrange for an English speaking adult to stay with you until you reach the ward and have been seen by a doctor and anaesthetist.
+		</p>
+	<?php }?>
+
+	<?php if (!$patient->isChild()) {?>
 		<?php if ($operation->booking->showWarning('Prescription')) {?>
 			<p>
 				<?php echo $operation->booking->getWarningHTML('Prescription')?>
@@ -91,8 +102,7 @@
 	<ul>
 		<?php if ($operation->booking->showWarning('Admission Instruction')) {?>
 			<li>
-				test
-				<?php echo $operation->booking->getWarningHTML('Admission Instructions')?>
+				<?php echo $operation->booking->getWarningHTML('Admission Instruction')?>
 			</li>
 		<?php }?>
 		<li>
@@ -113,9 +123,9 @@
 					<?php echo $operation->booking->getWarningHTML('Seating')?>
 				</li>
 			<?php }?>
-			<?php if ($operation->booking->showWarning('Prescription')) {?>
+			<?php if ($operation->booking->showWarning('Prescription charges')) {?>
 				<li>
-					<?php echo $operation->booking->getWarningHTML('Prescription')?>
+					<?php echo $operation->booking->getWarningHTML('Prescription charges')?>
 				</li>
 			<?php }?>
 		<?php }?>
@@ -123,19 +133,9 @@
 
 	<?php if ($patient->isChild()) {?>
 		<p>
-			If there has been any change in your child's general health, such as a cough or cold, any infectious disease, or any other condition which might affect their fitness for operation, please telephone <?php echo $operation->letterContact->refuse_telephone?> for advice.
+			If there has been any change in your child's general health, such as a cough or cold, any infectious disease, or any other condition which might affect their fitness for operation, please telephone <?php echo $operation->letterContact->refuse_telephone?> for advice. If you do not speak English, please arrange for an English speaking adult to stay with you until you reach the ward and have been seen by a doctor and anaesthetist.
 		</p>
-	<?php }else{?>
-		<p>
-			If you are unwell the day before admission, please contact us to ensure that it is still safe and appropriate to do the procedure.
-		</p>
-	<?php }?>
 
-	<p>
-		If you do not speak English, please arrange for an English speaking adult to stay with you until you reach the ward and have been seen by a doctor and anaesthetist.
-	</p>
-
-	<?php if ($patient->isChild()) {?>
 		<p>
 			It is very important that you let us know immediately if you are unable to keep this admission date. Please let us know by return of post, or if necessary, telephone <?php echo $operation->refuseContact?>
 		</p>

@@ -105,7 +105,7 @@ class OphTrOperationbooking_Admission_Letter_Warning_Rule extends BaseActiveReco
 			));
 	}
 
-	static public function getRule($rule_type_name, $site_id, $is_child, $theatre_id, $subspecialty_id) {
+	static public function getRule($rule_type_name, $site_id, $is_child, $theatre_id, $subspecialty_id, $firm_id) {
 		if (!$rule_type = OphTrOperationbooking_Admission_Letter_Warning_Rule_Type::model()->find('name=?',array($rule_type_name))) {
 			throw new Exception("We were asked for a rule type that doesn't exist: $rule_type_name");
 		}
@@ -116,14 +116,14 @@ class OphTrOperationbooking_Admission_Letter_Warning_Rule extends BaseActiveReco
 		$criteria->order = 'rule_order asc';
 
 		foreach (OphTrOperationbooking_Admission_Letter_Warning_Rule::model()->findAll($criteria) as $rule) {
-			if ($rule->applies($site_id, $is_child, $theatre_id, $subspecialty_id)) {
-				return $rule->parse($site_id, $is_child, $theatre_id, $subspecialty_id);
+			if ($rule->applies($site_id, $is_child, $theatre_id, $subspecialty_id, $firm_id)) {
+				return $rule->parse($site_id, $is_child, $theatre_id, $subspecialty_id, $firm_id);
 			}
 		}
 	}
 
-	public function applies($site_id, $is_child, $theatre_id, $subspecialty_id) {
-		foreach (array('site_id', 'is_child', 'theatre_id','subspecialty_id') as $field) {
+	public function applies($site_id, $is_child, $theatre_id, $subspecialty_id, $firm_id) {
+		foreach (array('site_id', 'is_child', 'theatre_id','subspecialty_id', 'firm_id') as $field) {
 			if ($this->{$field} !== null && $this->{$field} != ${$field}) {
 				return false;
 			}
@@ -132,10 +132,10 @@ class OphTrOperationbooking_Admission_Letter_Warning_Rule extends BaseActiveReco
 		return true;
 	}
 
-	public function parse($site_id, $is_child, $theatre_id, $subspecialty_id) {
+	public function parse($site_id, $is_child, $theatre_id, $subspecialty_id, $firm_id) {
 		foreach ($this->children as $rule) {
-			if ($rule->applies($site_id, $is_child, $theatre_id, $subspecialty_id)) {
-				return $rule->parse($site_id, $is_child, $theatre_id, $subspecialty_id);
+			if ($rule->applies($site_id, $is_child, $theatre_id, $subspecialty_id, $firm_id)) {
+				return $rule->parse($site_id, $is_child, $theatre_id, $subspecialty_id, $firm_id);
 			}
 		}
 
