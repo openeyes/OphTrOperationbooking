@@ -189,10 +189,12 @@ class WaitingListController extends BaseEventTypeController {
 		*/
 	protected function getFilteredFirms($subspecialtyId)
 	{
+		$medical = SpecialtyType::model()->find('name=?',array('Medical'));
+
 		$criteria = new CDbCriteria;
-		$criteria->addCondition('subspecialty_id = :subspecialtyId and specialty.medical = :medical');
+		$criteria->addCondition('subspecialty_id = :subspecialtyId and specialty_type_id = :specialty_type_id');
 		$criteria->params[':subspecialtyId'] = $subspecialtyId;
-		$criteria->params[':medical'] = true;
+		$criteria->params[':specialty_type_id'] = $medical->id;
 		$criteria->order = '`t`.name asc';
 
 		$sp_surgical = SpecialtyType::model()->find('name=?',array('Surgical'));
