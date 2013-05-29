@@ -137,7 +137,7 @@
 		</p>
 
 		<p>
-			It is very important that you let us know immediately if you are unable to keep this admission date. Please let us know by return of post, or if necessary, telephone <?php echo $operation->refuseContact?>
+			It is very important that you let us know immediately if you are unable to keep this admission date. Please let us know by return of post, or if necessary, telephone <?php echo $operation->refuseContact?>.
 		</p>
 	<?php }?>
 

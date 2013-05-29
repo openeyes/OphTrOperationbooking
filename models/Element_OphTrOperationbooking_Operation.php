@@ -1024,6 +1024,10 @@
 	}
 
 	public function getRefuseContact() {
+		# FIXME hack for 1.3 launch
+		if ($this->event->episode->patient->isChild()) {
+			return 'the Paediatrics and Strabismus Admission Coordinator on 020 7566 2258';
+		}
 		if (!$contact = $this->letterContact) {
 			# FIXME: need to handle problems with letters more gracefully than throwing unhandled exceptions.
 			return 'N/A';
