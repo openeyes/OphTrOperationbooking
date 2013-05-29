@@ -1034,7 +1034,7 @@
 			return $contact->refuse_title.' on '.$contact->refuse_telephone;
 		}
 
-		return $this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty->name.' Admission Coordinator on '.$contact->refuse_telephone;
+		return 'the '.$this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty->name.' Admission Coordinator on '.$contact->refuse_telephone;
 	}
 
 	public function getHealthContact() {
