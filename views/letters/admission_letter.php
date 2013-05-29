@@ -64,7 +64,7 @@
 
 	<?php if (!$patient->isChild()) {?>
 		<p>
-			If this is not convenient or you no longer wish to proceed with surgery, please contact the <?php echo $operation->refuseContact?> as soon as possible.
+			If this is not convenient or you no longer wish to proceed with surgery, please contact <?php echo $operation->refuseContact?> as soon as possible.
 		</p>
 
 		<?php if (!$operation->overnight_stay) {?>
