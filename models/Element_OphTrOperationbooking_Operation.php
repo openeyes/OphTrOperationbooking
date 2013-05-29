@@ -1045,7 +1045,7 @@
 		$site_id = $this->booking->ward->site_id;
 		$subspecialty_id = $this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty_id;
 		$theatre_id = $this->booking->session->theatre_id;
-		$firm_id = $this->event->episode->firm_id;
+		$firm_id = $this->booking->session->firm_id;
 
 		$criteria = new CDbCriteria;
 		$criteria->addCondition('parent_rule_id is null');
