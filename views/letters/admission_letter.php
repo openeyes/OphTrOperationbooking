@@ -133,7 +133,10 @@
 
 	<?php if ($patient->isChild()) {?>
 		<p>
-			If there has been any change in your child's general health, such as a cough or cold, any infectious disease, or any other condition which might affect their fitness for operation, please telephone <?php echo $operation->letterContact->refuse_telephone?> for advice. If you do not speak English, please arrange for an English speaking adult to stay with you until you reach the ward and have been seen by a doctor and anaesthetist.
+			If there has been any change in your child's general health, such as a cough or cold, any infectious disease, or any other condition which might affect their fitness for operation, please telephone <?php echo $operation->letterContact->refuse_telephone?> for advice.
+		</p>
+		<p>
+			If you do not speak English, please arrange for an English speaking adult to stay with you until you reach the ward and have been seen by a doctor and anaesthetist.
 		</p>
 
 		<p>
