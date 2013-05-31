@@ -64,7 +64,7 @@
 
 	<?php if (!$patient->isChild()) {?>
 		<p>
-			If this is not convenient or you no longer wish to proceed with surgery, please contact the <?php echo $operation->refuseContact?> as soon as possible.
+			If this is not convenient or you no longer wish to proceed with surgery, please contact <?php echo $operation->refuseContact?> as soon as possible.
 		</p>
 
 		<?php if (!$operation->overnight_stay) {?>
@@ -82,10 +82,7 @@
 
 	<?php if (!$patient->isChild()) {?>
 		<p>
-			If you are unwell the day before admission, please contact us to ensure that it is still safe and appropriate to do the procedure.
-		</p>
-		<p>
-			If you do not speak English, please arrange for an English speaking adult to stay with you until you reach the ward and have been seen by a doctor and anaesthetist.
+			If you are unwell the day before admission, please contact us to ensure that it is still safe and appropriate to do the procedure.  If you do not speak English, please arrange for an English speaking adult to stay with you until you reach the ward and have been seen by a doctor and anaesthetist.
 		</p>
 	<?php }?>
 
@@ -133,11 +130,14 @@
 
 	<?php if ($patient->isChild()) {?>
 		<p>
-			If there has been any change in your child's general health, such as a cough or cold, any infectious disease, or any other condition which might affect their fitness for operation, please telephone <?php echo $operation->letterContact->refuse_telephone?> for advice. If you do not speak English, please arrange for an English speaking adult to stay with you until you reach the ward and have been seen by a doctor and anaesthetist.
+			If there has been any change in your child's general health, such as a cough or cold, any infectious disease, or any other condition which might affect their fitness for operation, please telephone <?php /* FIXME: this should not be hard coded */?> 020 7566 2595 and ask to speak to a nurse for advice.
+		</p>
+		<p>
+			If you do not speak English, please arrange for an English speaking adult to stay with you until you reach the ward and have been seen by a doctor and anaesthetist.
 		</p>
 
 		<p>
-			It is very important that you let us know immediately if you are unable to keep this admission date. Please let us know by return of post, or if necessary, telephone <?php echo $operation->refuseContact?>
+			It is very important that you let us know immediately if you are unable to keep this admission date. Please let us know by return of post, or if necessary, telephone <?php echo $operation->refuseContact?>.
 		</p>
 	<?php }?>
 

@@ -68,6 +68,7 @@ class OphTrOperationbooking_Operation_EROD_Rule extends BaseActiveRecord
 		return array(
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
+			'items' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_EROD_Rule_Item', 'erod_rule_id')
 		);
 	}
 
