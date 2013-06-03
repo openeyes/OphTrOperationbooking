@@ -770,8 +770,6 @@
 		foreach ($erod = Yii::app()->db->createCommand()->select("ophtroperationbooking_operation_session.id as session_id, date, start_time, end_time, firm.name as firm_name, firm.id as firm_id, subspecialty.name as subspecialty_name, consultant, paediatric, anaesthetist, general_anaesthetic")
 			->from("ophtroperationbooking_operation_session")
 			->join("firm","firm.id = ophtroperationbooking_operation_session.firm_id")
-			->join("ophtroperationbooking_operation_booking","ophtroperationbooking_operation_booking.session_id = ophtroperationbooking_operation_session.id")
-			->join("et_ophtroperationbooking_operation","ophtroperationbooking_operation_booking.element_id = et_ophtroperationbooking_operation.id")
 			->join("service_subspecialty_assignment ssa","ssa.id = firm.service_subspecialty_assignment_id")
 			->join("subspecialty","subspecialty.id = ssa.subspecialty_id")
 			->join("ophtroperationbooking_operation_theatre","ophtroperationbooking_operation_session.theatre_id = ophtroperationbooking_operation_theatre.id")
