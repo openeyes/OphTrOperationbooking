@@ -19,6 +19,10 @@
 
 return array(
 	'params' => array(
+		'admin_menu' => array(
+			'Sequences' => '/OphTrOperationbooking/admin/ListOphTrOperationbooking_Operation_Sequence',
+			'Sessions' => '/OphTrOperationbooking/admin/ListOphTrOperationbooking_Operation_Session',
+		),
 		'menu_bar_items' => array(
 			'theatre_diaries' => array(
 				'title' => 'Theatre Diaries',

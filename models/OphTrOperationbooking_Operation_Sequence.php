@@ -26,7 +26,6 @@
  * @property time $start_time
  * @property time $end_time
  * @property date $end_date
- * @property integer $theatre_id
  *
  * The followings are the available model relations:
  *
@@ -68,7 +67,7 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('theatre_id, start_date, start_time, end_time, interval_id', 'required'),
+			array('theatre_id, start_date, start_time, end_time, interval_id, weekday', 'required'),
 			array('theatre_id', 'length', 'max'=>10),
 			array('end_date, week_selection, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id', 'safe'),
 			array('start_date', 'date', 'format'=>'yyyy-MM-dd'),
@@ -104,6 +103,8 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
 	public function attributeLabels()
 	{
 		return array(
+				'theatre_id' => 'Theatre',
+				'interval_id' => 'Interval',
 		);
 	}
 
@@ -176,5 +177,19 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
 			7 => 'Sunday',
 		);
 	}
+	
+	public function getIntervalOptions() {
+		$intervals = OphTrOperationbooking_Operation_Sequence_Interval::model()->findAll();
+		return CHtml::listData($intervals, 'id', 'name');
+	}
+
+	public function getTheatreOptions() {
+		$theatres = OphTrOperationbooking_Operation_Theatre::model()->findAll(array('order' => 'site_id, display_order'));
+		return CHtml::listData($theatres, 'id', 'NameWithSite');
+	}
+	
+	public function getFirmOptions() {
+		return Firm::model()->getListWithSpecialties();
+	}
+	
 }
-?>
