@@ -139,16 +139,26 @@ class OphTrOperationbooking_API extends BaseAPI {
 	 * @param Episode $episode
 	 * @return string
 	 */
-	public function getLetterProcedures($patient, $episode) {
-		$return = '';
+	public function getLetterProcedures($patient) {
+		if ($episode = $patient->getEpisodeForCurrentSubspecialty()) {
+			$return = '';
 
-		if ($operation = $this->getElementForLatestEventInEpisode($patient, $episode, 'Element_OphTrOperationbooking_Operation')) {
-			foreach ($operation->procedures as $i => $procedure) {
-				if ($i) $return .= ', ';
-				$return .= $operation->eye->adjective.' '.$procedure->term;
+			if ($operation = $this->getElementForLatestEventInEpisode($patient, $episode, 'Element_OphTrOperationbooking_Operation')) {
+				foreach ($operation->procedures as $i => $procedure) {
+					if ($i) $return .= ', ';
+					$return .= $operation->eye->adjective.' '.$procedure->term;
+				}
+			}
+
+			return strtolower($return);
+		}
+	}
+
+	public function getAdmissionDate($patient) {
+		if ($episode = $patient->getEpisodeForCurrentSubspecialty()) {
+			if ($booking = $this->getMostRecentBookingForEpisode($patient, $episode)) {
+				return $booking->session->NHSDate('date');
 			}
 		}
-
-		return strtolower($return);
 	}
 }
