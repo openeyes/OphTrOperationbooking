@@ -689,8 +689,8 @@
 			// FIXME: TEMPORARY FIX FOR THEATRE 9 MAINTAINANCE (USING OW4 INSTEAD)
 			$results[$ward->id] = $ward->name;
 		} else if (!empty($theatreId)) {
-					if ($ward = OphTrOperationbooking_Operation_Ward::model()->find('theatre_id=?',array($theatreId))) {
-				$results[$ward->id] = $ward->name;
+			if ($session->theatre->ward) {
+				$results[$session->theatre->ward_id] = $session->theatre->ward->name;
 			}
 		}
 
