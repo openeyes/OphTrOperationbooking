@@ -68,6 +68,8 @@ $(document).ready(function() {
 		} else {
 			disableButtons();
 
+			data += '&YII_CSRF_TOKEN='+YII_CSRF_TOKEN;
+
 			$.ajax({
 				url: baseUrl+'/OphTrOperationbooking/waitingList/confirmPrinted',
 				type: "POST",
@@ -107,7 +109,7 @@ $(document).ready(function() {
 		$.ajax({
 			url: baseUrl+'/OphTrOperationbooking/waitingList/filterSetFirm',
 			type: "POST",
-			data: "firm_id="+$('#firm-id').val(),
+			data: "firm_id="+$('#firm-id').val()+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
 			success: function(data) {
 			}
 		});
@@ -117,7 +119,7 @@ $(document).ready(function() {
 		$.ajax({
 			url: baseUrl+'/OphTrOperationbooking/waitingList/filterSetStatus',
 			type: "POST",
-			data: "status="+$('#status').val(),
+			data: "status="+$('#status').val()+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
 			success: function(data) {
 			}
 		});
@@ -127,7 +129,7 @@ $(document).ready(function() {
 		$.ajax({
 			url: baseUrl+'/OphTrOperationbooking/waitingList/filterSetSiteId',
 			type: "POST",
-			data: "site_id="+$('#site_id').val(),
+			data: "site_id="+$('#site_id').val()+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
 			success: function(data) {
 			}
 		});
@@ -137,7 +139,7 @@ $(document).ready(function() {
 		$.ajax({
 			url: baseUrl+'/OphTrOperationbooking/waitingList/filterSetHosNum',
 			type: "POST",
-			data: "hos_num="+$('#hos_num').val(),
+			data: "hos_num="+$('#hos_num').val()+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
 			success: function(data) {
 			}
 		});

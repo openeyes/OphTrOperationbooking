@@ -36,7 +36,7 @@ $(document).ready(function() {
 		$.ajax({
 			type: "POST",
 			url: baseUrl+"/OphTrOperationbooking/transport/confirm",
-			data: $('input[name^="operations"]:checked').serialize(),
+			data: $('input[name^="operations"]:checked').serialize()+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
 			success: function(html) {
 				if (html == "1") {
 					$('input[name^="operations"]:checked').map(function() {

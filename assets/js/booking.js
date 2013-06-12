@@ -70,7 +70,7 @@ $(document).ready(function() {
 		$.ajax({
 			type: 'POST',
 			url: window.location.href,
-			data: $('#cancelForm').serialize(),
+			data: $('#cancelForm').serialize()+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
 			dataType: 'json',
 			success: function(data) {
 				var n=0;

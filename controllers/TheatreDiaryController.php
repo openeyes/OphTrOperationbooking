@@ -605,4 +605,9 @@ class TheatreDiaryController extends BaseEventTypeController
 
 		throw new Exception('Unknown type: '.@$_POST['type']);
 	}
+
+	public function processJsVars() {
+		$this->jsVars['YII_CSRF_TOKEN'] = Yii::app()->request->csrfToken;
+		return parent::processJsVars();
+	}
 }

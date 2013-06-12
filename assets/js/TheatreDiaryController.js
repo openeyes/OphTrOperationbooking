@@ -286,7 +286,7 @@ $(document).ready(function() {
 
 			$.ajax({
 				type: "POST",
-				data: $('#session_form'+session_id).serialize()+"&session_id="+session_id,
+				data: $('#session_form'+session_id).serialize()+"&session_id="+session_id+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
 				dataType: 'json',
 				url: baseUrl+'/OphTrOperationbooking/theatreDiary/saveSession',
 				success: function(errors) {
@@ -354,7 +354,7 @@ function getDiary() {
 		disableButtons();
 		$('#theatreList').html('<h3 class="theatre firstTheatre">Please wait...</h3>');
 
-		searchData = $('#theatre-filter').serialize();
+		searchData = $('#theatre-filter').serialize()+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN;
 
 		$.ajax({
 			'url': baseUrl+'/OphTrOperationbooking/theatreDiary/search',
@@ -388,7 +388,7 @@ function setDiaryFilter(values) {
 	$.ajax({
 		'url': baseUrl+'/OphTrOperationbooking/theatreDiary/setDiaryFilter',
 		'type': 'POST',
-		'data': data,
+		'data': data+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
 		'success': function(html) {
 			if (field == 'site-id') {
 				loadTheatresAndWards(value);
@@ -396,7 +396,7 @@ function setDiaryFilter(values) {
 				$.ajax({
 					'url': baseUrl+'/OphTrOperationbooking/theatreDiary/filterFirms',
 					'type': 'POST',
-					'data': 'subspecialty_id='+$('#subspecialty-id').val(),
+					'data': 'subspecialty_id='+$('#subspecialty-id').val()+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
 					'success': function(data) {
 						if ($('#subspecialty-id').val() != '') {
 							$('#firm-id').attr('disabled', false);
@@ -415,13 +415,13 @@ function setDiaryFilter(values) {
 function loadTheatresAndWards(siteId) {
 	$.ajax({
 		'type': 'POST',
-		'data': {'site_id': siteId},
+		'data': {'site_id': siteId, 'YII_CSRF_TOKEN': YII_CSRF_TOKEN},
 		'url': baseUrl+'/OphTrOperationbooking/theatreDiary/filterTheatres',
 		'success':function(data) {
 			$('#theatre-id').html(data);
 			$.ajax({
 				'type': 'POST',
-				'data': {'site_id': siteId},
+				'data': {'site_id': siteId, 'YII_CSRF_TOKEN': YII_CSRF_TOKEN},
 				'url': baseUrl+'/OphTrOperationbooking/theatreDiary/filterWards',
 				'success':function(data) {
 					$('#ward-id').html(data);
@@ -469,7 +469,7 @@ function printElem(method,options){
 	$.ajax({
 		'url': baseUrl+'/OphTrOperationbooking/theatreDiary/'+method,
 		'type': 'POST',
-		'data': searchData,
+		'data': searchData+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
 		'success': function(data) {
 			$('#printable').html(data);
 			$('#printable').printElement(options);
@@ -526,7 +526,7 @@ var theatre_edit_session_data = null;
 function checkRequired(type, session_id) {
 	$.ajax({
 		type: "POST",
-		data: 'type='+type+'&session_id='+session_id,
+		data: 'type='+type+'&session_id='+session_id+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
 		url: baseUrl+'/OphTrOperationbooking/theatreDiary/checkRequired',
 		success: function(html) {
 			if (html == "1") {
