@@ -18,71 +18,67 @@
 */
 ?>
 <?php
-foreach ($diary as $site_name => $theatres) {
-	foreach ($theatres as $theatre_name => $dates) {?>
-		<h3 class="theatre"><strong><?php echo $theatre_name?> (<?php echo $site_name?>)</strong></h3>
-		<?php foreach ($dates as $date => $sessions) {
-			foreach ($sessions as $session_id => $session) {?>
-				<div id="diaryTemplate">
-					<div id="d_title">OPERATION LIST FORM</div>
-					<table class="d_overview">
-						<tbody>
-							<tr>
-								<td>THEATRE NO:</td>
-								<td colspan="2"><?php echo(htmlspecialchars($theatre_name, ENT_QUOTES))?></td>
-							</tr>
-							<tr>
-								<td>SESSION:</td>
-								<td><?php echo $session['start_time']?> - <?php echo $session['end_time']?></td>
-								<td>NHS</td>
-							</tr>
-						</tbody>
-					</table>
-					<table class="d_overview">
-						<tbody>
-							<tr>
-								<td>SURGICAL FIRM:<?php echo htmlspecialchars($session['firm_name'], ENT_QUOTES)?></td>
-								<td>ANAESTHETIST:</td>
-								<td>&nbsp;</td>
-								<td>DATE:</td>
-								<td><?php echo Helper::convertDate2NHS($date)?></td>
-							</tr>
-							<tr>
-								<td>COMMENTS: <?php echo htmlspecialchars($session['comments'])?></td>
-							</tr>
-						</tbody>
-					</table>
-					<table class="d_data">
-						<tbody>
-							<tr>
-								<th>HOSPT NO</th>
-								<th>PATIENT</th>
-								<th>AGE</th>
-								<th>WARD</th>
-								<th>GA or LA</th>
-								<th>PRIORITY</th>
-								<th>PROCEDURES AND COMMENTS</th>
-								<th>ADMISSION TIME</th>
-							</tr>
-							<?php foreach ($session['bookings'] as $booking) {?>
-								<tr>
-									<td><?php echo $booking['hos_num']?></td>
-									<td><?php echo $booking['patient']?></td>
-									<td><?php echo $booking['age']?></td>
-									<td><?php echo htmlspecialchars($booking['ward'])?></td>
-									<td><?php echo htmlspecialchars($booking['anaesthetic_type'])?></td>
-									<td><?php echo $booking['priority']?></td>
-									<td style="max-width: 500px; word-wrap:break-word; overflow: hidden;">
-									<?php echo !empty($booking['procedures']) ? '['.$booking['eye'].'] '.htmlspecialchars($booking['procedures']) : 'No procedures'?><br />
-									<?php echo htmlspecialchars($booking['comments'])?>
-									<td><?php echo $booking['admission_time']?></td>
-								</tr>
-							<?php }?>
-						</tbody>
-					</table>
-				</div>
-				<div style="page-break-after:always"></div>
-			<?php }
-		}
-	}
+foreach ($diary as $theatre) {?>
+	<h3 class="theatre"><strong><?php echo $theatre->name?> (<?php echo $theatre->site->name?>)</strong></h3>
+	<?php foreach ($theatre->sessions as $session) {?>
+		<div id="diaryTemplate">
+			<div id="d_title">OPERATION LIST FORM</div>
+			<table class="d_overview">
+				<tbody>
+					<tr>
+						<td>THEATRE NO:</td>
+						<td colspan="2"><?php echo(htmlspecialchars($theatre->name, ENT_QUOTES))?></td>
+					</tr>
+					<tr>
+						<td>SESSION:</td>
+						<td><?php echo $session->start_time?> - <?php echo $session->end_time?></td>
+						<td>NHS</td>
+					</tr>
+				</tbody>
+			</table>
+			<table class="d_overview">
+				<tbody>
+					<tr>
+						<td>SURGICAL FIRM:<?php echo htmlspecialchars($session->firm->name, ENT_QUOTES)?></td>
+						<td>ANAESTHETIST:</td>
+						<td>&nbsp;</td>
+						<td>DATE:</td>
+						<td><?php echo Helper::convertDate2NHS($session->date)?></td>
+					</tr>
+					<tr>
+						<td>COMMENTS: <?php echo htmlspecialchars($session->comments)?></td>
+					</tr>
+				</tbody>
+			</table>
+			<table class="d_data">
+				<tbody>
+					<tr>
+						<th>HOSPT NO</th>
+						<th>PATIENT</th>
+						<th>AGE</th>
+						<th>WARD</th>
+						<th>GA or LA</th>
+						<th>PRIORITY</th>
+						<th>PROCEDURES AND COMMENTS</th>
+						<th>ADMISSION TIME</th>
+					</tr>
+					<?php foreach ($session->activeBookings as $booking) {?>
+						<tr>
+							<td><?php echo $booking->operation->event->episode->patient->hos_num?></td>
+							<td><?php echo strtoupper($booking->operation->event->episode->patient->last_name)?>, <?php echo $booking->operation->event->episode->patient->first_name?></td>
+							<td><?php echo $booking->operation->event->episode->patient->age?></td>
+							<td><?php echo htmlspecialchars($booking->ward->name)?></td>
+							<td><?php echo htmlspecialchars($booking->operation->anaesthetic_type->name)?></td>
+							<td><?php echo $booking->operation->priority->name?></td>
+							<td style="max-width: 500px; word-wrap:break-word; overflow: hidden;">
+							<?php echo $booking->operation->procedures ? '['.$booking->operation->eye->adjective.'] '.$booking->operation->getProceduresCommaSeparated() : 'No procedures'?><br/>
+							<?php echo htmlspecialchars($booking->operation->comments)?>
+							<td><?php echo substr($booking->admission_time,0,5)?></td>
+						</tr>
+					<?php }?>
+				</tbody>
+			</table>
+		</div>
+		<div style="page-break-after:always"></div>
+	<?php }
 }
