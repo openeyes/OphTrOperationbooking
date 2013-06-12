@@ -26,6 +26,7 @@
 
 	<div id="waitinglist_display">
 		<form method="post" action="<?php echo Yii::app()->createUrl('/OphTrOperationbooking/waitingList/search')?>" id="waitingList-filter">
+			<input type="hidden" name="YII_CSRF_TOKEN" value="<?php echo Yii::app()->request->csrfToken?>" />
 			<div id="search-options">
 				<div id="main-search" class="grid-view">
 					<h3>Search partial bookings waiting lists by:</h3>
@@ -43,7 +44,7 @@
 									<?php echo CHtml::dropDownList('subspecialty-id', @$_POST['subspecialty-id'], Subspecialty::model()->getList(),
 										array('empty'=>'All specialties', 'ajax'=>array(
 											'type'=>'POST',
-											'data'=>array('subspecialty_id'=>'js:this.value'),
+											'data'=>array('subspecialty_id'=>'js:this.value','YII_CSRF_TOKEN'=>Yii::app()->request->csrfToken),
 											'url'=>Yii::app()->createUrl('/OphTrOperationbooking/waitingList/filterFirms'),
 											'success'=>"js:function(data) {
 												if ($('#subspecialty-id').val() != '') {

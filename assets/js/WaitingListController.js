@@ -90,7 +90,7 @@ $(document).ready(function() {
 			$.ajax({
 				url: baseUrl+'/OphTrOperationbooking/waitingList/filterFirms',
 				type: "POST",
-				data: "subspecialty_id="+$('#subspecialty-id').val(),
+				data: "subspecialty_id="+$('#subspecialty-id').val()+'&YII_CSRF_TOKEN='+YII_CSRF_TOKEN,
 				success: function(data) {
 					$('#firm-id').attr('disabled', false);
 					$('#firm-id').html(data);
