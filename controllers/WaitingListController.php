@@ -439,9 +439,4 @@ class WaitingListController extends BaseEventTypeController {
 			}
 		}
 	}
-
-	public function processJsVars() {
-		$this->jsVars['YII_CSRF_TOKEN'] = Yii::app()->request->csrfToken;
-		return parent::processJsVars();
-	}
 }
