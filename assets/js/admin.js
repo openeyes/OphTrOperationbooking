@@ -29,4 +29,57 @@ $(document).ready(function() {
 			});
 		}
 	});
+
+	$('#lcr_site_id').change(function() {
+		var siteId = $(this).val();
+
+		$('#letter_contact_rules li').children('a').removeAttr('style');
+
+		$.ajax({
+			'type': 'POST',
+			'data': {'site_id': siteId, 'YII_CSRF_TOKEN': YII_CSRF_TOKEN, 'empty': 1},
+			'url': baseUrl+'/OphTrOperationbooking/theatreDiary/filterTheatres',
+			'success':function(data) {
+				$('#lcr_theatre_id').html(data);
+			}
+		});
+	});
+
+	$('#lcr_subspecialty_id').change(function() {
+		var subspecialtyId = $(this).val();
+
+		$('#letter_contact_rules li').children('a').removeAttr('style');
+
+		$.ajax({
+			'url': baseUrl+'/OphTrOperationbooking/theatreDiary/filterFirms',
+			'type': 'POST',
+			'data': 'subspecialty_id='+subspecialtyId+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN+"&empty=1",
+			'success': function(data) {
+				$('#lcr_firm_id').html(data);
+			}
+		});
+	});
+
+	$('#lcr_firm_id, #lcr_theatre_id').change(function() {
+		$('#letter_contact_rules li').children('a').removeAttr('style');
+
+		if ($('#lcr_site_id').val() != '' && $('#lcr_subspecialty_id').val() != '' && $('#lcr_firm_id').val() != '' && $('#lcr_theatre_id').val() != '') {
+			$.ajax({
+				'type': 'POST',
+				'url': baseUrl+'/OphTrOperationbooking/admin/testLetterContactRules',
+				'data': $('#letter_contact_rules_test').serialize()+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
+				'dataType': 'json',
+				'success': function(resp) {
+					for (var i in resp) {
+						$('#letter_contact_rules li[id="'+resp[i]+'"]').children('a').attr('style','color: #f00');
+					}
+				}
+			});
+		}
+	});
+
+	$('#letter_contact_rules a.treenode').click(function() {
+		var id = $(this).attr('id').match(/[0-9]+/);
+		window.location.href = baseUrl+'/OphTrOperationbooking/admin/editLetterContactRule/'+id;
+	});
 });

@@ -85,6 +85,7 @@ class OphTrOperationbooking_Letter_Contact_Rule extends BaseActiveRecord
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 			'children' => array(self::HAS_MANY, 'OphTrOperationbooking_Letter_Contact_Rule', 'parent_rule_id'),
+			'parent' => array(self::BELONGS_TO, 'OphTrOperationbooking_Letter_Contact_Rule', 'parent_rule_id'),
 		);
 	}
 
@@ -94,6 +95,11 @@ class OphTrOperationbooking_Letter_Contact_Rule extends BaseActiveRecord
 	public function attributeLabels()
 	{
 		return array(
+			'parent_rule_id' => 'Parent rule',
+			'site_id' => 'Site',
+			'subspecialty_id' => 'Subspecialty',
+			'firm_id' => 'Firm',
+			'theatre_id' => 'Theatre',
 		);
 	}
 
@@ -133,5 +139,128 @@ class OphTrOperationbooking_Letter_Contact_Rule extends BaseActiveRecord
 		}
 
 		return $this;
+	}
+
+	public function findAllAsTree($parent=null) {
+		$tree = array();
+		$criteria = new CDbCriteria;
+		$criteria->addCondition('parent_rule_id <=> :parent_rule_id');
+		$criteria->params[':parent_rule_id'] = $parent ? $parent->id : null;
+		$criteria->order = 'rule_order asc';
+
+		foreach (OphTrOperationbooking_Letter_Contact_Rule::model()->findAll($criteria) as $rule) {
+			$treeItem = array(
+				'id' => $rule->id,
+				'text' => $rule->text,
+				'children' => $this->findAllAsTree($rule),
+			);
+			$treeItem['hasChildren'] = !empty($treeItem['children']);
+
+			$tree[] = $treeItem;
+		}
+
+		return $tree;
+	}
+
+	public function getText() {
+		$text = CHtml::openTag('a',array('href'=>'#','id'=>'item'.$this->id,'class'=>'treenode'));
+
+		if ($this->site) {
+			$text .= "[".$this->site->name."]";
+		}
+
+		if ($this->firm) {
+			if ($text) $text .= ' ';
+			$text .= "[".$this->firm->name."]";
+		}
+
+		if ($this->theatre) {
+			if ($text) $text .= ' ';
+			$text .= "[".$this->theatre->name."]";
+		}
+
+		if ($this->subspecialty) {
+			if ($text) $text .= ' ';
+			$text .= "[".$this->subspecialty->ref_spec."]";
+		}
+
+		if ($this->refuse_telephone) {
+			if ($text) $text .= ' ';
+			$text .= "refuse: [".$this->refuse_telephone."]";
+		}
+
+		if ($this->refuse_title) {
+			if ($text) $text .= ' ';
+			$text .= "title: [".$this->refuse_title."]";
+		}
+
+		if ($this->health_telephone) {
+			if ($text) $text .= ' ';
+			$text .= "health: [".$this->health_telephone."]";
+		}
+
+		return $text.CHtml::closeTag('a')." <a href=\"#\" id=\"add$this->id\"><img width=\"46px\" height=\"23px\" src=\"".Yii::app()->createUrl('/img/_elements/btns/plus-sign.png')."\" /></a>\n";
+	}
+
+	public function getTreeName() {
+		$text = '';
+
+		if ($this->site) {
+			$text .= "[".$this->site->name."]";
+		}
+
+		if ($this->firm) {
+			if ($text) $text .= ' ';
+			$text .= "[".$this->firm->name."]";
+		}
+
+		if ($this->theatre) {
+			if ($text) $text .= ' ';
+			$text .= "[".$this->theatre->name."]";
+		}
+
+		if ($this->subspecialty) {
+			if ($text) $text .= ' ';
+			$text .= "[".$this->subspecialty->ref_spec."]";
+		}
+
+		if ($this->refuse_telephone) {
+			if ($text) $text .= ' ';
+			$text .= "refuse: [".$this->refuse_telephone."]";
+		}
+
+		if ($this->health_telephone) {
+			if ($text) $text .= ' ';
+			$text .= "health: [".$this->health_telephone."]";
+		}
+
+		$parents = 0;
+		$object = $this;
+
+		while ($object->parent_rule_id) {
+			$parents++;
+			$object = $object->parent;
+		}
+
+		return str_repeat('+ ',$parents).$text;
+	}
+
+	public function getListAsTree($parent=null) {
+		$list = array();
+
+		$criteria = new CDbCriteria;
+		$criteria->addCondition('parent_rule_id <=> :parent');
+		$criteria->params[':parent'] = $parent ? $parent->id : null;
+		$criteria->order = 'rule_order asc';
+
+		foreach (OphTrOperationbooking_Letter_Contact_Rule::model()->findAll($criteria) as $rule) {
+			$list[] = $rule;
+
+			foreach ($this->getListAsTree($rule) as $child) {
+				$list[] = $child;
+			}
+		}
+
+		return $list;
 	}
 }

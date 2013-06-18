@@ -218,4 +218,63 @@ class AdminController extends ModuleAdminController {
 
 		echo "1";
 	}
+
+	public function actionViewLetterContactRules() {
+		$this->render('lettercontactrules',array(
+			'data' => OphTrOperationbooking_Letter_Contact_Rule::model()->findAllAsTree(),
+		));
+	}
+
+	public function actionLetterContactRulesData() {
+		echo json_encode(array(
+			array(
+				'id' => 1,
+				'text' => 'one',
+				'hasChildren' => true,
+				'children' => array(
+					array(
+						'id' => 2,
+						'text' => 'two',
+						'hasChildren' => false,
+					),
+				),
+			),
+		));
+	}
+
+	public function actionTestLetterContactRules() {
+		$site_id = @$_POST['lcr_site_id'];
+		$subspecialty_id = @$_POST['lcr_subspecialty_id'];
+		$theatre_id = @$_POST['lcr_theatre_id'];
+		$firm_id = @$_POST['lcr_firm_id'];
+
+		$criteria = new CDbCriteria;
+		$criteria->addCondition('parent_rule_id is null');
+		$criteria->order = 'rule_order asc';
+
+		$rule_ids = array();
+
+		foreach (OphTrOperationbooking_Letter_Contact_Rule::model()->findAll($criteria) as $rule) {
+			if ($rule->applies($site_id,$subspecialty_id,$theatre_id,$firm_id)) {
+				$final = $rule->parse($site_id,$subspecialty_id,$theatre_id,$firm_id);
+				echo json_encode(array($final->id));
+				return;
+			}
+		}
+
+		echo json_encode(array());
+	}
+
+	public function actionEditLetterContactRule($id) {
+		if (!$rule = OphTrOperationbooking_Letter_Contact_Rule::model()->findByPk($id)) {
+			throw new Exception("Letter contact rule not found: $id");
+		}
+
+		$errors = array();
+
+		$this->render('editlettercontactrule',array(
+			'rule' => $rule,
+			'errors' => $errors,
+		));
+	}
 }

@@ -209,3 +209,6 @@ span.transport_pagination_selected { background-color: #0B59DA; color: #fff; }
 #erod_rules ul li .column_checkbox { width: 15px; display: inline-block; }
 #erod_rules ul li .column_subspecialty { width: 215px; display: inline-block; }
 #erod_rules ul li .column_firms { width: 570px; display: inline-block; }
+
+#content .wrap .leftcolumn.narrow { width: 230px !important; }
+#content .wrap.twocolumns .rightcolumn.wide { width: 959px !important; }
