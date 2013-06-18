@@ -21,6 +21,41 @@
 
 <div class="fullWidth fullBox clearfix">
 	<div id="whiteBox">
+		<div style="float: right; margin-top: 4px; margin-right: 3px;">
+			<?php if ($this->canPrint()) {?>
+				<button style="margin-right: 15px;" type="submit" class="classy blue mini" id="btn_print_all"><span class="button-span button-span-blue">Print all</span></button>
+				<button style="margin-right: 15px;" type="submit" class="classy blue mini" id="btn_print"><span class="button-span button-span-blue">Print selected</span></button>
+			<?php }?>
+			<?php if (Yii::app()->user->checkAccess('admin')) {?>
+				<span class="data admin-confirmto">Set latest letter sent to be:
+					<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+							'name'=>'adminconfirmdate',
+							'id'=>'adminconfirmdate',
+							// additional javascript options for the date picker plugin
+							'options'=>array(
+								'showAnim'=>'fold',
+								'dateFormat'=>Helper::NHS_DATE_FORMAT_JS,
+								'maxDate'=>'today'
+							),
+							'value' => date("j M Y"),
+							'htmlOptions'=>array('style'=>'width: 110px;')
+					))?>
+				</span>
+				<span class="admin-confirmto">
+					<select name="adminconfirmto" id="adminconfirmto">
+						<option value="OFF">Off</option>
+						<option value="noletters">No letters sent</option>
+						<option value="0">Invitation letter</option>
+						<option value="1">1st reminder letter</option>
+						<option value="2">2nd reminder letter</option>
+						<option value="3">GP letter</option>
+					</select>
+				</span>
+			<?php }?>
+			<?php if (BaseController::checkUserLevel(4)) { ?>
+				<button type="submit" class="classy green mini" id="btn_confirm_selected"><span class="button-span button-span-green">Confirm selected</span></button>
+			<?php }?>
+		</div>
 		<p><strong>Use the filters below to find patients:</strong></p>
 	</div>
 
@@ -87,40 +122,5 @@
 		</form>
 		<div id="searchResults" class="whiteBox">
 		</div>
-	</div>
-	<div style="float: right; margin-right: 18px;">
-		<?php if($this->canPrint()) { ?>
-		<button style="margin-right: 15px;" type="submit" class="classy blue tall" id="btn_print_all"><span class="button-span button-span-blue">Print all</span></button>
-		<button style="margin-right: 15px;" type="submit" class="classy blue grande" id="btn_print"><span class="button-span button-span-blue">Print selected</span></button>
-		<?php } ?>
-		<?php if (Yii::app()->user->checkAccess('admin')) {?>
-			<span class="data admin-confirmto">Set latest letter sent to be:
-				<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-						'name'=>'adminconfirmdate',
-						'id'=>'adminconfirmdate',
-						// additional javascript options for the date picker plugin
-						'options'=>array(
-							'showAnim'=>'fold',
-							'dateFormat'=>Helper::NHS_DATE_FORMAT_JS,
-							'maxDate'=>'today'
-						),
-						'value' => date("j M Y"),
-						'htmlOptions'=>array('style'=>'width: 110px;')
-				))?>
-			</span>
-			<span class="admin-confirmto">
-				<select name="adminconfirmto" id="adminconfirmto">
-					<option value="OFF">Off</option>
-					<option value="noletters">No letters sent</option>
-					<option value="0">Invitation letter</option>
-					<option value="1">1st reminder letter</option>
-					<option value="2">2nd reminder letter</option>
-					<option value="3">GP letter</option>
-				</select>
-			</span>
-		<?php }?>
-		<?php if(BaseController::checkUserLevel(4)) { ?>
-		<button type="submit" class="classy green venti" id="btn_confirm_selected"><span class="button-span button-span-green">Confirm selected</span></button>
-		<?php } ?>
 	</div>
 </div>

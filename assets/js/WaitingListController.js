@@ -144,6 +144,11 @@ $(document).ready(function() {
 			}
 		});
 	});
+
+	$('#whiteBox').waypoint('sticky', {
+		offset: 44,
+		wrapper: '<div class="waitingList_sticky_wrapper" />'
+	});
 });
 
 function print_items_from_selector(sel,all) {

@@ -350,10 +350,6 @@ $(document).ready(function() {
 		offset: 44,
 		wrapper: '<div class="theatreDiary_sticky_wrapper" />'
 	});
-
-	$('body').delegate('#whiteBox.stuck', 'hover', function(e) {
-		$('#whiteBox').toggleClass('hover', e.type === 'mouseenter');
-	});
 });
 
 function getDiary() {
