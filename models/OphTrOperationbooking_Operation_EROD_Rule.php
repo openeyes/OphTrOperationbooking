@@ -68,8 +68,18 @@ class OphTrOperationbooking_Operation_EROD_Rule extends BaseActiveRecord
 		return array(
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
-			'items' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_EROD_Rule_Item', 'erod_rule_id')
+			'items' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_EROD_Rule_Item', 'erod_rule_id'),
+			'subspecialty' => array(self::BELONGS_TO, 'Subspecialty', 'subspecialty_id'),
 		);
+	}
+
+	public function getFirms() {
+		$firms = array();
+		foreach ($this->items as $item) {
+			$item['item_type'] == 'firm' && $firms[] = $item;
+		}
+
+		return $firms;
 	}
 
 	/**
@@ -78,6 +88,7 @@ class OphTrOperationbooking_Operation_EROD_Rule extends BaseActiveRecord
 	public function attributeLabels()
 	{
 		return array(
+			'subspecialty_id' => 'Subspecialty',
 		);
 	}
 
@@ -96,8 +107,22 @@ class OphTrOperationbooking_Operation_EROD_Rule extends BaseActiveRecord
 		$criteria->compare('name', $this->name, true);
 
 		return new CActiveDataProvider(get_class($this), array(
-				'criteria' => $criteria,
-			));
+			'criteria' => $criteria,
+		));
+	}
+
+	public function getFirmString() {
+		$string = '';
+
+		foreach ($this->items as $i => $item) {
+			if ($item['item_type'] == 'firm') {
+				if ($string) $string .= ', ';
+				$firm = Firm::model()->findByPk($item['item_id']);
+				$string .= $firm->name.' ('.$firm->serviceSubspecialtyAssignment->subspecialty->name.')';
+			}
+		}
+
+		return $string;
 	}
 }
 ?>

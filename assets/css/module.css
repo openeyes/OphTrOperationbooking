@@ -204,3 +204,8 @@ span.transport_pagination_selected { background-color: #0B59DA; color: #fff; }
 #whiteBox .banner-watermark { height: 20px; font-size: 16px; text-align: center; background-color: #f00; padding: 5px; color: #fff; line-height: 20px; margin: 0 auto; }
 #whiteBox .banner-watermark.admin { background-color: #DAA520; }
 #whiteBox.stuck { position: fixed; top: 39px; z-index: 9; box-shadow: 0 2px 4px rgba(0, 0, 0, .3); height: 25px; width: 98%; }
+
+#erod_rules ul li { padding: 0; margin: 0; line-height: 15px; font-size: 11px; }
+#erod_rules ul li .column_checkbox { width: 15px; display: inline-block; }
+#erod_rules ul li .column_subspecialty { width: 215px; display: inline-block; }
+#erod_rules ul li .column_firms { width: 570px; display: inline-block; }

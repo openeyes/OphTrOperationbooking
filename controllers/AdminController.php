@@ -1,0 +1,221 @@
+<?php
+/**
+ * OpenEyes
+ *
+ * (C) Moorfields Eye Hospital NHS Foundation Trust, 2008-2011
+ * (C) OpenEyes Foundation, 2011-2013
+ * This file is part of OpenEyes.
+ * OpenEyes is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * OpenEyes is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with OpenEyes in a file titled COPYING. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @package OpenEyes
+ * @link http://www.openeyes.org.uk
+ * @author OpenEyes <info@openeyes.org.uk>
+ * @copyright Copyright (c) 2008-2011, Moorfields Eye Hospital NHS Foundation Trust
+ * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
+ * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
+ */
+
+class AdminController extends ModuleAdminController {
+
+	public function actionViewERODRules() {
+		$this->render('erodrules');
+	}
+
+	public function actionCreatePostOpDrug() {
+		if (empty($_POST['name'])) {
+			throw new Exception("Missing name");
+		}
+
+		if ($drug = PostopDrug::model()->find(array('order'=>'display_order desc'))) {
+			$display_order = $drug->display_order+1;
+		} else {
+			$display_order = 1;
+		}
+
+		$drug = new PostopDrug;
+		$drug->name = @$_POST['name'];
+		$drug->display_order = $display_order;
+
+		if (!$drug->save()) {
+			echo json_encode(array('errors'=>$drug->getErrors()));
+			return;
+		}
+
+		// TODO: this is a hack for the Orbis demo and should be removed when full site/subspecialty functionality has been implemented
+		$specialty = Specialty::model()->find('code=?',array('OPH'));
+		foreach (Site::model()->findAll('institution_id=?',array(1)) as $site) {
+			foreach (Subspecialty::model()->findAll('specialty_id=?',array($specialty->id)) as $subspecialty) {
+				$ssd = new PostopSiteSubspecialtyDrug;
+				$ssd->site_id = $site->id;
+				$ssd->subspecialty_id = $subspecialty->id;
+				$ssd->drug_id = $drug->id;
+				if (!$ssd->save()) {
+					echo json_encode(array('errors'=>$ssd->getErrors()));
+				}
+			}
+		}
+
+		echo json_encode(array('id'=>$drug->id,'errors'=>array()));
+	}
+
+	public function actionUpdatePostOpDrug() {
+		if (!$drug = PostopDrug::model()->findByPk(@$_POST['id'])) {
+			throw new Exception("Drug not found: ".@$_POST['id']);
+		}
+
+		$drug->name = @$_POST['name'];
+		if (!$drug->save()) {
+			echo json_encode(array('errors'=>$drug->getErrors()));
+			return;
+		}
+
+		echo json_encode(array('errors'=>array()));
+	}
+
+	public function actionDeletePostOpDrug($id) {
+		if ($drug = PostopDrug::model()->findByPk($id)) {
+			$drug->deleted = 1;
+			if ($drug->save()) {
+				echo "1";
+				return;
+			}
+		}
+		echo "0";
+	}
+
+	public function actionSortPostOpDrugs() {
+		if (!empty($_POST['order'])) {
+			foreach ($_POST['order'] as $i => $id) {
+				if ($drug = PostopDrug::model()->findByPk($id)) {
+					$drug->display_order = $i+1;
+					if (!$drug->save()) {
+						throw new Exception("Unable to save drug: ".print_r($drug->getErrors(),true));
+					}
+				}
+			}
+		}
+	}
+
+	public function actionEditERODRule($id) {
+		if (!$erod = OphTrOperationbooking_Operation_EROD_Rule::model()->findByPk($id)) {
+			throw new Exception("EROD rule not found: $id");
+		}
+
+		$errors = array();
+
+		if (!empty($_POST)) {
+			$erod->subspecialty_id = $_POST['OphTrOperationbooking_Operation_EROD_Rule']['subspecialty_id'];
+			if (!$erod->save()) {
+				$errors = $erod->getErrors();
+			} else {
+				$firm_ids = array();
+				foreach ($erod->items as $item) {
+					$firm_ids[] = $item['item_id'];
+				}
+
+				foreach ($_POST['Firms'] as $firm_id) {
+					if (!in_array($firm_id,$firm_ids)) {
+						$item = new OphTrOperationbooking_Operation_EROD_Rule_Item;
+						$item->erod_rule_id = $erod->id;
+						$item->item_type = 'firm';
+						$item->item_id = $firm_id;
+						if (!$item->save()) {
+							$errors = array_merge($errors,$item->getErrors());
+						}
+					}
+				}
+
+				foreach ($firm_ids as $firm_id) {
+					if (!in_array($firm_id,$_POST['Firms'])) {
+						if (!$item = OphTrOperationbooking_Operation_EROD_Rule_Item::model()->find('erod_rule_id=? and item_type=? and item_id=?',array($erod->id,'firm',$firm_id))) {
+							throw new Exception("Rule item not found: [$erod->id][firm][$firm_id]");
+						}
+						if (!$item->delete()) {
+							throw new Exception("Rule item delete failed: ".print_r($item->getErrors(),true));
+						}
+					}
+				}
+
+				if (empty($errors)) {
+					$this->redirect(array('/OphTrOperationbooking/admin/viewERODRules'));
+				}
+			}
+		}
+
+		$this->render('/admin/editerodrule',array(
+			'erod' => $erod,
+			'errors' => $errors,
+		));
+	}
+
+	public function actionAddERODRule() {
+		$errors = array();
+
+		$erod = new OphTrOperationbooking_Operation_EROD_Rule;
+
+		if (!empty($_POST)) {
+			$erod->subspecialty_id = $_POST['OphTrOperationbooking_Operation_EROD_Rule']['subspecialty_id'];
+			if (!$erod->save()) {
+				$errors = $erod->getErrors();
+			} else {
+				$firm_ids = array();
+				foreach ($erod->items as $item) {
+					$firm_ids[] = $item['item_id'];
+				}
+
+				foreach ($_POST['Firms'] as $firm_id) {
+					if (!in_array($firm_id,$firm_ids)) {
+						$item = new OphTrOperationbooking_Operation_EROD_Rule_Item;
+						$item->erod_rule_id = $erod->id;
+						$item->item_type = 'firm';
+						$item->item_id = $firm_id;
+						if (!$item->save()) {
+							$errors = array_merge($errors,$item->getErrors());
+						}
+					}
+				}
+
+				foreach ($firm_ids as $firm_id) {
+					if (!in_array($firm_id,$_POST['Firms'])) {
+						if (!$item = OphTrOperationbooking_Operation_EROD_Rule_Item::model()->find('erod_rule_id=? and item_type=? and item_id=?',array($erod->id,'firm',$firm_id))) {
+							throw new Exception("Rule item not found: [$erod->id][firm][$firm_id]");
+						}
+						if (!$item->delete()) {
+							throw new Exception("Rule item delete failed: ".print_r($item->getErrors(),true));
+						}
+					}
+				}
+
+				if (empty($errors)) {
+					$this->redirect(array('/OphTrOperationbooking/admin/viewERODRules'));
+				}
+			}
+		}
+
+		$this->render('/admin/adderodrule',array(
+			'erod' => $erod,
+			'errors' => $errors,
+		));
+	}
+
+	public function actionDeleteERODRules() {
+		if (!empty($_POST['erod'])) {
+			foreach ($_POST['erod'] as $erod_id) {
+				if ($_erod = OphTrOperationbooking_Operation_EROD_Rule::model()->findByPk($erod_id)) {
+					foreach ($_erod->items as $item) {
+						if (!$item->delete()) {
+							throw new Exception("Unable to delete rule item: ".print_r($item->getErrors(),true));
+						}
+					}
+					if (!$_erod->delete()) {
+						throw new Exception("Unable to delete erod rule: ".print_r($_erod->getErrors(),true));
+					}
+				}
+			}
+		}
+
+		echo "1";
+	}
+}

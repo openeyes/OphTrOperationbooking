@@ -46,6 +46,13 @@ return array(
 				'position' => 20,
 			),
 		),
+		'admin_menu' => array(
+			'EROD rules' => '/OphTrOperationbooking/admin/viewERODRules',
+			'Letter contact rules' => '/OphTrOperationbooking/admin/viewLetterContactRules',
+			'Letter warning rules' => '/OphTrOperationbooking/admin/viewLetterWarningRules',
+			'Operation name rules' => '/OphTrOperationbooking/admin/viewOperationNameRules',
+			'Waiting list contact rules' => '/OphTrOperationbooking/admin/viewWaitingListContactRules',
+		),
 	)
 );
 
