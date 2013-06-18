@@ -22,6 +22,12 @@
 
 <div class="fullWidth fullBox clearfix">
 	<div id="whiteBox">
+		<?php if ($this->canPrint()) {?>
+			<div style="float: right; margin-top: 4px; margin-right: 3px;">
+				<button type="submit" class="classy blue mini diaryViewMode" id="btn_print_diary"><span class="button-span button-span-blue">Print</span></button>
+				<button type="submit" class="classy blue mini diaryViewMode" id="btn_print_diary_list"><span class="button-span button-span-blue">Print list</span></button>
+			</div>
+		<?php }?>
 		<p><strong>Use the filters below to view Theatre schedules:</strong></p>
 	</div>
 
@@ -123,12 +129,6 @@
 		<div id="theatreList"></div>
 		<div class="printable" id="printable"></div>
 	</div>
-	<?php if($this->canPrint()) { ?>
-	<div class="printButtons" style="text-align:right; margin-right:10px;">
-		<button type="submit" class="classy blue tall diaryViewMode" id="btn_print_diary"><span class="button-span button-span-blue">Print</span></button>
-		<button type="submit" class="classy blue tall diaryViewMode" id="btn_print_diary_list"><span class="button-span button-span-blue">Print list</span></button>
-	</div>
-	<?php } ?>
 </div>
 <div id="iframeprintholder" style="display: none;"></div>
 <script type="text/javascript">
