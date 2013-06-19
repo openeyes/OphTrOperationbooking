@@ -90,4 +90,9 @@ $(document).ready(function() {
 	$('#et_add_letter_contact_rule').click(function() {
 		window.location.href = baseUrl+'/OphTrOperationbooking/admin/add'+OE_rule_model;
 	});
+
+	$('#rules a.addTreeItemHere').click(function(e) {
+		e.preventDefault();
+		window.location.href = baseUrl+'/OphTrOperationbooking/admin/add'+OE_rule_model+'?parent_rule_id='+$(this).attr('rel');
+	});
 });

@@ -327,6 +327,10 @@ class AdminController extends ModuleAdminController {
 			} else {
 				$this->redirect(array('/OphTrOperationbooking/admin/viewLetterContactRules'));
 			}
+		} else {
+			if (isset($_GET['parent_rule_id'])) {
+				$rule->parent_rule_id = $_GET['parent_rule_id'];
+			}
 		}
 
 		$this->render('editlettercontactrule',array(
@@ -404,6 +408,10 @@ class AdminController extends ModuleAdminController {
 				$errors = $rule->getErrors();
 			} else {
 				$this->redirect(array('/OphTrOperationbooking/admin/viewLetterWarningRules'));
+			}
+		} else {
+			if (isset($_GET['parent_rule_id'])) {
+				$rule->parent_rule_id = $_GET['parent_rule_id'];
 			}
 		}
 
