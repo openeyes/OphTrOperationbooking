@@ -296,7 +296,6 @@ class AdminController extends ModuleAdminController {
 		$this->render('deletelettercontactrule',array(
 			'rule' => $rule,
 			'errors' => $errors,
-			'data' => OphTrOperationbooking_Letter_Contact_Rule::model()->findAllAsTree($rule,true,'textPlain'),
 		));
 	}
 
@@ -435,7 +434,6 @@ class AdminController extends ModuleAdminController {
 		$this->render('deleteletterwarningrule',array(
 			'rule' => $rule,
 			'errors' => $errors,
-			'data' => OphTrOperationbooking_Admission_Letter_Warning_Rule::model()->findAllAsTree($rule,true,'textPlain'),
 		));
 	}
 

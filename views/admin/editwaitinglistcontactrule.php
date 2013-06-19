@@ -39,6 +39,15 @@
 			<?php echo $form->textField($rule,'telephone')?>
 			<?php $this->endWidget()?>
 		</div>
+		<?php if ($rule->children) {?>
+			<div>
+				<p style="font-size: 13px; margin: 0; padding: 0; margin-top: 10px; margin-bottom: 10px;"><strong>Descendants</strong></p>
+				<?php
+				$this->widget('CTreeView',array(
+					'data' => OphTrOperationbooking_Waiting_List_Contact_Rule::model()->findAllAsTree($rule,true,'textPlain'),
+				))?>
+			</div>
+		<?php }?>
 	</div>
 </div>
 <?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>

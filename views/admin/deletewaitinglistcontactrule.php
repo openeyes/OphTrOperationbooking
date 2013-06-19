@@ -62,7 +62,7 @@
 				<p style="font-size: 15px; margin: 0; padding: 0; margin-top: 10px; margin-bottom: 10px;"><strong><span style="color: #f00;">WARNING:</span> this rule has one or more descendants, if you proceed these will all be deleted.</strong></p>
 				<?php
 				$this->widget('CTreeView',array(
-					'data' => $data,
+					'data' => OphTrOperationbooking_Waiting_List_Contact_Rule::model()->findAllAsTree($rule,true,'textPlain'),
 				))?>
 			</div>
 		<?php }?>

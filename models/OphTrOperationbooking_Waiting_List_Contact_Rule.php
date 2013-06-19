@@ -138,6 +138,6 @@ class OphTrOperationbooking_Waiting_List_Contact_Rule extends BaseTree
 	}
 
 	public function getIs_child_TreeText() {
-		return $this->is_child ? 'C' : 'A';
+		return $this->is_child ? 'Child' : 'Adult';
 	}
 }
