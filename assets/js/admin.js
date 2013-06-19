@@ -82,4 +82,8 @@ $(document).ready(function() {
 		var id = $(this).attr('id').match(/[0-9]+/);
 		window.location.href = baseUrl+'/OphTrOperationbooking/admin/editLetterContactRule/'+id;
 	});
+
+	$('#et_add_letter_contact_rule').click(function() {
+		window.location.href = baseUrl+'/OphTrOperationbooking/admin/addLetterContactRule';
+	});
 });

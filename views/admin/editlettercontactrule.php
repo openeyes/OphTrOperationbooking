@@ -31,13 +31,14 @@
 				'focus'=>'#contactname'
 			))?>
 			<?php echo $form->dropDownList($rule,'parent_rule_id',CHtml::listData(OphTrOperationbooking_Letter_Contact_Rule::model()->getListAsTree(),'id','treeName'),array('empty'=>'- None -'))?>
+			<?php echo $form->textField($rule,'rule_order')?>
 			<?php echo $form->dropDownList($rule,'site_id',CHtml::listData(Site::model()->findAll(array('order'=>'name asc','condition'=>'institution_id = 1')),'id','name'),array('empty'=>'- Not set -'))?>
 			<?php echo $form->dropDownList($rule,'firm_id',Firm::model()->getListWithSpecialties(),array('empty'=>'- Not set -'))?>
 			<?php echo $form->dropDownList($rule,'subspecialty_id',CHtml::listData(Subspecialty::model()->findAllByCurrentSpecialty(),'id','name'),array('empty'=>'- Not set -'))?>
 			<?php echo $form->dropDownList($rule,'theatre_id',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Not set -'))?>
-			<?php echo $form->textField($rule,'refuse_telephone')?>
-			<?php echo $form->textField($rule,'refuse_title')?>
-			<?php echo $form->textField($rule,'health_telephone')?>
+			<?php echo $form->textField($rule,'refuse_telephone',array('size'=>20))?>
+			<?php echo $form->textField($rule,'refuse_title',array('size'=>90))?>
+			<?php echo $form->textField($rule,'health_telephone',array('size'=>90))?>
 			<?php $this->endWidget()?>
 		</div>
 	</div>
@@ -45,43 +46,18 @@
 <?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
 <div>
 	<?php echo EventAction::button('Save', 'save', array('colour' => 'green'))->toHtml()?>
-	<?php echo EventAction::button('Cancel', 'contact_cancel', array('colour' => 'red'))->toHtml()?>
+	<?php echo EventAction::button('Cancel', 'cancel', array('colour' => 'red'))->toHtml()?>
+	<?php echo EventAction::button('Delete', 'delete', array('colour' => 'blue'))->toHtml()?>
 	<img class="loader" src="<?php echo Yii::app()->createUrl('/img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 </div>
-<div>
-	<?php echo EventAction::button('Add', 'add_contact_location', array('colour' => 'blue'))->toHtml()?>
-</div>
 <script type="text/javascript">
-	$('a.removeLocation').click(function(e) {
-		e.preventDefault();
-
-		var location_id = $(this).attr('rel');
-
-		var row = $(this).parent().parent();
-
-		$.ajax({
-			'type': 'POST',
-			'data': 'location_id='+location_id+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
-			'url': baseUrl+'/admin/removeLocation',
-			'success': function(resp) {
-				if (resp == "0") {
-					alert("This contact location is currently assocated with one or more patients and so cannot be removed.\n\nYou can click on the location row to view the patients involved.");
+	handleButton($('#et_cancel'),function() {
+		window.location.href = baseUrl+'/OphTrOperationbooking/admin/viewLetterContactRules';
 	});
-				} else if (resp == "-1") {
-					alert("There was an unexpected error trying to remove the location, please try again or contact support for assistance.");
-				} else {
-					row.remove();
-				}
-			}
-		});
+	handleButton($('#et_save'),function() {
+		$('#adminform').submit();
 	});
-
-	$('a.removeLocation').click(function(e) {
-		return false;
-	});
-
-	$('li.even, li.odd').click(function(e) {
-		e.preventDefault();
-		window.location.href = baseUrl+'/admin/contactLocation?location_id='+$(this).attr('data-attr-id');
+	handleButton($('#et_delete'),function() {
+		window.location.href = baseUrl+'/OphTrOperationbooking/admin/deleteLetterContactRule/<?php echo $rule->id?>';
 	});
 </script>

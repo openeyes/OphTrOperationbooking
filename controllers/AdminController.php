@@ -272,6 +272,61 @@ class AdminController extends ModuleAdminController {
 
 		$errors = array();
 
+		if (!empty($_POST)) {
+			$rule->attributes = $_POST['OphTrOperationbooking_Letter_Contact_Rule'];
+
+			if (!$rule->save()) {
+				$errors = $rule->getErrors();
+			} else {
+				$this->redirect(array('/OphTrOperationbooking/admin/viewLetterContactRules'));
+			}
+		}
+
+		$this->render('editlettercontactrule',array(
+			'rule' => $rule,
+			'errors' => $errors,
+		));
+	}
+
+	public function actionDeleteLetterContactRule($id) {
+		if (!$rule = OphTrOperationbooking_Letter_Contact_Rule::model()->findByPk($id)) {
+			throw new Exception("Letter contact rule not found: $id");
+		}
+
+		$errors = array();
+
+		if (!empty($_POST)) {
+			if (@$_POST['delete']) {
+				if (!$rule->delete()) {
+					$errors = $rule->getErrors();
+				} else {
+					$this->redirect(array('/OphTrOperationbooking/admin/viewLetterContactRules'));
+				}
+			}
+		}
+
+		$this->render('deletelettercontactrule',array(
+			'rule' => $rule,
+			'errors' => $errors,
+			'data' => OphTrOperationbooking_Letter_Contact_Rule::model()->findAllAsTree($rule,true,'textPlain'),
+		));
+	}
+
+	public function actionAddLetterContactRule() {
+		$rule = new OphTrOperationbooking_Letter_Contact_Rule;
+
+		$errors = array();
+
+		if (!empty($_POST)) {
+			$rule->attributes = $_POST['OphTrOperationbooking_Letter_Contact_Rule'];
+
+			if (!$rule->save()) {
+				$errors = $rule->getErrors();
+			} else {
+				$this->redirect(array('/OphTrOperationbooking/admin/viewLetterContactRules'));
+			}
+		}
+
 		$this->render('editlettercontactrule',array(
 			'rule' => $rule,
 			'errors' => $errors,

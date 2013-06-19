@@ -63,7 +63,7 @@ class OphTrOperationbooking_Letter_Contact_Rule extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('parent_id, contact_type_id, site_id, subspecialty_id, theatre_id, refuse_telephone, health_telephone', 'safe'),
+			array('parent_rule_id, contact_type_id, site_id, subspecialty_id, theatre_id, firm_id, refuse_telephone, health_telephone, refuse_title, rule_order', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, contact_type_id, site_id, subspecialty_id, theatre_id', 'safe', 'on' => 'search'),
@@ -96,6 +96,7 @@ class OphTrOperationbooking_Letter_Contact_Rule extends BaseActiveRecord
 	{
 		return array(
 			'parent_rule_id' => 'Parent rule',
+			'rule_order' => 'Rule order',
 			'site_id' => 'Site',
 			'subspecialty_id' => 'Subspecialty',
 			'firm_id' => 'Firm',
@@ -141,29 +142,44 @@ class OphTrOperationbooking_Letter_Contact_Rule extends BaseActiveRecord
 		return $this;
 	}
 
-	public function findAllAsTree($parent=null) {
+	public function findAllAsTree($parent=null, $first=true, $text='text') {
 		$tree = array();
 		$criteria = new CDbCriteria;
 		$criteria->addCondition('parent_rule_id <=> :parent_rule_id');
 		$criteria->params[':parent_rule_id'] = $parent ? $parent->id : null;
 		$criteria->order = 'rule_order asc';
 
-		foreach (OphTrOperationbooking_Letter_Contact_Rule::model()->findAll($criteria) as $rule) {
+		if ($first && $parent) {
 			$treeItem = array(
-				'id' => $rule->id,
-				'text' => $rule->text,
-				'children' => $this->findAllAsTree($rule),
+				'id' => $parent->id,
+				'text' => $parent->$text,
+				'children' => $this->findAllAsTree($parent,false,$text),
 			);
 			$treeItem['hasChildren'] = !empty($treeItem['children']);
 
 			$tree[] = $treeItem;
+		} else {
+			foreach (OphTrOperationbooking_Letter_Contact_Rule::model()->findAll($criteria) as $rule) {
+				$treeItem = array(
+					'id' => $rule->id,
+					'text' => $rule->$text,
+					'children' => $this->findAllAsTree($rule,false,$text),
+				);
+				$treeItem['hasChildren'] = !empty($treeItem['children']);
+
+				$tree[] = $treeItem;
+			}
 		}
 
 		return $tree;
 	}
 
 	public function getText() {
-		$text = CHtml::openTag('a',array('href'=>'#','id'=>'item'.$this->id,'class'=>'treenode'));
+		return $this->rule_order.': '.CHtml::openTag('a',array('href'=>'#','id'=>'item'.$this->id,'class'=>'treenode')).$this->textPlain.CHtml::closeTag('a')." <a href=\"#\" id=\"add$this->id\"><img width=\"46px\" height=\"23px\" src=\"".Yii::app()->createUrl('/img/_elements/btns/plus-sign.png')."\" /></a>\n";
+	}
+
+	public function getTextPlain() {
+		$text = '';
 
 		if ($this->site) {
 			$text .= "[".$this->site->name."]";
@@ -199,7 +215,7 @@ class OphTrOperationbooking_Letter_Contact_Rule extends BaseActiveRecord
 			$text .= "health: [".$this->health_telephone."]";
 		}
 
-		return $text.CHtml::closeTag('a')." <a href=\"#\" id=\"add$this->id\"><img width=\"46px\" height=\"23px\" src=\"".Yii::app()->createUrl('/img/_elements/btns/plus-sign.png')."\" /></a>\n";
+		return $text;
 	}
 
 	public function getTreeName() {
@@ -262,5 +278,17 @@ class OphTrOperationbooking_Letter_Contact_Rule extends BaseActiveRecord
 		}
 
 		return $list;
+	}
+
+	public function delete() {
+		if ($this->children) {
+			foreach ($this->children as $child) {
+				if (!$child->delete()) {
+					return false;
+				}
+			}
+		}
+
+		return parent::delete();
 	}
 }

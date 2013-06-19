@@ -44,6 +44,5 @@
 	</div>
 </div>
 <div>
-	<?php echo EventAction::button('Add', 'add_erod_rule', array('colour' => 'blue'))->toHtml()?>
-	<?php echo EventAction::button('Delete', 'delete_erod_rule', array('colour' => 'blue'))->toHtml()?>
+	<?php echo EventAction::button('Add', 'add_letter_contact_rule', array('colour' => 'blue'))->toHtml()?>
 </div>
