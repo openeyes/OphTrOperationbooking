@@ -30,8 +30,11 @@
  * @property string $telephone
  */
 
-class OphTrOperationbooking_Waiting_List_Contact_Rule extends BaseActiveRecord
+class OphTrOperationbooking_Waiting_List_Contact_Rule extends BaseTree
 {
+	public $textFields = array('site','service','firm','is_child','name','telephone');
+	public $textFieldsDropDown = array('site','service','firm','is_child','name','telephone');
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -75,6 +78,10 @@ class OphTrOperationbooking_Waiting_List_Contact_Rule extends BaseActiveRecord
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 			'children' => array(self::HAS_MANY, 'OphTrOperationbooking_Waiting_List_Contact_Rule', 'parent_rule_id'),
+			'parent' => array(self::BELONGS_TO, 'OphTrOperationbooking_Waiting_List_Contact_Rule', 'parent_rule_id'),
+			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
+			'service' => array(self::BELONGS_TO, 'Service', 'service_id'),
+			'firm' => array(self::BELONGS_TO, 'Firm', 'firm_id'),
 		);
 	}
 
@@ -123,5 +130,9 @@ class OphTrOperationbooking_Waiting_List_Contact_Rule extends BaseActiveRecord
 		}
 
 		return $this;
+	}
+
+	public function getIs_child_TreeText() {
+		return $this->is_child ? 'C' : 'A';
 	}
 }

@@ -37,7 +37,7 @@
 			<?php echo $form->dropDownList($rule,'firm_id',Firm::model()->getListWithSpecialties(),array('empty'=>'- Not set -'))?>
 			<?php echo $form->dropDownList($rule,'subspecialty_id',CHtml::listData(Subspecialty::model()->findAllByCurrentSpecialty(),'id','name'),array('empty'=>'- Not set -'))?>
 			<?php echo $form->dropDownList($rule,'theatre_id',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Not set -'))?>
-			<?php echo $form->dropDownList($rule,'is_child',array(''=>'- Not set -','0'=>'Child','1'=>'Adult'))?>
+			<?php echo $form->dropDownList($rule,'is_child',array(''=>'- Not set -','1'=>'Child','0'=>'Adult'))?>
 			<?php echo $form->radioBoolean($rule,'show_warning')?>
 			<?php echo $form->textArea($rule,'warning_text',array('rows'=>5,'cols'=>80))?>
 			<?php echo $form->radioBoolean($rule,'emphasis')?>

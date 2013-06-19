@@ -18,7 +18,6 @@
  */
 
 class AdminController extends ModuleAdminController {
-
 	public function actionViewERODRules() {
 		$this->render('erodrules');
 	}
@@ -419,5 +418,36 @@ class AdminController extends ModuleAdminController {
 			'rule' => $rule,
 			'errors' => $errors,
 		));
+	}
+
+	public function actionViewWaitingListContactRules() {
+		$this->jsVars['OE_rule_model'] = 'WaitingListContactRule';
+
+		$this->render('waitinglistcontactrules',array(
+			'data' => OphTrOperationbooking_Waiting_List_Contact_Rule::model()->findAllAsTree(),
+		));
+	}
+
+	public function actionTestWaitingListContactRules() {
+		$site_id = @$_POST['lcr_site_id'];
+		$service_id = @$_POST['lcr_service_id'];
+		$firm_id = @$_POST['lcr_firm_id'];
+		$is_child = @$_POST['lcr_is_child'];
+
+		$criteria = new CDbCriteria;
+		$criteria->addCondition('parent_rule_id is null');
+		$criteria->order = 'rule_order asc';
+
+		$rule_ids = array();
+
+		foreach (OphTrOperationbooking_Waiting_List_Contact_Rule::model()->findAll($criteria) as $rule) {
+			if ($rule->applies($site_id, $service_id, $firm_id, $is_child)) {
+				$final = $rule->parse($site_id, $service_id, $firm_id, $is_child);
+				echo json_encode(array($final->id));
+				return;
+			}
+		}
+
+		echo json_encode(array());
 	}
 }
