@@ -20,7 +20,7 @@
 ?>
 <div class="curvybox white">
 	<div class="admin">
-		<h3 class="georgia">Delete letter contact rule</h3>
+		<h3 class="georgia">Delete waiting list contact rule</h3>
 		<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
 		<div>
 			<?php
@@ -44,24 +44,16 @@
 				<span><?php echo $rule->firm ? $rule->firm->name : 'Not set'?></span>
 			</div>
 			<div>
-				<span class="lcr_field"><?php echo $rule->getAttributeLabel('subspecialty_id')?>:</span>
-				<span><?php echo $rule->subspecialty ? $rule->subspecialty->name : 'Not set'?></span>
+				<span class="lcr_field"><?php echo $rule->getAttributeLabel('service_id')?>:</span>
+				<span><?php echo $rule->service ? $rule->service ->name : 'Not set'?></span>
 			</div>
 			<div>
-				<span class="lcr_field"><?php echo $rule->getAttributeLabel('theatre_id')?>:</span>
-				<span><?php echo $rule->theatre ? $rule->theatre->name : 'Not set'?></span>
+				<span class="lcr_field"><?php echo $rule->getAttributeLabel('name')?>:</span>
+				<span><?php echo $rule->name?></span>
 			</div>
 			<div>
-				<span class="lcr_field"><?php echo $rule->getAttributeLabel('refuse_telephone')?>:</span>
-				<span><?php echo $rule->refuse_telephone ? $rule->refuse_telephone : 'Not set'?></span>
-			</div>
-			<div>
-				<span class="lcr_field"><?php echo $rule->getAttributeLabel('refuse_title')?>:</span>
-				<span><?php echo $rule->refuse_title ? $rule->refuse_title : 'Not set'?></span>
-			</div>
-			<div>
-				<span class="lcr_field"><?php echo $rule->getAttributeLabel('health_telephone')?>:</span>
-				<span><?php echo $rule->health_telephone ? $rule->health_telephone : 'Not set'?></span>
+				<span class="lcr_field"><?php echo $rule->getAttributeLabel('telephone')?>:</span>
+				<span><?php echo $rule->telephone?></span>
 			</div>
 			<?php $this->endWidget()?>
 		</div>

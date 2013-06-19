@@ -33,7 +33,7 @@
 class OphTrOperationbooking_Waiting_List_Contact_Rule extends BaseTree
 {
 	public $textFields = array('site','service','firm','is_child','name','telephone');
-	public $textFieldsDropDown = array('site','service','firm','is_child','name','telephone');
+	public $textFieldsDropdown = array('site','service','firm','is_child','name','telephone');
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -60,7 +60,7 @@ class OphTrOperationbooking_Waiting_List_Contact_Rule extends BaseTree
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('parent_rule_id, site_id, service_id, firm_id, is_child, name, telephone', 'safe'),
+			array('parent_rule_id, rule_order, site_id, service_id, firm_id, is_child, name, telephone', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, parent_rule_id, site_id, service_id, firm_id, is_child, name, telephone', 'safe', 'on' => 'search'),
@@ -91,6 +91,11 @@ class OphTrOperationbooking_Waiting_List_Contact_Rule extends BaseTree
 	public function attributeLabels()
 	{
 		return array(
+			'parent_rule_id' => 'Parent',
+			'rule_order' => 'Rule order',
+			'site_id' => 'Site',
+			'firm_id' => 'Firm',
+			'service_id' => 'Service',
 		);
 	}
 

@@ -226,23 +226,6 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionLetterContactRulesData() {
-		echo json_encode(array(
-			array(
-				'id' => 1,
-				'text' => 'one',
-				'hasChildren' => true,
-				'children' => array(
-					array(
-						'id' => 2,
-						'text' => 'two',
-						'hasChildren' => false,
-					),
-				),
-			),
-		));
-	}
-
 	public function actionTestLetterContactRules() {
 		$site_id = @$_POST['lcr_site_id'];
 		$subspecialty_id = @$_POST['lcr_subspecialty_id'];
@@ -283,6 +266,8 @@ class AdminController extends ModuleAdminController {
 			}
 		}
 
+		$this->jsVars['OE_rule_model'] = 'LetterContactRule';
+
 		$this->render('editlettercontactrule',array(
 			'rule' => $rule,
 			'errors' => $errors,
@@ -305,6 +290,8 @@ class AdminController extends ModuleAdminController {
 				}
 			}
 		}
+
+		$this->jsVars['OE_rule_model'] = 'LetterContactRule';
 
 		$this->render('deletelettercontactrule',array(
 			'rule' => $rule,
@@ -331,6 +318,8 @@ class AdminController extends ModuleAdminController {
 				$rule->parent_rule_id = $_GET['parent_rule_id'];
 			}
 		}
+
+		$this->jsVars['OE_rule_model'] = 'LetterContactRule';
 
 		$this->render('editlettercontactrule',array(
 			'rule' => $rule,
@@ -389,6 +378,8 @@ class AdminController extends ModuleAdminController {
 			}
 		}
 
+		$this->jsVars['OE_rule_model'] = 'LetterWarningRule';
+
 		$this->render('editletterwarningrule',array(
 			'rule' => $rule,
 			'errors' => $errors,
@@ -414,9 +405,37 @@ class AdminController extends ModuleAdminController {
 			}
 		}
 
+		$this->jsVars['OE_rule_model'] = 'LetterWarningRule';
+
 		$this->render('editletterwarningrule',array(
 			'rule' => $rule,
 			'errors' => $errors,
+		));
+	}
+
+	public function actionDeleteLetterWarningRule($id) {
+		if (!$rule = OphTrOperationbooking_Admission_Letter_Warning_Rule::model()->findByPk($id)) {
+			throw new Exception("Letter warning rule not found: $id");
+		}
+
+		$errors = array();
+
+		if (!empty($_POST)) {
+			if (@$_POST['delete']) {
+				if (!$rule->delete()) {
+					$errors = $rule->getErrors();
+				} else {
+					$this->redirect(array('/OphTrOperationbooking/admin/viewLetterWarningRules'));
+				}
+			}
+		}
+
+		$this->jsVars['OE_rule_model'] = 'LetterWarningRule';
+
+		$this->render('deleteletterwarningrule',array(
+			'rule' => $rule,
+			'errors' => $errors,
+			'data' => OphTrOperationbooking_Admission_Letter_Warning_Rule::model()->findAllAsTree($rule,true,'textPlain'),
 		));
 	}
 
@@ -449,5 +468,56 @@ class AdminController extends ModuleAdminController {
 		}
 
 		echo json_encode(array());
+	}
+
+	public function actionEditWaitingListContactRule($id) {
+		if (!$rule = OphTrOperationbooking_Waiting_List_Contact_Rule::model()->findByPk($id)) {
+			throw new Exception("Waiting list contact rule not found: $id");
+		}
+
+		$errors = array();
+
+		if (!empty($_POST)) {
+			$rule->attributes = $_POST['OphTrOperationbooking_Waiting_List_Contact_Rule'];
+
+			if (!$rule->save()) {
+				$errors = $rule->getErrors();
+			} else {
+				$this->redirect(array('/OphTrOperationbooking/admin/viewWaitingListContactRules'));
+			}
+		}
+
+		$this->jsVars['OE_rule_model'] = 'WaitingListContactRule';
+
+		$this->render('editwaitinglistcontactrule',array(
+			'rule' => $rule,
+			'errors' => $errors,
+		));
+	}
+
+	public function actionDeleteWaitingListContactRule($id) {
+		if (!$rule = OphTrOperationbooking_Waiting_List_Contact_Rule::model()->findByPk($id)) {
+			throw new Exception("Waiting list contact rule not found: $id");
+		}
+
+		$errors = array();
+
+		if (!empty($_POST)) {
+			if (@$_POST['delete']) {
+				if (!$rule->delete()) {
+					$errors = $rule->getErrors();
+				} else {
+					$this->redirect(array('/OphTrOperationbooking/admin/viewWaitingListContactRules'));
+				}
+			}
+		}
+
+		$this->jsVars['OE_rule_model'] = 'WaitingListContactRule';
+
+		$this->render('deletewaitinglistcontactrule',array(
+			'rule' => $rule,
+			'errors' => $errors,
+			'data' => OphTrOperationbooking_Waiting_List_Contact_Rule::model()->findAllAsTree($rule,true,'textPlain'),
+		));
 	}
 }

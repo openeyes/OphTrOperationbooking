@@ -20,7 +20,7 @@
 ?>
 <div class="curvybox white">
 	<div class="admin">
-		<h3 class="georgia">Delete letter contact rule</h3>
+		<h3 class="georgia">Delete letter warning rule</h3>
 		<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
 		<div>
 			<?php
@@ -31,6 +31,10 @@
 				'focus'=>'#contactname'
 			))?>
 			<input type="hidden" name="delete" value="1" />
+			<div>
+				<span class="lcr_field"><?php echo $rule->getAttributeLabel('rule_type_id')?>:</span>
+				<span><?php echo $rule->ruleType->name?></span>
+			</div>
 			<div>
 				<span class="lcr_field"><?php echo $rule->getAttributeLabel('parent_rule_id')?>:</span>
 				<span><?php echo $rule->parent ? $rule->parent->treeName : 'None'?></span>
@@ -52,16 +56,24 @@
 				<span><?php echo $rule->theatre ? $rule->theatre->name : 'Not set'?></span>
 			</div>
 			<div>
-				<span class="lcr_field"><?php echo $rule->getAttributeLabel('refuse_telephone')?>:</span>
-				<span><?php echo $rule->refuse_telephone ? $rule->refuse_telephone : 'Not set'?></span>
+				<span class="lcr_field"><?php echo $rule->getAttributeLabel('is_child')?>:</span>
+				<span><?php echo $rule->is_child == 0 ? 'Child' : ($rule->is_child == 1 ? 'Adult' : 'Not set')?></span>
 			</div>
 			<div>
-				<span class="lcr_field"><?php echo $rule->getAttributeLabel('refuse_title')?>:</span>
-				<span><?php echo $rule->refuse_title ? $rule->refuse_title : 'Not set'?></span>
+				<span class="lcr_field"><?php echo $rule->getAttributeLabel('show_warning')?>:</span>
+				<span><?php echo $rule->show_warning ? 'Yes' : 'No'?></span>
 			</div>
 			<div>
-				<span class="lcr_field"><?php echo $rule->getAttributeLabel('health_telephone')?>:</span>
-				<span><?php echo $rule->health_telephone ? $rule->health_telephone : 'Not set'?></span>
+				<span class="lcr_field"><?php echo $rule->getAttributeLabel('warning_text')?>:</span>
+				<span><?php echo $rule->warning_text?></span>
+			</div>
+			<div>
+				<span class="lcr_field"><?php echo $rule->getAttributeLabel('emphasis')?>:</span>
+				<span><?php echo $rule->emphasis ? 'Yes' : 'No'?></span>
+			</div>
+			<div>
+				<span class="lcr_field"><?php echo $rule->getAttributeLabel('strong')?>:</span>
+				<span><?php echo $rule->strong ? 'Yes' : 'No'?></span>
 			</div>
 			<?php $this->endWidget()?>
 		</div>
