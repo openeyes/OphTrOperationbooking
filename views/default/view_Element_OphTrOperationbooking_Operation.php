@@ -120,7 +120,7 @@
 			<?php echo date('H:i',strtotime($booking->session_end_time)); ?></strong>,
 			in <strong><?php echo $booking->theatre->nameWithSite; ?></strong>.
 			Cancelled on <?php echo $booking->NHSDate('cancellation_date'); ?>
-			by <strong><?php echo $booking->usermodified->FullName; ?></strong>
+			by <strong><?php echo $booking->usercancelled->FullName; ?></strong>
 			due to <?php echo $booking->cancellationReasonWithComment; ?>
 		</li>
 		<?php }?>
