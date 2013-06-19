@@ -220,6 +220,8 @@ class AdminController extends ModuleAdminController {
 	}
 
 	public function actionViewLetterContactRules() {
+		$this->jsVars['OE_rule_model'] = 'LetterContactRule';
+
 		$this->render('lettercontactrules',array(
 			'data' => OphTrOperationbooking_Letter_Contact_Rule::model()->findAllAsTree(),
 		));
@@ -328,6 +330,84 @@ class AdminController extends ModuleAdminController {
 		}
 
 		$this->render('editlettercontactrule',array(
+			'rule' => $rule,
+			'errors' => $errors,
+		));
+	}
+
+	public function actionViewLetterWarningRules() {
+		$this->jsVars['OE_rule_model'] = 'LetterWarningRule';
+
+		$this->render('letterwarningrules',array(
+			'data' => OphTrOperationbooking_Admission_Letter_Warning_Rule::model()->findAllAsTree(),
+		));
+	}
+
+	public function actionTestLetterWarningRules() {
+		$site_id = @$_POST['lcr_site_id'];
+		$subspecialty_id = @$_POST['lcr_subspecialty_id'];
+		$theatre_id = @$_POST['lcr_theatre_id'];
+		$firm_id = @$_POST['lcr_firm_id'];
+		$is_child = @$_POST['lcr_is_child'];
+
+		$criteria = new CDbCriteria;
+		$criteria->addCondition('parent_rule_id is null');
+		$criteria->addCondition('rule_type_id = :rule_type_id');
+		$criteria->params[':rule_type_id'] = @$_POST['lcr_rule_type_id'];
+		$criteria->order = 'rule_order asc';
+
+		$rule_ids = array();
+
+		foreach (OphTrOperationbooking_Admission_Letter_Warning_Rule::model()->findAll($criteria) as $rule) {
+			if ($rule->applies($site_id, $is_child, $theatre_id, $subspecialty_id, $firm_id)) {
+				$final = $rule->parse($site_id, $is_child, $theatre_id, $subspecialty_id, $firm_id);
+				echo json_encode(array($final->id));
+				return;
+			}
+		}
+
+		echo json_encode(array());
+	}
+
+	public function actionEditLetterWarningRule($id) {
+		if (!$rule = OphTrOperationbooking_Admission_Letter_Warning_Rule::model()->findByPk($id)) {
+			throw new Exception("Letter warning rule not found: $id");
+		}
+
+		$errors = array();
+
+		if (!empty($_POST)) {
+			$rule->attributes = $_POST['OphTrOperationbooking_Admission_Letter_Warning_Rule'];
+
+			if (!$rule->save()) {
+				$errors = $rule->getErrors();
+			} else {
+				$this->redirect(array('/OphTrOperationbooking/admin/viewLetterWarningRules'));
+			}
+		}
+
+		$this->render('editletterwarningrule',array(
+			'rule' => $rule,
+			'errors' => $errors,
+		));
+	}
+
+	public function actionAddLetterWarningRule() {
+		$rule = new OphTrOperationbooking_Admission_Letter_Warning_Rule;
+
+		$errors = array();
+
+		if (!empty($_POST)) {
+			$rule->attributes = $_POST['OphTrOperationbooking_Admission_Letter_Warning_Rule'];
+
+			if (!$rule->save()) {
+				$errors = $rule->getErrors();
+			} else {
+				$this->redirect(array('/OphTrOperationbooking/admin/viewLetterWarningRules'));
+			}
+		}
+
+		$this->render('editletterwarningrule',array(
 			'rule' => $rule,
 			'errors' => $errors,
 		));

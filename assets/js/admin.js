@@ -48,7 +48,7 @@ $(document).ready(function() {
 	$('#lcr_subspecialty_id').change(function() {
 		var subspecialtyId = $(this).val();
 
-		$('#letter_contact_rules li').children('a').removeAttr('style');
+		$('#rules li').children('a').removeAttr('style');
 
 		$.ajax({
 			'url': baseUrl+'/OphTrOperationbooking/theatreDiary/filterFirms',
@@ -60,30 +60,34 @@ $(document).ready(function() {
 		});
 	});
 
-	$('#lcr_firm_id, #lcr_theatre_id').change(function() {
-		$('#letter_contact_rules li').children('a').removeAttr('style');
+	$('#lcr_firm_id, #lcr_theatre_id, #lcr_is_child, #lcr_rule_type_id').change(function() {
+		$('#rules li').children('a').removeAttr('style');
 
 		if ($('#lcr_site_id').val() != '' && $('#lcr_subspecialty_id').val() != '' && $('#lcr_firm_id').val() != '' && $('#lcr_theatre_id').val() != '') {
+			// only require these if they're in the dom
+			if ($('#lcr_is_child').length >0 && $('#lcr_is_child').val() == '') return;
+			if ($('#lcr_rule_type_id').length >0 && $('#lcr_rule_type_id').val() == '') return;
+
 			$.ajax({
 				'type': 'POST',
-				'url': baseUrl+'/OphTrOperationbooking/admin/testLetterContactRules',
-				'data': $('#letter_contact_rules_test').serialize()+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
+				'url': baseUrl+'/OphTrOperationbooking/admin/test'+OE_rule_model+'s',
+				'data': $('#rulestest').serialize()+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
 				'dataType': 'json',
 				'success': function(resp) {
 					for (var i in resp) {
-						$('#letter_contact_rules li[id="'+resp[i]+'"]').children('a').attr('style','color: #f00');
+						$('#rules li[id="'+resp[i]+'"]').children('a').attr('style','color: #f00');
 					}
 				}
 			});
 		}
 	});
 
-	$('#letter_contact_rules a.treenode').click(function() {
+	$('#rules a.treenode').click(function() {
 		var id = $(this).attr('id').match(/[0-9]+/);
-		window.location.href = baseUrl+'/OphTrOperationbooking/admin/editLetterContactRule/'+id;
+		window.location.href = baseUrl+'/OphTrOperationbooking/admin/edit'+OE_rule_model+'/'+id;
 	});
 
 	$('#et_add_letter_contact_rule').click(function() {
-		window.location.href = baseUrl+'/OphTrOperationbooking/admin/addLetterContactRule';
+		window.location.href = baseUrl+'/OphTrOperationbooking/admin/add'+OE_rule_model;
 	});
 });

@@ -20,7 +20,7 @@
 ?>
 <div class="curvybox white">
 	<div class="admin">
-		<h3 class="georgia"><?php echo $rule->id ? 'Edit' : 'Add'?> letter contact rule</h3>
+		<h3 class="georgia"><?php echo $rule->id ? 'Edit' : 'Add'?> letter warning rule</h3>
 		<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
 		<div>
 			<?php
@@ -30,15 +30,18 @@
 				'htmlOptions' => array('class'=>'sliding'),
 				'focus'=>'#contactname'
 			))?>
-			<?php echo $form->dropDownList($rule,'parent_rule_id',CHtml::listData(OphTrOperationbooking_Letter_Contact_Rule::model()->getListAsTree(),'id','treeName'),array('empty'=>'- None -'))?>
+			<?php echo $form->dropDownList($rule,'rule_type_id',CHtml::listData(OphTrOperationbooking_Admission_Letter_Warning_Rule_Type::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Rule type -'))?>
+			<?php echo $form->dropDownList($rule,'parent_rule_id',CHtml::listData(OphTrOperationbooking_Admission_Letter_Warning_Rule::model()->getListAsTree(),'id','treeName'),array('empty'=>'- None -'))?>
 			<?php echo $form->textField($rule,'rule_order')?>
 			<?php echo $form->dropDownList($rule,'site_id',CHtml::listData(Site::model()->findAll(array('order'=>'name asc','condition'=>'institution_id = 1')),'id','name'),array('empty'=>'- Not set -'))?>
 			<?php echo $form->dropDownList($rule,'firm_id',Firm::model()->getListWithSpecialties(),array('empty'=>'- Not set -'))?>
 			<?php echo $form->dropDownList($rule,'subspecialty_id',CHtml::listData(Subspecialty::model()->findAllByCurrentSpecialty(),'id','name'),array('empty'=>'- Not set -'))?>
 			<?php echo $form->dropDownList($rule,'theatre_id',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Not set -'))?>
-			<?php echo $form->textField($rule,'refuse_telephone',array('size'=>20))?>
-			<?php echo $form->textField($rule,'refuse_title',array('size'=>90))?>
-			<?php echo $form->textField($rule,'health_telephone',array('size'=>90))?>
+			<?php echo $form->dropDownList($rule,'is_child',array(''=>'- Not set -','0'=>'Child','1'=>'Adult'))?>
+			<?php echo $form->radioBoolean($rule,'show_warning')?>
+			<?php echo $form->textArea($rule,'warning_text',array('rows'=>5,'cols'=>80))?>
+			<?php echo $form->radioBoolean($rule,'emphasis')?>
+			<?php echo $form->radioBoolean($rule,'strong')?>
 			<?php $this->endWidget()?>
 		</div>
 	</div>

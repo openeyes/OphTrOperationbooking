@@ -22,15 +22,17 @@
 		<form id="rulestest">
 			<div style="margin-bottom: 1em;">
 				Test: 
+				<?php echo CHtml::dropDownList('lcr_rule_type_id','',CHtml::listData(OphTrOperationbooking_Admission_Letter_Warning_Rule_Type::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Rule -'))?>
 				<?php echo CHtml::dropDownList('lcr_site_id','',CHtml::listData(Site::model()->findAll(array('order'=>'name asc','condition'=>'institution_id = 1')),'id','name'),array('empty'=>'- Site -'))?>
 				<?php echo CHtml::dropDownList('lcr_subspecialty_id','',CHtml::listData(Subspecialty::model()->findAllByCurrentSpecialty(),'id','name'),array('empty'=>'- Subspecialty -'))?>
 				<?php echo CHtml::dropDownList('lcr_firm_id','',array(),array('empty'=>'- Firm -'))?>
 				<?php echo CHtml::dropDownList('lcr_theatre_id','',array(),array('empty'=>'- Theatre -'))?>
+				<?php echo CHtml::dropDownList('lcr_is_child','',array('' => '- Child/adult -','1' => 'Child','2' => 'Adult'))?>
 			</div>
 		</form>
 	</div>
 	<div class="reportInputs">
-		<h3 class="georgia">Letter contact rules</h3>
+		<h3 class="georgia">Letter warning rules</h3>
 		<div>
 			<form id="rules">
 				<?php
