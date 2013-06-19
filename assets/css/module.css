@@ -214,3 +214,6 @@ span.transport_pagination_selected { background-color: #0B59DA; color: #fff; }
 #content .wrap.twocolumns .rightcolumn.wide { width: 959px !important; }
 
 #lcr_deleteform .lcr_field { font-size: 14px; width: 130px; display: inline-block; margin-bottom: 3px; }
+
+#rules a { border: none; }
+#rules a:hover { color: #f00; }
