@@ -98,6 +98,37 @@ $(document).ready(function() {
 		e.preventDefault();
 		window.location.href = baseUrl+'/OphTrOperationbooking/admin/add'+OE_rule_model+'?parent_rule_id='+$(this).attr('rel');
 	});
+
+	$('#et_add_operation_name_rule').click(function() {
+		window.location.href = baseUrl+'/OphTrOperationbooking/admin/addOperationNameRule';
+	});
+
+	$('#operation_name_rules li .column_theatre, #operation_name_rules li .column_name').click(function(e) {
+		e.preventDefault();
+
+		if ($(this).parent().attr('data-attr-id')) {
+			window.location.href = baseUrl+'/OphTrOperationbooking/admin/editOperationNameRule/'+$(this).parent().attr('data-attr-id');
+		}
+	});
+
+	$('#et_delete_operation_name_rule').click(function() {
+		if ($('input.operation_name_rules[type="checkbox"]:checked').length == 0) {
+			alert("You haven't selected any rules to delete.");
+		} else {
+			$.ajax({
+				'type': 'POST',
+				'url': baseUrl+'/OphTrOperationbooking/admin/deleteOperationNameRules',
+				'data': $('#operation_name_rules').serialize()+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
+				'success': function(resp) {
+					if (resp == "1") {
+						window.location.reload();
+					} else {
+						alert("Something went wrong trying to delete the rules. Please try again or contact support for assistance.");
+					}
+				}
+			});
+		}
+	});
 });
 
 function OphTrOperationbooking_showMatchingRule() {

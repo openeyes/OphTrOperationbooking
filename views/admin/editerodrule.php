@@ -20,7 +20,7 @@
 ?>
 <div class="report curvybox white">
 	<div class="admin">
-		<h3 class="georgia">Edit EROD rule</h3>
+		<h3 class="georgia"><?php echo $erod->id ? 'Edit' : 'Add'?> EROD rule</h3>
 		<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
 		<div>
 			<?php

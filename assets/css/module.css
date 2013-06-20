@@ -208,7 +208,7 @@ span.transport_pagination_selected { background-color: #0B59DA; color: #fff; }
 #erod_rules ul li { padding: 0; margin: 0; line-height: 15px; font-size: 11px; }
 #erod_rules ul li .column_checkbox { width: 15px; display: inline-block; }
 #erod_rules ul li .column_subspecialty { width: 215px; display: inline-block; }
-#erod_rules ul li .column_firms { width: 570px; display: inline-block; }
+#erod_rules ul li .column_firms { width: 639px; display: inline-block; }
 
 #content .wrap .leftcolumn.narrow { width: 230px !important; }
 #content .wrap.twocolumns .rightcolumn.wide { width: 959px !important; }
@@ -217,3 +217,8 @@ span.transport_pagination_selected { background-color: #0B59DA; color: #fff; }
 
 #rules a { border: none; }
 #rules a:hover { color: #f00; }
+
+#operation_name_rules ul li { padding: 0; margin: 0; line-height: 15px; font-size: 11px; }
+#operation_name_rules ul li .column_checkbox { width: 15px; display: inline-block; }
+#operation_name_rules ul li .column_theatre { width: 215px; display: inline-block; }
+#operation_name_rules ul li .column_name { width: 639px; display: inline-block; }

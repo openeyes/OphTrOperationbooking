@@ -75,6 +75,7 @@ class OphTrOperationbooking_Operation_Name_Rule extends BaseActiveRecord
 		return array(
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
+			'theatre' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Theatre', 'theatre_id'),
 		);
 	}
 
@@ -86,6 +87,7 @@ class OphTrOperationbooking_Operation_Name_Rule extends BaseActiveRecord
 		return array(
 			'id' => 'ID',
 			'name' => 'Name',
+			'theatre_id' => 'Theatre',
 		);
 	}
 

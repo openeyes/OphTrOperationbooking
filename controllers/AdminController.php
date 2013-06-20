@@ -193,7 +193,7 @@ class AdminController extends ModuleAdminController {
 			}
 		}
 
-		$this->render('/admin/adderodrule',array(
+		$this->render('/admin/editerodrule',array(
 			'erod' => $erod,
 			'errors' => $errors,
 		));
@@ -517,5 +517,67 @@ class AdminController extends ModuleAdminController {
 			'errors' => $errors,
 			'data' => OphTrOperationbooking_Waiting_List_Contact_Rule::model()->findAllAsTree($rule,true,'textPlain'),
 		));
+	}
+
+	public function actionViewOperationNameRules() {
+		$this->render('operationnamerules');
+	}
+
+	public function actionAddOperationNameRule() {
+		$errors = array();
+
+		$rule = new OphTrOperationbooking_Operation_Name_Rule;
+
+		if (!empty($_POST)) {
+			$rule->attributes = $_POST['OphTrOperationbooking_Operation_Name_Rule'];
+
+			if (!$rule->save()) {
+				$errors = $erod->getErrors();
+			} else {
+				$this->redirect(array('/OphTrOperationbooking/admin/viewOperationNameRules'));
+			}
+		}
+
+		$this->render('/admin/editoperationnamerule',array(
+			'rule' => $rule,
+			'errors' => $errors,
+		));
+	}
+
+	public function actionEditOperationNameRule($id) {
+		if (!$rule = OphTrOperationbooking_Operation_Name_Rule::model()->findByPk($id)) {
+			throw new Exception("Operation name rule not found: $id");
+		}
+
+		$errors = array();
+
+		if (!empty($_POST)) {
+			$rule->attributes = $_POST['OphTrOperationbooking_Operation_Name_Rule'];
+
+			if (!$rule->save()) {
+				$errors = $rule->getErrors();
+			} else {
+				$this->redirect(array('/OphTrOperationbooking/admin/viewOperationNameRules'));
+			}
+		}
+
+		$this->render('/admin/editoperationnamerule',array(
+			'rule' => $rule,
+			'errors' => $errors,
+		));
+	}
+
+	public function actionDeleteOperationNameRules() {
+		if (!empty($_POST['operation_name'])) {
+			foreach ($_POST['operation_name'] as $rule_id) {
+				if ($_rule = OphTrOperationbooking_Operation_Name_Rule::model()->findByPk($rule_id)) {
+					if (!$_rule->delete()) {
+						throw new Exception("Unable to delete rule rule: ".print_r($_rule->getErrors(),true));
+					}
+				}
+			}
+		}
+
+		echo "1";
 	}
 }
