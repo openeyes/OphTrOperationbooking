@@ -69,8 +69,7 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
 		// will receive user inputs.
 		return array(
 			array('theatre_id, start_date, start_time, end_time, interval_id', 'required'),
-			array('theatre_id', 'length', 'max'=>10),
-			array('end_date, week_selection, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id', 'safe'),
+			array('end_date, week_selection, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id, theatre_id, start_date, start_time, end_time, interval_id', 'safe'),
 			array('start_date', 'date', 'format'=>'yyyy-MM-dd'),
 			array('start_time', 'date', 'format'=>array('H:mm', 'H:mm:ss')),
 			array('end_time', 'date', 'format'=>array('H:mm', 'H:mm:ss')),
@@ -92,7 +91,7 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
 		return array(
 			'theatre' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Theatre', 'theatre_id'),
 			'firmAssignment' => array(self::HAS_ONE, 'SequenceFirmAssignment', 'sequence_id'),
-			'firm' => array(self::HAS_ONE, 'Firm', 'firm_id', 'through' => 'firmAssignment'),
+			'firm' => array(self::BELONGS_TO, 'Firm', 'firm_id'),
 			'sessions' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Session', 'sequence_id'),
 			'interval' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Sequence_Interval', 'interval_id'),
 		);
@@ -104,6 +103,14 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
 	public function attributeLabels()
 	{
 		return array(
+			'firm_id' => 'Firm',
+			'theatre_id' => 'Theatre',
+			'start_date' => 'Start date',
+			'end_date' => 'End date',
+			'start_time' => 'Start time',
+			'end_time' => 'End time',
+			'interval_id' => 'Interval',
+			'general_anaesthetic' => 'General anaesthetic',
 		);
 	}
 
@@ -175,6 +182,34 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
 			6 => 'Saturday',
 			7 => 'Sunday',
 		);
+	}
+
+	public function getDates() {
+		if ($this->end_date) {
+			return $this->NHSDate('start_date').' - '.$this->NHSDate('end_date');
+		}
+		return $this->NHSDate('start_date').' onwards';
+	}
+
+	public function getWeekdayText() {
+		$options = $this->weekdayOptions;
+		return isset($options[$this->weekday]) ? $options[$this->weekday] : 'None';
+	}
+
+	protected function beforeValidate() {
+		if ($this->start_date && !preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$this->start_date)) {
+			$this->start_date = date('Y-m-d',strtotime($this->start_date));
+		}
+
+		return parent::beforeValidate();
+	}
+
+	protected function beforeSave() {
+		if ($this->start_date && !preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$this->start_date)) {
+			$this->start_date = date('Y-m-d',strtotime($this->start_date));
+		}
+		
+		return parent::beforeSave();
 	}
 }
 ?>

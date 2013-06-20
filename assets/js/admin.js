@@ -129,6 +129,19 @@ $(document).ready(function() {
 			});
 		}
 	});
+
+	$('#admin_sequences li.even .column_firm, #admin_sequences li.even .column_theatre, #admin_sequences li.even .column_dates, #admin_sequences li.even .column_time, #admin_sequences li.even .column_interval, #admin_sequences li.even .column_weekday, #admin_sequences li.even .column_attributes, #admin_sequences li.odd .column_firm, #admin_sequences li.odd .column_theatre, #admin_sequences li.odd .column_dates, #admin_sequences li.odd .column_time, #admin_sequences li.odd .column_interval, #admin_sequences li.odd .column_weekday, #admin_sequences li.odd .column_attributes').click(function(e) {
+		e.preventDefault();
+
+		if ($(this).parent().attr('data-attr-id')) {
+			window.location.href = baseUrl+'/OphTrOperationbooking/admin/editSequence/'+$(this).parent().attr('data-attr-id');
+		}
+	});
+
+	handleButton($('#et_add_sequence'),function(e) {
+		e.preventDefault();
+		window.location.href = baseUrl+'/OphTrOperationbooking/admin/addSequence';
+	});
 });
 
 function OphTrOperationbooking_showMatchingRule() {

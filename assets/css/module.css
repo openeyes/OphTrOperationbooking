@@ -222,3 +222,24 @@ span.transport_pagination_selected { background-color: #0B59DA; color: #fff; }
 #operation_name_rules ul li .column_checkbox { width: 15px; display: inline-block; }
 #operation_name_rules ul li .column_theatre { width: 215px; display: inline-block; }
 #operation_name_rules ul li .column_name { width: 639px; display: inline-block; }
+
+#admin_sequences ul li { padding: 0; margin: 0; line-height: 15px; font-size: 11px; }
+#admin_sequences ul li .column_checkbox { width: 15px; display: inline-block; }
+#admin_sequences ul li .column_firm { width: 195px; display: inline-block; }
+#admin_sequences ul li .column_theatre { width: 140px; display: inline-block; }
+#admin_sequences ul li .column_dates { width: 140px; display: inline-block; }
+#admin_sequences ul li .column_time { width: 100px; display: inline-block; }
+#admin_sequences ul li .column_interval { width: 50px; display: inline-block; }
+#admin_sequences ul li .column_weekday { width: 65px; display: inline-block; }
+#admin_sequences ul li .column_attributes { width: 140px; display: inline-block; }
+
+#admin_sequences_filters { margin-bottom: 1em; }
+#admin_sequences_filters div { margin-bottom: 0.8em; }
+
+#admin_sequences span { padding: 8px 4px 8px 4px; }
+#admin_sequences span.set { border-right: none; color: #000; font-weight: bold; }
+#admin_sequences span.notset { border-right: none; color: #aaa }
+
+#inline_edit span.label { display: inline-block; width: 140px; }
+#inline_edit span.error { margin-left: 0.8em; color: #f00; font-weight: bold; }
+#inline_edit div { margin-bottom: 0.6em; }
