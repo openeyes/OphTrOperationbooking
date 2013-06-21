@@ -69,7 +69,7 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
 		// will receive user inputs.
 		return array(
 			array('theatre_id, start_date, start_time, end_time, interval_id', 'required'),
-			array('end_date, week_selection, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id, theatre_id, start_date, start_time, end_time, interval_id, deleted', 'safe'),
+			array('end_date, week_selection, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id, theatre_id, start_date, start_time, end_time, interval_id, deleted, weekday', 'safe'),
 			array('start_date', 'date', 'format'=>'yyyy-MM-dd'),
 			array('start_time', 'date', 'format'=>array('H:mm', 'H:mm:ss')),
 			array('end_time', 'date', 'format'=>array('H:mm', 'H:mm:ss')),
@@ -211,7 +211,136 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
 			$this->end_date = date('Y-m-d',strtotime($this->end_date));
 		}
 
+		// Verify that this session doesn't conflict with any other sequences or sessions
+		$criteria = new CDbCriteria;
+		if ($this->id) {
+			$criteria->addCondition('id <> :id');
+			$criteria->params[':id'] = $this->id;
+		}
+
+		$criteria->addCondition('theatre_id = :theatre_id');
+		$criteria->params[':theatre_id'] = $this->theatre_id;
+
+		$criteria->addCondition('weekday = :weekday');
+		$criteria->params[':weekday'] = $this->weekday;
+
+		$criteria->addCondition('end_date is null or end_date >= :start_date');
+		$criteria->params[':start_date'] = $this->start_date;
+
+		$dateList = $this->getDateListForMonths(12);
+
+		$conflicts = array();
+
+		foreach (OphTrOperationbooking_Operation_Sequence::model()->findAll($criteria) as $sequence) {
+			$s_dateList = $sequence->getDateListForMonths(12);
+
+			foreach ($s_dateList as $date) {
+				$start = strtotime("$date $this->start_time");
+				$end = strtotime("$date $this->end_time");
+
+				$s_start = strtotime("$date $sequence->start_time");
+				$s_end = strtotime("$date $sequence->end_time");
+
+				if ($start < $s_end && $start >= $s_start) {
+					if (!isset($conflicts[$sequence->id]['start_time'])) {
+						$this->addError('start_time',"This start time conflicts with sequence $sequence->id");
+						$conflicts[$sequence->id]['start_time'] = 1;
+					}
+				}
+
+				if ($end > $s_start && $end <= $s_end) {
+					if (!isset($conflicts[$sequence->id]['end_time'])) {
+						$this->addError('end_time',"This end time conflicts with sequence $sequence->id");
+						$conflicts[$sequence->id]['end_time'] = 1;
+					}
+				}
+			}
+		}
+
+		$criteria = new CDbCriteria;
+
+		$criteria->addCondition('sequence_id <> :sequence_id');
+		$criteria->params[':sequence_id'] = $this->id;
+
+		$criteria->addCondition('theatre_id = :theatre_id');
+		$criteria->params[':theatre_id'] = $this->theatre_id;
+
+		$criteria->addInCondition('date',$dateList);
+
+		$conflicts = array();
+		foreach (OphTrOperationbooking_Operation_Session::model()->findAll($criteria) as $session) {
+			$start = strtotime("$session->date $this->start_time");
+			$end = strtotime("$session->date $this->end_time");
+
+			$s_start = strtotime("$session->date $session->start_time");
+			$s_end = strtotime("$session->date $session->end_time");
+
+			if ($start < $s_end && $start >= $s_start) {
+				if (!isset($conflicts[$session->id]['start_time'])) {
+					$this->addError('start_time',"This start time conflicts with session $session->id");
+					$conflicts[$session->id]['start_time'] = 1;
+				}
+			}
+
+			if ($end > $s_start && $end <= $s_end) {
+				if (!isset($conflicts[$session->id]['end_time'])) {
+					$this->addError('end_time',"This end time conflicts with session $session->id");
+					$conflicts[$session->id]['end_time'] = 1;
+				}
+			}
+		}
+
 		return parent::beforeValidate();
+	}
+
+	public function getDateListForMonths($num_months) {
+		$initialEndDate = strtotime('+'.$num_months.' months');
+
+		$startDate = strtotime($this->start_date);
+
+		if ($this->end_date && strtotime($this->end_date) < $initialEndDate) {
+			$endDate = strtotime($this->end_date);
+		} else {
+			$endDate = $initialEndDate;
+		}
+
+		$dateList = array();
+		if ($this->interval_id == 1) {
+			$dateList[] = $this->start_date;
+		} else if ($this->interval_id == 6 && $this->week_selection) {
+			$date = date('Y-m-d', $startDate);
+			$time = $startDate;
+
+			while (date('N', $time) != date('N', strtotime($this->start_date))) {
+				$date = date('Y-m-d', mktime(0,0,0, date('m', $time), date('d', $time) + 1, date('Y', $time)));
+				$time = strtotime($date);
+			}
+			$dateList = $this->getWeekOccurrences($this->weekday, $this->week_selection, $time, $endDate, $date, date('Y-m-d', $endDate));
+		} else {
+			$interval = $this->interval->getInteger($endDate);
+
+			$days = $interval / 24 / 60 / 60;
+
+			$nextStartDate = $startDate;
+
+			$date = date('Y-m-d', $nextStartDate);
+
+			$time = $nextStartDate;
+
+			while (date('N', $time) != date('N', strtotime($this->start_date))) {
+				$date = date('Y-m-d', mktime(0,0,0, date('m', $time), date('d', $time) + 1, date('Y', $time)));
+				$time = strtotime($date);
+			}
+
+			while ($time <= $endDate) {
+				$dateList[] = $date;
+
+				$date = date('Y-m-d', mktime(0,0,0, date('m', $time), date('d', $time) + $days, date('Y', $time)));
+				$time = strtotime($date);
+			}
+		}
+
+		return $dateList;
 	}
 
 	protected function beforeSave() {
