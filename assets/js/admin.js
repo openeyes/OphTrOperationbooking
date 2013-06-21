@@ -155,6 +155,10 @@ $(document).ready(function() {
 		e.preventDefault();
 		window.location.href = baseUrl+'/OphTrOperationbooking/admin/addSession';
 	});
+
+	$('#et_add_theatre').click(function() {
+		window.location.href = baseUrl+'/OphTrOperationbooking/admin/addTheatre';
+	});
 });
 
 function OphTrOperationbooking_showMatchingRule() {

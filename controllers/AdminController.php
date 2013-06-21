@@ -1271,4 +1271,28 @@ class AdminController extends ModuleAdminController {
 
 		echo "1";
 	}
+
+	public function actionViewTheatres() {
+		$this->render('theatres');
+	}
+
+	public function actionAddTheatre() {
+		$errors = array();
+
+		$theatre = new OphTrOperationbooking_Operation_Theatre;
+
+		if (!empty($_POST)) {
+			$theatre->attributes = $_POST['OphTrOperationbooking_Operation_Theatre'];
+			if (!$theatre->save()) {
+				$errors = $theatre->getErrors();
+			} else {
+				$this->redirect(array('/OphTrOperationbooking/admin/viewTheatres'));
+			}
+		}
+
+		$this->render('/admin/edittheatre',array(
+			'theatre' => $theatre,
+			'errors' => $errors,
+		));
+	}
 }

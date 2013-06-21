@@ -90,6 +90,7 @@ class OphTrOperationbooking_Operation_Theatre extends BaseActiveRecord
 	public function attributeLabels()
 	{
 		return array(
+			'site_id' => 'Site',
 		);
 	}
 
