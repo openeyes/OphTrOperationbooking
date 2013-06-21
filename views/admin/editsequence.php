@@ -57,11 +57,6 @@
 				</div>
 			</div>
 			<?php $this->endWidget()?>
-			<div class="view_sessions">
-				<span>
-					<?php echo CHtml::link('View sessions',Yii::app()->createUrl('/OphTrOperationbooking/admin/viewSessions?sequence_id='.$sequence->id))?>
-				</span>
-			</div>
 		</div>
 	</div>
 </div>
@@ -69,6 +64,11 @@
 <div>
 	<?php echo EventAction::button('Save', 'save', array('colour' => 'green'))->toHtml()?>
 	<?php echo EventAction::button('Cancel', 'cancel', array('colour' => 'red'))->toHtml()?>
+	<?php if ($sequence->id) {?>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<?php echo EventAction::button('View sessions','view_sessions',array('colour'=>'blue'))->toHtml()?>
+		<?php echo EventAction::button('Add session','add_session_to_sequence',array('colour'=>'blue'))->toHtml()?>
+	<?php }?>
 	<img class="loader" src="<?php echo Yii::app()->createUrl('/img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 </div>
 <script type="text/javascript">
@@ -78,5 +78,13 @@
 	});
 	handleButton($('#et_save'),function(e) {
 		$('#adminform').submit();
+	});
+	handleButton($('#et_view_sessions'),function(e) {
+		e.preventDefault();
+		window.location.href = baseUrl+'/OphTrOperationbooking/admin/viewSessions?sequence_id=<?php echo $sequence->id?>';
+	});
+	handleButton($('#et_add_session_to_sequence'),function(e) {
+		e.preventDefault();
+		window.location.href = baseUrl+'/OphTrOperationbooking/admin/addSession?sequence_id=<?php echo $sequence->id?>';
 	});
 </script>

@@ -103,6 +103,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 	public function attributeLabels()
 	{
 		return array(
+			'sequence_id' => 'Sequence ID',
 			'firm_id' => 'Firm',
 			'theatre_id' => 'Theatre',
 			'start_time' => 'Start time',

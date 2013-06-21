@@ -30,6 +30,9 @@
 				'htmlOptions' => array('class'=>'sliding'),
 				'focus'=>'#username'
 			))?>
+			<?php if (!$session->id) {?>
+				<?php echo $form->textField($session,'sequence_id',array('size'=>10))?>
+			<?php }?>
 			<?php echo $form->dropDownList($session,'firm_id',Firm::model()->getListWithSpecialties(),array('empty'=>'- Emergency -'))?>
 			<?php echo $form->dropDownList($session,'theatre_id',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- None -'))?>
 			<?php echo $form->datePicker($session,'date',array(),array('null'=>true))?>

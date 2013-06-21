@@ -150,6 +150,11 @@ $(document).ready(function() {
 			window.location.href = baseUrl+'/OphTrOperationbooking/admin/editSession/'+$(this).parent().attr('data-attr-id');
 		}
 	});
+
+	handleButton($('#et_add_session'),function(e) {
+		e.preventDefault();
+		window.location.href = baseUrl+'/OphTrOperationbooking/admin/addSession';
+	});
 });
 
 function OphTrOperationbooking_showMatchingRule() {

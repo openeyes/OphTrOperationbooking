@@ -269,4 +269,4 @@ ul.grid li.checkall_message span { border: 1px solid #bbb; text-align: center; p
 #admin_sessions span.set { border-right: none; color: #000; font-weight: bold; }
 #admin_sessions span.notset { border-right: none; color: #aaa }
 
-div.view_sessions { margin-top: 1em; font-size: 15px; }
+div.view_sessions { margin-top: 0.4em; margin-bottom: 1em; }

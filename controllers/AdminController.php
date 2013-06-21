@@ -862,7 +862,7 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionAddSequence($id) {
+	public function actionAddSequence() {
 		$sequence = new OphTrOperationbooking_Operation_Sequence;
 
 		$errors = array();
@@ -1106,6 +1106,31 @@ class AdminController extends ModuleAdminController {
 					$this->redirect(array('/OphTrOperationbooking/admin/viewSessions'));
 				}
 			}
+		}
+
+		$this->render('/admin/editsession',array(
+			'session' => $session,
+			'errors' => $errors,
+		));
+	}
+
+	public function actionAddSession() {
+		$session = new OphTrOperationbooking_Operation_Session;
+
+		$errors = array();
+
+		if (!empty($_POST)) {
+			$session->attributes = $_POST['OphTrOperationbooking_Operation_Session'];
+
+			if (!$session->save()) {
+				$errors = $session->getErrors();
+			} else {
+				if (empty($errors)) {
+					$this->redirect(array('/OphTrOperationbooking/admin/viewSessions'));
+				}
+			}
+		} else if (isset($_GET['sequence_id'])) {
+			$session->sequence_id = $_GET['sequence_id'];
 		}
 
 		$this->render('/admin/editsession',array(
