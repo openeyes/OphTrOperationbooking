@@ -829,6 +829,8 @@ class AdminController extends ModuleAdminController {
 
 		$errors = array();
 
+		// check for conflicts with other sessions
+
 		if (!empty($_POST)) {
 			$sequence->attributes = $_POST['OphTrOperationbooking_Operation_Sequence'];
 
@@ -1055,6 +1057,18 @@ class AdminController extends ModuleAdminController {
 			$sessions = $this->getSessions(true);
 		}
 
+		$errors = $this->saveSessions($sessions);
+
+		if (empty($errors)) {
+			$errors = $this->saveSessions($sessions,true);
+		}
+
+		echo json_encode($errors);
+	}
+
+	public function saveSessions($sessions, $save=false) {
+		$errors = array();
+
 		foreach ($sessions as $session) {
 			$changed = false;
 
@@ -1077,20 +1091,17 @@ class AdminController extends ModuleAdminController {
 			}
 
 			if ($changed) {
-				if (!empty($errors)) {
-					$session->validate();
-					echo json_encode(array_merge($errors,$session->getErrors()));
-					return;
-				}
-
-				if (!$session->save()) {
-					echo json_encode($session->getErrors());
-					return;
+				if (!$session->validate()) {
+					$errors = array_merge($errors,$session->getErrors());
+				} else {
+					if ($save && !$session->save()) {
+						$errors = array_merge($errors,$session->getErrors());
+					}
 				}
 			}
 		}
 
-		echo json_encode($errors);
+		return $errors;
 	}
 
 	public function actionEditSession($id) {
