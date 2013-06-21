@@ -735,14 +735,16 @@ class AdminController extends ModuleAdminController {
 	public function getUri($elements) {
 		$uri = preg_replace('/\?.*$/','',$_SERVER['REQUEST_URI']);
 
-		if (isset($elements['sortby']) && $elements['sortby'] == @$_GET['sortby']) {
-			$_GET['order'] = (@$_GET['order'] == 'desc') ? 'asc' : 'desc';
-		} else if (isset($_GET['sortby']) && isset($elements['sortby']) && $_GET['sortby'] != $elements['sortby']) {
-			$_GET['order'] = 'asc';
+		$request = $_REQUEST;
+
+		if (isset($elements['sortby']) && $elements['sortby'] == @$request['sortby']) {
+			$request['order'] = (@$request['order'] == 'desc') ? 'asc' : 'desc';
+		} else if (isset($request['sortby']) && isset($elements['sortby']) && $request['sortby'] != $elements['sortby']) {
+			$request['order'] = 'asc';
 		}
 
 		$first = true;
-		foreach (array_merge($_GET,$elements) as $key => $value) {
+		foreach (array_merge($request,$elements) as $key => $value) {
 			$uri .= $first ? '?' : '&';
 			$first = false;
 			$uri .= "$key=$value";
