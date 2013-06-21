@@ -51,3 +51,100 @@
 	<?php echo EventAction::button('Add', 'add_theatre', array('colour' => 'blue'))->toHtml()?>
 	<?php echo EventAction::button('Delete', 'delete_theatre', array('colour' => 'blue'))->toHtml()?>
 </div>
+<div id="confirm_delete_theatres" title="Confirm delete theatre" style="display: none;">
+	<div>
+		<div id="delete_theatres">
+			<div class="alertBox" style="margin-top: 10px; margin-bottom: 15px;">
+				<strong>WARNING: This will remove the theatres from the system.<br/>This action cannot be undone.</strong>
+			</div>
+			<p>
+				<strong>Are you sure you want to proceed?</strong>
+			</p>
+			<div class="buttonwrapper" style="margin-top: 15px; margin-bottom: 5px;">
+				<input type="hidden" id="medication_id" value="" />
+				<button type="submit" class="classy red venti btn_remove_theatres"><span class="button-span button-span-red">Remove theatre(s)</span></button>
+				<button type="submit" class="classy green venti btn_cancel_remove_theatres"><span class="button-span button-span-green">Cancel</span></button>
+				<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	handleButton($('#et_delete_theatre'),function(e) {
+		e.preventDefault();
+
+		if ($('input[type="checkbox"][name="theatre[]"]:checked').length <1) {
+			alert("Please select the theatre(s) you wish to delete.");
+			enableButtons();
+			return;
+		}
+
+		$.ajax({
+			'type': 'POST',
+			'url': baseUrl+'/OphTrOperationbooking/admin/verifyDeleteTheatres',
+			'data': $('form#theatres').serialize()+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
+			'success': function(resp) {
+				if (resp == "1") {
+					enableButtons();
+
+					if ($('input[type="checkbox"][name="theatre[]"]:checked').length == 1) {
+						$('#confirm_delete_theatres').attr('title','Confirm delete theatre');
+						$('#delete_theatres').children('div').children('strong').html("WARNING: This will remove the theatre from the system.<br/><br/>This action cannot be undone.");
+						$('button.btn_remove_theatres').children('span').text('Remove theatre');
+					} else {
+						$('#confirm_delete_theatres').attr('title','Confirm delete theatres');
+						$('#delete_theatres').children('div').children('strong').html("WARNING: This will remove the theatres from the system.<br/><br/>This action cannot be undone.");
+						$('button.btn_remove_theatres').children('span').text('Remove theatres');
+					}
+
+					$('#confirm_delete_theatres').dialog({
+						resizable: false,
+						modal: true,
+						width: 560
+					});
+				} else {
+					alert("One or more of the selected theatres have active future bookings and so cannot be deleted.");
+					enableButtons();
+				}
+			}
+		});
+	});
+
+	$('button.btn_cancel_remove_theatres').click(function(e) {
+		e.preventDefault();
+		$('#confirm_delete_theatres').dialog('close');
+	});
+
+	handleButton($('button.btn_remove_theatres'),function(e) {
+		e.preventDefault();
+
+		// verify again as a precaution against race conditions
+		$.ajax({
+			'type': 'POST',
+			'url': baseUrl+'/OphTrOperationbooking/admin/verifyDeleteTheatres',
+			'data': $('form#theatres').serialize()+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
+			'success': function(resp) {
+				if (resp == "1") {
+					$.ajax({
+						'type': 'POST',
+						'url': baseUrl+'/OphTrOperationbooking/admin/deleteTheatres',
+						'data': $('form#theatres').serialize()+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
+						'success': function(resp) {
+							if (resp == "1") {
+								window.location.reload();
+							} else {
+								alert("There was an unexpected error deleting the theatres, please try again or contact support for assistance");
+								enableButtons();
+								$('#confirm_delete_theatres').dialog('close');
+							}
+						}
+					});
+				} else {
+					alert("One or more of the selected theatres now have active future bookings and so cannot be deleted.");
+					enableButtons();
+					$('#confirm_delete_theatres').dialog('close');
+				}
+			}
+		});
+	});
+</script>

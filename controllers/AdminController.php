@@ -1295,4 +1295,66 @@ class AdminController extends ModuleAdminController {
 			'errors' => $errors,
 		));
 	}
+
+	public function actionEditTheatre($id) {
+		if (!$theatre = OphTrOperationbooking_Operation_Theatre::model()->findByPk($id)) {
+			throw new Exception("Theatre not found: $id");
+		}
+
+		$errors = array();
+
+		if (!empty($_POST)) {
+			$theatre->attributes = $_POST['OphTrOperationbooking_Operation_Theatre'];
+			if (!$theatre->save()) {
+				$errors = $theatre->getErrors();
+			} else {
+				$this->redirect(array('/OphTrOperationbooking/admin/viewTheatres'));
+			}
+		}
+
+		$this->render('/admin/edittheatre',array(
+			'theatre' => $theatre,
+			'errors' => $errors,
+		));
+	}
+
+	public function actionVerifyDeleteTheatres() {
+		$criteria = new CDbCriteria;
+		$criteria->addInCondition('session.theatre_id',$_POST['theatre']);
+		$criteria->addCondition('booking_cancellation_date is null');
+		$criteria->addCondition('session_date >= :today');
+		$criteria->params[':today'] = date('Y-m-d');
+
+		if (OphTrOperationbooking_Operation_Booking::model()
+			->with(array(
+				'session',
+				'operation' => array(
+					'with' => array(
+						'event' => array(
+							'with' => 'episode',
+						),
+					),
+				),
+			))
+			->find($criteria)) {
+			echo "0";
+		} else {
+			echo "1";
+		}
+	}
+
+	public function actionDeleteTheatres() {
+		$criteria = new CDbCriteria;
+		$criteria->addInCondition('id',$_POST['theatre']);
+		$theatres = OphTrOperationbooking_Operation_Theatre::model()->findAll($criteria);
+
+		foreach ($theatres as $theatre) {
+			$theatre->deleted = 1;
+			if (!$theatre->save()) {
+				throw new Exception("Unable to mark theatre deleted: ".print_r($theatre->getErrors(),true));
+			}
+		}
+
+		echo "1";
+	}
 }

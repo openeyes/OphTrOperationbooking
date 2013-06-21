@@ -159,6 +159,14 @@ $(document).ready(function() {
 	$('#et_add_theatre').click(function() {
 		window.location.href = baseUrl+'/OphTrOperationbooking/admin/addTheatre';
 	});
+
+	$('form#theatres li.even .column_site, form#theatres li.even .column_name, form#theatres li.even .column_code, form#theatres li.odd .column_site, form#theatres li.odd .column_name, form#theatres li.odd .column_code').click(function(e) {
+		e.preventDefault();
+
+		if ($(this).parent().attr('data-attr-id')) {
+			window.location.href = baseUrl+'/OphTrOperationbooking/admin/editTheatre/'+$(this).parent().attr('data-attr-id');
+		}
+	});
 });
 
 function OphTrOperationbooking_showMatchingRule() {
