@@ -232,6 +232,7 @@ span.transport_pagination_selected { background-color: #0B59DA; color: #fff; }
 #admin_sequences ul li .column_interval { width: 50px; display: inline-block; }
 #admin_sequences ul li .column_weekday { width: 65px; display: inline-block; }
 #admin_sequences ul li .column_attributes { width: 140px; display: inline-block; }
+#admin_sequences ul li .column_checkall_message { width: 924px; display: inline-block; height: 14px; }
 
 #admin_sequences_filters { margin-bottom: 1em; }
 #admin_sequences_filters div { margin-bottom: 0.8em; }
@@ -240,6 +241,32 @@ span.transport_pagination_selected { background-color: #0B59DA; color: #fff; }
 #admin_sequences span.set { border-right: none; color: #000; font-weight: bold; }
 #admin_sequences span.notset { border-right: none; color: #aaa }
 
+ul.grid li.checkall_message { text-align: left; vertical-align: middle; background:#ddd; color: #444; font-size: 11px; font-weight:bold; min-width:10px; padding:0px; border-right:1px solid #bbb; }
+
+ul.grid li.checkall_message span { border: 1px solid #bbb; text-align: center; padding: 4px 4px 4px 8px !important; background-color: #ffc; }
+
 #inline_edit span.label { display: inline-block; width: 140px; }
 #inline_edit span.error { margin-left: 0.8em; color: #f00; font-weight: bold; }
 #inline_edit div { margin-bottom: 0.6em; }
+#inline_edit span.timeWarning { color: #f00; }
+
+#admin_sessions ul li { padding: 0; margin: 0; line-height: 15px; font-size: 11px; }
+#admin_sessions ul li .column_checkbox { width: 15px; display: inline-block; }
+#admin_sessions ul li .column_firm { width: 195px; display: inline-block; }
+#admin_sessions ul li .column_theatre { width: 140px; display: inline-block; }
+#admin_sessions ul li .column_date { width: 140px; display: inline-block; }
+#admin_sessions ul li .column_time { width: 100px; display: inline-block; }
+#admin_sessions ul li .column_interval { width: 50px; display: inline-block; }
+#admin_sessions ul li .column_weekday { width: 65px; display: inline-block; }
+#admin_sessions ul li .column_available { width: 50px; display: inline-block; }
+#admin_sessions ul li .column_attributes { width: 140px; display: inline-block; }
+#admin_sessions ul li .column_checkall_message { width: 924px; display: inline-block; height: 14px; }
+
+#admin_sessions_filters { margin-bottom: 1em; }
+#admin_sessions_filters div { margin-bottom: 0.8em; }
+
+#admin_sessions span { padding: 8px 4px 8px 4px; }
+#admin_sessions span.set { border-right: none; color: #000; font-weight: bold; }
+#admin_sessions span.notset { border-right: none; color: #aaa }
+
+div.view_sessions { margin-top: 1em; font-size: 15px; }

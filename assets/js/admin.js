@@ -142,6 +142,14 @@ $(document).ready(function() {
 		e.preventDefault();
 		window.location.href = baseUrl+'/OphTrOperationbooking/admin/addSequence';
 	});
+
+	$('#admin_sessions li.even .column_firm, #admin_sessions li.even .column_theatre, #admin_sessions li.even .column_date, #admin_sessions li.even .column_time, #admin_sessions li.even .column_weekday, #admin_sessions li.even .column_available, #admin_sessions li.even .column_attributes, #admin_sessions li.odd .column_firm, #admin_sessions li.odd .column_theatre, #admin_sessions li.odd .column_date, #admin_sessions li.odd .column_time, #admin_sessions li.odd .column_weekday, #admin_sessions li.odd column_available, #admin_sessions li.odd .column_attributes').click(function(e) {
+		e.preventDefault();
+
+		if ($(this).parent().attr('data-attr-id')) {
+			window.location.href = baseUrl+'/OphTrOperationbooking/admin/editSession/'+$(this).parent().attr('data-attr-id');
+		}
+	});
 });
 
 function OphTrOperationbooking_showMatchingRule() {

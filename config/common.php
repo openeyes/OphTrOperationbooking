@@ -48,6 +48,7 @@ return array(
 		),
 		'admin_menu' => array(
 			'Sequences' => '/OphTrOperationbooking/admin/viewSequences',
+			'Sessions' => '/OphTrOperationbooking/admin/viewSessions',
 			'EROD rules' => '/OphTrOperationbooking/admin/viewERODRules',
 			'Letter contact rules' => '/OphTrOperationbooking/admin/viewLetterContactRules',
 			'Letter warning rules' => '/OphTrOperationbooking/admin/viewLetterWarningRules',

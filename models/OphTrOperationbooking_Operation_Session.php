@@ -69,7 +69,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		return array(
 			array('sequence_id, date, start_time, end_time', 'required'),
 			array('sequence_id, theatre_id', 'length', 'max' => 10),
-			array('comments, available, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id', 'safe'),
+			array('comments, available, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id, theatre_id, start_time, end_time', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, sequence_id, theatre_id, date, start_time, end_time, comments, available, firm_id, site_id, weekday, consultant, paediatric, anaesthetist, general_anaesthetic', 'safe', 'on'=>'search'),
@@ -93,6 +93,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 			'theatre' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Theatre', 'theatre_id'),
 			'firm' => array(self::BELONGS_TO, 'Firm', 'firm_id'),
 			'activeBookings' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Booking', 'session_id', 'condition' => 'booking_cancellation_date is null'),
+			'sequence' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Sequence', 'sequence_id'),
 		);
 	}
 
@@ -102,6 +103,11 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 	public function attributeLabels()
 	{
 		return array(
+			'firm_id' => 'Firm',
+			'theatre_id' => 'Theatre',
+			'start_time' => 'Start time',
+			'end_time' => 'End time',
+			'general_anaesthetic' => 'General anaesthetic',
 		);
 	}
 
@@ -214,6 +220,26 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		if ($this->date < date('Y-m-d')) {
 			return "This session is in the past and so cannot be booked into.";
 		}
+	}
+
+	public function getWeekdayText() {
+		return date('l',strtotime($this->date));
+	}
+
+	protected function beforeValidate() {
+		if ($this->date && !preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$this->date)) {
+			$this->date = date('Y-m-d',strtotime($this->date));
+		}
+
+		return parent::beforeValidate();
+	}
+
+	protected function beforeSave() {
+		if ($this->date && !preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$this->date)) {
+			$this->date = date('Y-m-d',strtotime($this->date));
+		}
+
+		return parent::beforeSave();
 	}
 }
 ?>

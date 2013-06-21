@@ -200,6 +200,9 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
 		if ($this->start_date && !preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$this->start_date)) {
 			$this->start_date = date('Y-m-d',strtotime($this->start_date));
 		}
+		if ($this->end_date && !preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$this->end_date)) {
+			$this->end_date = date('Y-m-d',strtotime($this->end_date));
+		}
 
 		return parent::beforeValidate();
 	}
@@ -208,7 +211,10 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
 		if ($this->start_date && !preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$this->start_date)) {
 			$this->start_date = date('Y-m-d',strtotime($this->start_date));
 		}
-		
+		if ($this->end_date && !preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$this->end_date)) {
+			$this->end_date = date('Y-m-d',strtotime($this->end_date));
+		}
+
 		return parent::beforeSave();
 	}
 }

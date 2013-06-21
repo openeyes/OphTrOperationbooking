@@ -19,7 +19,7 @@
 ?>
 <div class="report curvybox white">
 	<h3>Filters</h3>
-	<form id="admin_sequences_filters">
+	<form id="admin_sessions_filters">
 		<div>
 			<?php echo CHtml::dropDownList('firm_id',@$_GET['firm_id'],Firm::model()->getListWithSpecialties(),array('empty'=>'- Firm -'))?>
 			&nbsp;&nbsp;
@@ -50,63 +50,66 @@
 					'value'=>@$_GET['date_to'],
 					'htmlOptions'=>array('style'=>'width: 110px;')
 			))?>
+			&nbsp;&nbsp;
+			Seq: <?php echo CHtml::textField('sequence_id',@$_GET['sequence_id'],array('size'=>10))?>
 		</div>
 		<div>
-			<?php echo CHtml::dropDownList('interval_id',@$_GET['interval_id'],CHtml::listData(OphTrOperationbooking_Operation_Sequence_Interval::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Interval -'))?>&nbsp;&nbsp;
 			<?php echo CHtml::dropDownList('weekday',@$_GET['weekday'],array(1=>'Monday',2=>'Tuesday',3=>'Wednesday',4=>'Thursday',5=>'Friday',6=>'Saturday',7=>'Sunday'),array('empty'=>'- Weekday '))?>&nbsp;&nbsp;
 			<?php echo CHtml::dropDownList('consultant',@$_GET['consultant'],array(1=>'Yes',0=>'No'),array('empty'=>'- Consultant -'))?>&nbsp;&nbsp;
 			<?php echo CHtml::dropDownList('paediatric',@$_GET['paediatric'],array(1=>'Yes',0=>'No'),array('empty'=>'- Paediatric -'))?>&nbsp;&nbsp;
 			<?php echo CHtml::dropDownList('anaesthetist',@$_GET['anaesthetist'],array(1=>'Yes',0=>'No'),array('empty'=>'- Anaesthetist -'))?>&nbsp;&nbsp;
 			<?php echo CHtml::dropDownList('general_anaesthetic',@$_GET['general_anaesthetic'],array(1=>'Yes',0=>'No'),array('empty'=>'- General anaesthetic -'))?>&nbsp;&nbsp;
+			<?php echo CHtml::dropDownList('available',@$_GET['available'],array(1=>'Yes',0=>'No'),array('empty'=>'- Available -'))?>&nbsp;&nbsp;
 			<?php echo EventAction::button('Filter', 'filter', array('colour' => 'blue'))->toHtml()?>
 			<?php echo EventAction::button('Reset', 'reset', array('colour' => 'blue'))->toHtml()?>
 		</div>
 	</form>
 	<div class="reportInputs">
-		<h3 class="georgia">Sequences</h3>
+		<h3 class="georgia">Sessions<?php if (@$_GET['sequence_id']!='') {?> for sequence <?php echo $_GET['sequence_id']?><?php }?></h3>
 		<div class="pagination">
 			<?php echo $this->renderPartial('_pagination',array(
-				'page' => $sequences['page'],
-				'pages' => $sequences['pages'],
+				'page' => $sessions['page'],
+				'pages' => $sessions['pages'],
+				'onePageOnly' => true,
 			))?>
 		</div>
 		<div>
-			<form id="admin_sequences">
+			<form id="admin_sessions">
 				<ul class="grid reduceheight">
 					<li class="header">
-						<span class="column_checkbox"><input type="checkbox" id="checkall" class="sequences" /></span>
+						<span class="column_checkbox"><input type="checkbox" id="checkall" class="sessions" /></span>
 						<span class="column_firm"><?php echo CHtml::link('Firm',$this->getUri(array('sortby'=>'firm')))?></span>
 						<span class="column_theatre"><?php echo CHtml::link('Theatre',$this->getUri(array('sortby'=>'theatre')))?></span>
-						<span class="column_dates"><?php echo CHtml::link('Dates',$this->getUri(array('sortby'=>'dates')))?></span>
+						<span class="column_date"><?php echo CHtml::link('Date',$this->getUri(array('sortby'=>'dates')))?></span>
 						<span class="column_time"><?php echo CHtml::link('Time',$this->getUri(array('sortby'=>'time')))?></span>
-						<span class="column_interval"><?php echo CHtml::link('Interval',$this->getUri(array('sortby'=>'interval')))?></span>
 						<span class="column_weekday"><?php echo CHtml::link('Weekday',$this->getUri(array('sortby'=>'weekday')))?></span>
+						<span class="column_available">Available</span>
 						<span class="column_attributes">Attributes</span>
 						<input type="hidden" id="select_all" value="0" />
 					</li>
-					<?php if ($sequences['more_items']) {?>
+					<?php if ($sessions['more_items']) {?>
 						<li class="checkall_message" style="display: none;">
 							<span class="column_checkall_message">
-								All <?php echo count($sequences['data'])?> sequences on this page are selected. <a href="#" id="select_all_items">Select all <?php echo $sequences['count']?> sequences that match the current search criteria</a>
+								All <?php echo count($sessions['data'])?> sessions on this page are selected. <a href="#" id="select_all_items">Select all <?php echo $sessions['count']?> sessions that match the current search criteria</a>
 							</span>
 						</li>
 					<?php }?>
 					<div class="sortable">
 						<?php
-						foreach ($sequences['data'] as $i => $sequence) {?>
-							<li class="<?php if ($i%2 == 0) {?>even<?php }else{?>odd<?php }?>" data-attr-id="<?php echo $sequence->id?>">
-								<span class="column_checkbox"><input type="checkbox" name="sequence[]" value="<?php echo $sequence->id?>" class="sequences" /></span>
-								<span class="column_firm"><?php echo $sequence->firm ? $sequence->firm->nameAndSubspecialtyCode: 'Emergency'?></span>
-								<span class="column_theatre"><?php echo $sequence->theatre->name?></span>
-								<span class="column_dates"><?php echo $sequence->dates?></span>
-								<span class="column_time"><?php echo $sequence->start_time?> - <?php echo $sequence->end_time?></span>
-								<span class="column_interval"><?php echo $sequence->interval->name?></span>
-								<span class="column_weekday"><?php echo $sequence->weekdayText?></span>
+						foreach ($sessions['data'] as $i => $session) {?>
+							<li class="<?php if ($i%2 == 0) {?>even<?php }else{?>odd<?php }?>" data-attr-id="<?php echo $session->id?>">
+								<span class="column_checkbox"><input type="checkbox" name="session[]" value="<?php echo $session->id?>" class="sessions" /></span>
+								<span class="column_firm"><?php echo $session->firm ? $session->firm->nameAndSubspecialtyCode: 'Emergency'?></span>
+								<span class="column_theatre"><?php echo $session->theatre->name?></span>
+								<span class="column_date"><?php echo $session->NHSDate('date')?></span>
+								<span class="column_time"><?php echo $session->start_time?> - <?php echo $session->end_time?></span>
+								<span class="column_weekday"><?php echo $session->weekdayText?></span>
+								<span class="column_available"><?php echo $session->available ? 'Yes' : 'No'?></span>
 								<span class="column_attributes">
-									<span class="<?php echo $sequence->consultant ? 'set' : 'notset'?>">CON</span>
-									<span class="<?php echo $sequence->paediatric ? 'set' : 'notset'?>">PAED</span>
-									<span class="<?php echo $sequence->anaesthetist ? 'set' : 'notset'?>">ANA</span>
-									<span class="<?php echo $sequence->general_anaesthetic ? 'set' : 'notset'?>">GA</span>
+									<span class="<?php echo $session->consultant ? 'set' : 'notset'?>">CON</span>
+									<span class="<?php echo $session->paediatric ? 'set' : 'notset'?>">PAED</span>
+									<span class="<?php echo $session->anaesthetist ? 'set' : 'notset'?>">ANA</span>
+									<span class="<?php echo $session->general_anaesthetic ? 'set' : 'notset'?>">GA</span>
 								</span>
 							</li>
 						<?php }?>
@@ -116,7 +119,7 @@
 		</div>
 	</div>
 	<div style="margin-bottom: 0.8em;">
-		<a href="#" id="update_inline" style="display: none;">Update selected sequences</a>
+		<a href="#" id="update_inline" style="display: none;">Update selected sessions</a>
 	</div>
 	<?php
 	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
@@ -136,25 +139,10 @@
 				<span class="error"></span>
 			</div>
 			<div>
-				<span class="label">Start date:</span>
+				<span class="label">Date:</span>
 				<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-						'name'=>'inline_start_date',
-						'id'=>'inline_start_date',
-						// additional javascript options for the date picker plugin
-						'options'=>array(
-							'showAnim'=>'fold',
-							'dateFormat'=>Helper::NHS_DATE_FORMAT_JS,
-						),
-						'value'=>'',
-						'htmlOptions'=>array('style'=>'width: 110px;')
-				))?>
-				<span class="error"></span>
-			</div>
-			<div>
-				<span class="label">End date:</span>
-				<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-						'name'=>'inline_end_date',
-						'id'=>'inline_end_date',
+						'name'=>'inline_date',
+						'id'=>'inline_date',
 						// additional javascript options for the date picker plugin
 						'options'=>array(
 							'showAnim'=>'fold',
@@ -173,16 +161,6 @@
 			<div>
 				<span class="label">End time:</span>
 				<?php echo CHtml::textField('inline_end_time','',array('size'=>10))?>
-				<span class="error"></span>
-			</div>
-			<div>
-				<span class="label">Interval:</span>
-				<?php echo CHtml::dropDownList('inline_interval_id','',CHtml::listData(OphTrOperationbooking_Operation_Sequence_Interval::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Don\'t change -'))?>
-				<span class="error"></span>
-			</div>
-			<div>
-				<span class="label">Weekday:</span>
-				<?php echo CHtml::dropDownList('inline_weekday','',array(1=>'Monday',2=>'Tuesday',3=>'Wednesday',4=>'Thursday',5=>'Friday',6=>'Saturday',7=>'Sunday'),array('empty'=>'- Don\'t change -'))?>
 				<span class="error"></span>
 			</div>
 			<div>
@@ -206,37 +184,31 @@
 				<span class="error"></span>
 			</div>
 			<div>
-				<span class="label">Week selection:</span>
-				<?php echo CHtml::dropDownList('inline_update_weeks','',array(0=>'Don\'t change',1=>'Change'))?>
-				<span class="inline_weeks" style="display: none;">
-					&nbsp;&nbsp;
-					<input type="hidden" name="inline_week1" value="0" /><input type="checkbox" name="inline_week1" value="1" /> 1st
-					&nbsp;
-					<input type="hidden" name="inline_week2" value="0" /><input type="checkbox" name="inline_week2" value="1" /> 2nd
-					&nbsp;
-					<input type="hidden" name="inline_week3" value="0" /><input type="checkbox" name="inline_week3" value="1" /> 3rd
-					&nbsp;
-					<input type="hidden" name="inline_week4" value="0" /><input type="checkbox" name="inline_week4" value="1" /> 4th
-					&nbsp;
-					<input type="hidden" name="inline_week5" value="0" /><input type="checkbox" name="inline_week5" value="1" /> 5th
-				</span>
+				<span class="label">Available:</span>
+				<?php echo CHtml::dropDownList('inline_available','',array(1=>'Yes',0=>'No'),array('empty'=>'- Don\'t change -'))?>
+				<span class="error"></span>
+			</div>
+			<div>
+				<span class="label">Comments:</span>
+				<?php echo CHtml::textArea('inline_comments','',array('rows'=>5,'cols'=>60))?>
 			</div>
 			<div>
 				<?php echo EventAction::button('Update','update_inline',array('colour'=>'green'))->toHtml()?>
 				<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
+				<span class="timeWarning" style="display: none;">Please be patient, it may take some time to process all the sessions ...</span>
 			</div>
 		</div>
 	<?php $this->endWidget()?>
 </div>
 <div>
-	<?php echo EventAction::button('Add', 'add_sequence', array('colour' => 'blue'))->toHtml()?>
-	<?php echo EventAction::button('Delete', 'delete_sequence', array('colour' => 'blue'))->toHtml()?>
+	<?php echo EventAction::button('Add', 'add_session', array('colour' => 'blue'))->toHtml()?>
+	<?php echo EventAction::button('Delete', 'delete_session', array('colour' => 'blue'))->toHtml()?>
 </div>
 <script type="text/javascript">
 	handleButton($('#et_filter'),function(e) {
 		e.preventDefault();
 
-		var filterParams = $('#admin_sequences_filters').serialize();
+		var filterParams = $('#admin_sessions_filters').serialize();
 		var urlParams = $(document).getUrlParams();
 
 		for (var key in urlParams) {
@@ -245,13 +217,13 @@
 			}
 		}
 
-		window.location.href = baseUrl+'/OphTrOperationbooking/admin/viewSequences?'+filterParams;
+		window.location.href = baseUrl+'/OphTrOperationbooking/admin/viewSessions?'+filterParams;
 	});
 
 	handleButton($('#et_reset'),function(e) {
 		e.preventDefault();
 
-		var filterFields = $('#admin_sequences_filters').serialize().match(/([a-z_]+)=/g);
+		var filterFields = $('#admin_sessions_filters').serialize().match(/([a-z_]+)=/g);
 		params = $(document).getUrlParams();
 		for (var i in filterFields) {
 			delete params[filterFields[i].replace(/=/,'')];
@@ -261,9 +233,9 @@
 		params = $.param(params);
 
 		if (params != '?=') {
-			window.location.href = baseUrl+'/OphTrOperationbooking/admin/viewSequences?'+params+"&reset=1";
+			window.location.href = baseUrl+'/OphTrOperationbooking/admin/viewSessions?'+params+"&reset=1";
 		} else {
-			window.location.href = baseUrl+'/OphTrOperationbooking/admin/viewSequences?reset=1';
+			window.location.href = baseUrl+'/OphTrOperationbooking/admin/viewSessions?reset=1';
 		}
 	});
 
@@ -280,8 +252,8 @@
 		$('#inline_edit').toggle('fast');
 	});
 
-	$('input[name="sequence[]"]').click(function() {
-		if ($('input[name="sequence[]"]:checked').length >0) {
+	$('input[name="session[]"]').click(function() {
+		if ($('input[name="session[]"]:checked').length >0) {
 			$('#update_inline').show();
 		} else {
 			$('#update_inline').hide();
@@ -304,15 +276,16 @@
 		$('span.error').html('');
 
 		if ($('#select_all').val() == 0) {
-			var data = $('#admin_sequences').serialize()+"&"+$('#inline_edit').serialize();
+			var data = $('#admin_sessions').serialize()+"&"+$('#inline_edit').serialize();
 		} else {
-			var data = $('#admin_sequences_filters').serialize()+"&"+$('#inline_edit').serialize()+"&use_filters=1";
+			var data = $('#admin_sessions_filters').serialize()+"&"+$('#inline_edit').serialize()+"&use_filters=1";
+			$('span.timeWarning').show();
 		}
 
 		$.ajax({
 			'type': 'POST',
 			'dataType': 'json',
-			'url': baseUrl+'/OphTrOperationbooking/admin/sequenceInlineEdit',
+			'url': baseUrl+'/OphTrOperationbooking/admin/sessionInlineEdit',
 			'data': data+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
 			'success': function(errors) {
 				var count = 0;
@@ -333,16 +306,16 @@
 	$('#select_all_items').live('click',function(e) {
 		e.preventDefault();
 		$('#select_all').val(1);
-		$('span.column_checkall_message').html("All <?php echo $sequences['count']?> sequences that match the current search criteria are selected. <a href=\"#\" id=\"clear_selection\">Clear selection</a>");
+		$('span.column_checkall_message').html("All <?php echo $sessions['count']?> sessions that match the current search criteria are selected. <a href=\"#\" id=\"clear_selection\">Clear selection</a>");
 	});
 
 	$('#clear_selection').live('click',function(e) {
 		e.preventDefault();
 		$('#select_all').val(0);
 		$('#checkall').removeAttr('checked');
-		$('input[type="checkbox"][name="sequence[]"]').removeAttr('checked');
+		$('input[type="checkbox"][name="session[]"]').removeAttr('checked');
 		$('li.checkall_message').hide();
-		$('span.column_checkall_message').html("All <?php echo $sequences['items_per_page']?> sequences on this page are selected. <a href=\"#\" id=\"select_all_items\">Select all <?php echo $sequences['count']?> sequences that match the current search criteria</a>");
+		$('span.column_checkall_message').html("All <?php echo $sessions['items_per_page']?> sessions on this page are selected. <a href=\"#\" id=\"select_all_items\">Select all <?php echo $sessions['count']?> sessions that match the current search criteria</a>");
 		$('#update_inline').hide();
 	});
 </script>

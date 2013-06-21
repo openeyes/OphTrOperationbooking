@@ -57,6 +57,11 @@
 				</div>
 			</div>
 			<?php $this->endWidget()?>
+			<div class="view_sessions">
+				<span>
+					<?php echo CHtml::link('View sessions',Yii::app()->createUrl('/OphTrOperationbooking/admin/viewSessions?sequence_id='.$sequence->id))?>
+				</span>
+			</div>
 		</div>
 	</div>
 </div>

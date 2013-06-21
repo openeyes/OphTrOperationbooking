@@ -19,6 +19,7 @@
 
 class AdminController extends ModuleAdminController {
 	public $sequences_items_per_page = 20;
+	public $sessions_items_per_page = 20;
 
 	public function actionViewERODRules() {
 		$this->render('erodrules');
@@ -614,60 +615,64 @@ class AdminController extends ModuleAdminController {
 		$this->redirect(array($uri));
 	}
 
-	public function getSequences() {
+	public function getSequences($all=false) {
 		$criteria = new CDbCriteria;
 
-		if ($firm = Firm::model()->findByPk(@$_GET['firm_id'])) {
+		if ($firm = Firm::model()->findByPk(@$_REQUEST['firm_id'])) {
 			$criteria->addCondition('firm_id=:firm_id');
 			$criteria->params[':firm_id'] = $firm->id;
 		}
 
-		if ($theatre = OphTrOperationbooking_Operation_Theatre::model()->findByPk(@$_GET['theatre_id'])) {
+		if ($theatre = OphTrOperationbooking_Operation_Theatre::model()->findByPk(@$_REQUEST['theatre_id'])) {
 			$criteria->addCondition('theatre_id=:theatre_id');
 			$criteria->params[':theatre_id'] = $theatre->id;
 		}
 
-		if (@$_GET['date_from'] && strtotime(@$_GET['date_from'])) {
+		if (@$_REQUEST['date_from'] && strtotime(@$_REQUEST['date_from'])) {
 			$criteria->addCondition('start_date >= :start_date');
-			$criteria->params[':start_date'] = date('Y-m-d',strtotime(@$_GET['date_from']));
+			$criteria->params[':start_date'] = date('Y-m-d',strtotime(@$_REQUEST['date_from']));
 		}
 
-		if (@$_GET['date_to'] && strtotime(@$_GET['date_to'])) {
+		if (@$_REQUEST['date_to'] && strtotime(@$_REQUEST['date_to'])) {
 			$criteria->addCondition('end_date >= :end_date');
-			$criteria->params[':end_date'] = date('Y-m-d',strtotime(@$_GET['date_to']));
+			$criteria->params[':end_date'] = date('Y-m-d',strtotime(@$_REQUEST['date_to']));
 		}
 
-		if (@$_GET['interval_id'] != '') {
+		if (@$_REQUEST['interval_id'] != '') {
 			$criteria->addCondition('interval_id = :interval_id');
-			$criteria->params[':interval_id'] = @$_GET['interval_id'];
+			$criteria->params[':interval_id'] = @$_REQUEST['interval_id'];
 		}
 
-		if (@$_GET['weekday'] != '') {
+		if (@$_REQUEST['weekday'] != '') {
 			$criteria->addCondition('weekday = :weekday');
-			$criteria->params[':weekday'] = @$_GET['weekday'];
+			$criteria->params[':weekday'] = @$_REQUEST['weekday'];
 		}
 
-		if (@$_GET['consultant'] != '') {
+		if (@$_REQUEST['consultant'] != '') {
 			$criteria->addCondition('consultant = :consultant');
-			$criteria->params[':consultant'] = @$_GET['consultant'];
+			$criteria->params[':consultant'] = @$_REQUEST['consultant'];
 		}
 
-		if (@$_GET['paediatric'] != '') {
+		if (@$_REQUEST['paediatric'] != '') {
 			$criteria->addCondition('paediatric = :paediatric');
-			$criteria->params[':paediatric'] = @$_GET['paediatric'];
+			$criteria->params[':paediatric'] = @$_REQUEST['paediatric'];
 		}
 		
-		if (@$_GET['anaesthetist'] != '') {
+		if (@$_REQUEST['anaesthetist'] != '') {
 			$criteria->addCondition('anaesthetist = :anaesthetist');
-			$criteria->params[':anaesthetist'] = @$_GET['anaesthetist'];
+			$criteria->params[':anaesthetist'] = @$_REQUEST['anaesthetist'];
 		}
 		
-		if (@$_GET['general_anaesthetic'] != '') {
+		if (@$_REQUEST['general_anaesthetic'] != '') {
 			$criteria->addCondition('general_anaesthetic = :general_anaesthetic');
-			$criteria->params[':general_anaesthetic'] = @$_GET['general_anaesthetic'];
+			$criteria->params[':general_anaesthetic'] = @$_REQUEST['general_anaesthetic'];
 		}
 
-		$page = @$_GET['page'] ? $_GET['page'] : 1;
+		$page = @$_REQUEST['page'] ? $_REQUEST['page'] : 1;
+
+		if ($all) {
+			return OphTrOperationbooking_Operation_Sequence::model()->findAll($criteria);
+		}
 
 		$count = OphTrOperationbooking_Operation_Sequence::model()->count($criteria);
 		$pages = ceil($count/$this->sequences_items_per_page);
@@ -678,9 +683,9 @@ class AdminController extends ModuleAdminController {
 		$criteria->limit = $this->sequences_items_per_page;
 		$criteria->offset = ($page-1) * $this->sequences_items_per_page;
 
-		$order = @$_GET['order']=='desc' ? 'desc' : 'asc';
+		$order = @$_REQUEST['order']=='desc' ? 'desc' : 'asc';
 
-		switch (@$_GET['sortby']) {
+		switch (@$_REQUEST['sortby']) {
 			case 'firm':
 				$criteria->order = "firm.name $order, subspecialty.name $order";
 				break;
@@ -703,8 +708,7 @@ class AdminController extends ModuleAdminController {
 				$criteria->order = "firm.name $order, subspecialty.name $order";
 		}
 
-		return array(
-			'data' => OphTrOperationbooking_Operation_Sequence::model()->with(array(
+		$data = OphTrOperationbooking_Operation_Sequence::model()->with(array(
 				'firm' => array(
 					'with' => array(
 						'serviceSubspecialtyAssignment' => array(
@@ -714,10 +718,15 @@ class AdminController extends ModuleAdminController {
 				),
 				'theatre',
 				'interval',
-			))->findAll($criteria),
+			))->findAll($criteria);
+			
+		return array(
+			'data' => $data,
 			'count' => $count,
 			'page' => $page,
 			'pages' => $pages,
+			'more_items' => ($count > count($data)),
+			'items_per_page' => $this->sequences_items_per_page,
 		);
 	}
 
@@ -744,45 +753,66 @@ class AdminController extends ModuleAdminController {
 		$errors = array();
 
 		if (!empty($_POST['sequence'])) {
-			foreach ($_POST['sequence'] as $sequence_id) {
-				if ($sequence = OphTrOperationbooking_Operation_Sequence::model()->findByPk($sequence_id)) {
-					foreach (array('firm_id','theatre_id','start_time','end_time','interval_id','weekday','consultant','paediatric','anaesthetist','general_anaesthetic') as $field) {
-						if ($_POST['inline_'.$field] != '') {
-							$sequence->$field = $_POST['inline_'.$field];
-						}
-					}
-					if ($_POST['inline_start_date'] != '') {
-						if (!strtotime($_POST['inline_start_date'])) {
-							$errors['start_date'] = "Invalid start date";
-						}
-						$sequence->start_date = date('Y-m-d',strtotime($_POST['inline_start_date']));
-					}
-					if ($_POST['inline_end_date'] != '') {
-						if (!strtotime($_POST['inline_end_date'])) {
-							$errors['end_date'] = "Invalid end date";
-						}
-						$sequence->end_date = date('Y-m-d',strtotime($_POST['inline_end_date']));
-					}
-					if ($_POST['inline_update_weeks']) {
-						$weeks = 0;
-						$_POST['inline_week1'] && $weeks += 1;
-						$_POST['inline_week2'] && $weeks += 2;
-						$_POST['inline_week3'] && $weeks += 4;
-						$_POST['inline_week4'] && $weeks += 8;
-						$_POST['inline_week5'] && $weeks += 16;
-						$sequence->week_selection = $weeks;
-					}
+			$criteria = new CDbCriteria;
+			$criteria->addInCondition('id',$_POST['sequence']);
+			$sequences = OphTrOperationbooking_Operation_Sequence::model()->findAll($criteria);
+		} else if (@$_POST['use_filters']) {
+			$sequences = $this->getSequences(true);
+		}
 
-					if (!empty($errors)) {
-						$sequence->validate();
-						echo json_encode(array_merge($errors,$sequence->getErrors()));
-						return;
-					}
+		foreach ($sequences as $sequence) {
+			$changed = false;
 
-					if (!$sequence->save()) {
-						echo json_encode($sequence->getErrors());
-						return;
+			foreach (array('firm_id','theatre_id','start_time','end_time','interval_id','weekday','consultant','paediatric','anaesthetist','general_anaesthetic') as $field) {
+				if ($_POST['inline_'.$field] != '') {
+					if ($sequence->$field != $_POST['inline_'.$field]) {
+						$sequence->$field = $_POST['inline_'.$field];
+						$changed = true;
 					}
+				}
+			}
+			if ($_POST['inline_start_date'] != '') {
+				if (!strtotime($_POST['inline_start_date'])) {
+					$errors['start_date'] = "Invalid start date";
+				}
+				if ($sequence->start_date != date('Y-m-d',strtotime($_POST['inline_start_date']))) {
+					$sequence->start_date = date('Y-m-d',strtotime($_POST['inline_start_date']));
+					$changed = true;
+				}
+			}
+			if ($_POST['inline_end_date'] != '') {
+				if (!strtotime($_POST['inline_end_date'])) {
+					$errors['end_date'] = "Invalid end date";
+				}
+				if ($sequence->end_date != date('Y-m-d',strtotime($_POST['inline_end_date']))) {
+					$sequence->end_date = date('Y-m-d',strtotime($_POST['inline_end_date']));
+					$changed = true;
+				}
+			}
+			if ($_POST['inline_update_weeks']) {
+				$weeks = 0;
+				$_POST['inline_week1'] && $weeks += 1;
+				$_POST['inline_week2'] && $weeks += 2;
+				$_POST['inline_week3'] && $weeks += 4;
+				$_POST['inline_week4'] && $weeks += 8;
+				$_POST['inline_week5'] && $weeks += 16;
+
+				if ($sequence->week_selection != $weeks) {
+					$sequence->week_selection = $weeks;
+					$changed = true;
+				}
+			}
+
+			if ($changed) {
+				if (!empty($errors)) {
+					$sequence->validate();
+					echo json_encode(array_merge($errors,$sequence->getErrors()));
+					return;
+				}
+
+				if (!$sequence->save()) {
+					echo json_encode($sequence->getErrors());
+					return;
 				}
 			}
 		}
@@ -868,6 +898,218 @@ class AdminController extends ModuleAdminController {
 
 		$this->render('/admin/editsequence',array(
 			'sequence' => $sequence,
+			'errors' => $errors,
+		));
+	}
+
+	public function actionViewSessions() {
+		if (@$_GET['reset'] == 1) {
+			unset($_GET['reset']);
+			unset(Yii::app()->session['admin_sessions']);
+			$this->redirectWith($_GET);
+		}
+
+		if (empty($_GET) && !empty(Yii::app()->session['admin_sessions'])) {
+			$this->redirectWith(Yii::app()->session['admin_sessions']);
+		} else if (!empty($_GET)) {
+			Yii::app()->session['admin_sessions'] = $_GET;
+		}
+
+		$this->render('/admin/sessions',array(
+			'sessions' => $this->getSessions(),
+		));
+	}
+
+	public function getSessions($all=false) {
+		$criteria = new CDbCriteria;
+
+		if ($firm = Firm::model()->findByPk(@$_REQUEST['firm_id'])) {
+			$criteria->addCondition('firm_id=:firm_id');
+			$criteria->params[':firm_id'] = $firm->id;
+		}
+
+		if ($theatre = OphTrOperationbooking_Operation_Theatre::model()->findByPk(@$_REQUEST['theatre_id'])) {
+			$criteria->addCondition('t.theatre_id=:theatre_id');
+			$criteria->params[':theatre_id'] = $theatre->id;
+		}
+
+		if (@$_REQUEST['date_from'] && strtotime(@$_REQUEST['date_from'])) {
+			$criteria->addCondition('date >= :start_date');
+			$criteria->params[':start_date'] = date('Y-m-d',strtotime(@$_REQUEST['date_from']));
+		}
+
+		if (@$_REQUEST['date_to'] && strtotime(@$_REQUEST['date_to'])) {
+			$criteria->addCondition('date >= :end_date');
+			$criteria->params[':end_date'] = date('Y-m-d',strtotime(@$_REQUEST['date_to']));
+		}
+
+		if (@$_REQUEST['weekday'] != '') {
+			$criteria->addCondition('sequence.weekday = :weekday');
+			$criteria->params[':weekday'] = @$_REQUEST['weekday'];
+		}
+
+		if (@$_REQUEST['consultant'] != '') {
+			$criteria->addCondition('t.consultant = :consultant');
+			$criteria->params[':consultant'] = @$_REQUEST['consultant'];
+		}
+
+		if (@$_REQUEST['paediatric'] != '') {
+			$criteria->addCondition('t.paediatric = :paediatric');
+			$criteria->params[':paediatric'] = @$_REQUEST['paediatric'];
+		}
+
+		if (@$_REQUEST['anaesthetist'] != '') {
+			$criteria->addCondition('t.anaesthetist = :anaesthetist');
+			$criteria->params[':anaesthetist'] = @$_REQUEST['anaesthetist'];
+		}
+	 
+		if (@$_REQUEST['general_anaesthetic'] != '') {
+			$criteria->addCondition('t.general_anaesthetic = :general_anaesthetic');
+			$criteria->params[':general_anaesthetic'] = @$_REQUEST['general_anaesthetic'];
+		}
+
+		if (@$_REQUEST['available'] != '') {
+			$criteria->addCondition('t.available = :available');
+			$criteria->params[':available'] = @$_REQUEST['available'];
+		}
+
+		if (@$_REQUEST['sequence_id'] != '') {
+			$criteria->addCondition('t.sequence_id = :sequence_id');
+			$criteria->params[':sequence_id'] = @$_REQUEST['sequence_id'];
+		}
+
+		$page = @$_REQUEST['page'] ? $_REQUEST['page'] : 1;
+
+		if ($all) {
+			return OphTrOperationbooking_Operation_Session::model()->with('sequence')->findAll($criteria);
+		}
+		
+		$count = OphTrOperationbooking_Operation_Session::model()->with('sequence')->count($criteria);
+		$pages = ceil($count/$this->sessions_items_per_page);
+
+		if ($page <1) $page = 1;
+		if ($page > $pages) $page = $pages;
+
+		$criteria->limit = $this->sessions_items_per_page;
+		$criteria->offset = ($page-1) * $this->sessions_items_per_page;
+
+		$order = @$_REQUEST['order']=='desc' ? 'desc' : 'asc';
+
+		switch (@$_REQUEST['sortby']) {
+			case 'firm':
+				$criteria->order = "firm.name $order, subspecialty.name $order";
+				break;
+			case 'theatre':
+				$criteria->order = "theatre.name $order";
+				break;
+			case 'dates':
+				$criteria->order = "date $order, t.start_time $order, t.end_time $order";
+				break;
+			case 'time':
+				$criteria->order = "t.start_time $order, t.end_time $order";
+				break;
+			case 'interval':
+				$criteria->order = "interval.name $order";
+				break;
+			case 'weekday':
+				$criteria->order = "sequence.weekday $order";
+				break;
+			default:
+				$criteria->order = "firm.name $order, subspecialty.name $order";
+		}
+
+		$data = OphTrOperationbooking_Operation_Session::model()->with(array(
+			'sequence',
+			'firm' => array(
+				'with' => array(
+					'serviceSubspecialtyAssignment' => array(
+						'with' => 'subspecialty',
+					),
+				),
+			),
+			'theatre',
+		))->findAll($criteria);
+
+		return array(
+			'data' => $data,
+			'count' => $count,
+			'page' => $page,
+			'pages' => $pages,
+			'more_items' => ($count > count($data)),
+			'items_per_page' => $this->sessions_items_per_page,
+		);
+	}
+
+	public function actionSessionInlineEdit() {
+		$errors = array();
+
+		if (!empty($_POST['session'])) {
+			$criteria = new CDbCriteria;
+			$criteria->addInCondition('id',$_POST['session']);
+			$sessions = OphTrOperationbooking_Operation_Session::model()->findAll($criteria);
+		} else if (@$_POST['use_filters']) {
+			$sessions = $this->getSessions(true);
+		}
+
+		foreach ($sessions as $session) {
+			$changed = false;
+
+			foreach (array('firm_id','theatre_id','start_time','end_time','consultant','paediatric','anaesthetist','general_anaesthetic','comments','available') as $field) {
+				if ($_POST['inline_'.$field] != '') {
+					if ($session->$field != $_POST['inline_'.$field]) {
+						$session->$field = $_POST['inline_'.$field];
+						$changed = true;
+					}
+				}
+			}
+			if ($_POST['inline_date'] != '') {
+				if (!strtotime($_POST['inline_date'])) {
+					$errors['date'] = "Invalid start date";
+				}
+				if ($session->date != date('Y-m-d',strtotime($_POST['inline_date']))) {
+					$session->date = date('Y-m-d',strtotime($_POST['inline_date']));
+					$changed = true;
+				}
+			}
+
+			if ($changed) {
+				if (!empty($errors)) {
+					$session->validate();
+					echo json_encode(array_merge($errors,$session->getErrors()));
+					return;
+				}
+
+				if (!$session->save()) {
+					echo json_encode($session->getErrors());
+					return;
+				}
+			}
+		}
+
+		echo json_encode($errors);
+	}
+
+	public function actionEditSession($id) {
+		if (!$session = OphTrOperationbooking_Operation_Session::model()->findByPk($id)) {
+			throw new Exception("Session not found: $id");
+		}
+
+		$errors = array();
+
+		if (!empty($_POST)) {
+			$session->attributes = $_POST['OphTrOperationbooking_Operation_Session'];
+
+			if (!$session->save()) {
+				$errors = $session->getErrors();
+			} else {
+				if (empty($errors)) {
+					$this->redirect(array('/OphTrOperationbooking/admin/viewSessions'));
+				}
+			}
+		}
+
+		$this->render('/admin/editsession',array(
+			'session' => $session,
 			'errors' => $errors,
 		));
 	}

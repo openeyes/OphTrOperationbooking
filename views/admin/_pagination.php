@@ -17,6 +17,10 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
+if (@$onePageOnly && $page >10) {?>
+	<a href="<?php echo Yii::app()->createUrl($this->getUri(array('page'=>$page-10)))?>">&laquo;10</a>
+	&nbsp;
+<?php }
 if ($page > 1) {?>
 	<a href="<?php echo Yii::app()->createUrl($this->getUri(array('page'=>$page-1)))?>">&laquo; back</a>
 	&nbsp;
@@ -27,10 +31,13 @@ if ($page > 1) {?>
 <?php for ($i=1; $i<=$pages;$i++) {?>
 	<?php if ($i == $page) {?>
 		<span class="selected"><?php echo $i?></span>
+		&nbsp;
 	<?php }else{?>
-		<a href="<?php echo Yii::app()->createUrl($this->getUri(array('page'=>$i)))?>"><?php echo $i?></a>
+		<?php if (!@$onePageOnly) {?>
+			<a href="<?php echo Yii::app()->createUrl($this->getUri(array('page'=>$i)))?>"><?php echo $i?></a>
+			&nbsp;
+		<?php }?>
 	<?php }?>
-	&nbsp;
 <?php }?>
 <?php if ($page < $pages) {?>
 	<a href="<?php echo Yii::app()->createUrl($this->getUri(array('page'=>$page+1)))?>">next &raquo;</a>
@@ -38,4 +45,11 @@ if ($page > 1) {?>
 <?php }else{?>
 	next &raquo;
 	&nbsp;
+<?php }
+if (@$onePageOnly && $page < $pages-9) {?>
+  <a href="<?php echo Yii::app()->createUrl($this->getUri(array('page'=>$page+10)))?>">10 &raquo;</a>
+<?php }
+if (@$onePageOnly) {?>
+	&nbsp;&nbsp;
+	<?php echo $page?>/<?php echo $pages?>
 <?php }?>
