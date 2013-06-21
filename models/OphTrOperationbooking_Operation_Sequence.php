@@ -235,23 +235,25 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
 			$s_dateList = $sequence->getDateListForMonths(12);
 
 			foreach ($s_dateList as $date) {
-				$start = strtotime("$date $this->start_time");
-				$end = strtotime("$date $this->end_time");
+				if (in_array($date,$dateList)) {
+					$start = strtotime("$date $this->start_time");
+					$end = strtotime("$date $this->end_time");
 
-				$s_start = strtotime("$date $sequence->start_time");
-				$s_end = strtotime("$date $sequence->end_time");
+					$s_start = strtotime("$date $sequence->start_time");
+					$s_end = strtotime("$date $sequence->end_time");
 
-				if ($start < $s_end && $start >= $s_start) {
-					if (!isset($conflicts[$sequence->id]['start_time'])) {
-						$this->addError('start_time',"This start time conflicts with sequence $sequence->id");
-						$conflicts[$sequence->id]['start_time'] = 1;
+					if ($start < $s_end && $start >= $s_start) {
+						if (!isset($conflicts[$sequence->id]['start_time'])) {
+							$this->addError('start_time',"This start time conflicts with sequence $sequence->id");
+							$conflicts[$sequence->id]['start_time'] = 1;
+						}
 					}
-				}
 
-				if ($end > $s_start && $end <= $s_end) {
-					if (!isset($conflicts[$sequence->id]['end_time'])) {
-						$this->addError('end_time',"This end time conflicts with sequence $sequence->id");
-						$conflicts[$sequence->id]['end_time'] = 1;
+					if ($end > $s_start && $end <= $s_end) {
+						if (!isset($conflicts[$sequence->id]['end_time'])) {
+							$this->addError('end_time',"This end time conflicts with sequence $sequence->id");
+							$conflicts[$sequence->id]['end_time'] = 1;
+						}
 					}
 				}
 			}
