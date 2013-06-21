@@ -35,7 +35,16 @@
 			<?php }?>
 			<?php echo $form->dropDownList($session,'firm_id',Firm::model()->getListWithSpecialties(),array('empty'=>'- Emergency -'))?>
 			<?php echo $form->dropDownList($session,'theatre_id',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- None -'))?>
-			<?php echo $form->datePicker($session,'date',array(),array('null'=>true))?>
+			<?php if ($session->id) {?>
+				<div id="div_OphTrOperationbooking_Operation_Session_date" class="eventDetail">
+					<div class="label">Date:</div>
+					<div class="data">
+						<span class="label" style="margin-bottom: 0;"><?php echo $session->NHSDate('date')?></span>
+					</div>
+				</div>
+			<?php }else{?>
+				<?php echo $form->datePicker($session,'date',array('size'=>10))?>
+			<?php }?>
 			<?php echo $form->textField($session,'start_time',array('size'=>10))?>
 			<?php echo $form->textField($session,'end_time',array('size'=>10))?>
 			<?php echo $form->radioBoolean($session,'consultant')?>
