@@ -26,7 +26,8 @@
 	<?php echo $form->radioButtons($element, 'eye_id', 'eye')?>
 	<?php $form->widget('application.widgets.ProcedureSelection',array(
 		'element' => $element,
-		'durations' => true
+		'durations' => true,
+		'restrict_common' => 'booked',
 	))?>
 	<?php echo $form->radioBoolean($element, 'consultant_required')?>
 	<?php echo $form->radioButtons($element, 'anaesthetic_type_id', 'anaesthetic_type')?>

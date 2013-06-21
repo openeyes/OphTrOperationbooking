@@ -90,6 +90,7 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecord
 			'event' => array(self::BELONGS_TO, 'Event', 'event_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
+			'usercancelled' => array(self::BELONGS_TO, 'User', 'cancellation_user_id'),
 			'ward' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Ward', 'ward_id'),
 			'session' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Session', 'session_id'),
 			'operation' => array(self::BELONGS_TO, 'Element_OphTrOperationbooking_Operation', 'element_id'),

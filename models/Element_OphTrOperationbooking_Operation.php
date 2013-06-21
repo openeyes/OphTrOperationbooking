@@ -646,8 +646,8 @@
 			// FIXME: TEMPORARY FIX FOR THEATRE 9 MAINTAINANCE (USING OW4 INSTEAD)
 			$results[$ward->id] = $ward->name;
 		} else if (!empty($theatreId)) {
-					if ($ward = OphTrOperationbooking_Operation_Ward::model()->find('theatre_id=?',array($theatreId))) {
-				$results[$ward->id] = $ward->name;
+			if ($session->theatre->ward) {
+				$results[$session->theatre->ward_id] = $session->theatre->ward->name;
 			}
 		}
 
@@ -808,7 +808,9 @@
 
 		$event = $this->event;
 		$event->datetime = date("Y-m-d H:i:s");
-		$event->save();
+		if (!$event->save()) {
+			throw new Exception("Unable to set event datetime: ".print_r($event->getErrors(),true));
+		}
 
 		if ($this->booking) {
 			$this->booking->booking_cancellation_date = date('Y-m-d H:i:s');
@@ -1089,7 +1091,9 @@
 				$dls->date_2nd_reminder_letter_sent = null;
 				$dls->date_gp_letter_sent = null;
 			}
-			$dls->save();
+			if (!$dls->save()) {
+				throw new Exception("Unable to save date letter sent: ".print_r($dls->getErrors(),true));
+			}
 
 			OELog::log("Letter print confirmed, datelettersent=$dls->id confirmdate='$confirmdate'");
 

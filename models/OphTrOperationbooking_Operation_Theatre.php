@@ -23,6 +23,7 @@
  * @property integer $id
  * @property string $name
  * @property integer $site_id
+ * @property integer $ward_id
  * @property string $code
  *
  * The followings are the available model relations:
@@ -58,7 +59,7 @@ class OphTrOperationbooking_Operation_Theatre extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, site_id, code', 'safe'),
+			array('name, site_id, code, ward_id', 'safe'),
 			array('name, site_id, code', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
@@ -81,6 +82,7 @@ class OphTrOperationbooking_Operation_Theatre extends BaseActiveRecord
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
 			'sessions' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Session', 'theatre_id'),
+			'ward' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Ward', 'ward_id'),
 		);
 	}
 

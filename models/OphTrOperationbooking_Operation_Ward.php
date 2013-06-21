@@ -27,7 +27,6 @@
  * @property string $directions
  * @property integer $restriction
  * @property string $code
- * @property integer $theatre_id
  *
  * The followings are the available model relations:
  *
@@ -94,7 +93,6 @@ class OphTrOperationbooking_Operation_Ward extends BaseActiveRecord
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
-			'theatre' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Theatre', 'theatre_id'),
 		);
 	}
 
