@@ -67,7 +67,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('sequence_id, date, start_time, end_time', 'required'),
+			array('sequence_id, date, start_time, end_time, theatre_id', 'required'),
 			array('sequence_id, theatre_id', 'length', 'max' => 10),
 			array('comments, available, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id, theatre_id, start_time, end_time, deleted', 'safe'),
 			// The following rule is used by search().
@@ -237,6 +237,22 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 	protected function beforeValidate() {
 		if ($this->date && !preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$this->date)) {
 			$this->date = date('Y-m-d',strtotime($this->date));
+		}
+
+		// Ensure we are still compatible with any active bookings
+		foreach ($this->activeBookings as $booking) {
+			if ($booking->operation->anaesthetist_required && !$this->anaesthetist) {
+				$this->addError('anaesthetist','One or more active bookings require an anaesthetist');
+			}
+			if ($booking->operation->consultant_required && !$this->consultant) {
+				$this->addError('consultant','One or more active bookings require a consultant');
+			}
+			if ($booking->operation->event->episode->patient->isChild() && !$this->paediatric) {
+				$this->addError('paediatric','One or more active bookings are for a child');
+			}
+			if ($booking->operation->anaesthetic_type->name == 'GA' && !$this->general_anaesthetic) {
+				$this->addError('general_anaesthetic','One or more active bookings require general anaesthetic');
+			}
 		}
 
 		return parent::beforeValidate();
