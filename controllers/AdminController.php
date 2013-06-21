@@ -621,6 +621,8 @@ class AdminController extends ModuleAdminController {
 		if ($firm = Firm::model()->findByPk(@$_REQUEST['firm_id'])) {
 			$criteria->addCondition('firm_id=:firm_id');
 			$criteria->params[':firm_id'] = $firm->id;
+		} else if (@$_REQUEST['firm_id'] == 'NULL') {
+			$criteria->addCondition('firm_id is null');
 		}
 
 		if ($theatre = OphTrOperationbooking_Operation_Theatre::model()->findByPk(@$_REQUEST['theatre_id'])) {
@@ -634,7 +636,7 @@ class AdminController extends ModuleAdminController {
 		}
 
 		if (@$_REQUEST['date_to'] && strtotime(@$_REQUEST['date_to'])) {
-			$criteria->addCondition('end_date >= :end_date');
+			$criteria->addCondition('end_date <= :end_date');
 			$criteria->params[':end_date'] = date('Y-m-d',strtotime(@$_REQUEST['date_to']));
 		}
 
@@ -924,8 +926,10 @@ class AdminController extends ModuleAdminController {
 		$criteria = new CDbCriteria;
 
 		if ($firm = Firm::model()->findByPk(@$_REQUEST['firm_id'])) {
-			$criteria->addCondition('firm_id=:firm_id');
+			$criteria->addCondition('t.firm_id=:firm_id');
 			$criteria->params[':firm_id'] = $firm->id;
+		} else if (@$_REQUEST['firm_id'] == 'NULL') {
+			$criteria->addCondition('t.firm_id is null');
 		}
 
 		if ($theatre = OphTrOperationbooking_Operation_Theatre::model()->findByPk(@$_REQUEST['theatre_id'])) {
@@ -939,7 +943,7 @@ class AdminController extends ModuleAdminController {
 		}
 
 		if (@$_REQUEST['date_to'] && strtotime(@$_REQUEST['date_to'])) {
-			$criteria->addCondition('date >= :end_date');
+			$criteria->addCondition('date <= :end_date');
 			$criteria->params[':end_date'] = date('Y-m-d',strtotime(@$_REQUEST['date_to']));
 		}
 
@@ -1137,5 +1141,55 @@ class AdminController extends ModuleAdminController {
 			'session' => $session,
 			'errors' => $errors,
 		));
+	}
+
+	public function actionVerifyDeleteSessions() {
+		if (!empty($_POST['session'])) {
+			$session_ids = $_POST['session'];
+		} else if (@$_POST['use_filters']) {
+			$session_ids = array();
+			foreach ($this->getSessions(true) as $session) {
+				$session_ids[] = $session->id;
+			}
+		}
+
+		$criteria = new CDbCriteria;
+		$criteria->addInCondition('t.session_id',$session_ids);
+		$criteria->addCondition('booking_cancellation_date is null');
+
+		if (OphTrOperationbooking_Operation_Booking::model()
+			->with(array(
+				'operation' => array(
+					'with' => array(
+						'event' => array(
+							'with' => 'episode',
+						),
+					),
+				),
+			))
+			->find($criteria)) {
+			echo "0";
+		} else {
+			echo "1";
+		}
+	}
+
+	public function actionDeleteSessions() {
+		if (!empty($_POST['session'])) {
+			$criteria = new CDbCriteria;
+			$criteria->addInCondition('id',$_POST['session']);
+			$sessions = OphTrOperationbooking_Operation_Session::model()->findAll($criteria);
+		} else if (@$_POST['use_filters']) {
+			$sessions = $this->getSessions(true);
+		}
+
+		foreach ($sessions as $session) {
+			$session->deleted = 1;
+			if (!$session->save()) {
+				throw new Exception("Unable to mark session deleted: ".print_r($session->getErrors(),true));
+			}
+		}
+
+		echo "1";
 	}
 }

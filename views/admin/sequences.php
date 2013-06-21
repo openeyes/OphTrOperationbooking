@@ -21,7 +21,7 @@
 	<h3>Filters</h3>
 	<form id="admin_sequences_filters">
 		<div>
-			<?php echo CHtml::dropDownList('firm_id',@$_GET['firm_id'],Firm::model()->getListWithSpecialties(),array('empty'=>'- Firm -'))?>
+			<?php echo CHtml::dropDownList('firm_id',@$_GET['firm_id'],Firm::model()->getListWithSpecialtiesAndEmergency(),array('empty'=>'- Firm -'))?>
 			&nbsp;&nbsp;
 			<?php echo CHtml::dropDownList('theatre_id',@$_GET['theatre_id'],CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Theatre -'))?>
 			&nbsp;&nbsp;
@@ -88,6 +88,13 @@
 						<li class="checkall_message" style="display: none;">
 							<span class="column_checkall_message">
 								All <?php echo count($sequences['data'])?> sequences on this page are selected. <a href="#" id="select_all_items">Select all <?php echo $sequences['count']?> sequences that match the current search criteria</a>
+							</span>
+						</li>
+					<?php }?>
+					<?php if (count($sequences['data']) <1) {?>
+						<li class="no_results">
+							<span class="column_no_results">
+								No items matched your search criteria.
 							</span>
 						</li>
 					<?php }?>
@@ -295,6 +302,9 @@
 			$('li.checkall_message').show();
 		} else {
 			$('#update_inline').hide();
+			$('#select_all').val(0);
+			$('li.checkall_message').hide();
+			$('span.column_checkall_message').html("All <?php echo $sequences['items_per_page']?> sequences on this page are selected. <a href=\"#\" id=\"select_all_items\">Select all <?php echo $sequences['count']?> sequences that match the current search criteria</a>");
 		}
 	});
 

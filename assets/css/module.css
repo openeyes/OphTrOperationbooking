@@ -233,6 +233,7 @@ span.transport_pagination_selected { background-color: #0B59DA; color: #fff; }
 #admin_sequences ul li .column_weekday { width: 65px; display: inline-block; }
 #admin_sequences ul li .column_attributes { width: 140px; display: inline-block; }
 #admin_sequences ul li .column_checkall_message { width: 924px; display: inline-block; height: 14px; }
+#admin_sequences ul li .column_no_results { width: 928px; display: inline-block; }
 
 #admin_sequences_filters { margin-bottom: 1em; }
 #admin_sequences_filters div { margin-bottom: 0.8em; }
@@ -242,8 +243,10 @@ span.transport_pagination_selected { background-color: #0B59DA; color: #fff; }
 #admin_sequences span.notset { border-right: none; color: #aaa }
 
 ul.grid li.checkall_message { text-align: left; vertical-align: middle; background:#ddd; color: #444; font-size: 11px; font-weight:bold; min-width:10px; padding:0px; border-right:1px solid #bbb; }
+ul.grid li.no_results { text-align: left; vertical-align: middle; background:#ddd; color: #444; font-size: 11px; font-weight:bold; min-width:10px; padding:0px; border-right:1px solid #bbb; }
 
 ul.grid li.checkall_message span { border: 1px solid #bbb; text-align: center; padding: 4px 4px 4px 8px !important; background-color: #ffc; }
+ul.grid li.no_results span { border: 1px solid #bbb; text-align: center; background-color: #fff; }
 
 #inline_edit span.label { display: inline-block; width: 140px; }
 #inline_edit span.error { margin-left: 0.8em; color: #f00; font-weight: bold; }
@@ -261,6 +264,7 @@ ul.grid li.checkall_message span { border: 1px solid #bbb; text-align: center; p
 #admin_sessions ul li .column_available { width: 50px; display: inline-block; }
 #admin_sessions ul li .column_attributes { width: 140px; display: inline-block; }
 #admin_sessions ul li .column_checkall_message { width: 924px; display: inline-block; height: 14px; }
+#admin_sessions ul li .column_no_results { width: 928px; display: inline-block; }
 
 #admin_sessions_filters { margin-bottom: 1em; }
 #admin_sessions_filters div { margin-bottom: 0.8em; }

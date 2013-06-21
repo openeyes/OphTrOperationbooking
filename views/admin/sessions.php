@@ -21,7 +21,7 @@
 	<h3>Filters</h3>
 	<form id="admin_sessions_filters">
 		<div>
-			<?php echo CHtml::dropDownList('firm_id',@$_GET['firm_id'],Firm::model()->getListWithSpecialties(),array('empty'=>'- Firm -'))?>
+			<?php echo CHtml::dropDownList('firm_id',@$_GET['firm_id'],Firm::model()->getListWithSpecialtiesAndEmergency(),array('empty'=>'- Firm -'))?>
 			&nbsp;&nbsp;
 			<?php echo CHtml::dropDownList('theatre_id',@$_GET['theatre_id'],CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Theatre -'))?>
 			&nbsp;&nbsp;
@@ -91,6 +91,13 @@
 						<li class="checkall_message" style="display: none;">
 							<span class="column_checkall_message">
 								All <?php echo count($sessions['data'])?> sessions on this page are selected. <a href="#" id="select_all_items">Select all <?php echo $sessions['count']?> sessions that match the current search criteria</a>
+							</span>
+						</li>
+					<?php }?>
+					<?php if (count($sessions['data']) <1) {?>
+						<li class="no_results">
+							<span class="column_no_results">
+								No items matched your search criteria.
 							</span>
 						</li>
 					<?php }?>
@@ -203,6 +210,25 @@
 <div>
 	<?php echo EventAction::button('Add', 'add_session', array('colour' => 'blue'))->toHtml()?>
 	<?php echo EventAction::button('Delete', 'delete_session', array('colour' => 'blue'))->toHtml()?>
+	<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
+</div>
+<div id="confirm_delete_sessions" title="Confirm delete session" style="display: none;">
+	<div>
+		<div id="delete_sessions">
+			<div class="alertBox" style="margin-top: 10px; margin-bottom: 15px;">
+				<strong>WARNING: This will remove the sessions from the system.<br/>This action cannot be undone.</strong>
+			</div>
+			<p>
+				<strong>Are you sure you want to proceed?</strong>
+			</p>
+			<div class="buttonwrapper" style="margin-top: 15px; margin-bottom: 5px;">
+				<input type="hidden" id="medication_id" value="" />
+				<button type="submit" class="classy red venti btn_remove_sessions"><span class="button-span button-span-red">Remove session(s)</span></button>
+				<button type="submit" class="classy green venti btn_cancel_remove_sessions"><span class="button-span button-span-green">Cancel</span></button>
+				<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
+			</div>
+		</div>
+	</div>
 </div>
 <script type="text/javascript">
 	handleButton($('#et_filter'),function(e) {
@@ -267,6 +293,9 @@
 			$('li.checkall_message').show();
 		} else {
 			$('#update_inline').hide();
+			$('#select_all').val(0);
+			$('li.checkall_message').hide();
+			$('span.column_checkall_message').html("All <?php echo $sessions['items_per_page']?> sessions on this page are selected. <a href=\"#\" id=\"select_all_items\">Select all <?php echo $sessions['count']?> sessions that match the current search criteria</a>");
 		}
 	});
 
@@ -317,5 +346,95 @@
 		$('li.checkall_message').hide();
 		$('span.column_checkall_message').html("All <?php echo $sessions['items_per_page']?> sessions on this page are selected. <a href=\"#\" id=\"select_all_items\">Select all <?php echo $sessions['count']?> sessions that match the current search criteria</a>");
 		$('#update_inline').hide();
+	});
+
+	handleButton($('#et_delete_session'),function(e) {
+		e.preventDefault();
+
+		if ($('#select_all').val() == 0 && $('input[type="checkbox"][name="session[]"]:checked').length <1) {
+			alert("Please select the session(s) you wish to delete.");
+			enableButtons();
+			return;
+		}
+
+		if ($('#select_all').val() == 0) {
+			var data = $('#admin_sessions').serialize()+"&"+$('#inline_edit').serialize();
+		} else {
+			var data = $('#admin_sessions_filters').serialize()+"&"+$('#inline_edit').serialize()+"&use_filters=1";
+		}
+
+		$.ajax({
+			'type': 'POST',
+			'url': baseUrl+'/OphTrOperationbooking/admin/verifyDeleteSessions',
+			'data': data+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
+			'success': function(resp) {
+				if (resp == "1") {
+					enableButtons();
+
+					if ($('input[type="checkbox"][name="session[]"]:checked').length == 1) {
+						$('#confirm_delete_sessions').attr('title','Confirm delete session');
+						$('#delete_sessions').children('div').children('strong').html("WARNING: This will remove the session from the system.<br/><br/>This action cannot be undone.");
+						$('button.btn_remove_sessions').children('span').text('Remove session');
+					} else {
+						$('#confirm_delete_sessions').attr('title','Confirm delete sessions');
+						$('#delete_sessions').children('div').children('strong').html("WARNING: This will remove the sessions from the system.<br/><br/>This action cannot be undone.");
+						$('button.btn_remove_sessions').children('span').text('Remove sessions');
+					}
+
+					$('#confirm_delete_sessions').dialog({
+						resizable: false,
+						modal: true,
+						width: 560
+					});
+				} else {
+					alert("One or more of the selected sessions have active bookings and so cannot be deleted.");
+					enableButtons();
+				}
+			}
+		});
+	});
+
+	$('button.btn_cancel_remove_sessions').click(function(e) {
+		e.preventDefault();
+		$('#confirm_delete_sessions').dialog('close');
+	});
+
+	handleButton($('button.btn_remove_sessions'),function(e) {
+		e.preventDefault();
+
+		if ($('#select_all').val() == 0) {
+			var data = $('#admin_sessions').serialize()+"&"+$('#inline_edit').serialize();
+		} else {
+			var data = $('#admin_sessions_filters').serialize()+"&"+$('#inline_edit').serialize()+"&use_filters=1";
+		}
+
+		// verify again as a precaution against race conditions
+		$.ajax({
+			'type': 'POST',
+			'url': baseUrl+'/OphTrOperationbooking/admin/verifyDeleteSessions',
+			'data': data+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
+			'success': function(resp) {
+				if (resp == "1") {
+					$.ajax({
+						'type': 'POST',
+						'url': baseUrl+'/OphTrOperationbooking/admin/deleteSessions',
+						'data': data+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
+						'success': function(resp) {
+							if (resp == "1") {
+								window.location.reload();
+							} else {
+								alert("There was an unexpected error deleting the sessions, please try again or contact support for assistance");
+								enableButtons();
+								$('#confirm_delete_sessions').dialog('close');
+							}
+						}
+					});
+				} else {
+					alert("One or more of the selected sessions now have active bookings and so cannot be deleted.");
+					enableButtons();
+					$('#confirm_delete_sessions').dialog('close');
+				}
+			}
+		});
 	});
 </script>
