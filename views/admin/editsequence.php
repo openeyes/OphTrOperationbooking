@@ -34,13 +34,7 @@
 			<?php echo $form->dropDownList($sequence,'theatre_id',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- None -'))?>
 			<?php echo $form->datePicker($sequence,'start_date',array(),array('null'=>true))?>
 			<?php echo $form->datePicker($sequence,'end_date',array(),array('null'=>true))?>
-			<div id="div_OphTrOperationbooking_Operation_Sequence_weekday" class="eventDetail">
-				<div class="label">Weekday:</div>
-				<div class="data">
-					<span id="weekday" class="label" style="margin-top: 6px; margin-bottom: 0;"><?php if ($sequence->id) { echo date('l',strtotime($sequence->start_date)); } else { echo 'Not set'; }?></span>
-					<?php echo $form->hiddenField($sequence,'weekday')?>
-				</div>
-			</div>
+			<?php echo $form->dropDownList($sequence,'weekday',array(1=>'Monday',2=>'Tuesday',3=>'Wednesday',4=>'Thursday',5=>'Friday',6=>'Saturday',7=>'Sunday'),array('empty'=>'- Weekday -'))?>
 			<?php echo $form->textField($sequence,'start_time',array('size'=>10))?>
 			<?php echo $form->textField($sequence,'end_time',array('size'=>10))?>
 			<?php echo $form->dropDownList($sequence,'interval_id',CHtml::listData(OphTrOperationbooking_Operation_Sequence_Interval::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- None -'))?>
@@ -121,17 +115,9 @@
 			day_id = 7;
 		}
 
-		switch (day_id) {
-			case 1: $('#weekday').text('Monday'); break;
-			case 2: $('#weekday').text('Tuesday'); break;
-			case 3: $('#weekday').text('Wednesday'); break;
-			case 4: $('#weekday').text('Thursday'); break;
-			case 5: $('#weekday').text('Friday'); break;
-			case 6: $('#weekday').text('Saturday'); break;
-			case 7: $('#weekday').text('Sunday'); break;
+		if ($('#OphTrOperationbooking_Operation_Sequence_weekday').val() == '') {
+			$('#OphTrOperationbooking_Operation_Sequence_weekday').val(day_id);
 		}
-
-		$('#OphTrOperationbooking_Operation_Sequence_weekday').val(day_id);
 	});
 
 	handleButton($('#et_delete_sequence'),function(e) {
