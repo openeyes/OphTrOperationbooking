@@ -1057,17 +1057,24 @@ class AdminController extends ModuleAdminController {
 			$sessions = $this->getSessions(true);
 		}
 
-		$errors = $this->saveSessions($sessions);
+		$result = $this->saveSessions($sessions);
 
-		if (empty($errors)) {
-			$errors = $this->saveSessions($sessions,true);
+		if (empty($result['errors'])) {
+			foreach ($result['sessions'] as $session) {
+				if (!$session->save()) {
+					echo json_encode($session->getErrors());
+					return;
+				}
+			}
+			echo json_encode(array());
+		} else {
+			echo json_encode($result['errors']);
 		}
-
-		echo json_encode($errors);
 	}
 
-	public function saveSessions($sessions, $save=false) {
+	public function saveSessions($sessions) {
 		$errors = array();
+		$_sessions = array();
 
 		foreach ($sessions as $session) {
 			$changed = false;
@@ -1094,14 +1101,15 @@ class AdminController extends ModuleAdminController {
 				if (!$session->validate()) {
 					$errors = array_merge($errors,$session->getErrors());
 				} else {
-					if ($save && !$session->save()) {
-						$errors = array_merge($errors,$session->getErrors());
-					}
+					$_sessions[] = $session;
 				}
 			}
 		}
 
-		return $errors;
+		return array(
+			'sessions' => $_sessions,
+			'errors' => $errors,
+		);
 	}
 
 	public function actionEditSession($id) {
