@@ -239,6 +239,24 @@
 	<?php echo EventAction::button('Add', 'add_sequence', array('colour' => 'blue'))->toHtml()?>
 	<?php echo EventAction::button('Delete', 'delete_sequence', array('colour' => 'blue'))->toHtml()?>
 </div>
+<div id="confirm_delete_sequences" title="Confirm delete sequence" style="display: none;">
+	<div>
+		<div id="delete_sequences">
+			<div class="alertBox" style="margin-top: 10px; margin-bottom: 15px;">
+				<strong>WARNING: This will remove the sequences from the system.<br/>This action cannot be undone.</strong>
+			</div>
+			<p>
+				<strong>Are you sure you want to proceed?</strong>
+			</p>
+			<div class="buttonwrapper" style="margin-top: 15px; margin-bottom: 5px;">
+				<input type="hidden" id="medication_id" value="" />
+				<button type="submit" class="classy red venti btn_remove_sequences"><span class="button-span button-span-red">Remove sequence(s)</span></button>
+				<button type="submit" class="classy green venti btn_cancel_remove_sequences"><span class="button-span button-span-green">Cancel</span></button>
+				<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
+			</div>
+		</div>
+	</div>
+</div>
 <script type="text/javascript">
 	handleButton($('#et_filter'),function(e) {
 		e.preventDefault();
@@ -354,5 +372,95 @@
 		$('li.checkall_message').hide();
 		$('span.column_checkall_message').html("All <?php echo $sequences['items_per_page']?> sequences on this page are selected. <a href=\"#\" id=\"select_all_items\">Select all <?php echo $sequences['count']?> sequences that match the current search criteria</a>");
 		$('#update_inline').hide();
+	});
+
+	handleButton($('#et_delete_sequence'),function(e) {
+		e.preventDefault();
+
+		if ($('#select_all').val() == 0 && $('input[type="checkbox"][name="sequence[]"]:checked').length <1) {
+			alert("Please select the sequence(s) you wish to delete.");
+			enableButtons();
+			return;
+		}
+
+		if ($('#select_all').val() == 0) {
+			var data = $('#admin_sequences').serialize()+"&"+$('#inline_edit').serialize();
+		} else {
+			var data = $('#admin_sequences_filters').serialize()+"&"+$('#inline_edit').serialize()+"&use_filters=1";
+		}
+
+		$.ajax({
+			'type': 'POST',
+			'url': baseUrl+'/OphTrOperationbooking/admin/verifyDeleteSequences',
+			'data': data+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
+			'success': function(resp) {
+				if (resp == "1") {
+					enableButtons();
+
+					if ($('input[type="checkbox"][name="sequence[]"]:checked').length == 1) {
+						$('#confirm_delete_sequences').attr('title','Confirm delete sequence');
+						$('#delete_sequences').children('div').children('strong').html("WARNING: This will remove the sequence from the system.<br/><br/>This action cannot be undone.");
+						$('button.btn_remove_sequences').children('span').text('Remove sequence');
+					} else {
+						$('#confirm_delete_sequences').attr('title','Confirm delete sequences');
+						$('#delete_sequences').children('div').children('strong').html("WARNING: This will remove the sequences from the system.<br/><br/>This action cannot be undone.");
+						$('button.btn_remove_sequences').children('span').text('Remove sequences');
+					}
+
+					$('#confirm_delete_sequences').dialog({
+						resizable: false,
+						modal: true,
+						width: 560
+					});
+				} else {
+					alert("One or more of the selected sequences have sessions with active bookings and so cannot be deleted.");
+					enableButtons();
+				}
+			}
+		});
+	});
+
+	$('button.btn_cancel_remove_sequences').click(function(e) {
+		e.preventDefault();
+		$('#confirm_delete_sequences').dialog('close');
+	});
+
+	handleButton($('button.btn_remove_sequences'),function(e) {
+		e.preventDefault();
+
+		if ($('#select_all').val() == 0) {
+			var data = $('#admin_sequences').serialize()+"&"+$('#inline_edit').serialize();
+		} else {
+			var data = $('#admin_sequences_filters').serialize()+"&"+$('#inline_edit').serialize()+"&use_filters=1";
+		}
+
+		// verify again as a precaution against race conditions
+		$.ajax({
+			'type': 'POST',
+			'url': baseUrl+'/OphTrOperationbooking/admin/verifyDeleteSequences',
+			'data': data+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
+			'success': function(resp) {
+				if (resp == "1") {
+					$.ajax({
+						'type': 'POST',
+						'url': baseUrl+'/OphTrOperationbooking/admin/deleteSequences',
+						'data': data+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
+						'success': function(resp) {
+							if (resp == "1") {
+								window.location.reload();
+							} else {
+								alert("There was an unexpected error deleting the sequences, please try again or contact support for assistance");
+								enableButtons();
+								$('#confirm_delete_sequences').dialog('close');
+							}
+						}
+					});
+				} else {
+					alert("One or more of the selected sequences now have sessions with active bookings and so cannot be deleted.");
+					enableButtons();
+					$('#confirm_delete_sequences').dialog('close');
+				}
+			}
+		});
 	});
 </script>

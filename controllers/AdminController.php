@@ -1192,4 +1192,62 @@ class AdminController extends ModuleAdminController {
 
 		echo "1";
 	}
+
+	public function actionVerifyDeleteSequences() {
+		if (!empty($_POST['sequence'])) {
+			$sequence_ids = $_POST['sequence'];
+		} else if (@$_POST['use_filters']) {
+			$sequence_ids = array();
+			foreach ($this->getSequences(true) as $sequence) {
+				$sequence_ids[] = $sequence->id;
+			}
+		}
+
+		$criteria = new CDbCriteria;
+		$criteria->addInCondition('session.sequence_id',$sequence_ids);
+		$criteria->addCondition('booking_cancellation_date is null');
+
+		if (OphTrOperationbooking_Operation_Booking::model()
+			->with(array(
+				'session',
+				'operation' => array(
+					'with' => array(
+						'event' => array(
+							'with' => 'episode',
+						),
+					),
+				),
+			))
+			->find($criteria)) {
+			echo "0";
+		} else {
+			echo "1";
+		}
+	}
+
+	public function actionDeleteSequences() {
+		if (!empty($_POST['sequence'])) {
+			$criteria = new CDbCriteria;
+			$criteria->addInCondition('id',$_POST['sequence']);
+			$sequences = OphTrOperationbooking_Operation_Sequence::model()->findAll($criteria);
+		} else if (@$_POST['use_filters']) {
+			$sequences = $this->getSequences(true);
+		}
+
+		foreach ($sequences as $sequence) {
+			$sequence->deleted = 1;
+			if (!$sequence->save()) {
+				throw new Exception("Unable to mark sequence deleted: ".print_r($sequence->getErrors(),true));
+			}
+
+			foreach ($sequence->sessions as $session) {
+				$session->deleted = 1;
+				if (!$session->save()) {
+					throw new Exception("Unable to mark session deleted: ".print_r($session->getErrors(),true));
+				}
+			}
+		}
+
+		echo "1";
+	}
 }
