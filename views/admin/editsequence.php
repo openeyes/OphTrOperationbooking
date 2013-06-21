@@ -75,8 +75,28 @@
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		<?php echo EventAction::button('View sessions','view_sessions',array('colour'=>'blue'))->toHtml()?>
 		<?php echo EventAction::button('Add session','add_session_to_sequence',array('colour'=>'blue'))->toHtml()?>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<?php echo EventAction::button('Delete sequence','delete_sequence',array('colour'=>'red'))->toHtml()?>
 	<?php }?>
 	<img class="loader" src="<?php echo Yii::app()->createUrl('/img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
+</div>
+<div id="confirm_delete_sequence" title="Confirm delete sequence" style="display: none;">
+	<div>
+		<div id="delete_sequence">
+			<div class="alertBox" style="margin-top: 10px; margin-bottom: 15px;">
+				<strong>WARNING: This will remove the sequence from the system.<br/>This action cannot be undone.</strong>
+			</div>
+			<p>
+				<strong>Are you sure you want to proceed?</strong>
+			</p>
+			<div class="buttonwrapper" style="margin-top: 15px; margin-bottom: 5px;">
+				<input type="hidden" id="medication_id" value="" />
+				<button type="submit" class="classy red venti btn_remove_sequence"><span class="button-span button-span-red">Remove sequence</span></button>
+				<button type="submit" class="classy green venti btn_cancel_remove_sequence"><span class="button-span button-span-green">Cancel</span></button>
+				<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
+			</div>
+		</div>
+	</div>
 </div>
 <script type="text/javascript">
 	handleButton($('#et_cancel'),function(e) {
@@ -112,5 +132,64 @@
 		}
 
 		$('#OphTrOperationbooking_Operation_Sequence_weekday').val(day_id);
+	});
+
+	handleButton($('#et_delete_sequence'),function(e) {
+		$.ajax({
+			'type': 'POST',
+			'url': baseUrl+'/OphTrOperationbooking/admin/verifyDeleteSequences',
+			'data': "sequence[]=<?php echo $sequence->id?>&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
+			'success': function(resp) {
+				if (resp == "1") {
+					enableButtons();
+
+					$('#confirm_delete_sequence').dialog({
+						resizable: false,
+						modal: true,
+						width: 560
+					});
+				} else {
+					alert("This sequence has one or more sessions with active bookings and so cannot be deleted.");
+					enableButtons();
+				}
+			}
+		});
+	});
+
+	handleButton($('button.btn_remove_sequence'),function(e) {
+		e.preventDefault();
+
+		$.ajax({
+			'type': 'POST',
+			'url': baseUrl+'/OphTrOperationbooking/admin/verifyDeleteSequences',
+			'data': "sequence[]=<?php echo $sequence->id?>&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
+			'success': function(resp) {
+				if (resp == "1") {
+					$.ajax({
+						'type': 'POST',
+						'url': baseUrl+'/OphTrOperationbooking/admin/deleteSequences',
+						'data': "sequence[]=<?php echo $sequence->id?>&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
+						'success': function(resp) {
+							if (resp == "1") {
+								window.location.href = baseUrl+'/OphTrOperationbooking/admin/viewSequences';
+							} else {
+								alert("There was an unexpected error deleting the sequence, please try again or contact support for assistance");
+								enableButtons();
+								$('#confirm_delete_sequences').dialog('close');
+							}
+						}
+					});
+				} else {
+					alert("This sequence now has one or more sessions with active bookings and so cannot be deleted.");
+					enableButtons();
+					$('#confirm_delete_sequences').dialog('close');
+				}
+			}
+		});
+	});
+
+	$('button.btn_cancel_remove_sequence').click(function(e) {
+		e.preventDefault();
+		$('#confirm_delete_sequence').dialog('close');
 	});
 </script>
