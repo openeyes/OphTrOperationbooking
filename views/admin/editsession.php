@@ -60,14 +60,96 @@
 <div>
 	<?php echo EventAction::button('Save', 'save', array('colour' => 'green'))->toHtml()?>
 	<?php echo EventAction::button('Cancel', 'cancel', array('colour' => 'red'))->toHtml()?>
+	<?php if ($session->id) {?>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<?php echo EventAction::button('Delete session','delete_session',array('colour'=>'red'))->toHtml()?>
+	<?php }?>
 	<img class="loader" src="<?php echo Yii::app()->createUrl('/img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
+</div>
+<div id="confirm_delete_session" title="Confirm delete session" style="display: none;">
+	<div>
+		<div id="delete_session">
+			<div class="alertBox" style="margin-top: 10px; margin-bottom: 15px;">
+				<strong>WARNING: This will remove the session from the system.<br/>This action cannot be undone.</strong>
+			</div>
+			<p>
+				<strong>Are you sure you want to proceed?</strong>
+			</p>
+			<div class="buttonwrapper" style="margin-top: 15px; margin-bottom: 5px;">
+				<input type="hidden" id="medication_id" value="" />
+				<button type="submit" class="classy red venti btn_remove_session"><span class="button-span button-span-red">Remove session</span></button>
+				<button type="submit" class="classy green venti btn_cancel_remove_session"><span class="button-span button-span-green">Cancel</span></button>
+				<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
+			</div>
+		</div>
+	</div>
 </div>
 <script type="text/javascript">
 	handleButton($('#et_cancel'),function(e) {
 		e.preventDefault();
 		window.location.href = baseUrl+'/OphTrOperationbooking/admin/viewSessions';
 	});
+
 	handleButton($('#et_save'),function(e) {
 		$('#adminform').submit();
+	});
+
+	handleButton($('#et_delete_session'),function(e) {
+		$.ajax({
+			'type': 'POST',
+			'url': baseUrl+'/OphTrOperationbooking/admin/verifyDeleteSessions',
+			'data': "session[]=<?php echo $session->id?>&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
+			'success': function(resp) {
+				if (resp == "1") {
+					enableButtons();
+
+					$('#confirm_delete_session').dialog({
+						resizable: false,
+						modal: true,
+						width: 560
+					});
+				} else {
+					alert("This session has one or more active bookings and so cannot be deleted.");
+					enableButtons();
+				}
+			}
+		});
+	});
+
+	handleButton($('button.btn_remove_session'),function(e) {
+		e.preventDefault();
+
+		$.ajax({
+			'type': 'POST',
+			'url': baseUrl+'/OphTrOperationbooking/admin/verifyDeleteSessions',
+			'data': "session[]=<?php echo $session->id?>&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
+			'success': function(resp) {
+				if (resp == "1") {
+					$.ajax({
+						'type': 'POST',
+						'url': baseUrl+'/OphTrOperationbooking/admin/deleteSessions',
+						'data': "session[]=<?php echo $session->id?>&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
+						'success': function(resp) {
+							if (resp == "1") {
+								window.location.href = baseUrl+'/OphTrOperationbooking/admin/viewSessions';
+							} else {
+								alert("There was an unexpected error deleting the session, please try again or contact support for assistance");
+								enableButtons();
+								$('#confirm_delete_sessions').dialog('close');
+							}
+						}
+					});
+				} else {
+					alert("This session has one or more active bookings and so cannot be deleted.");
+					enableButtons();
+					$('#confirm_delete_sessions').dialog('close');
+				}
+			}
+		});
+	});
+
+	$('button.btn_cancel_remove_session').click(function(e) {
+		e.preventDefault();
+		$('#confirm_delete_session').dialog('close');
 	});
 </script>
