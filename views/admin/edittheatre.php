@@ -33,6 +33,7 @@
 			<?php echo $form->dropDownList($theatre,'site_id',Site::model()->getListForCurrentInstitution(),array('empty'=>'- Site -'))?>
 			<?php echo $form->textField($theatre,'name')?>
 			<?php echo $form->textField($theatre,'code',array('size'=>10))?>
+			<?php echo $form->dropDownList($theatre,'ward_id',CHtml::listData(OphTrOperationbooking_Operation_Ward::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- None -'))?>
 			<?php $this->endWidget()?>
 		</div>
 	</div>

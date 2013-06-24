@@ -28,7 +28,6 @@
 						<span class="column_site">Site</span>
 						<span class="column_name">Name</span>
 						<span class="column_code">Code</span>
-						<span class="column_theatre">Theatre</span>
 						<span class="column_restrictions">Restrictions</span>
 					</li>
 					<div class="sortable">
@@ -41,7 +40,6 @@
 								<span class="column_site"><?php echo $ward->site->name?></span>
 								<span class="column_name"><?php echo $ward->name?></span>
 								<span class="column_code"><?php echo $ward->code?>&nbsp;</span>
-								<span class="column_theatre"><?php echo $ward->theatre ? $ward->theatre->name : 'None'?></span>
 								<span class="column_restrictions"><?php echo $ward->restrictionText?></span>
 							</li>
 						<?php }?>

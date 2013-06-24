@@ -34,7 +34,6 @@
 			<?php echo $form->textField($ward,'name')?>
 			<?php echo $form->textField($ward,'long_name')?>
 			<?php echo $form->textField($ward,'code',array('size'=>10))?>
-			<?php echo $form->dropDownList($ward,'theatre_id',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- None -'))?>
 			<?php echo $form->radioBoolean($ward,'restriction_male')?>
 			<?php echo $form->radioBoolean($ward,'restriction_female')?>
 			<?php echo $form->radioBoolean($ward,'restriction_child')?>

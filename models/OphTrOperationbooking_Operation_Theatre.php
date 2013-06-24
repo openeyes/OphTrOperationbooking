@@ -100,6 +100,7 @@ class OphTrOperationbooking_Operation_Theatre extends BaseActiveRecord
 	{
 		return array(
 			'site_id' => 'Site',
+			'ward_id' => 'Ward',
 		);
 	}
 

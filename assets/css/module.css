@@ -277,16 +277,16 @@ div.view_sessions { margin-top: 0.4em; margin-bottom: 1em; }
 
 form#theatres ul li { padding: 0; margin: 0; line-height: 15px; font-size: 11px; }
 form#theatres ul li .column_checkbox { width: 15px; display: inline-block; }
-form#theatres ul li .column_site { width: 250px; display: inline-block; }
-form#theatres ul li .column_name { width: 250px; display: inline-block; }
+form#theatres ul li .column_site { width: 252px; display: inline-block; }
+form#theatres ul li .column_name { width: 252px; display: inline-block; }
 form#theatres ul li .column_code { width: 50px; display: inline-block; }
+form#theatres ul li .column_ward { width: 252px; display: inline-block; }
 
 #admin_wards ul li { padding: 0; margin: 0; line-height: 15px; font-size: 11px; }
 #admin_wards ul li .column_checkbox { width: 15px; display: inline-block; }
-#admin_wards ul li .column_site { width: 170px; display: inline-block; }
-#admin_wards ul li .column_name { width: 210px; display: inline-block; }
+#admin_wards ul li .column_site { width: 257px; display: inline-block; }
+#admin_wards ul li .column_name { width: 297px; display: inline-block; }
 #admin_wards ul li .column_code { width: 40px; display: inline-block; }
-#admin_wards ul li .column_theatre { width: 150px; display: inline-block; }
 #admin_wards ul li .column_restrictions { width: 212px; display: inline-block; }
 
 #admin_schedulingoptions ul li { padding: 0; margin: 0; line-height: 15px; font-size: 11px; }
