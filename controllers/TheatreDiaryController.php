@@ -334,10 +334,18 @@ class TheatreDiaryController extends BaseEventTypeController
 		*/
 	public function actionFilterFirms()
 	{
-		echo CHtml::tag('option', array('value'=>''), CHtml::encode('All firms'), true);
+		if (@$_POST['empty']) {
+			echo CHtml::tag('option', array('value'=>''), CHtml::encode('- Firm -'), true);
+		} else {
+			echo CHtml::tag('option', array('value'=>''), CHtml::encode('All firms'), true);
+		}
 
 		if (!empty($_POST['subspecialty_id'])) {
-			$firms = $this->getFilteredFirms($_POST['subspecialty_id']);
+			$subspecialty_id = $_POST['subspecialty_id'];
+		} else if (!empty($_POST['service_id'])) {
+			$subspecialty_id = ServiceSubspecialtyAssignment::model()->find('service_id=?',array($_POST['service_id']))->subspecialty_id;
+
+			$firms = $this->getFilteredFirms($subspecialty_id);
 
 			foreach ($firms as $id => $name) {
 				echo CHtml::tag('option', array('value'=>$id), CHtml::encode($name), true);
@@ -351,7 +359,11 @@ class TheatreDiaryController extends BaseEventTypeController
 		*/
 	public function actionFilterTheatres()
 	{
-		echo CHtml::tag('option', array('value'=>''), CHtml::encode('All theatres'), true);
+		if (@$_POST['empty']) {
+			echo CHtml::tag('option', array('value'=>''), CHtml::encode('- Theatre -'), true);
+		} else {
+			echo CHtml::tag('option', array('value'=>''), CHtml::encode('All theatres'), true);
+		}
 
 		if (!empty($_POST['site_id'])) {
 			$theatres = $this->getFilteredTheatres($_POST['site_id']);

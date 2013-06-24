@@ -30,8 +30,11 @@
  * @property string $telephone
  */
 
-class OphTrOperationbooking_Waiting_List_Contact_Rule extends BaseActiveRecord
+class OphTrOperationbooking_Waiting_List_Contact_Rule extends BaseTree
 {
+	public $textFields = array('site','service','firm','is_child','name','telephone');
+	public $textFieldsDropdown = array('site','service','firm','is_child','name','telephone');
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -57,7 +60,7 @@ class OphTrOperationbooking_Waiting_List_Contact_Rule extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('parent_rule_id, site_id, service_id, firm_id, is_child, name, telephone', 'safe'),
+			array('parent_rule_id, rule_order, site_id, service_id, firm_id, is_child, name, telephone', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, parent_rule_id, site_id, service_id, firm_id, is_child, name, telephone', 'safe', 'on' => 'search'),
@@ -75,6 +78,10 @@ class OphTrOperationbooking_Waiting_List_Contact_Rule extends BaseActiveRecord
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 			'children' => array(self::HAS_MANY, 'OphTrOperationbooking_Waiting_List_Contact_Rule', 'parent_rule_id'),
+			'parent' => array(self::BELONGS_TO, 'OphTrOperationbooking_Waiting_List_Contact_Rule', 'parent_rule_id'),
+			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
+			'service' => array(self::BELONGS_TO, 'Service', 'service_id'),
+			'firm' => array(self::BELONGS_TO, 'Firm', 'firm_id'),
 		);
 	}
 
@@ -84,6 +91,11 @@ class OphTrOperationbooking_Waiting_List_Contact_Rule extends BaseActiveRecord
 	public function attributeLabels()
 	{
 		return array(
+			'parent_rule_id' => 'Parent',
+			'rule_order' => 'Rule order',
+			'site_id' => 'Site',
+			'firm_id' => 'Firm',
+			'service_id' => 'Service',
 		);
 	}
 
@@ -123,5 +135,9 @@ class OphTrOperationbooking_Waiting_List_Contact_Rule extends BaseActiveRecord
 		}
 
 		return $this;
+	}
+
+	public function getIs_child_TreeText() {
+		return $this->is_child ? 'Child' : 'Adult';
 	}
 }

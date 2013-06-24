@@ -27,8 +27,11 @@
  * @property boolean $show_warning
  */
 
-class OphTrOperationbooking_Admission_Letter_Warning_Rule extends BaseActiveRecord
+class OphTrOperationbooking_Admission_Letter_Warning_Rule extends BaseTree 
 {
+	public $textFields = array('ruleType','site','firm','theatre','subspecialty','is_child','show_warning','warning_text','emphasis','strong');
+	public $textFieldsDropdown = array('ruleType','site','firm','theatre','subspecialty','is_child','show_warning','warning_text','emphasis','strong');
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -54,7 +57,8 @@ class OphTrOperationbooking_Admission_Letter_Warning_Rule extends BaseActiveReco
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('rule_type_id, parent_rule_id, rule_order, site_id, theatre_id, subspecialty_id, is_child, show_warning, warning_text, emphasis, strong', 'safe'),
+			array('rule_type_id, parent_rule_id, rule_order, site_id, theatre_id, subspecialty_id, is_child, show_warning, warning_text, emphasis, strong, firm_id', 'safe'),
+			array('rule_type_id', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, name', 'safe', 'on' => 'search'),
@@ -72,6 +76,12 @@ class OphTrOperationbooking_Admission_Letter_Warning_Rule extends BaseActiveReco
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 			'children' => array(self::HAS_MANY, 'OphTrOperationbooking_Admission_Letter_Warning_Rule', 'parent_rule_id'),
+			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
+			'theatre' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Theatre','theatre_id'),
+			'subspecialty' => array(self::BELONGS_TO, 'Subspecialty', 'subspecialty_id'),
+			'firm' => array(self::BELONGS_TO, 'Firm', 'firm_id'),
+			'ruleType' => array(self::BELONGS_TO, 'OphTrOperationbooking_Admission_Letter_Warning_Rule_Type','rule_type_id'),
+			'parent' => array(self::BELONGS_TO, 'OphTrOperationbooking_Admission_Letter_Warning_Rule', 'parent_rule_id'),
 		);
 	}
 
@@ -82,7 +92,18 @@ class OphTrOperationbooking_Admission_Letter_Warning_Rule extends BaseActiveReco
 	{
 		return array(
 			'id' => 'ID',
-			'name' => 'Name',
+			'rule_type_id' => 'Rule type',
+			'parent_rule_id' => 'Parent',
+			'rule_order' => 'Rule order',
+			'site_id' => 'Site',
+			'firm_id' => 'Firm',
+			'subspecialty_id' => 'Subspecialty',
+			'theatre_id' => 'Theatre',
+			'is_child' => 'Is child',
+			'show_warning' => 'Show warning',
+			'warning_text' => 'Warning text',
+			'emphasis' => 'Italics',
+			'strong' => 'Bold',
 		);
 	}
 
@@ -140,5 +161,28 @@ class OphTrOperationbooking_Admission_Letter_Warning_Rule extends BaseActiveReco
 		}
 
 		return $this;
+	}
+
+	public function getWarning_text_TreeText() {
+		if ($this->warning_text) {
+			return substr($this->warning_text,0,55).' ...';
+		}
+		return '';
+	}
+
+	public function getIs_child_TreeText() {
+		return $this->is_child ? 'C' : 'A';
+	}
+
+	public function getShow_warning_TreeText() {
+		return $this->show_warning ? 'SHOW' : 'HIDE';
+	}
+
+	public function getEmphasis_TreeText() {
+		return $this->emphasis ? 'I' : null;
+	}
+
+	public function getStrong_TreeText() {
+		return $this->strong ? 'B' : null;
 	}
 }

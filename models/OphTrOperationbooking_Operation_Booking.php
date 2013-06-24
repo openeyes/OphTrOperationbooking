@@ -96,6 +96,7 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecord
 			'operation' => array(self::BELONGS_TO, 'Element_OphTrOperationbooking_Operation', 'element_id'),
 			'theatre' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Theatre', 'session_theatre_id'),
 			'cancellationReason' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Cancellation_Reason', 'cancellation_reason_id'),
+			'schedulingOption' => array(self::BELONGS_TO, 'Element_OphTrOperationbooking_ScheduleOperation', 'element_id'),
 		);
 	}
 

@@ -59,14 +59,21 @@ class OphTrOperationbooking_Operation_Theatre extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, site_id, code, ward_id', 'safe'),
+			array('name, site_id, code, ward_id, deleted', 'safe'),
 			array('name, site_id, code', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, name, site_id, code', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
+	public function defaultScope() {
+		$table_alias = $this->getTableAlias(false,false);
+		return array(
+			'condition' => $table_alias.'.deleted = 0',
+		);
+	}
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -92,6 +99,7 @@ class OphTrOperationbooking_Operation_Theatre extends BaseActiveRecord
 	public function attributeLabels()
 	{
 		return array(
+			'site_id' => 'Site',
 		);
 	}
 

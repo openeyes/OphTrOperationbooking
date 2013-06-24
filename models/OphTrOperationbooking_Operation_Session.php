@@ -67,15 +67,22 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('sequence_id, date, start_time, end_time', 'required'),
+			array('sequence_id, date, start_time, end_time, theatre_id', 'required'),
 			array('sequence_id, theatre_id', 'length', 'max' => 10),
-			array('comments, available, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id', 'safe'),
+			array('comments, available, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id, theatre_id, start_time, end_time, deleted', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, sequence_id, theatre_id, date, start_time, end_time, comments, available, firm_id, site_id, weekday, consultant, paediatric, anaesthetist, general_anaesthetic', 'safe', 'on'=>'search'),
 		);
 	}
-	
+
+	public function defaultScope() {
+		$table_alias = $this->getTableAlias(false,false);
+		return array(
+			'condition' => $table_alias.'.deleted = 0',
+		);
+	}
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -93,6 +100,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 			'theatre' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Theatre', 'theatre_id'),
 			'firm' => array(self::BELONGS_TO, 'Firm', 'firm_id'),
 			'activeBookings' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Booking', 'session_id', 'condition' => 'booking_cancellation_date is null'),
+			'sequence' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Sequence', 'sequence_id'),
 		);
 	}
 
@@ -102,6 +110,12 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 	public function attributeLabels()
 	{
 		return array(
+			'sequence_id' => 'Sequence ID',
+			'firm_id' => 'Firm',
+			'theatre_id' => 'Theatre',
+			'start_time' => 'Start time',
+			'end_time' => 'End time',
+			'general_anaesthetic' => 'General anaesthetic',
 		);
 	}
 
@@ -214,6 +228,42 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		if ($this->date < date('Y-m-d')) {
 			return "This session is in the past and so cannot be booked into.";
 		}
+	}
+
+	public function getWeekdayText() {
+		return date('l',strtotime($this->date));
+	}
+
+	protected function beforeValidate() {
+		if ($this->date && !preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$this->date)) {
+			$this->date = date('Y-m-d',strtotime($this->date));
+		}
+
+		// Ensure we are still compatible with any active bookings
+		foreach ($this->activeBookings as $booking) {
+			if ($booking->operation->anaesthetist_required && !$this->anaesthetist) {
+				$this->addError('anaesthetist','One or more active bookings require an anaesthetist');
+			}
+			if ($booking->operation->consultant_required && !$this->consultant) {
+				$this->addError('consultant','One or more active bookings require a consultant');
+			}
+			if ($booking->operation->event->episode->patient->isChild() && !$this->paediatric) {
+				$this->addError('paediatric','One or more active bookings are for a child');
+			}
+			if ($booking->operation->anaesthetic_type->name == 'GA' && !$this->general_anaesthetic) {
+				$this->addError('general_anaesthetic','One or more active bookings require general anaesthetic');
+			}
+		}
+
+		return parent::beforeValidate();
+	}
+
+	protected function beforeSave() {
+		if ($this->date && !preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$this->date)) {
+			$this->date = date('Y-m-d',strtotime($this->date));
+		}
+
+		return parent::beforeSave();
 	}
 }
 ?>

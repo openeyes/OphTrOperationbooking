@@ -36,8 +36,11 @@
  * @property OphTrOperationbooking_Operation_Firm $firm
  */
 
-class OphTrOperationbooking_Letter_Contact_Rule extends BaseActiveRecord
+class OphTrOperationbooking_Letter_Contact_Rule extends BaseTree
 {
+	public $textFields = array('site','firm','theatre','subspecialty','refuse_telephone' => 'refuse','refuse_title' => 'title','health_telephone' => 'health');
+	public $textFieldsDropdown = array('site','firm','theatre','subspecialty','refuse_telephone' => 'refuse','health_telephone' => 'health');
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class
@@ -63,7 +66,7 @@ class OphTrOperationbooking_Letter_Contact_Rule extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('parent_id, contact_type_id, site_id, subspecialty_id, theatre_id, refuse_telephone, health_telephone', 'safe'),
+			array('parent_rule_id, contact_type_id, site_id, subspecialty_id, theatre_id, firm_id, refuse_telephone, health_telephone, refuse_title, rule_order', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, contact_type_id, site_id, subspecialty_id, theatre_id', 'safe', 'on' => 'search'),
@@ -85,6 +88,7 @@ class OphTrOperationbooking_Letter_Contact_Rule extends BaseActiveRecord
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 			'children' => array(self::HAS_MANY, 'OphTrOperationbooking_Letter_Contact_Rule', 'parent_rule_id'),
+			'parent' => array(self::BELONGS_TO, 'OphTrOperationbooking_Letter_Contact_Rule', 'parent_rule_id'),
 		);
 	}
 
@@ -94,6 +98,12 @@ class OphTrOperationbooking_Letter_Contact_Rule extends BaseActiveRecord
 	public function attributeLabels()
 	{
 		return array(
+			'parent_rule_id' => 'Parent rule',
+			'rule_order' => 'Rule order',
+			'site_id' => 'Site',
+			'subspecialty_id' => 'Subspecialty',
+			'firm_id' => 'Firm',
+			'theatre_id' => 'Theatre',
 		);
 	}
 

@@ -20,7 +20,7 @@
 ?>
 <div class="report curvybox white">
 	<div class="admin">
-		<h3 class="georgia">Edit EROD rule</h3>
+		<h3 class="georgia"><?php echo $ward->id ? 'Edit' : 'Add'?> ward</h3>
 		<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
 		<div>
 			<?php
@@ -30,8 +30,16 @@
 				'htmlOptions' => array('class'=>'sliding'),
 				'focus'=>'#username'
 			))?>
-			<?php echo $form->dropDownList($erod,'subspecialty_id',CHtml::listData(Subspecialty::model()->findAll(array('order'=>'name')),'id','name'),array('style'=>'margin-bottom:6px;','empty'=>'- Subspecialty -'))?>
-			<?php echo $form->multiSelectList($erod, 'Firms', 'firms', 'item_id', Firm::model()->getListWithSpecialties(), array(), array('empty' => '- Firms -', 'label' => 'Firms'))?>
+			<?php echo $form->dropDownList($ward,'site_id',Site::model()->getListForCurrentInstitution(),array('empty'=>'- Site -'))?>
+			<?php echo $form->textField($ward,'name')?>
+			<?php echo $form->textField($ward,'long_name')?>
+			<?php echo $form->textField($ward,'code',array('size'=>10))?>
+			<?php echo $form->dropDownList($ward,'theatre_id',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- None -'))?>
+			<?php echo $form->radioBoolean($ward,'restriction_male')?>
+			<?php echo $form->radioBoolean($ward,'restriction_female')?>
+			<?php echo $form->radioBoolean($ward,'restriction_child')?>
+			<?php echo $form->radioBoolean($ward,'restriction_adult')?>
+			<?php echo $form->radioBoolean($ward,'restriction_observation')?>
 			<?php $this->endWidget()?>
 		</div>
 	</div>
@@ -45,7 +53,7 @@
 <script type="text/javascript">
 	handleButton($('#et_cancel'),function(e) {
 		e.preventDefault();
-		window.location.href = baseUrl+'/OphTrOperationbooking/admin/viewERODRules';
+		window.location.href = baseUrl+'/OphTrOperationbooking/admin/viewWards';
 	});
 	handleButton($('#et_save'),function(e) {
 		$('#adminform').submit();
