@@ -1421,4 +1421,82 @@ class AdminController extends ModuleAdminController {
 			'errors' => $errors,
 		));
 	}
+
+	public function actionViewSchedulingOptions() {
+		$this->render('schedulingoptions');
+	}
+
+	public function actionVerifyDeleteSchedulingOptions() {
+		$criteria = new CDbCriteria;
+		$criteria->addInCondition('schedule_options_id',$_POST['scheduleoption']);
+
+		if (Element_OphTrOperationbooking_ScheduleOperation::model()
+			->with(array(
+				'event' => array(
+					'with' => 'episode',
+				),
+			))
+			->find($criteria)) {
+			echo "0";
+		} else {
+			echo "1";
+		}
+	}
+
+	public function actionDeleteSchedulingOptions() {
+		$criteria = new CDbCriteria;
+		$criteria->addInCondition('id',$_POST['scheduleoption']);
+		$options = OphTrOperationbooking_ScheduleOperation_Options::model()->findAll($criteria);
+
+		foreach ($options as $option) {
+			if (!$option->delete()) {
+				throw new Exception("Unable to delete scheduling option: ".print_r($option->getErrors(),true));
+			}
+		}
+
+		echo "1";
+	}
+
+	public function actionEditSchedulingOption($id) {
+		if (!$option = OphTrOperationbooking_ScheduleOperation_Options::model()->findByPk($id)) {
+			throw new Exception("Ward not found: $id");
+		}
+
+		$errors = array();
+
+		if (!empty($_POST)) {
+			$option->attributes = $_POST['OphTrOperationbooking_ScheduleOperation_Options'];
+
+			if (!$option->save()) {
+				$errors = $option->getErrors();
+			} else {
+				$this->redirect(array('/OphTrOperationbooking/admin/viewSchedulingOptions'));
+			}
+		}
+
+		$this->render('/admin/editschedulingoption',array(
+			'option' => $option,
+			'errors' => $errors,
+		));
+	}
+
+	public function actionAddSchedulingOption() {
+		$errors = array();
+
+		$option = new OphTrOperationbooking_ScheduleOperation_Options;
+
+		if (!empty($_POST)) {
+			$option->attributes = $_POST['OphTrOperationbooking_ScheduleOperation_Options'];
+			if (!$option->save()) {
+				$errors = $option->getErrors();
+			} else {
+				$this->redirect(array('/OphTrOperationbooking/admin/viewSchedulingOptions'));
+			}
+		}
+
+		$this->render('/admin/editschedulingoption',array(
+			'option' => $option,
+			'errors' => $errors,
+		));
+	}
 }

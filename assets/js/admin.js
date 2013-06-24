@@ -179,6 +179,18 @@ $(document).ready(function() {
 	$('#et_add_ward').click(function() {
 		window.location.href = baseUrl+'/OphTrOperationbooking/admin/addWard';
 	});
+
+	$('#admin_schedulingoptions li.even .column_name, #admin_schedulingoptions li.odd .column_name').click(function(e) {
+		e.preventDefault();
+
+		if ($(this).parent().attr('data-attr-id')) {
+			window.location.href = baseUrl+'/OphTrOperationbooking/admin/editSchedulingOption/'+$(this).parent().attr('data-attr-id');
+		}
+	});
+
+	$('#et_add_scheduleoption').click(function() {
+		window.location.href = baseUrl+'/OphTrOperationbooking/admin/addSchedulingOption';
+	});
 });
 
 function OphTrOperationbooking_showMatchingRule() {

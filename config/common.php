@@ -51,6 +51,7 @@ return array(
 			'Sessions' => '/OphTrOperationbooking/admin/viewSessions',
 			'Wards' => '/OphTrOperationbooking/admin/viewWards',
 			'Theatres' => '/OphTrOperationbooking/admin/viewTheatres',
+			'Scheduling options' => '/OphTrOperationbooking/admin/viewSchedulingOptions',
 			'EROD rules' => '/OphTrOperationbooking/admin/viewERODRules',
 			'Letter contact rules' => '/OphTrOperationbooking/admin/viewLetterContactRules',
 			'Letter warning rules' => '/OphTrOperationbooking/admin/viewLetterWarningRules',
