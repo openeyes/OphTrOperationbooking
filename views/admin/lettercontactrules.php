@@ -27,6 +27,7 @@
 				<?php echo CHtml::dropDownList('lcr_firm_id','',array(),array('empty'=>'- Firm -'))?>
 				<?php echo CHtml::dropDownList('lcr_theatre_id','',array(),array('empty'=>'- Theatre -'))?>
 			</div>
+			<div id="nomatch" style="display: none; color: #f00;">No match</div>
 		</form>
 	</div>
 	<div class="reportInputs">

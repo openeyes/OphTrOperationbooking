@@ -27,6 +27,7 @@
 				<?php echo CHtml::dropDownList('lcr_firm_id','',array(),array('empty'=>'- Firm -'))?>
 				<?php echo CHtml::dropDownList('lcr_is_child','',array('' => '- Child/adult -','1' => 'Child','0' => 'Adult'))?>
 			</div>
+			<div id="nomatch" style="display: none; color: #f00;">No match</div>
 		</form>
 	</div>
 	<div class="reportInputs">
