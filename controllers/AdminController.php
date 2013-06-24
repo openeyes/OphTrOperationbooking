@@ -1357,4 +1357,68 @@ class AdminController extends ModuleAdminController {
 
 		echo "1";
 	}
+
+	public function actionViewWards() {
+		$this->render('wards');
+	}
+
+	public function actionEditWard($id) {
+		if (!$ward = OphTrOperationbooking_Operation_Ward::model()->findByPk($id)) {
+			throw new Exception("Ward not found: $id");
+		}
+
+		$errors = array();
+
+		if (!empty($_POST)) {
+			$ward->attributes = $_POST['OphTrOperationbooking_Operation_Ward'];
+
+			$ward->restriction = 0;
+
+			if (@$_POST['OphTrOperationbooking_Operation_Ward']['restriction_male']) {
+				$ward->restriction += OphTrOperationbooking_Operation_Ward::RESTRICTION_MALE;
+			}
+			if (@$_POST['OphTrOperationbooking_Operation_Ward']['restriction_female']) {
+				$ward->restriction += OphTrOperationbooking_Operation_Ward::RESTRICTION_FEMALE;
+			}
+			if (@$_POST['OphTrOperationbooking_Operation_Ward']['restriction_child']) {
+				$ward->restriction += OphTrOperationbooking_Operation_Ward::RESTRICTION_CHILD;
+			}
+			if (@$_POST['OphTrOperationbooking_Operation_Ward']['restriction_adult']) {
+				$ward->restriction += OphTrOperationbooking_Operation_Ward::RESTRICTION_ADULT;
+			}
+			if (@$_POST['OphTrOperationbooking_Operation_Ward']['restriction_observation']) {
+				$ward->restriction += OphTrOperationbooking_Operation_Ward::RESTRICTION_OBSERVATION;
+			}
+			if (!$ward->save()) {
+				$errors = $ward->getErrors();
+			} else {
+				$this->redirect(array('/OphTrOperationbooking/admin/viewWards'));
+			}
+		}
+
+		$this->render('/admin/editward',array(
+			'ward' => $ward,
+			'errors' => $errors,
+		));
+	}
+
+	public function actionAddWard() {
+		$errors = array();
+
+		$ward = new OphTrOperationbooking_Operation_Ward;
+
+		if (!empty($_POST)) {
+			$ward->attributes = $_POST['OphTrOperationbooking_Operation_Ward'];
+			if (!$ward->save()) {
+				$errors = $ward->getErrors();
+			} else {
+				$this->redirect(array('/OphTrOperationbooking/admin/viewWards'));
+			}
+		}
+
+		$this->render('/admin/editward',array(
+			'ward' => $ward,
+			'errors' => $errors,
+		));
+	}
 }

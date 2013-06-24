@@ -167,6 +167,18 @@ $(document).ready(function() {
 			window.location.href = baseUrl+'/OphTrOperationbooking/admin/editTheatre/'+$(this).parent().attr('data-attr-id');
 		}
 	});
+
+	$('#admin_wards li.even .column_site, #admin_wards li.even .column_name, #admin_wards li.even .column_code, #admin_wards li.even .column_theatre, #admin_wards li.even .column_restrictions, #admin_wards li.odd .column_site, #admin_wards li.odd .column_name, #admin_wards li.odd .column_code, #admin_wards li.odd .column_theatre, #admin_wards li.odd .column_restrictions').click(function(e) {
+		e.preventDefault();
+
+		if ($(this).parent().attr('data-attr-id')) {
+			window.location.href = baseUrl+'/OphTrOperationbooking/admin/editWard/'+$(this).parent().attr('data-attr-id');
+		}
+	});
+
+	$('#et_add_ward').click(function() {
+		window.location.href = baseUrl+'/OphTrOperationbooking/admin/addWard';
+	});
 });
 
 function OphTrOperationbooking_showMatchingRule() {

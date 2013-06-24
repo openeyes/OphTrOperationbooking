@@ -69,7 +69,7 @@ class OphTrOperationbooking_Operation_Ward extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('site_id, name, long_name, directions', 'safe'),
+			array('site_id, name, long_name, directions, theatre_id, code, restriction', 'safe'),
 			array('site_id, name', 'required'),
 			array('restriction', 'numerical', 'integerOnly'=>true),
 			array('site_id', 'length', 'max'=>10),
@@ -104,6 +104,14 @@ class OphTrOperationbooking_Operation_Ward extends BaseActiveRecord
 	public function attributeLabels()
 	{
 		return array(
+			'site_id' => 'Site',
+			'theatre_id' => 'Theatre',
+			'long_name' => 'Long name',
+			'restriction_male' => 'Male only',
+			'restriction_female' => 'Female only',
+			'restriction_child' => 'Children only',
+			'restriction_adult' => 'Adult only',
+			'restriction_observation' => 'Observation only',
 		);
 	}
 
@@ -132,6 +140,52 @@ class OphTrOperationbooking_Operation_Ward extends BaseActiveRecord
 
 	public function getDirectionsText() {
 		return $this->directions ? $this->directions : $this->getLongName();
+	}
+
+	public function getRestrictionText() {
+		$restrictions = array();
+
+		if ($this->restriction & self::RESTRICTION_MALE) {
+			$restrictions[] = '[MALE]';
+		}
+		if ($this->restriction & self::RESTRICTION_FEMALE) {
+			$restrictions[] = '[FEMALE]';
+		}
+		if ($this->restriction & self::RESTRICTION_CHILD) {
+			$restrictions[] = '[CHILD]';
+		}
+		if ($this->restriction & self::RESTRICTION_ADULT) {
+			$restrictions[] = '[ADULT]';
+		}
+		if ($this->restriction & self::RESTRICTION_OBSERVATION) {
+			$restrictions[] = '[OBS]';
+		}
+
+		if (empty($restrictions)) {
+			return 'None';
+		}
+
+		return implode(' ',$restrictions);
+	}
+
+	public function getRestriction_male() {
+		return $this->restriction & self::RESTRICTION_MALE ? 1 : 0;
+	}
+
+	public function getRestriction_female() {
+		return $this->restriction & self::RESTRICTION_FEMALE ? 1 : 0;
+	}
+
+	public function getRestriction_child() {
+		return $this->restriction & self::RESTRICTION_CHILD ? 1 : 0;
+	}
+
+	public function getRestriction_adult() {
+		return $this->restriction & self::RESTRICTION_ADULT ? 1 : 0;
+	}
+
+	public function getRestriction_observation() {
+		return $this->restriction & self::RESTRICTION_OBSERVATION ? 1 : 0;
 	}
 }
 ?>
