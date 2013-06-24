@@ -208,8 +208,15 @@ function OphTrOperationbooking_showMatchingRule() {
 			'data': $('#rulestest').serialize()+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
 			'dataType': 'json',
 			'success': function(resp) {
+				var count = 0;
 				for (var i in resp) {
 					$('#rules li[id="'+resp[i]+'"]').children('a').attr('style','color: #f00');
+					count += 1;
+					$('#nomatch').hide();
+				}
+
+				if (count <1) {
+					$('#nomatch').show();
 				}
 			}
 		});
