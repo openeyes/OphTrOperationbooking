@@ -451,10 +451,12 @@ class TheatreDiaryController extends BaseEventTypeController
 		}
 
 		foreach ($bookings as $i => $booking) {
-			$booking->display_order = $i+1;
+			if ($booking->display_order != ($i+1)) {
+				$booking->display_order = $i+1;
 
-			if (!$booking->save()) {
-				throw new Exception('Unable to save booking: '.print_r($session->getErrors(),true));
+				if (!$booking->save()) {
+					throw new Exception('Unable to save booking: '.print_r($session->getErrors(),true));
+				}
 			}
 		}
 
