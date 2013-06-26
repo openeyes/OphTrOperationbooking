@@ -978,10 +978,6 @@
 	}
 
 	public function getRefuseContact() {
-		# FIXME hack for 1.3 launch
-		if ($this->event->episode->patient->isChild()) {
-			return 'the Paediatrics and Strabismus Admission Coordinator on 020 7566 2258';
-		}
 		if (!$contact = $this->letterContact) {
 			# FIXME: need to handle problems with letters more gracefully than throwing unhandled exceptions.
 			return 'N/A';
@@ -1004,14 +1000,15 @@
 		$subspecialty_id = $this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty_id;
 		$theatre_id = $this->booking->session->theatre_id;
 		$firm_id = $this->booking->session->firm_id;
+		$is_child = $this->event->episode->patient->isChild();
 
 		$criteria = new CDbCriteria;
 		$criteria->addCondition('parent_rule_id is null');
 		$criteria->order = 'rule_order asc';
 
 		foreach (OphTrOperationbooking_Letter_Contact_Rule::model()->findAll($criteria) as $rule) {
-			if ($rule->applies($site_id,$subspecialty_id,$theatre_id,$firm_id)) {
-				return $rule->parse($site_id,$subspecialty_id,$theatre_id,$firm_id);
+			if ($rule->applies($site_id,$subspecialty_id,$theatre_id,$firm_id,$is_child)) {
+				return $rule->parse($site_id,$subspecialty_id,$theatre_id,$firm_id,$is_child);
 			}
 		}
 
