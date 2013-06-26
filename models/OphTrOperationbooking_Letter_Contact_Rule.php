@@ -63,7 +63,7 @@ class OphTrOperationbooking_Letter_Contact_Rule extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('parent_id, contact_type_id, site_id, subspecialty_id, theatre_id, refuse_telephone, health_telephone', 'safe'),
+			array('parent_id, contact_type_id, site_id, subspecialty_id, theatre_id, refuse_telephone, health_telephone, is_child', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, contact_type_id, site_id, subspecialty_id, theatre_id', 'safe', 'on' => 'search'),
