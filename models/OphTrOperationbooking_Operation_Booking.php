@@ -165,15 +165,14 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecord
 				throw new Exception('Unable to add event issue: '.print_r($this->operation->event->getErrors(),true));
 			}
 
-			if (Yii::app()->params['urgent_booking_notify_hours'] && Yii::app()->params['urgent_booking_notify_email']) {
-				if (strtotime($this->session->date) <= (strtotime(date('Y-m-d')) + (Yii::app()->params['urgent_booking_notify_hours'] * 3600))) {
-					if (!is_array(Yii::app()->params['urgent_booking_notify_email'])) {
-						$targets = array(Yii::app()->params['urgent_booking_notify_email']);
-					} else {
-						$targets = Yii::app()->params['urgent_booking_notify_email'];
+			if (Config::has('urgent_booking_notify_hours') && Config::has('urgent_booking_notify_email')) {
+				if (strtotime($this->session->date) <= (strtotime(date('Y-m-d')) + (Config::get('urgent_booking_notify_hours') * 3600))) {
+					$targets = Config::get('urgent_booking_notify_email');
+					if (!is_array($targets)) {
+						$targets = array($targets);
 					}
 					foreach ($targets as $email) {
-						mail($email, "[OpenEyes] Urgent cancellation made","A cancellation was made with a TCI date within the next 24 hours.\n\nDisorder: ".$this->operation->getDisorderText()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.","From: ".Yii::app()->params['urgent_booking_notify_email_from']."\r\n");
+						mail($email, "[OpenEyes] Urgent cancellation made","A cancellation was made with a TCI date within the next 24 hours.\n\nDisorder: ".$this->operation->getDisorderText()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.","From: ".Config::get('urgent_booking_notify_email_from')."\r\n");
 					}
 				}
 			}

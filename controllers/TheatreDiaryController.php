@@ -548,7 +548,7 @@ class TheatreDiaryController extends BaseEventTypeController
 				}
 				return;
 			case 'paediatric':
-				$child_age = isset(Yii::app()->params['child_age_limit']) ? Yii::app()->params['child_age_limit'] : Patient::CHILD_AGE_LIMIT;
+				$child_age = Config::get('child_age_limit');
 
 				$criteria = new CDbCriteria;
 				$criteria->addCondition('booking.booking_cancellation_date is null and patient.dob >= :ageLimitDate');

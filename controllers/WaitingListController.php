@@ -102,8 +102,8 @@ class WaitingListController extends BaseEventTypeController {
 		}
 
 		if ($hos_num && ctype_digit($hos_num)) {
-			if (Yii::app()->params['pad_hos_num']) {
-				$hos_num = sprintf(Yii::app()->params['pad_hos_num'],$hos_num);
+			if (Config::has('pad_hos_num')) {
+				$hos_num = sprintf(Config::get('pad_hos_num'),$hos_num);
 			}
 			$whereSql .= " AND patient.hos_num = :hos_num";
 			$whereParams[":hos_num"] = $hos_num;

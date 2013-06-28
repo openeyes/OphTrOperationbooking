@@ -702,7 +702,7 @@
 			$criteria->addCondition('`t`.anaesthetist = :one and `t`.general_anaesthetic = :one');
 		}
 
-		$lead_time_date = date('Y-m-d',strtotime($this->decision_date) + (86400 * 7 * Yii::app()->params['erod_lead_time_weeks']));
+		$lead_time_date = date('Y-m-d',strtotime($this->decision_date) + (86400 * 7 * Config::get('erod_lead_time_weeks')));
 
 		if ($rule = OphTrOperationbooking_Operation_EROD_Rule::model()->find('subspecialty_id=?',array($this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty_id))) {
 			$firm_ids = array();
@@ -828,12 +828,11 @@
 
 			$this->booking->audit('booking','cancel');
 
-			if(Yii::app()->params['urgent_booking_notify_hours'] && Yii::app()->params['urgent_booking_notify_email']) {
-				if(strtotime($this->booking->session_date) <= (strtotime(date('Y-m-d')) + (Yii::app()->params['urgent_booking_notify_hours'] * 3600))) {
-					if (!is_array(Yii::app()->params['urgent_booking_notify_email'])) {
-						$targets = array(Yii::app()->params['urgent_booking_notify_email']);
-					} else {
-						$targets = Yii::app()->params['urgent_booking_notify_email'];
+			if (Config::has('urgent_booking_notify_hours') && Config::has('urgent_booking_notify_email')) {
+				if (strtotime($this->booking->session_date) <= (strtotime(date('Y-m-d')) + (Config::get('urgent_booking_notify_hours') * 3600))) {
+					$targets = Config::get('urgent_booking_notify_email');
+					if (!is_array($targets)) {
+						$targets = array($targets);
 					}
 					foreach ($targets as $email) {
 						mail(
@@ -841,7 +840,7 @@
 							"[OpenEyes] Urgent cancellation made","A cancellation was made with a TCI date within the next 24 hours.\n\nDisorder: "
 								. $this->getDisorderText() . "\n\nPlease see: http://" . @$_SERVER['SERVER_NAME']
 								. Yii::app()->createUrl('/OphTrOperationbooking/transport')."\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.",
-							"From: " . Yii::app()->params['urgent_booking_notify_email_from']."\r\n"
+							"From: " . Config::get('urgent_booking_notify_email_from')."\r\n"
 						);
 					}
 				}
@@ -919,18 +918,17 @@
 
 		$this->event->deleteIssues();
 
-		if (Yii::app()->params['urgent_booking_notify_hours'] && Yii::app()->params['urgent_booking_notify_email']) {
-			if (strtotime($session->date) <= (strtotime(date('Y-m-d')) + (Yii::app()->params['urgent_booking_notify_hours'] * 3600))) {
-				if (!is_array(Yii::app()->params['urgent_booking_notify_email'])) {
-					$targets = array(Yii::app()->params['urgent_booking_notify_email']);
-				} else {
-					$targets = Yii::app()->params['urgent_booking_notify_email'];
+		if (Config::has('urgent_booking_notify_hours') && Config::has('urgent_booking_notify_email')) {
+			if (strtotime($session->date) <= (strtotime(date('Y-m-d')) + (Config::get('urgent_booking_notify_hours') * 3600))) {
+				$targets = Config::get('urgent_booking_notify_email');
+				if (!is_array($targets)) {
+					$targets = array($targets);
 				}
 				foreach ($targets as $email) {
 					if ($reschedule) {
-						mail($email, "[OpenEyes] Urgent reschedule made","A patient booking was rescheduled with a TCI date within the next 24 hours.\n\nDisorder: ".$this->getDisorderText()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.","From: ".Yii::app()->params['urgent_booking_notify_email_from']."\r\n");
+						mail($email, "[OpenEyes] Urgent reschedule made","A patient booking was rescheduled with a TCI date within the next 24 hours.\n\nDisorder: ".$this->getDisorderText()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.","From: ".Config::get('urgent_booking_notify_email_from')."\r\n");
 					} else {
-						mail($email, "[OpenEyes] Urgent booking made","A patient booking was made with a TCI date within the next 24 hours.\n\nDisorder: ".$this->getDisorderText()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.","From: ".Yii::app()->params['urgent_booking_notify_email_from']."\r\n");
+						mail($email, "[OpenEyes] Urgent booking made","A patient booking was made with a TCI date within the next 24 hours.\n\nDisorder: ".$this->getDisorderText()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.","From: ".Config::get('urgent_booking_notify_email_from')."\r\n");
 					}
 				}
 			}

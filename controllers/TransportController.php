@@ -96,12 +96,12 @@ class TransportController extends BaseEventTypeController
 			$criteria->addCondition('latestBooking.cancellation_date is null');
 		}
 
-		if (!empty(Yii::app()->params['transport_exclude_sites'])) {
-			$criteria->addNotInCondition('site.id',Yii::app()->params['transport_exclude_sites']);
+		if (Config::has('transport_exclude_sites')) {
+			$criteria->addNotInCondition('site.id',Config::get('transport_exclude_sites'));
 		}
 
-		if (!empty(Yii::app()->params['transport_exclude_theatres'])) {
-			$criteria->addNotInCondition('theatre_id',Yii::app()->params['transport_exclude_theatres']);
+		if (Config::has('transport_exclude_theatres')) {
+			$criteria->addNotInCondition('theatre_id',Config::get('transport_exclude_theatres'));
 		}
 
 		$criteria->addCondition('session.date >= :today');

@@ -33,31 +33,5 @@ return array(
 			),
 		),
 	),
-	'params' => array(
-		'menu_bar_items' => array(
-			'theatre_diaries' => array(
-				'title' => 'Theatre Diaries',
-				'uri' => 'OphTrOperationbooking/theatreDiary/index',
-				'position' => 10,
-			),
-			'partial_bookings' => array(
-				'title' => 'Partial bookings waiting list',
-				'uri' => 'OphTrOperationbooking/waitingList/index',
-				'position' => 20,
-			),
-		),
-		'admin_menu' => array(
-			'Sequences' => '/OphTrOperationbooking/admin/viewSequences',
-			'Sessions' => '/OphTrOperationbooking/admin/viewSessions',
-			'Wards' => '/OphTrOperationbooking/admin/viewWards',
-			'Theatres' => '/OphTrOperationbooking/admin/viewTheatres',
-			'Scheduling options' => '/OphTrOperationbooking/admin/viewSchedulingOptions',
-			'EROD rules' => '/OphTrOperationbooking/admin/viewERODRules',
-			'Letter contact rules' => '/OphTrOperationbooking/admin/viewLetterContactRules',
-			'Letter warning rules' => '/OphTrOperationbooking/admin/viewLetterWarningRules',
-			'Operation name rules' => '/OphTrOperationbooking/admin/viewOperationNameRules',
-			'Waiting list contact rules' => '/OphTrOperationbooking/admin/viewWaitingListContactRules',
-		),
-	)
 );
 
