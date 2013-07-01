@@ -322,7 +322,7 @@ class TheatreDiaryController extends BaseEventTypeController
 			$order = 'w.code ASC, p.hos_num ASC';
 		}
 
-		if ($_POST['firm-id']) {
+		if (@$_POST['firm-id']) {
 			$whereSql .= ' and f.id = :firmId';
 			$whereParams[':firmId'] = $_POST['firm-id'];
 		}
