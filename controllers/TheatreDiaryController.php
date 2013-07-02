@@ -412,21 +412,29 @@ class TheatreDiaryController extends BaseEventTypeController
 				if (!$operation = Element_OphTrOperationbooking_Operation::model()->findByPk($m[1])) {
 					throw new Exception('Operation not found: '.$m[1]);
 				}
-
 				if (!$booking = $operation->booking) {
 					throw new Exception('Operation has no active booking: '.$m[1]);
 				}
-
-				if ($booking->admission_time != $value || $booking->confirmed != @$_POST['confirm_'.$m[1]]) {
+				$booking_data = array(
+						'original_display_order' => $booking->display_order,
+						'booking_id' => $booking->id,
+						'changed' => false,
+				);
+				
+				// Check to see if the booking has been changed and so needs saving
+				$confirmed = @$_POST['confirm_'.$m[1]];
+				if((date('H:i', strtotime($booking->admission_time)) != $value) || $booking->confirmed != $confirmed) {
+					$booking_data['changed'] = true;
 					$booking->admission_time = $value;
 					$booking->confirmed = @$_POST['confirm_'.$m[1]];
+				}
 
-					if (!$booking->validate()) {
-						$formErrors = $booking->getErrors();
-						$errors[(integer)$m[1]] = $formErrors['admission_time'][0];
-					} else {
-						$bookings[] = $booking;
-					}
+				$booking_data['booking'] = $booking;
+				$bookings[] = $booking_data;
+				
+				if (!$booking->validate()) {
+					$formErrors = $booking->getErrors();
+					$errors[(integer)$m[1]] = $formErrors['admission_time'][0];
 				}
 			}
 		}
@@ -450,12 +458,28 @@ class TheatreDiaryController extends BaseEventTypeController
 			throw new Exception('Unable to save session: '.print_r($session->getErrors(),true));
 		}
 
-		foreach ($bookings as $i => $booking) {
-			if ($booking->display_order != ($i+1)) {
-				$booking->display_order = $i+1;
-
-				if (!$booking->save()) {
-					throw new Exception('Unable to save booking: '.print_r($session->getErrors(),true));
+		// Create array of booking IDs in the original display order
+		$original_bookings = array();
+		foreach($bookings as $booking_data) {
+			$original_bookings[$booking_data['original_display_order']] = $booking_data['booking_id'];
+		}
+		ksort($original_bookings);
+		$original_bookings = array_values($original_bookings);
+		
+		$previous_display_order = 0;
+		foreach ($bookings as $new_position => $booking_data) {
+			
+			// Check if relative position of booking has changed and adjust display_order as required
+			if($booking_data['booking_id'] != $original_bookings[$new_position]) {
+				$booking_data['booking']->display_order = $previous_display_order + 1;
+				$booking_data['changed'] = true;
+			}
+			$previous_display_order = $booking_data['booking']->display_order;
+			
+			// Save booking if it has changed
+			if($booking_data['changed']) {
+				if(!$booking_data['booking']->save()) {
+					throw new Exception('Unable to save booking: '.print_r($booking_data['booking']->getErrors(), true));
 				}
 			}
 		}
