@@ -35,7 +35,7 @@
 						$criteria = new CDbCriteria;
 						$criteria->order = "display_order asc";
 						foreach (OphTrOperationbooking_Operation_Ward::model()->findAll() as $i => $ward) {?>
-							<li class="<?php if ($i%2 == 0) {?>even<?php }else{?>odd<?php }?>" data-attr-id="<?php echo $ward->id?>">
+							<li class="<?php if ($i%2 == 0) {?>even<?php } else {?>odd<?php }?>" data-attr-id="<?php echo $ward->id?>">
 								<span class="column_checkbox"><input type="checkbox" name="ward[]" value="<?php echo $ward->id?>" class="wards" /></span>
 								<span class="column_site"><?php echo $ward->site->name?></span>
 								<span class="column_name"><?php echo $ward->name?></span>

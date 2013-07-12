@@ -104,7 +104,7 @@
 					<div class="sortable">
 						<?php
 						foreach ($sessions['data'] as $i => $session) {?>
-							<li class="<?php if ($i%2 == 0) {?>even<?php }else{?>odd<?php }?>" data-attr-id="<?php echo $session->id?>">
+							<li class="<?php if ($i%2 == 0) {?>even<?php } else {?>odd<?php }?>" data-attr-id="<?php echo $session->id?>">
 								<span class="column_checkbox"><input type="checkbox" name="session[]" value="<?php echo $session->id?>" class="sessions" /></span>
 								<span class="column_firm"><?php echo $session->firm ? $session->firm->nameAndSubspecialtyCode: 'Emergency'?></span>
 								<span class="column_theatre"><?php echo $session->theatre->name?></span>

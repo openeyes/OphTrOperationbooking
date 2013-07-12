@@ -33,7 +33,7 @@
 						$criteria = new CDbCriteria;
 						$criteria->order = "display_order asc";
 						foreach (OphTrOperationbooking_Operation_Name_Rule::model()->findAll() as $i => $rule) {?>
-							<li class="<?php if ($i%2 == 0) {?>even<?php }else{?>odd<?php }?>" data-attr-id="<?php echo $rule->id?>">
+							<li class="<?php if ($i%2 == 0) {?>even<?php } else {?>odd<?php }?>" data-attr-id="<?php echo $rule->id?>">
 								<span class="column_checkbox"><input type="checkbox" name="operation_name[]" value="<?php echo $rule->id?>" class="operation_name_rules" /></span>
 								<span class="column_theatre"><?php echo $rule->theatre->name?></span>
 								<span class="column_name"><?php echo $rule->name?></span>

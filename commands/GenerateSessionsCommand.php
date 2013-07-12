@@ -17,21 +17,23 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class GenerateSessionsCommand extends CConsoleCommand {
-	
-	public function getName() {
+class GenerateSessionsCommand extends CConsoleCommand
+{
+	public function getName()
+	{
 		return 'Generate Session Data Command.';
 	}
-	
-	public function getHelp() {
+
+	public function getHelp()
+	{
 		return "A script to generate session data based on sequences in the database for future dates.\n
 			Optional parameters to 1) specify the end date for the script, 2) specify whether output should be returned rather than displayed.\n";
 	}
 
-	public function run($args) {
-
+	public function run($args)
+	{
 		$output = '';
-		
+
 		// Get sequences
 		$today = date('Y-m-d');
 		$initialEndDate = empty($args) ? strtotime('+13 months') : strtotime($args[0]);
@@ -40,7 +42,7 @@ class GenerateSessionsCommand extends CConsoleCommand {
 			array(':end_date'=>date('Y-m-d', $initialEndDate), ':today'=>$today)
 		);
 
-		foreach($sequences as $sequence) {
+		foreach ($sequences as $sequence) {
 			$criteria = new CDbCriteria;
 			$criteria->addCondition('sequence_id = :sequence_id');
 			$criteria->params[':sequence_id'] = $sequence->id;
@@ -52,7 +54,7 @@ class GenerateSessionsCommand extends CConsoleCommand {
 			$startDate = empty($session) ? strtotime($sequence->start_date) : strtotime($session->date) + (60 * 60 * 24);
 
 			// Sessions should be generated up to the smaller of initialEndDate (+13 months or command line) and sequence end_date
-			if($sequence->end_date && strtotime($sequence->end_date) < $initialEndDate) {
+			if ($sequence->end_date && strtotime($sequence->end_date) < $initialEndDate) {
 				$endDate = strtotime($sequence->end_date);
 			} else {
 				$endDate = $initialEndDate;
@@ -118,12 +120,12 @@ class GenerateSessionsCommand extends CConsoleCommand {
 				}
 			}
 
-			if(!empty($dateList)) {
+			if (!empty($dateList)) {
 				// Process dateList into sessions
-				foreach($dateList as $date) {
+				foreach ($dateList as $date) {
 					// TODO: Check for collisions, maybe in Session validation code
 					$new_session = new OphTrOperationbooking_Operation_Session;
-					foreach(array('start_time','end_time','consultant','anaesthetist','paediatric','general_anaesthetic','theatre_id') as $attribute) {
+					foreach (array('start_time','end_time','consultant','anaesthetist','paediatric','general_anaesthetic','theatre_id') as $attribute) {
 						$new_session->$attribute = $sequence->$attribute;
 					}
 					$new_session->date = $date;

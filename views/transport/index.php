@@ -22,11 +22,11 @@
 <div class="fullWidth fullBox clearfix">
 	<div id="waitinglist_display">
 		<h3>TCIs for today onwards.</h3>
-		<?php if($this->canPrint()) { ?>
+		<?php if ($this->canPrint()) { ?>
 		<button type="submit" class="classy blue venti btn_transport_download" style="margin-right: 10px; margin-top: 20px; margin-bottom: 20px; float: right; z-index: 1"><span class="button-span button-span-blue">Download CSV</span></button>
 		<button type="submit" class="classy blue tall btn_transport_print" style="margin-right: 10px; margin-top: 20px; margin-bottom: 20px; float: right; z-index: 1"><span class="button-span button-span-blue">Print list</span></button>
 		<?php } ?>
-		<?php if(BaseController::checkUserLevel(4)) { ?>
+		<?php if (BaseController::checkUserLevel(4)) { ?>
 		<button type="submit" class="classy blue tall btn_transport_confirm" style="margin-right: 10px; margin-top: 20px; margin-bottom: 20px; float: right; z-index: 1"><span class="button-span button-span-blue">Confirm</span></button>
 		<?php } ?>
 
@@ -66,9 +66,9 @@
 					Include:
 				</label>
 				&nbsp;
-				<input type="checkbox" name="include_bookings" id="include_bookings" class="filter" value="1"<?php if (@$_GET['include_bookings']){?> checked="checked"<?php }?> /> Bookings
-				<input type="checkbox" name="include_reschedules" id="include_reschedules" class="filter" value="1"<?php if (@$_GET['include_reschedules']){?> checked="checked"<?php }?> /> Reschedules
-				<input type="checkbox" name="include_cancellations" id="include_cancellations" class="filter" value="1"<?php if (@$_GET['include_cancellations']){?> checked="checked"<?php }?> /> Cancellations
+				<input type="checkbox" name="include_bookings" id="include_bookings" class="filter" value="1"<?php if (@$_GET['include_bookings']) {?> checked="checked"<?php }?> /> Bookings
+				<input type="checkbox" name="include_reschedules" id="include_reschedules" class="filter" value="1"<?php if (@$_GET['include_reschedules']) {?> checked="checked"<?php }?> /> Reschedules
+				<input type="checkbox" name="include_cancellations" id="include_cancellations" class="filter" value="1"<?php if (@$_GET['include_cancellations']) {?> checked="checked"<?php }?> /> Cancellations
 			</form>
 			<form id="csvform" method="post" action="<?php echo Yii::app()->createUrl('/OphTrOperationbooking/transport/downloadcsv')?>">
 				<input type="hidden" name="date_from" value="<?php echo @$_GET['date_from']?>" />
@@ -81,11 +81,11 @@
 				<?php echo $this->renderPartial('/transport/_list_header')?>
 			</div>
 		</div>
-		<?php if($this->canPrint()) { ?>
+		<?php if ($this->canPrint()) { ?>
 		<button type="submit" class="classy blue venti btn_transport_download" style="margin-right: 10px; margin-top: 20px; margin-bottom: 20px; float: right;"><span class="button-span button-span-blue">Download CSV</span></button>
 		<button type="submit" class="classy blue tall btn_transport_print" style="margin-right: 10px; margin-top: 20px; margin-bottom: 20px; float: right;"><span class="button-span button-span-blue">Print list</span></button>
 		<?php } ?>
-		<?php if(BaseController::checkUserLevel(4)) { ?>
+		<?php if (BaseController::checkUserLevel(4)) { ?>
 		<button type="submit" class="classy blue tall btn_transport_confirm" style="margin-right: 10px; margin-top: 20px; margin-bottom: 20px; float: right;"><span class="button-span button-span-blue">Confirm</span></button>
 		<?php } ?>
 	</div>

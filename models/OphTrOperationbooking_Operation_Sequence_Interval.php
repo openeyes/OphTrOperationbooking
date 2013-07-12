@@ -54,7 +54,7 @@ class OphTrOperationbooking_Operation_Sequence_Interval extends BaseActiveRecord
 		return array(
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -94,7 +94,8 @@ class OphTrOperationbooking_Operation_Sequence_Interval extends BaseActiveRecord
 			));
 	}
 
-	public function getInteger($endTimestamp) {
+	public function getInteger($endTimestamp)
+	{
 		switch ($this->id) {
 			case 2:
 			case 3:

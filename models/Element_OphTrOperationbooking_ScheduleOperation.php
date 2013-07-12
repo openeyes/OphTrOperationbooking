@@ -70,7 +70,7 @@ class Element_OphTrOperationbooking_ScheduleOperation extends BaseEventTypeEleme
 			array('id, event_id, schedule_options_id, ', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -115,7 +115,7 @@ class Element_OphTrOperationbooking_ScheduleOperation extends BaseEventTypeEleme
 		$criteria->compare('event_id', $this->event_id, true);
 
 $criteria->compare('schedule_options_id', $this->schedule_options_id);
-		
+
 		return new CActiveDataProvider(get_class($this), array(
 				'criteria' => $criteria,
 			));

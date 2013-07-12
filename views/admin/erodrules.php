@@ -33,7 +33,7 @@
 						$criteria = new CDbCriteria;
 						$criteria->order = "display_order asc";
 						foreach (OphTrOperationbooking_Operation_EROD_Rule::model()->findAll() as $i => $erod) {?>
-							<li class="<?php if ($i%2 == 0) {?>even<?php }else{?>odd<?php }?>" data-attr-id="<?php echo $erod->id?>">
+							<li class="<?php if ($i%2 == 0) {?>even<?php } else {?>odd<?php }?>" data-attr-id="<?php echo $erod->id?>">
 								<span class="column_checkbox"><input type="checkbox" name="erod[]" value="<?php echo $erod->id?>" class="erod_rules" /></span>
 								<span class="column_subspecialty"><?php echo $erod->subspecialty->name?></span>
 								<span class="column_firms"><?php echo $erod->firmString?></span>

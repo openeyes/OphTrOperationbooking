@@ -32,7 +32,7 @@
 						$criteria = new CDbCriteria;
 						$criteria->order = "display_order asc";
 						foreach (OphTrOperationbooking_ScheduleOperation_Options::model()->findAll() as $i => $scheduleoption) {?>
-							<li class="<?php if ($i%2 == 0) {?>even<?php }else{?>odd<?php }?>" data-attr-id="<?php echo $scheduleoption->id?>">
+							<li class="<?php if ($i%2 == 0) {?>even<?php } else {?>odd<?php }?>" data-attr-id="<?php echo $scheduleoption->id?>">
 								<span class="column_checkbox"><input type="checkbox" name="scheduleoption[]" value="<?php echo $scheduleoption->id?>" class="scheduleoptions" /></span>
 								<span class="column_name"><?php echo $scheduleoption->name?></span>
 							</li>

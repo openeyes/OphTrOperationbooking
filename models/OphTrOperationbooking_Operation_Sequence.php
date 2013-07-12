@@ -81,7 +81,8 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
 		);
 	}
 
-	public function defaultScope() {
+	public function defaultScope()
+	{
 		$table_alias = $this->getTableAlias(false,false);
 		return array(
 			'condition' => $table_alias.'.deleted = 0',
@@ -140,7 +141,8 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
 			));
 	}
 
-	public function checkDates() {
+	public function checkDates()
+	{
 		if (!empty($this->end_date)) {
 			$start = strtotime($this->start_date);
 			$end = strtotime($this->end_date);
@@ -151,7 +153,8 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
 		}
 	}
 
-	public function checkTimes() {
+	public function checkTimes()
+	{
 		$start = strtotime($this->start_time);
 		$end = strtotime($this->end_time);
 
@@ -160,16 +163,17 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
 		}
 	}
 
-	public function getWeekOccurrences($weekday, $weekSelection, $startTimestamp, $endTimestamp, $startDate, $endDate) {
+	public function getWeekOccurrences($weekday, $weekSelection, $startTimestamp, $endTimestamp, $startDate, $endDate)
+	{
 		$dates = array();
 		$month = strtotime(date('Y-m-01',$startTimestamp));
 		$weekday_options = $this->getWeekdayOptions();
 		$weekday_string = $weekday_options[$weekday];
-		while($month <= $endTimestamp) {
+		while ($month <= $endTimestamp) {
 			$day = strtotime("first $weekday_string of", $month);
 			for ($i = self::SELECT_1STWEEK; $i <= self::SELECT_5THWEEK; $i *= 2) {
-				// Only add date if it is between start and end dates, and is a selected week. Also check we haven't rolled over into the next month (4 week months) 
-				if($day >= $startTimestamp && $day <= $endTimestamp && $day <= strtotime('last day of', $month) && ($weekSelection & $i)) {
+				// Only add date if it is between start and end dates, and is a selected week. Also check we haven't rolled over into the next month (4 week months)
+				if ($day >= $startTimestamp && $day <= $endTimestamp && $day <= strtotime('last day of', $month) && ($weekSelection & $i)) {
 					$dates[] = date('Y-m-d',$day);
 				}
 				$day = strtotime("+1 week", $day);
@@ -179,7 +183,8 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
 		return $dates;
 	}
 
-	public function getWeekdayOptions() {
+	public function getWeekdayOptions()
+	{
 		return array(
 			1 => 'Monday',
 			2 => 'Tuesday',
@@ -191,19 +196,22 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
 		);
 	}
 
-	public function getDates() {
+	public function getDates()
+	{
 		if ($this->end_date) {
 			return $this->NHSDate('start_date').' - '.$this->NHSDate('end_date');
 		}
 		return $this->NHSDate('start_date').' onwards';
 	}
 
-	public function getWeekdayText() {
+	public function getWeekdayText()
+	{
 		$options = $this->weekdayOptions;
 		return isset($options[$this->weekday]) ? $options[$this->weekday] : 'None';
 	}
 
-	protected function beforeValidate() {
+	protected function beforeValidate()
+	{
 		if ($this->start_date && !preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$this->start_date)) {
 			$this->start_date = date('Y-m-d',strtotime($this->start_date));
 		}
@@ -295,7 +303,8 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
 		return parent::beforeValidate();
 	}
 
-	public function getDateListForMonths($num_months) {
+	public function getDateListForMonths($num_months)
+	{
 		$initialEndDate = strtotime('+'.$num_months.' months');
 
 		$startDate = strtotime($this->start_date);
@@ -345,7 +354,8 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
 		return $dateList;
 	}
 
-	protected function beforeSave() {
+	protected function beforeSave()
+	{
 		if ($this->start_date && !preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$this->start_date)) {
 			$this->start_date = date('Y-m-d',strtotime($this->start_date));
 		}

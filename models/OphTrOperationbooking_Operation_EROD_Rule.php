@@ -57,7 +57,7 @@ class OphTrOperationbooking_Operation_EROD_Rule extends BaseActiveRecord
 			array('subspecialty_id', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -73,7 +73,8 @@ class OphTrOperationbooking_Operation_EROD_Rule extends BaseActiveRecord
 		);
 	}
 
-	public function getFirms() {
+	public function getFirms()
+	{
 		$firms = array();
 		foreach ($this->items as $item) {
 			$item['item_type'] == 'firm' && $firms[] = $item;
@@ -111,7 +112,8 @@ class OphTrOperationbooking_Operation_EROD_Rule extends BaseActiveRecord
 		));
 	}
 
-	public function getFirmString() {
+	public function getFirmString()
+	{
 		$string = '';
 
 		foreach ($this->items as $i => $item) {

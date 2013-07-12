@@ -67,7 +67,7 @@ class OphTrOperationbooking_Operation_Defaults extends BaseActiveRecord
 			array('id, name', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */

@@ -17,8 +17,10 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class OphTrOperationbooking_API extends BaseAPI {
-	public function getBookingsForEpisode($episode_id) {
+class OphTrOperationbooking_API extends BaseAPI
+{
+	public function getBookingsForEpisode($episode_id)
+	{
 		$criteria = new CDbCriteria;
 		$criteria->order = 'datetime asc';
 		$criteria->addCondition('episode_id',$episode_id);
@@ -37,11 +39,12 @@ class OphTrOperationbooking_API extends BaseAPI {
 	/**
 	 *  Gets 'open' bookings for the specified episode
 	 * A booking is deemed open if it has no operation note linked to it
-	 * 
+	 *
 	 *  @params integer $episode_id
 	 *  @return OphTrOperationbooking_Operation_Booking[]
 	 */
-	public function getOpenBookingsForEpisode($episode_id) {
+	public function getOpenBookingsForEpisode($episode_id)
+	{
 		$criteria = new CDbCriteria;
 		$criteria->order = 'datetime asc';
 		$criteria->addCondition('episode_id',$episode_id);
@@ -61,15 +64,18 @@ class OphTrOperationbooking_API extends BaseAPI {
 			->findAll($criteria);
 	}
 
-	public function getOperationProcedures($operation_id) {
+	public function getOperationProcedures($operation_id)
+	{
 		return OphTrOperationbooking_Operation_Procedures::model()->findAll('element_id=?',array($operation_id));
 	}
 
-	public function getOperationForEvent($event_id) {
+	public function getOperationForEvent($event_id)
+	{
 		return Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($event_id));
 	}
 
-	public function setOperationStatus($event_id, $status_name) {
+	public function setOperationStatus($event_id, $status_name)
+	{
 		if (!$operation = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($event_id))) {
 			throw new Exception("Operation event not found: $event_id");
 		}
@@ -95,7 +101,8 @@ class OphTrOperationbooking_API extends BaseAPI {
 		}
 	}
 
-	public function getProceduresForOperation($event_id) {
+	public function getProceduresForOperation($event_id)
+	{
 		if (!$operation = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($event_id))) {
 			throw new Exception("Operation event not found: $event_id");
 		}
@@ -103,22 +110,24 @@ class OphTrOperationbooking_API extends BaseAPI {
 		return $operation->procedures;
 	}
 
-	public function getEyeForOperation($event_id) {
+	public function getEyeForOperation($event_id)
+	{
 		if (!$operation = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($event_id))) {
 			throw new Exception("Operation event not found: $event_id");
 		}
 
 		return $operation->eye;
 	}
-	
+
 	/**
 	 * Get the most recent booking for the patient in the given episode
-	 * 
+	 *
 	 * @param Patient $patient
 	 * @param Episode $episode
 	 * @return OphTrOperationbooking_Operation_Booking
 	 */
-	public function getMostRecentBookingForEpisode($patient, $episode) {
+	public function getMostRecentBookingForEpisode($patient, $episode)
+	{
 		$criteria = new CDbCriteria;
 		$criteria->compare('episode_id', $episode->id);
 		$criteria->order = 'datetime desc';
@@ -134,12 +143,13 @@ class OphTrOperationbooking_API extends BaseAPI {
 
 	/**
 	 * get the procedures for this patient and episode as a string for use in correspondence
-	 * 
+	 *
 	 * @param Patient $patient
 	 * @param Episode $episode
 	 * @return string
 	 */
-	public function getLetterProcedures($patient) {
+	public function getLetterProcedures($patient)
+	{
 		if ($episode = $patient->getEpisodeForCurrentSubspecialty()) {
 			$return = '';
 
@@ -154,7 +164,8 @@ class OphTrOperationbooking_API extends BaseAPI {
 		}
 	}
 
-	public function getAdmissionDate($patient) {
+	public function getAdmissionDate($patient)
+	{
 		if ($episode = $patient->getEpisodeForCurrentSubspecialty()) {
 			if ($booking = $this->getMostRecentBookingForEpisode($patient, $episode)) {
 				return $booking->session->NHSDate('date');

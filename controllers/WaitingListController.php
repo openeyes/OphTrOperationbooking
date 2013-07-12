@@ -17,9 +17,10 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class WaitingListController extends BaseEventTypeController {
-	
-	public function accessRules() {
+class WaitingListController extends BaseEventTypeController
+{
+	public function accessRules()
+	{
 		return array(
 			// Level 2 or below can't change anything
 			array('deny',
@@ -33,8 +34,9 @@ class WaitingListController extends BaseEventTypeController {
 			array('deny'),
 		);
 	}
-	
-	public function printActions() {
+
+	public function printActions()
+	{
 		return array(
 			'printLetters',
 		);
@@ -43,7 +45,8 @@ class WaitingListController extends BaseEventTypeController {
 	/**
 		* Lists all models.
 		*/
-	public function actionIndex() {
+	public function actionIndex()
+	{
 		if (empty($_POST)) {
 			if (($data = YiiSession::get('waitinglist_searchoptions'))) {
 				$_POST = $data;
@@ -89,7 +92,8 @@ class WaitingListController extends BaseEventTypeController {
 		$this->renderPartial('_list', array('operations' => $operations, 'assetPath' => Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.'.$this->getModule()->name.'.assets'), false, -1, YII_DEBUG)), false, true);
 	}
 
-	public function getWaitingList($firm_id, $subspecialty_id, $status, $hos_num=false, $site_id=false) {
+	public function getWaitingList($firm_id, $subspecialty_id, $status, $hos_num=false, $site_id=false)
+	{
 		$whereSql = '';
 		$whereParams = array();
 
@@ -162,23 +166,28 @@ class WaitingListController extends BaseEventTypeController {
 		}
 	}
 
-	public function setFilter($field, $value) {
+	public function setFilter($field, $value)
+	{
 		YiiSession::set('waitinglist_searchoptions',$field,$value);
 	}
 
-	public function actionFilterSetFirm() {
+	public function actionFilterSetFirm()
+	{
 		$this->setFilter('firm-id', $_POST['firm_id']);
 	}
 
-	public function actionFilterSetStatus() {
+	public function actionFilterSetStatus()
+	{
 		$this->setFilter('status', $_POST['status']);
 	}
 
-	public function actionFilterSetSiteId() {
+	public function actionFilterSetSiteId()
+	{
 		$this->setFilter('site_id', $_POST['site_id']);
 	}
 
-	public function actionFilterSetHosNum() {
+	public function actionFilterSetHosNum()
+	{
 		$this->setFilter('hos_num', $_POST['hos_num']);
 	}
 	/**
@@ -221,7 +230,8 @@ class WaitingListController extends BaseEventTypeController {
 		* Invalid operation IDs are ignored
 		* @throws CHttpException
 		*/
-	public function actionPrintLetters() {
+	public function actionPrintLetters()
+	{
 		Audit::add('waiting list',(@$_REQUEST['all']=='true' ? 'print all' : 'print selected'),serialize($_POST));
 
 		if (isset($_REQUEST['event_id'])) {
@@ -239,7 +249,7 @@ class WaitingListController extends BaseEventTypeController {
 		// Print letter(s) for each operation
 		$this->layout = '//layouts/pdf';
 		$pdf_print = new OEPDFPrint('Openeyes', 'Waiting list letters', 'Waiting list letters');
-		foreach($operations as $operation) {
+		foreach ($operations as $operation) {
 			$this->printLetter($pdf_print, $operation, $auto_confirm);
 		}
 		$pdf_print->output();
@@ -251,7 +261,8 @@ class WaitingListController extends BaseEventTypeController {
 		* @param Element_OphTrOperationbooking_Operation $operation
 		* @param Boolean $auto_confirm
 		*/
-	protected function printLetter($pdf_print, $operation, $auto_confirm = false) {
+	protected function printLetter($pdf_print, $operation, $auto_confirm = false)
+	{
 		$patient = $operation->event->episode->patient;
 		$letter_status = $operation->getDueLetter();
 		if ($letter_status === null && $operation->getLastLetter() == Element_OphTrOperationbooking_Operation::LETTER_GP) {
@@ -270,7 +281,7 @@ class WaitingListController extends BaseEventTypeController {
 			$firm = $operation->event->episode->firm;
 			$site = $operation->site;
 			$waitingListContact = $operation->waitingListContact;
-			
+
 			// Don't print GP letter if practice address is not defined
 			if ($letter_status != Element_OphTrOperationbooking_Operation::LETTER_GP || ($patient->practice && $patient->practice->contact->address)) {
 				Yii::log("Printing letter: ".$letter_template, 'trace');
@@ -296,7 +307,8 @@ class WaitingListController extends BaseEventTypeController {
 	 * @param Element_OphTrOperationbooking_Operation $operation
 	 * @return string
 	 */
-	protected function getFromAddress($operation) {
+	protected function getFromAddress($operation)
+	{
 		$from_address = $operation->site->getLetterAddress(array(
 			'include_name' => true,
 			'delimiter' => "\n",
@@ -312,7 +324,8 @@ class WaitingListController extends BaseEventTypeController {
 	 * @param OEPDFPrint $pdf
 	 * @param Element_OphTrOperationbooking_Operation $operation
 	 */
-	protected function print_admission_form($pdf, $operation) {
+	protected function print_admission_form($pdf, $operation)
+	{
 		$patient = $operation->event->episode->patient;
 		$to_address = $patient->getLetterAddress(array(
 			'include_name' => true,
@@ -338,7 +351,8 @@ class WaitingListController extends BaseEventTypeController {
 	 * @param OEPDFPrint $pdf
 	 * @param Element_OphTrOperationbooking_Operation $operation
 	 */
-	protected function print_invitation_letter($pdf, $operation) {
+	protected function print_invitation_letter($pdf, $operation)
+	{
 		$patient = $operation->event->episode->patient;
 		$to_address = $patient->getLetterAddress(array(
 			'include_name' => true,
@@ -360,7 +374,8 @@ class WaitingListController extends BaseEventTypeController {
 	 * @param OEPDFPrint $pdf
 	 * @param Element_OphTrOperationbooking_Operation $operation
 	 */
-	protected function print_reminder_letter($pdf, $operation) {
+	protected function print_reminder_letter($pdf, $operation)
+	{
 		$patient = $operation->event->episode->patient;
 		$to_address = $patient->getLetterAddress(array(
 			'include_name' => true,
@@ -382,8 +397,8 @@ class WaitingListController extends BaseEventTypeController {
 	 * @param OEPDFPrint $pdf
 	 * @param Element_OphTrOperationbooking_Operation $operation
 	 */
-	protected function print_gp_letter($pdf, $operation) {
-
+	protected function print_gp_letter($pdf, $operation)
+	{
 		// GP Letter
 		$patient = $operation->event->episode->patient;
 		if ($gp = $patient->gp) {
@@ -426,7 +441,8 @@ class WaitingListController extends BaseEventTypeController {
 
 	}
 
-	public function actionConfirmPrinted() {
+	public function actionConfirmPrinted()
+	{
 		Audit::add('waiting list','confirm',serialize($_POST));
 
 		foreach ($_POST['operations'] as $operation_id) {

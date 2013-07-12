@@ -101,7 +101,7 @@
 			array('id, event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments, ', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -176,7 +176,7 @@
 		$criteria->compare('priority_id', $this->priority_id);
 		$criteria->compare('decision_date', $this->decision_date);
 		$criteria->compare('comments', $this->comments);
-		
+
 		return new CActiveDataProvider(get_class($this), array(
 				'criteria' => $criteria,
 			));
@@ -185,17 +185,19 @@
 	/**
 	 * Set default values for forms on create
 	 */
-	public function setDefaultOptions() {
+	public function setDefaultOptions()
+	{
 		$patient_id = (int) $_REQUEST['patient_id'];
 		$firm = Yii::app()->getController()->firm;
 		$episode = Episode::getCurrentEpisodeByFirm($patient_id, $firm);
-		if($episode && $episode->diagnosis) {
+		if ($episode && $episode->diagnosis) {
 			$this->eye_id = $episode->eye_id;
 		}
 		$this->site_id = Yii::app()->session['selected_site_id'];
 	}
 
-	public function getproc_defaults() {
+	public function getproc_defaults()
+	{
 		$ids = array();
 		foreach (OphTrOperationbooking_Operation_Defaults::model()->findAll() as $item) {
 			$ids[] = $item->value_id;
@@ -261,7 +263,8 @@
 		return parent::beforeValidate();
 	}
 
-	protected function afterValidate() {
+	protected function afterValidate()
+	{
 		if (!empty($_POST['Element_OphTrOperationbooking_Operation']) && empty($_POST['Procedures_procs'])) {
 			$this->addError('procedures', 'At least one procedure must be entered');
 		}
@@ -297,7 +300,8 @@
 		);
 	}
 
-	public function getLetterType() {
+	public function getLetterType()
+	{
 		$letterTypes = $this->getLetterOptions();
 		$letterType = ($this->getDueLetter() !== null && isset($letterTypes[$this->getDueLetter()])) ? $letterTypes[$this->getDueLetter()] : false;
 
@@ -308,12 +312,14 @@
 		return $letterType;
 	}
 
-	public function getHas_gp() {
+	public function getHas_gp()
+	{
 		return ($this->getDueLetter() != self::LETTER_GP || ($this->event->episode->patient->practice && $this->event->episode->patient->practice->contact->address));
 	}
 
-	public function getHas_address() {
-		return (bool)$this->event->episode->patient->contact->correspondAddress;
+	public function getHas_address()
+	{
+		return (bool) $this->event->episode->patient->contact->correspondAddress;
 	}
 
 	public function getLastLetter()
@@ -450,7 +456,8 @@
 		Yii::app()->end();
 	}
 
-	public function getMinDate() {
+	public function getMinDate()
+	{
 		$date = strtotime($this->event->datetime);
 
 		if ($this->schedule_timeframe->schedule_options_id != 1) {
@@ -467,11 +474,13 @@
 		return $date;
 	}
 
-	public function getSchedule_timeframe() {
+	public function getSchedule_timeframe()
+	{
 		return Element_OphTrOperationbooking_ScheduleOperation::model()->find('event_id=?',array($this->event_id));
 	}
 
-	public function getFirmCalendarForMonth($firm, $timestamp) {
+	public function getFirmCalendarForMonth($firm, $timestamp)
+	{
 		$sessions = array();
 
 		$year = date('Y',$timestamp);
@@ -541,7 +550,8 @@
 		return $this->fixCalendarDateOrdering($sessions);
 	}
 
-	public function fixCalendarDateOrdering($sessions) {
+	public function fixCalendarDateOrdering($sessions)
+	{
 		$return = array();
 
 		foreach (array('Mon','Tue','Wed','Thu','Fri','Sat','Sun') as $day) {
@@ -626,14 +636,15 @@
 			->findAll($criteria);
 	}
 
-	public function getWardOptions($session) {
+	public function getWardOptions($session)
+	{
 		if (!$session || !$session->id) {
 			throw new Exception('Session is required.');
 		}
-		
+
 		$siteId = $session->theatre->site_id;
 		$theatreId = $session->theatre_id;
-		
+
 		$results = array();
 
 		if($session->sequence_id == 328 // Allan Bruce (External) Saturday, CR9
@@ -675,7 +686,8 @@
 		return $results;
 	}
 
-	public function calculateEROD($booking_session_id) {
+	public function calculateEROD($booking_session_id)
+	{
 		$where = '';
 
 		if ($this->cancelledBookings) {
@@ -766,7 +778,8 @@
 		}
 	}
 
-	public function audit($target, $action, $data=null, $log=false, $properties=array()) {
+	public function audit($target, $action, $data=null, $log=false, $properties=array())
+	{
 		$properties['event_id'] = $this->event_id;
 		$properties['episode_id'] = $this->event->episode_id;
 		$properties['patient_id'] = $this->event->episode->patient_id;
@@ -774,7 +787,8 @@
 		return parent::audit($target, $action, $data, $log, $properties);
 	}
 
-	public function cancel($reason_id, $comment = null) {
+	public function cancel($reason_id, $comment = null)
+	{
 		if (!$reason = OphTrOperationbooking_Operation_Cancellation_Reason::model()->findByPk($reason_id)) {
 			return array(
 				'result' => false,
@@ -829,8 +843,8 @@
 
 			$this->booking->audit('booking','cancel');
 
-			if(Yii::app()->params['urgent_booking_notify_hours'] && Yii::app()->params['urgent_booking_notify_email']) {
-				if(strtotime($this->booking->session_date) <= (strtotime(date('Y-m-d')) + (Yii::app()->params['urgent_booking_notify_hours'] * 3600))) {
+			if (Yii::app()->params['urgent_booking_notify_hours'] && Yii::app()->params['urgent_booking_notify_email']) {
+				if (strtotime($this->booking->session_date) <= (strtotime(date('Y-m-d')) + (Yii::app()->params['urgent_booking_notify_hours'] * 3600))) {
 					if (!is_array(Yii::app()->params['urgent_booking_notify_email'])) {
 						$targets = array(Yii::app()->params['urgent_booking_notify_email']);
 					} else {
@@ -852,11 +866,13 @@
 		return array('result'=>true);
 	}
 
-	public function isEditable() {
+	public function isEditable()
+	{
 		return $this->status->name != 'Cancelled' && $this->status->name != 'Completed';
 	}
 
-	public function schedule($booking_attributes, $operation_comments, $session_comments, $reschedule=false) {
+	public function schedule($booking_attributes, $operation_comments, $session_comments, $reschedule=false)
+	{
 		$booking = new OphTrOperationbooking_Operation_Booking;
 		$booking->attributes = $booking_attributes;
 
@@ -959,7 +975,8 @@
 		return true;
 	}
 
-	public function setStatus($name) {
+	public function setStatus($name)
+	{
 		if (!$status = OphTrOperationbooking_Operation_Status::model()->find('name=?',array($name))) {
 			throw new Exception('Invalid status: '.$name);
 		}
@@ -970,7 +987,8 @@
 		}
 	}
 
-	public function getProceduresCommaSeparated($field = 'term') {
+	public function getProceduresCommaSeparated($field = 'term')
+	{
 		$procedures = array();
 		foreach ($this->procedures as $procedure) {
 			$procedures[] = $procedure->$field;
@@ -978,7 +996,8 @@
 		return empty($procedures) ? 'No procedures' : implode(', ', $procedures);
 	}
 
-	public function getRefuseContact() {
+	public function getRefuseContact()
+	{
 		if (!$contact = $this->letterContact) {
 			# FIXME: need to handle problems with letters more gracefully than throwing unhandled exceptions.
 			return 'N/A';
@@ -992,11 +1011,13 @@
 		return 'the '.$this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty->name.' Admission Coordinator on '.$contact->refuse_telephone;
 	}
 
-	public function getHealthContact() {
+	public function getHealthContact()
+	{
 		return $this->letterContact->health_telephone;
 	}
 
-	public function getLetterContact() {
+	public function getLetterContact()
+	{
 		$site_id = $this->booking->ward->site_id;
 		$subspecialty_id = $this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty_id;
 		$theatre_id = $this->booking->session->theatre_id;
@@ -1016,7 +1037,8 @@
 		return false;
 	}
 
-	public function getWaitingListContact() {
+	public function getWaitingListContact()
+	{
 		$site_id = $this->site->id;
 		$service_id = $this->event->episode->firm->serviceSubspecialtyAssignment->service_id;
 		$firm_id = $this->event->episode->firm_id;
@@ -1036,11 +1058,13 @@
 		return false;
 	}
 
-	public function getDiagnosis() {
+	public function getDiagnosis()
+	{
 		return Element_OphTrOperationbooking_Diagnosis::model()->find('event_id=?',array($this->event_id));
 	}
 
-	public function getTextOperationName() {
+	public function getTextOperationName()
+	{
 		if ($rule = OphTrOperationbooking_Operation_Name_Rule::model()->find('theatre_id=?',array($this->booking->session->theatre_id))) {
 			return $this->event->episode->patient->childPrefix.$rule->name;
 		}
@@ -1052,7 +1076,8 @@
 		return $this->event->episode->patient->childPrefix.'operation';
 	}
 
-	public function confirmLetterPrinted($confirmto = null, $confirmdate = null) {
+	public function confirmLetterPrinted($confirmto = null, $confirmdate = null)
+	{
 		// admin users can set confirmto and confirm up to a specific point, steamrollering whatever else is in there
 		if (!is_null($confirmto)) {
 			if (!$dls = $this->date_letter_sent) {
@@ -1128,14 +1153,16 @@
 		}
 	}
 
-	public function getDisorderText() {
+	public function getDisorderText()
+	{
 		if (!$diagnosis = Element_OphTrOperationbooking_Diagnosis::model()->find('event_id=?',array($this->event_id))) {
 			throw new Exception("Unable to find diagnosis element for event_id $this->event_id");
 		}
 		return $diagnosis->disorder->term;
 	}
 
-	public function sentInvitation() {
+	public function sentInvitation()
+	{
 		if (is_null($last_letter = $this->lastLetter)) return false;
 
 		return in_array($last_letter,array(
@@ -1146,7 +1173,8 @@
 		));
 	}
 
-	public function sent1stReminder() {
+	public function sent1stReminder()
+	{
 		if (is_null($last_letter = $this->lastLetter)) return false;
 
 		return in_array($last_letter,array(
@@ -1156,7 +1184,8 @@
 		));
 	}
 
-	public function sent2ndReminder() {
+	public function sent2ndReminder()
+	{
 		if (is_null($last_letter = $this->lastLetter)) return false;
 
 		return in_array($last_letter,array(
@@ -1165,7 +1194,8 @@
 		));
 	}
 
-	public function sentGPLetter() {
+	public function sentGPLetter()
+	{
 		if (is_null($last_letter = $this->lastLetter)) return false;
 
 		return in_array($last_letter,array(
@@ -1173,7 +1203,8 @@
 		));
 	}
 
-	public function matchDiagnosisEye() {
+	public function matchDiagnosisEye()
+	{
 		if (isset($_POST['Element_OphTrOperationbooking_Diagnosis']['eye_id']) &&
 			isset($_POST['Element_OphTrOperationbooking_Operation']['eye_id'])
 		) {
@@ -1187,7 +1218,8 @@
 		}
 	}
 
-	public function delete() {
+	public function delete()
+	{
 		// Delete related records
 		OphTrOperationbooking_Operation_Date_Letter_Sent::model()->deleteAll('element_id = ?', array($this->id));
 		OphTrOperationbooking_Operation_Procedures::model()->deleteAll('element_id = ?', array($this->id));
@@ -1196,7 +1228,8 @@
 		parent::delete();
 	}
 
-	public function getTransportColour() {
+	public function getTransportColour()
+	{
 		$booking = $this->latestBooking;
 
 		if (!$booking->transport_arranged) {
@@ -1210,7 +1243,8 @@
 		return 'Grey';
 	}
 
-	public function getTransportStatus() {
+	public function getTransportStatus()
+	{
 		if ($this->latestBooking->booking_cancellation_date) {
 			return 'Cancelled';
 		}

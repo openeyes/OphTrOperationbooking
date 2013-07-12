@@ -17,10 +17,12 @@
 * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
 */
 
-class DefaultController extends BaseEventTypeController {
+class DefaultController extends BaseEventTypeController
+{
 	public $eventIssueCreate = 'Operation requires scheduling';
 
-	protected function beforeAction($action) {
+	protected function beforeAction($action)
+	{
 		$this->assetPath = Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.'.$this->getModule()->name.'.assets'), false, -1, YII_DEBUG);
 		Yii::app()->clientScript->registerScriptFile($this->assetPath.'/js/booking.js');
 		Yii::app()->clientScript->registerScriptFile('/js/jquery.validate.min.js');
@@ -29,7 +31,8 @@ class DefaultController extends BaseEventTypeController {
 		return parent::beforeAction($action);
 	}
 
-	public function actionCreate() {
+	public function actionCreate()
+	{
 		if (@$_POST['schedule_now']) {
 			$this->successUri = 'booking/schedule/';
 		}
@@ -37,11 +40,13 @@ class DefaultController extends BaseEventTypeController {
 		parent::actionCreate();
 	}
 
-	public function actionUpdate($id) {
+	public function actionUpdate($id)
+	{
 		parent::actionUpdate($id);
 	}
 
-	public function actionView($id) {
+	public function actionView($id)
+	{
 		$this->extraViewProperties = array(
 			'operation' => Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($id)),
 		);
@@ -49,18 +54,21 @@ class DefaultController extends BaseEventTypeController {
 		parent::actionView($id);
 	}
 
-	public function actionPrint($id) {
+	public function actionPrint($id)
+	{
 		parent::actionPrint($id);
 	}
 
-	public function printActions() {
+	public function printActions()
+	{
 		return array('print','admissionLetter');
 	}
 
-	public function actionCancel($id) {
+	public function actionCancel($id)
+	{
 		if (!$event = Event::model()->findByPk($id)) {
 			throw new Exception('Unable to find event: '.$id);
-		} 
+		}
 
 		if (!$operation = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($event->id))) {
 			throw new CHttpException(500,'Operation not found');
@@ -80,7 +88,7 @@ class DefaultController extends BaseEventTypeController {
 
 			if ($result['result']) {
 				$operation->event->deleteIssues();
-		
+
 				$event->audit('event','cancel',false);
 
 				die(json_encode(array()));
@@ -110,7 +118,8 @@ class DefaultController extends BaseEventTypeController {
 			), false, true);
 	}
 
-	public function actionAdmissionLetter($id) {
+	public function actionAdmissionLetter($id)
+	{
 		if (!$event = Event::model()->findByPk($id)) {
 			throw new Exception('Event not found: '.$id);
 		}

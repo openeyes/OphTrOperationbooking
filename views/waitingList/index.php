@@ -103,7 +103,7 @@
 								</td>
 								<td>
 									<input type="text" size="12" name="hos_num" id="hos_num" value="<?php echo @$_POST['hos_num']?>" /><br/>
-									<span id="hos_num_error" class="red"<?php if (!@$_POST['hos_num'] || ctype_digit($_POST['hos_num'])){?> style="display: none;"<?php }?>>Invalid hospital number</span>
+									<span id="hos_num_error" class="red"<?php if (!@$_POST['hos_num'] || ctype_digit($_POST['hos_num'])) {?> style="display: none;"<?php }?>>Invalid hospital number</span>
 								</td>
 								<td width="20px;" style="margin-left: 50px; border: none;">
 									<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="float: right; margin-left: 0px; display: none;" />

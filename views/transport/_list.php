@@ -44,7 +44,7 @@
 						No items matched your search criteria.
 					</td>
 				</tr>
-			<?php }else{?>
+			<?php } else {?>
 				<?php foreach ($operations as $operation) {?>
 					<tr class="waitinglist<?php echo $operation->transportColour?>">
 						<td style="width: 53px;"><?php echo $operation->event->episode->patient->hos_num?></td>

@@ -76,7 +76,7 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecord
 			array('id, element_id, session_id, display_order, ward_id, admission_time, confirmed', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -132,7 +132,8 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecord
 			));
 	}
 
-	public function getCancellationReasonWithComment() {
+	public function getCancellationReasonWithComment()
+	{
 		$return = $this->cancellationReason->text;
 		if ($this->cancellation_comment) {
 			$return .= " ($this->cancellation_comment)";
@@ -140,7 +141,8 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecord
 		return $return;
 	}
 
-	public function audit($target, $action, $data=null, $log=false, $properties=array()) {
+	public function audit($target, $action, $data=null, $log=false, $properties=array())
+	{
 		$properties['event_id'] = $this->operation->event_id;
 		$properties['episode_id'] = $this->operation->event->episode_id;
 		$properties['patient_id'] = $this->operation->event->episode->patient_id;
@@ -148,7 +150,8 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecord
 		return parent::audit($target, $action, $data, $log, $properties);
 	}
 
-	public function cancel($reason, $cancellation_comment, $reschedule=false) {
+	public function cancel($reason, $cancellation_comment, $reschedule=false)
+	{
 		$this->booking_cancellation_date = date('Y-m-d H:i:s');
 		$this->cancellation_reason_id = $reason->id;
 		$this->cancellation_comment = $cancellation_comment;
@@ -195,9 +198,10 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecord
 		}
 	}
 
-	public function showWarning($type) {
+	public function showWarning($type)
+	{
 		$subspecialty_id = ($this->session->firm) ? $this->session->firm->serviceSubspecialtyAssignment->subspecialty_id : null;
-		
+
 		if ($rule = OphTrOperationbooking_Admission_Letter_Warning_Rule::getRule(
 				$type,
 				$this->session->theatre->site_id,
@@ -212,11 +216,12 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecord
 		return false;
 	}
 
-	public function getWarningHTML($type) {
+	public function getWarningHTML($type)
+	{
 		$return = '';
-		
+
 		$subspecialty_id = ($this->session->firm) ? $this->session->firm->serviceSubspecialtyAssignment->subspecialty_id : null;
-		
+
 		if ($rule = OphTrOperationbooking_Admission_Letter_Warning_Rule::getRule(
 				$type,
 				$this->session->theatre->site_id,
@@ -243,9 +248,10 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecord
 		return $return;
 	}
 
-	protected function afterValidate() {
+	protected function afterValidate()
+	{
 		if (preg_match('/^([0-9]{1,2}).*?([0-9]{2})$/',$this->admission_time,$m)) {
-			if ((integer)$m[1] > 23 || (integer)$m[2] > 59) {
+			if ((integer) $m[1] > 23 || (integer) $m[2] > 59) {
 				$this->addError('admission_time','Please enter a valid admission time in the 24-hour clock format');
 			}
 		}

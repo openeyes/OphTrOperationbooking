@@ -59,7 +59,7 @@ class OphTrOperationbooking_Operation_EROD_Rule_Item extends BaseActiveRecord
 			array('erod_rule_id, item_type, item_id', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */

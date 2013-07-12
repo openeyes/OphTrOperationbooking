@@ -29,7 +29,7 @@
  * @property Element_OphTrOperationbooking_Operation $element
  * @property Procedure $proc
  * @property User $user
- * @property User $usermodified 
+ * @property User $usermodified
  */
 
 class OphTrOperationbooking_Operation_Procedures extends BaseActiveRecord
@@ -66,7 +66,7 @@ class OphTrOperationbooking_Operation_Procedures extends BaseActiveRecord
 			array('id, element_id, proc_id', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */

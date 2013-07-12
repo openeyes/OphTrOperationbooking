@@ -27,7 +27,7 @@
  * @property boolean $show_warning
  */
 
-class OphTrOperationbooking_Admission_Letter_Warning_Rule extends BaseTree 
+class OphTrOperationbooking_Admission_Letter_Warning_Rule extends BaseTree
 {
 	public $textFields = array('ruleType','site','firm','theatre','subspecialty','is_child','show_warning','warning_text','emphasis','strong');
 	public $textFieldsDropdown = array('ruleType','site','firm','theatre','subspecialty','is_child','show_warning','warning_text','emphasis','strong');
@@ -64,7 +64,7 @@ class OphTrOperationbooking_Admission_Letter_Warning_Rule extends BaseTree
 			array('id, name', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -126,7 +126,8 @@ class OphTrOperationbooking_Admission_Letter_Warning_Rule extends BaseTree
 			));
 	}
 
-	static public function getRule($rule_type_name, $site_id, $is_child, $theatre_id, $subspecialty_id, $firm_id) {
+	static public function getRule($rule_type_name, $site_id, $is_child, $theatre_id, $subspecialty_id, $firm_id)
+	{
 		if (!$rule_type = OphTrOperationbooking_Admission_Letter_Warning_Rule_Type::model()->find('name=?',array($rule_type_name))) {
 			throw new Exception("We were asked for a rule type that doesn't exist: $rule_type_name");
 		}
@@ -143,7 +144,8 @@ class OphTrOperationbooking_Admission_Letter_Warning_Rule extends BaseTree
 		}
 	}
 
-	public function applies($site_id, $is_child, $theatre_id, $subspecialty_id, $firm_id) {
+	public function applies($site_id, $is_child, $theatre_id, $subspecialty_id, $firm_id)
+	{
 		foreach (array('site_id', 'is_child', 'theatre_id','subspecialty_id', 'firm_id') as $field) {
 			if ($this->{$field} !== null && $this->{$field} != ${$field}) {
 				return false;
@@ -153,7 +155,8 @@ class OphTrOperationbooking_Admission_Letter_Warning_Rule extends BaseTree
 		return true;
 	}
 
-	public function parse($site_id, $is_child, $theatre_id, $subspecialty_id, $firm_id) {
+	public function parse($site_id, $is_child, $theatre_id, $subspecialty_id, $firm_id)
+	{
 		foreach ($this->children as $rule) {
 			if ($rule->applies($site_id, $is_child, $theatre_id, $subspecialty_id, $firm_id)) {
 				return $rule->parse($site_id, $is_child, $theatre_id, $subspecialty_id, $firm_id);
@@ -163,26 +166,31 @@ class OphTrOperationbooking_Admission_Letter_Warning_Rule extends BaseTree
 		return $this;
 	}
 
-	public function getWarning_text_TreeText() {
+	public function getWarning_text_TreeText()
+	{
 		if ($this->warning_text) {
 			return substr($this->warning_text,0,55).' ...';
 		}
 		return '';
 	}
 
-	public function getIs_child_TreeText() {
+	public function getIs_child_TreeText()
+	{
 		return $this->is_child ? 'C' : 'A';
 	}
 
-	public function getShow_warning_TreeText() {
+	public function getShow_warning_TreeText()
+	{
 		return $this->show_warning ? 'SHOW' : 'HIDE';
 	}
 
-	public function getEmphasis_TreeText() {
+	public function getEmphasis_TreeText()
+	{
 		return $this->emphasis ? 'I' : null;
 	}
 
-	public function getStrong_TreeText() {
+	public function getStrong_TreeText()
+	{
 		return $this->strong ? 'B' : null;
 	}
 }

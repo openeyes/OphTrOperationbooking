@@ -71,7 +71,7 @@ class Element_OphTrOperationbooking_Diagnosis extends BaseEventTypeElement
 			array('id, event_id, eye_id, disorder_id, ', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -118,7 +118,7 @@ class Element_OphTrOperationbooking_Diagnosis extends BaseEventTypeElement
 		$criteria->compare('event_id', $this->event_id, true);
 		$criteria->compare('eye_id', $this->eye_id);
 		$criteria->compare('disorder_id', $this->disorder_id);
-		
+
 		return new CActiveDataProvider(get_class($this), array(
 				'criteria' => $criteria,
 		));
@@ -140,7 +140,8 @@ class Element_OphTrOperationbooking_Diagnosis extends BaseEventTypeElement
 		}
 	}
 
-	protected function afterSave() {
+	protected function afterSave()
+	{
 		if (!$this->event->episode->eye && !$this->event->episode->disorder_id) {
 			$this->event->episode->setPrincipalDiagnosis($this->disorder_id, $this->eye_id);
 

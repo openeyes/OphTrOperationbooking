@@ -26,7 +26,7 @@
 		<img id="loader_<?php echo $session->id?>" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="margin-right: 5px; margin-bottom: 4px; display: none;" />
 		<div class="session_options diaryViewMode" data-id="<?php echo $session->id?>">
 			<span class="aBtn_inactive">View</span>
-			<?php if(BaseController::checkUserLevel(4)) { ?>
+			<?php if (BaseController::checkUserLevel(4)) { ?>
 			<span class="aBtn edit-event">
 				<a href="#" rel="<?php echo $session->id?>" class="edit-session">Edit</a>
 			</span>
@@ -72,13 +72,13 @@
 					<input type="hidden" name="anaesthetist_<?php echo $session->id?>" value="0" />
 					<input type="hidden" name="general_anaesthetic_<?php echo $session->id?>" value="0" />
 					<input type="hidden" name="available_<?php echo $session->id?>" value="0" />
-					<input type="checkbox" id="consultant_<?php echo $session->id?>" name="consultant_<?php echo $session->id?>" value="1"<?php if ($session->consultant){?> checked="checked"<?php }?> /> Consultant present<br/>
-					<input type="checkbox" id="paediatric_<?php echo $session->id?>" name="paediatric_<?php echo $session->id?>" value="1"<?php if ($session->paediatric){?> checked="checked"<?php }?> /> Paediatric<br/>
-					<input type="checkbox" id="anaesthetist_<?php echo $session->id?>" name="anaesthetist_<?php echo $session->id?>" value="1"<?php if ($session->anaesthetist){?> checked="checked"<?php }?> /> Anaesthetist present<br/>
-					<input type="checkbox" id="general_anaesthetic_<?php echo $session->id?>" name="general_anaesthetic_<?php echo $session->id?>" value="1"<?php if ($session->general_anaesthetic){?> checked="checked"<?php }?> /> General anaesthetic available<br/>
-					<input type="checkbox" id="available_<?php echo $session->id?>" name="available_<?php echo $session->id?>" value="1"<?php if ($session->available){?> checked="checked"<?php }?> /> Session available<br/>
+					<input type="checkbox" id="consultant_<?php echo $session->id?>" name="consultant_<?php echo $session->id?>" value="1"<?php if ($session->consultant) {?> checked="checked"<?php }?> /> Consultant present<br/>
+					<input type="checkbox" id="paediatric_<?php echo $session->id?>" name="paediatric_<?php echo $session->id?>" value="1"<?php if ($session->paediatric) {?> checked="checked"<?php }?> /> Paediatric<br/>
+					<input type="checkbox" id="anaesthetist_<?php echo $session->id?>" name="anaesthetist_<?php echo $session->id?>" value="1"<?php if ($session->anaesthetist) {?> checked="checked"<?php }?> /> Anaesthetist present<br/>
+					<input type="checkbox" id="general_anaesthetic_<?php echo $session->id?>" name="general_anaesthetic_<?php echo $session->id?>" value="1"<?php if ($session->general_anaesthetic) {?> checked="checked"<?php }?> /> General anaesthetic available<br/>
+					<input type="checkbox" id="available_<?php echo $session->id?>" name="available_<?php echo $session->id?>" value="1"<?php if ($session->available) {?> checked="checked"<?php }?> /> Session available<br/>
 				</div>
-			<?php }else{?>
+			<?php } else {?>
 				<input type="hidden" id="consultant_<?php echo $session->id?>" name="consultant_<?php echo $session->id?>" value="<?php echo $session->consultant?>" />
 				<input type="hidden" id="paediatric_<?php echo $session->id?>" name="paediatric_<?php echo $session->id?>" value="<?php echo $session->paediatric?>" />
 				<input type="hidden" id="anaesthetist_<?php echo $session->id?>" name="anaesthetist_<?php echo $session->id?>" value="<?php echo $session->anaesthetist?>" />
@@ -154,7 +154,7 @@
 						<div class="session_timeleft">
 							<?php if ($status) {?>
 								<?php echo $session->availableMinutes ?> minutes unallocated
-							<?php }else{?>
+							<?php } else {?>
 								<?php echo abs($session->availableMinutes) ?> minutes overbooked
 							<?php }?>
 							<span<?php if ($session->available) {?> style="display: none;"<?php }?> class="session_unavailable" id="session_unavailable_<?php echo $session->id?>"> - session unavailable</span>
