@@ -105,4 +105,3 @@ class OphTrOperationbooking_Operation_Status extends BaseActiveRecord
 			));
 	}
 }
-?>

@@ -129,4 +129,3 @@ class OphTrOperationbooking_Operation_Theatre extends BaseActiveRecord
 		return $this->name . ' (' . $this->site->name . ')';
 	}
 }
-?>

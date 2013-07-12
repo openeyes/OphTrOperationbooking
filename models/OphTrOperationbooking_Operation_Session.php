@@ -280,4 +280,3 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		return parent::beforeSave();
 	}
 }
-?>

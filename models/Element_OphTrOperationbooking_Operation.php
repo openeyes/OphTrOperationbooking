@@ -526,9 +526,9 @@
 
 							if ($full == count($sessiondata[$date])) {
 								$status = 'full';
-							} else if ($full >0 and $open >0) {
+							} elseif ($full >0 and $open >0) {
 								$status = 'limited';
-							} else if ($open == count($sessiondata[$date])) {
+							} elseif ($open == count($sessiondata[$date])) {
 								$status = 'available';
 							}
 						}
@@ -657,7 +657,7 @@
 				&& $ward = OphTrOperationbooking_Operation_Ward::model()->find('code = ?', array('OW4'))) {
 			// FIXME: TEMPORARY FIX FOR THEATRE 9 MAINTAINANCE (USING OW4 INSTEAD)
 			$results[$ward->id] = $ward->name;
-		} else if (!empty($theatreId)) {
+		} elseif (!empty($theatreId)) {
 			if ($session->theatre->ward) {
 				$results[$session->theatre->ward_id] = $session->theatre->ward->name;
 			}
@@ -1121,17 +1121,17 @@
 			OELog::log("Letter print confirmed, datelettersent=$dls->id confirmdate='$confirmdate'");
 
 		// Only confirm if letter is actually due
-		} else if ($this->getDueLetter() !== $this->getLastLetter()) {
+		} elseif ($this->getDueLetter() !== $this->getLastLetter()) {
 			if ($dls = $this->date_letter_sent) {
 				if ($dls->date_invitation_letter_sent == null) {
 					$dls->date_invitation_letter_sent = date('Y-m-d H:i:s');
-				} else if ($dls->date_1st_reminder_letter_sent == null) {
+				} elseif ($dls->date_1st_reminder_letter_sent == null) {
 					$dls->date_1st_reminder_letter_sent = date('Y-m-d H:i:s');
-				} else if ($dls->date_2nd_reminder_letter_sent == null) {
+				} elseif ($dls->date_2nd_reminder_letter_sent == null) {
 					$dls->date_2nd_reminder_letter_sent = date('Y-m-d H:i:s');
-				} else if ($dls->date_gp_letter_sent == null) {
+				} elseif ($dls->date_gp_letter_sent == null) {
 					$dls->date_gp_letter_sent = date('Y-m-d H:i:s');
-				} else if ($dls->date_scheduling_letter_sent == null) {
+				} elseif ($dls->date_scheduling_letter_sent == null) {
 					$dls->date_scheduling_letter_sent = date('Y-m-d H:i:s');
 				}
 				if (!$dls->save()) {

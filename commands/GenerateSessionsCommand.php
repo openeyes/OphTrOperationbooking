@@ -67,7 +67,7 @@ class GenerateSessionsCommand extends CConsoleCommand
 				if (empty($session)) {
 					$dateList[] = $sequence->start_date;
 				}
-			} else if ($sequence->interval_id == 6 && $sequence->week_selection) {
+			} elseif ($sequence->interval_id == 6 && $sequence->week_selection) {
 				// MONTHLY REPEAT (weeks x,y of month)
 				$date = date('Y-m-d', $startDate);
 				$time = $startDate;

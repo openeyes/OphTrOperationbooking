@@ -259,4 +259,3 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecord
 		return parent::afterValidate();
 	}
 }
-?>

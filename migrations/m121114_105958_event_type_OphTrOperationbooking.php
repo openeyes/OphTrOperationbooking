@@ -566,4 +566,3 @@ class m121114_105958_event_type_OphTrOperationbooking extends CDbMigration
 		$this->delete('element_type', 'id='.$element_schedule['id']);
 	}
 }
-?>

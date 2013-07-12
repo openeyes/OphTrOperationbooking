@@ -101,4 +101,3 @@ class OphTrOperationbooking_Operation_EROD_Rule_Item extends BaseActiveRecord
 			));
 	}
 }
-?>

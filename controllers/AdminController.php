@@ -621,7 +621,7 @@ class AdminController extends ModuleAdminController
 
 		if (empty($_GET) && !empty(Yii::app()->session['admin_sequences'])) {
 			$this->redirectWith(Yii::app()->session['admin_sequences']);
-		} else if (!empty($_GET)) {
+		} elseif (!empty($_GET)) {
 			Yii::app()->session['admin_sequences'] = $_GET;
 		}
 
@@ -651,7 +651,7 @@ class AdminController extends ModuleAdminController
 		if ($firm = Firm::model()->findByPk(@$_REQUEST['firm_id'])) {
 			$criteria->addCondition('firm_id=:firm_id');
 			$criteria->params[':firm_id'] = $firm->id;
-		} else if (@$_REQUEST['firm_id'] == 'NULL') {
+		} elseif (@$_REQUEST['firm_id'] == 'NULL') {
 			$criteria->addCondition('firm_id is null');
 		}
 
@@ -770,7 +770,7 @@ class AdminController extends ModuleAdminController
 
 		if (isset($elements['sortby']) && $elements['sortby'] == @$request['sortby']) {
 			$request['order'] = (@$request['order'] == 'desc') ? 'asc' : 'desc';
-		} else if (isset($request['sortby']) && isset($elements['sortby']) && $request['sortby'] != $elements['sortby']) {
+		} elseif (isset($request['sortby']) && isset($elements['sortby']) && $request['sortby'] != $elements['sortby']) {
 			$request['order'] = 'asc';
 		}
 
@@ -792,7 +792,7 @@ class AdminController extends ModuleAdminController
 			$criteria = new CDbCriteria;
 			$criteria->addInCondition('id',$_POST['sequence']);
 			$sequences = OphTrOperationbooking_Operation_Sequence::model()->findAll($criteria);
-		} else if (@$_POST['use_filters']) {
+		} elseif (@$_POST['use_filters']) {
 			$sequences = $this->getSequences(true);
 		}
 
@@ -952,7 +952,7 @@ class AdminController extends ModuleAdminController
 
 		if (empty($_GET) && !empty(Yii::app()->session['admin_sessions'])) {
 			$this->redirectWith(Yii::app()->session['admin_sessions']);
-		} else if (!empty($_GET)) {
+		} elseif (!empty($_GET)) {
 			Yii::app()->session['admin_sessions'] = $_GET;
 		}
 
@@ -968,7 +968,7 @@ class AdminController extends ModuleAdminController
 		if ($firm = Firm::model()->findByPk(@$_REQUEST['firm_id'])) {
 			$criteria->addCondition('t.firm_id=:firm_id');
 			$criteria->params[':firm_id'] = $firm->id;
-		} else if (@$_REQUEST['firm_id'] == 'NULL') {
+		} elseif (@$_REQUEST['firm_id'] == 'NULL') {
 			$criteria->addCondition('t.firm_id is null');
 		}
 
@@ -1092,7 +1092,7 @@ class AdminController extends ModuleAdminController
 			$criteria = new CDbCriteria;
 			$criteria->addInCondition('id',$_POST['session']);
 			$sessions = OphTrOperationbooking_Operation_Session::model()->findAll($criteria);
-		} else if (@$_POST['use_filters']) {
+		} elseif (@$_POST['use_filters']) {
 			$sessions = $this->getSessions(true);
 		}
 
@@ -1194,7 +1194,7 @@ class AdminController extends ModuleAdminController
 					$this->redirect(array('/OphTrOperationbooking/admin/viewSessions'));
 				}
 			}
-		} else if (isset($_GET['sequence_id'])) {
+		} elseif (isset($_GET['sequence_id'])) {
 			$session->sequence_id = $_GET['sequence_id'];
 		}
 
@@ -1208,7 +1208,7 @@ class AdminController extends ModuleAdminController
 	{
 		if (!empty($_POST['session'])) {
 			$session_ids = $_POST['session'];
-		} else if (@$_POST['use_filters']) {
+		} elseif (@$_POST['use_filters']) {
 			$session_ids = array();
 			foreach ($this->getSessions(true) as $session) {
 				$session_ids[] = $session->id;
@@ -1242,7 +1242,7 @@ class AdminController extends ModuleAdminController
 			$criteria = new CDbCriteria;
 			$criteria->addInCondition('id',$_POST['session']);
 			$sessions = OphTrOperationbooking_Operation_Session::model()->findAll($criteria);
-		} else if (@$_POST['use_filters']) {
+		} elseif (@$_POST['use_filters']) {
 			$sessions = $this->getSessions(true);
 		}
 
@@ -1260,7 +1260,7 @@ class AdminController extends ModuleAdminController
 	{
 		if (!empty($_POST['sequence'])) {
 			$sequence_ids = $_POST['sequence'];
-		} else if (@$_POST['use_filters']) {
+		} elseif (@$_POST['use_filters']) {
 			$sequence_ids = array();
 			foreach ($this->getSequences(true) as $sequence) {
 				$sequence_ids[] = $sequence->id;
@@ -1295,7 +1295,7 @@ class AdminController extends ModuleAdminController
 			$criteria = new CDbCriteria;
 			$criteria->addInCondition('id',$_POST['sequence']);
 			$sequences = OphTrOperationbooking_Operation_Sequence::model()->findAll($criteria);
-		} else if (@$_POST['use_filters']) {
+		} elseif (@$_POST['use_filters']) {
 			$sequences = $this->getSequences(true);
 		}
 

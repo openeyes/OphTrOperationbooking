@@ -110,4 +110,3 @@ class OphTrOperationbooking_Operation_Name_Rule extends BaseActiveRecord
 			));
 	}
 }
-?>

@@ -194,4 +194,3 @@ class OphTrOperationbooking_Operation_Ward extends BaseActiveRecord
 		return $this->restriction & self::RESTRICTION_OBSERVATION ? 1 : 0;
 	}
 }
-?>

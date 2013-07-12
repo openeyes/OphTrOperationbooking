@@ -135,4 +135,3 @@ class OphTrOperationbooking_Operation_Priority extends BaseActiveRecord
 		return parent::beforeValidate();
 	}
 }
-?>

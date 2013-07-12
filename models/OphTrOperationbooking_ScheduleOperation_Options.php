@@ -135,4 +135,3 @@ class OphTrOperationbooking_ScheduleOperation_Options extends BaseActiveRecord
 		return parent::beforeValidate();
 	}
 }
-?>

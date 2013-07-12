@@ -126,7 +126,7 @@ class OphTrOperationbooking_Admission_Letter_Warning_Rule extends BaseTree
 			));
 	}
 
-	static public function getRule($rule_type_name, $site_id, $is_child, $theatre_id, $subspecialty_id, $firm_id)
+	public static function getRule($rule_type_name, $site_id, $is_child, $theatre_id, $subspecialty_id, $firm_id)
 	{
 		if (!$rule_type = OphTrOperationbooking_Admission_Letter_Warning_Rule_Type::model()->find('name=?',array($rule_type_name))) {
 			throw new Exception("We were asked for a rule type that doesn't exist: $rule_type_name");

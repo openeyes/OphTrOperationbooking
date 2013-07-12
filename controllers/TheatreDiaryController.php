@@ -348,7 +348,7 @@ class TheatreDiaryController extends BaseEventTypeController
 
 		if (!empty($_POST['subspecialty_id'])) {
 			$subspecialty_id = $_POST['subspecialty_id'];
-		} else if (!empty($_POST['service_id'])) {
+		} elseif (!empty($_POST['service_id'])) {
 			$subspecialty_id = ServiceSubspecialtyAssignment::model()->find('service_id=?',array($_POST['service_id']))->subspecialty_id;
 		}
 

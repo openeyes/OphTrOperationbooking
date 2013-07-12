@@ -117,7 +117,7 @@ class BookingController extends BaseEventTypeController
 					$_POST['Operation']['comments'] = $operation->comments;
 				}
 			}
-		} else if ($operation->booking) {
+		} elseif ($operation->booking) {
 			$selectedDate = $operation->booking->session->date;
 		}
 
@@ -172,7 +172,7 @@ class BookingController extends BaseEventTypeController
 			}
 			if (!$reason = OphTrOperationbooking_Operation_Cancellation_Reason::model()->findByPk($_POST['cancellation_reason'])) {
 				$errors[] = "Please select a rescheduling reason";
-			} else if (isset($_POST['booking_id']) && empty($errors)) {
+			} elseif (isset($_POST['booking_id']) && empty($errors)) {
 				if (!$booking = OphTrOperationbooking_Operation_Booking::model()->findByPk($_POST['booking_id'])) {
 					throw new Exception('Booking not found: '.@$_POST['booking_id']);
 				}

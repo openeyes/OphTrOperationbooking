@@ -295,7 +295,7 @@ class WaitingListController extends BaseEventTypeController
 			} else {
 				Yii::log("Patient has no practice address, printing letter supressed: ".$patient->id, 'trace');
 			}
-		} else if ($letter_status === null) {
+		} elseif ($letter_status === null) {
 			Yii::log("No letter is due: ".$patient->id, 'trace');
 		} else {
 			throw new CException('Undefined letter status');

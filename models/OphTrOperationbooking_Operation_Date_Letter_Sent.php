@@ -108,4 +108,3 @@ class OphTrOperationbooking_Operation_Date_Letter_Sent extends BaseActiveRecord
 			));
 	}
 }
-?>

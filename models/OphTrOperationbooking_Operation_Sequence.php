@@ -318,7 +318,7 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
 		$dateList = array();
 		if ($this->interval_id == 1) {
 			$dateList[] = $this->start_date;
-		} else if ($this->interval_id == 6 && $this->week_selection) {
+		} elseif ($this->interval_id == 6 && $this->week_selection) {
 			$date = date('Y-m-d', $startDate);
 			$time = $startDate;
 
@@ -366,4 +366,3 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
 		return parent::beforeSave();
 	}
 }
-?>

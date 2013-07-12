@@ -127,4 +127,3 @@ class OphTrOperationbooking_Operation_EROD_Rule extends BaseActiveRecord
 		return $string;
 	}
 }
-?>
