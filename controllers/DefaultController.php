@@ -110,6 +110,8 @@ class DefaultController extends BaseEventTypeController
 		$this->patient = $operation->event->episode->patient;
 		$this->title = 'Cancel operation';
 
+		$this->processJsVars();
+
 		$this->renderPartial('cancel', array(
 				'operation' => $operation,
 				'patient' => $operation->event->episode->patient,
