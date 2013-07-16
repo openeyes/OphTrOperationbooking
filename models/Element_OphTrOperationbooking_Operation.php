@@ -194,6 +194,16 @@
 			$this->eye_id = $episode->eye_id;
 		}
 		$this->site_id = Yii::app()->session['selected_site_id'];
+
+		if ($patient = Patient::model()->findByPk($patient_id)) {
+			$key = $patient->isChild() ? 'ophtroperationbooking_default_anaesthetic_child' : 'ophtroperationbooking_default_anaesthetic';
+
+			if (isset(Yii::app()->params[$key])) {
+				if ($at = AnaestheticType::model()->find('code=?',array(Yii::app()->params[$key]))) {
+					$this->anaesthetic_type_id = $at->id;
+				}
+			}
+		}
 	}
 
 	public function getproc_defaults()
