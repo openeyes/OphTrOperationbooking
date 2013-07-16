@@ -130,7 +130,7 @@ class OphTrOperationbooking_API extends BaseAPI
 	{
 		$criteria = new CDbCriteria;
 		$criteria->compare('episode_id', $episode->id);
-		$criteria->order = 'created_date desc';
+		$criteria->order = 'event.created_date desc';
 
 		return OphTrOperationbooking_Operation_Booking::model()
 			->with(array(
