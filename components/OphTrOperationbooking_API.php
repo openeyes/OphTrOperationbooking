@@ -20,7 +20,7 @@
 class OphTrOperationbooking_API extends BaseAPI {
 	public function getBookingsForEpisode($episode_id) {
 		$criteria = new CDbCriteria;
-		$criteria->order = 'datetime asc';
+		$criteria->order = 'created_date asc';
 		$criteria->addCondition('episode_id',$episode_id);
 
 		return OphTrOperationbooking_Operation_Booking::model()
@@ -43,7 +43,7 @@ class OphTrOperationbooking_API extends BaseAPI {
 	 */
 	public function getOpenBookingsForEpisode($episode_id) {
 		$criteria = new CDbCriteria;
-		$criteria->order = 'datetime asc';
+		$criteria->order = 'created_date asc';
 		$criteria->addCondition('episode_id',$episode_id);
 		$criteria->addCondition('`t`.booking_cancellation_date is null');
 
@@ -121,7 +121,7 @@ class OphTrOperationbooking_API extends BaseAPI {
 	public function getMostRecentBookingForEpisode($patient, $episode) {
 		$criteria = new CDbCriteria;
 		$criteria->compare('episode_id', $episode->id);
-		$criteria->order = 'datetime desc';
+		$criteria->order = 'created_date desc';
 
 		return OphTrOperationbooking_Operation_Booking::model()
 			->with(array(

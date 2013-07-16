@@ -451,7 +451,7 @@
 	}
 
 	public function getMinDate() {
-		$date = strtotime($this->event->datetime);
+		$date = strtotime($this->event->created_date);
 
 		if ($this->schedule_timeframe->schedule_options_id != 1) {
 			$interval = str_replace('After ', '+', $this->getScheduleText());
@@ -805,12 +805,6 @@
 
 		if (!$episode->save()) {
 			throw new Exception('Unable to change episode status for episode '.$episode->id);
-		}
-
-		$event = $this->event;
-		$event->datetime = date("Y-m-d H:i:s");
-		if (!$event->save()) {
-			throw new Exception("Unable to set event datetime: ".print_r($event->getErrors(),true));
 		}
 
 		if ($this->booking) {
