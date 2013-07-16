@@ -46,7 +46,7 @@ class OphTrOperationbooking_API extends BaseAPI
 	public function getOpenBookingsForEpisode($episode_id)
 	{
 		$criteria = new CDbCriteria;
-		$criteria->order = 'created_date asc';
+		$criteria->order = 'event.created_date asc';
 		$criteria->addCondition('episode_id',$episode_id);
 		$criteria->addCondition('`t`.booking_cancellation_date is null');
 
