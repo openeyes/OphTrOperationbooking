@@ -43,7 +43,7 @@
 						There are no patients who match the specified criteria.
 					</td>
 				</tr>
-			<?php }else{?>
+			<?php } else {?>
 				<?php
 				$i = 0;
 				foreach ($operations as $eo) {
@@ -97,20 +97,20 @@
 						<td<?php if ($tablecolour == 'White' && Yii::app()->user->checkAccess('admin')) { ?> class="admin-td"<?php } ?>>
 
 							<?php if (($patient && $patient->contact->correspondAddress) && $eo->id && ($eo->getDueLetter() != Element_OphTrOperationbooking_Operation::LETTER_GP || ($eo->getDueLetter() == Element_OphTrOperationbooking_Operation::LETTER_GP && $patient->practice_id))) {?>
-							<div>	
+							<div>
 								<input<?php if ($tablecolour == 'White' && !Yii::app()->user->checkAccess('admin')) { ?> disabled="disabled"<?php } ?> type="checkbox" id="operation<?php echo $eo->id ?>" value="1" />
 							</div>
 							<?php }?>
-							
-							<?php if (!$patient->practice || !$patient->practice->contact->address ) { ?>
+
+							<?php if (!$patient->practice || !$patient->practice->contact->address) { ?>
 								<script type="text/javascript">
 									$('#pas_warnings').show();
 									$('#pas_warnings .no_gp').show();
 								</script>
 								<span class="no-GP">No GP</span>
 							<?php }?>
-							
-							<?php if ($patient && !$patient->contact->correspondAddress){ ?>
+
+							<?php if ($patient && !$patient->contact->correspondAddress) { ?>
 								<script type="text/javascript">
 									$('#pas_warnings').show();
 									$('#pas_warnings .no_address').show();
@@ -168,4 +168,4 @@
 		var $tr = $(this).closest("tr");
 		$tr.toggleClass('hover');
 	});
-</script>	
+</script>

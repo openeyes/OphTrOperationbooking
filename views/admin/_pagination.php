@@ -24,7 +24,7 @@ if (@$onePageOnly && $page >10) {?>
 if ($page > 1) {?>
 	<a href="<?php echo Yii::app()->createUrl($this->getUri(array('page'=>$page-1)))?>">&laquo; back</a>
 	&nbsp;
-<?php }else{?>
+<?php } else {?>
 	&laquo; back
 	&nbsp;
 <?php }?>
@@ -32,7 +32,7 @@ if ($page > 1) {?>
 	<?php if ($i == $page) {?>
 		<span class="selected"><?php echo $i?></span>
 		&nbsp;
-	<?php }else{?>
+	<?php } else {?>
 		<?php if (!@$onePageOnly) {?>
 			<a href="<?php echo Yii::app()->createUrl($this->getUri(array('page'=>$i)))?>"><?php echo $i?></a>
 			&nbsp;
@@ -42,7 +42,7 @@ if ($page > 1) {?>
 <?php if ($page < $pages) {?>
 	<a href="<?php echo Yii::app()->createUrl($this->getUri(array('page'=>$page+1)))?>">next &raquo;</a>
 	&nbsp;
-<?php }else{?>
+<?php } else {?>
 	next &raquo;
 	&nbsp;
 <?php }

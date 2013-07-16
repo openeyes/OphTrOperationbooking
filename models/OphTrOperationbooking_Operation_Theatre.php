@@ -67,7 +67,8 @@ class OphTrOperationbooking_Operation_Theatre extends BaseActiveRecord
 		);
 	}
 
-	public function defaultScope() {
+	public function defaultScope()
+	{
 		$table_alias = $this->getTableAlias(false,false);
 		return array(
 			'condition' => $table_alias.'.deleted = 0',
@@ -123,8 +124,8 @@ class OphTrOperationbooking_Operation_Theatre extends BaseActiveRecord
 			));
 	}
 
-	public function getNameWithSite() {
+	public function getNameWithSite()
+	{
 		return $this->name . ' (' . $this->site->name . ')';
 	}
 }
-?>

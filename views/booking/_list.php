@@ -78,7 +78,7 @@ if (!$reschedule) {
 <?php if ($bookable) {?>
 	<div class="eventDetail clearfix">
 		<div class="label"><strong>Admission Time:</strong></div>
-		<div class="data"> 
+		<div class="data">
 			<input type="text" id="Booking_admission_time" name="Booking[admission_time]" value="<?php echo $_POST['Booking']['admission_time']?>" size="6" />
 			<span id="Booking_admission_time_error"></span>
 		</div>
@@ -92,7 +92,7 @@ if (!$reschedule) {
 			<div class="sessionComments" style="width:400px; display:inline-block; margin-bottom:0; ">
 				<textarea id="Session_comments" name="Session[comments]" rows="2" style="width:395px;"><?php echo htmlspecialchars($_POST['Session']['comments'])?></textarea>
 			</div>
-		</div>	
+		</div>
 	</div>
 
 	<?php

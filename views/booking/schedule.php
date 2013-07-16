@@ -28,7 +28,7 @@ $this->header();
 						<li><?php echo $error?></li>
 					<?php }
 				}
-			}else{?>
+			} else {?>
 				<li>&nbsp;</li></ul>
 			<?php }?>
 		</ul>

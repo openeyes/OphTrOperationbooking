@@ -64,7 +64,7 @@ class OphTrOperationbooking_Operation_Name_Rule extends BaseActiveRecord
 			array('id, name', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -110,4 +110,3 @@ class OphTrOperationbooking_Operation_Name_Rule extends BaseActiveRecord
 			));
 	}
 }
-?>

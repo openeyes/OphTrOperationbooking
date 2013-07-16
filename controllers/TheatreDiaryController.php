@@ -21,7 +21,8 @@ class TheatreDiaryController extends BaseEventTypeController
 {
 	public $layout='//layouts/main';
 
-	public function accessRules() {
+	public function accessRules()
+	{
 		return array(
 			// Level 2 or below can't change anything
 			array('deny',
@@ -35,7 +36,7 @@ class TheatreDiaryController extends BaseEventTypeController
 			array('deny'),
 		);
 	}
-	
+
 	public function actionIndex()
 	{
 		$firm = Firm::model()->findByPk($this->selectedFirmId);
@@ -88,7 +89,8 @@ class TheatreDiaryController extends BaseEventTypeController
 		$this->render('index', array('wards'=>$wards, 'theatres'=>$theatres));
 	}
 
-	public function actionPrintDiary() {
+	public function actionPrintDiary()
+	{
 		Audit::add('diary','print',serialize($_POST));
 
 		Yii::app()->getClientScript()->registerCssFile(Yii::app()->createUrl(
@@ -100,7 +102,8 @@ class TheatreDiaryController extends BaseEventTypeController
 		$this->renderPartial('_print_diary', array('diary'=>$this->getDiary()), false, true);
 	}
 
-	public function actionPrintList() {
+	public function actionPrintList()
+	{
 		Audit::add('diary','print list',serialize($_POST));
 
 		Yii::app()->getClientScript()->registerCssFile(Yii::app()->createUrl(
@@ -119,7 +122,8 @@ class TheatreDiaryController extends BaseEventTypeController
 		$this->renderPartial('_list', array('diary' => $this->getDiary(), 'assetPath'=>Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.OphTrOperationbooking.assets'), false, -1, YII_DEBUG)), false, true);
 	}
 
-	public function getDiary() {
+	public function getDiary()
+	{
 		$firmId = Yii::app()->session['selected_firm_id'];
 
 		$_POST['date-start'] = Helper::convertNHS2MySQL(@$_POST['date-start']);
@@ -239,8 +243,9 @@ class TheatreDiaryController extends BaseEventTypeController
 			))
 			->findAll($criteria);
 	}
-	
-	public function getNextSessionDate($firmId) {
+
+	public function getNextSessionDate($firmId)
+	{
 		$criteria = new CDbCriteria;
 		$criteria->addCondition("firm_id = :firmId and date >= :date");
 		$criteria->params = array(
@@ -256,7 +261,8 @@ class TheatreDiaryController extends BaseEventTypeController
 		}
 	}
 
-	public function getBookingList() {
+	public function getBookingList()
+	{
 		$_POST = array(
 			'date-start' => '2013-05-01',
 			'date-end' => '2013-05-31',
@@ -342,7 +348,7 @@ class TheatreDiaryController extends BaseEventTypeController
 
 		if (!empty($_POST['subspecialty_id'])) {
 			$subspecialty_id = $_POST['subspecialty_id'];
-		} else if (!empty($_POST['service_id'])) {
+		} elseif (!empty($_POST['service_id'])) {
 			$subspecialty_id = ServiceSubspecialtyAssignment::model()->find('service_id=?',array($_POST['service_id']))->subspecialty_id;
 		}
 
@@ -393,7 +399,8 @@ class TheatreDiaryController extends BaseEventTypeController
 		}
 	}
 
-	public function actionSaveSession() {
+	public function actionSaveSession()
+	{
 		if (!$session = OphTrOperationbooking_Operation_Session::model()->findByPk(@$_POST['session_id'])) {
 			throw new Exception('Session not found: '.@$_POST['session_id']);
 		}
@@ -414,10 +421,10 @@ class TheatreDiaryController extends BaseEventTypeController
 						'booking_id' => $booking->id,
 						'changed' => false,
 				);
-				
+
 				// Check to see if the booking has been changed and so needs saving
 				$confirmed = @$_POST['confirm_'.$m[1]];
-				if((date('H:i', strtotime($booking->admission_time)) != $value) || $booking->confirmed != $confirmed) {
+				if ((date('H:i', strtotime($booking->admission_time)) != $value) || $booking->confirmed != $confirmed) {
 					$booking_data['changed'] = true;
 					$booking->admission_time = $value;
 					$booking->confirmed = @$_POST['confirm_'.$m[1]];
@@ -425,10 +432,10 @@ class TheatreDiaryController extends BaseEventTypeController
 
 				$booking_data['booking'] = $booking;
 				$bookings[] = $booking_data;
-				
+
 				if (!$booking->validate()) {
 					$formErrors = $booking->getErrors();
-					$errors[(integer)$m[1]] = $formErrors['admission_time'][0];
+					$errors[(integer) $m[1]] = $formErrors['admission_time'][0];
 				}
 			}
 		}
@@ -454,25 +461,25 @@ class TheatreDiaryController extends BaseEventTypeController
 
 		// Create array of booking IDs in the original display order
 		$original_bookings = array();
-		foreach($bookings as $booking_data) {
+		foreach ($bookings as $booking_data) {
 			$original_bookings[$booking_data['original_display_order']] = $booking_data['booking_id'];
 		}
 		ksort($original_bookings);
 		$original_bookings = array_values($original_bookings);
-		
+
 		$previous_display_order = 0;
 		foreach ($bookings as $new_position => $booking_data) {
-			
+
 			// Check if relative position of booking has changed and adjust display_order as required
-			if($booking_data['booking_id'] != $original_bookings[$new_position]) {
+			if ($booking_data['booking_id'] != $original_bookings[$new_position]) {
 				$booking_data['booking']->display_order = $previous_display_order + 1;
 				$booking_data['changed'] = true;
 			}
 			$previous_display_order = $booking_data['booking']->display_order;
-			
+
 			// Save booking if it has changed
-			if($booking_data['changed']) {
-				if(!$booking_data['booking']->save()) {
+			if ($booking_data['changed']) {
+				if (!$booking_data['booking']->save()) {
 					throw new Exception('Unable to save booking: '.print_r($booking_data['booking']->getErrors(), true));
 				}
 			}
@@ -534,13 +541,15 @@ class TheatreDiaryController extends BaseEventTypeController
 		return CHtml::listData(OphTrOperationbooking_Operation_Ward::model()->findAll($criteria),'id','name');
 	}
 
-	public function actionSetDiaryFilter() {
+	public function actionSetDiaryFilter()
+	{
 		foreach ($_POST as $key => $value) {
 			YiiSession::set('theatre_searchoptions',$key,$value);
 		}
 	}
 
-	public function actionGetSessionTimestamps() {
+	public function actionGetSessionTimestamps()
+	{
 		if (isset($_POST['session_id'])) {
 			if ($session = Session::model()->findByPk($_POST['session_id'])) {
 				$ex = explode(' ',$session->last_modified_date);
@@ -552,7 +561,8 @@ class TheatreDiaryController extends BaseEventTypeController
 		}
 	}
 
-	public function actionCheckRequired() {
+	public function actionCheckRequired()
+	{
 		if (!$session = OphTrOperationbooking_Operation_Session::model()->findByPk(@$_POST['session_id'])) {
 			throw new Exception('Session not found: '.$_POST['session_id']);
 		}

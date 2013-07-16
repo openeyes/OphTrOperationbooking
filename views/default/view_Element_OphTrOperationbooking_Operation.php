@@ -20,7 +20,7 @@
 <h4 class="elementTypeName">Procedure<?php if (count($element->procedures) != 1) echo 's'?></h4>
 
 <div class="eventHighlight priority">
-	<h4><?php echo $element->eye->adjective?> 
+	<h4><?php echo $element->eye->adjective?>
 		<?php foreach ($element->procedures as $procedure) {
 			echo "{$procedure->term}<br />";
 		}
@@ -113,7 +113,7 @@
 <?php if (count($element->cancelledBookings)) { ?>
 	<h3 class="subsection">Cancelled Bookings</h3>
 	<ul class="eventComments">
-		<?php foreach($element->cancelledBookings as $booking) { ?>
+		<?php foreach ($element->cancelledBookings as $booking) { ?>
 		<li>
 			Originally scheduled for <strong><?php echo $booking->NHSDate('session_date'); ?>,
 			<?php echo date('H:i',strtotime($booking->session_start_time)); ?> -
@@ -170,7 +170,7 @@ if ($element->status->name != 'Cancelled' && $this->event->editable) {
 				array('id' => 'btn_schedule-now'));
 		}
 	} else {
-		if($this->canPrint()) {
+		if ($this->canPrint()) {
 			$print_letter_options = null;
 			if (!$element->has_address) {
 				$print_letter_options['disabled'] = true;
@@ -189,7 +189,7 @@ if ($element->status->name != 'Cancelled' && $this->event->editable) {
 				array('colour' => 'green'),
 				array('id' => 'btn_reschedule-later'));
 		}
-	}	
+	}
 }
 if (BaseController::checkUserLevel(4) && $element->status->name != 'Cancelled' && $element->status->name != 'Completed' && $element->event->episode->editable) {
 	$this->event_actions[] = EventAction::link("Cancel operation",

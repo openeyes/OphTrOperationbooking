@@ -54,7 +54,7 @@
 		<th>DOB</th>
 		<td><?php echo $patient->NHSDate('dob')?></td>
 	</tr>
-	
+
 </table>
 
 <h2>Admission Information</h2>
@@ -63,14 +63,14 @@
 		<th>
 			<?php if ($operation->booking) {?>
 				Admitting Consultant:
-			<?php }else {?>
+			<?php } else {?>
 				Consultant:
 			<?php }?>
 		</th>
 		<td>
 			<?php if ($emergencyList) {?>
 				Emergency List (<?php echo CHtml::encode($firm->consultantName)?>)
-			<?php }else{?>
+			<?php } else {?>
 				<?php echo CHtml::encode($firm->consultantName)?>
 			<?php }?>
 		</td>
@@ -92,10 +92,10 @@
 	<tr>
 		<th>Site:</th>
 		<td><?php echo CHtml::encode($site->name)?></td>
-		<?php if($operation->booking) {?>
+		<?php if ($operation->booking) {?>
 			<th>Person organising operation:</th>
 			<td><?php echo $operation->booking->user->getFullName()?></td>
-		<?php }else{?>
+		<?php } else {?>
 			<th>Person organising admission:</th>
 			<td><?php echo $operation->event->user->getFullName()?></td>
 		<?php }?>
@@ -119,18 +119,18 @@
 		<th>Total theatre time (mins):</th>
 		<td><?php echo CHtml::encode($operation->total_duration)?></td>
 	</tr>
-	
+
 	<tr>
 		<th>Intended procedure(s):</th>
 		<td><?php echo CHtml::encode($operation->proceduresCommaSeparated)?></td>
-		<?php if($operation->booking) {?>
+		<?php if ($operation->booking) {?>
 			<th>Operation date:</th>
 			<td><?php echo $operation->booking->session->NHSDate('date')?></td>
-		<?php }else{?>
+		<?php } else {?>
 			<th colspan="2" rowspan="4">Patient Added to partial bookings waiting List, admission Date to be arranged</th>
 		<?php }?>
 	</tr>
-	
+
 	<tr>
 		<th>Eye:</th>
 		<td><?php echo $operation->eye->name?></td>
@@ -145,7 +145,7 @@
 			<td><?php echo $operation->booking->ward->name?></td>
 		<?php }?>
 	</tr>
-	
+
 	<tr>
 		<th>Diagnosis:</th>
 		<td>
@@ -156,7 +156,7 @@
 			<td><?php echo date('H:i',strtotime($operation->booking->admission_time))?></td>
 		<?php }?>
 	</tr>
-	
+
 	<tr>
 		<th>Anaesthesia:</th>
 		<td><?php echo $operation->anaesthetic_type->name?></td>

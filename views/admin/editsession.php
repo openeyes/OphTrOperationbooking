@@ -42,7 +42,7 @@
 						<span class="label" style="margin-bottom: 0;"><?php echo $session->NHSDate('date')?></span>
 					</div>
 				</div>
-			<?php }else{?>
+			<?php } else {?>
 				<?php echo $form->datePicker($session,'date',array('size'=>10))?>
 			<?php }?>
 			<?php echo $form->textField($session,'start_time',array('size'=>10))?>

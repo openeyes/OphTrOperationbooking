@@ -38,4 +38,3 @@
 </p>
 
 <?php echo $this->renderPartial('../letters/letter_end'); ?>
-	

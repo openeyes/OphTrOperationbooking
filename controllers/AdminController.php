@@ -17,15 +17,18 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class AdminController extends ModuleAdminController {
+class AdminController extends ModuleAdminController
+{
 	public $sequences_items_per_page = 20;
 	public $sessions_items_per_page = 20;
 
-	public function actionViewERODRules() {
+	public function actionViewERODRules()
+	{
 		$this->render('erodrules');
 	}
 
-	public function actionCreatePostOpDrug() {
+	public function actionCreatePostOpDrug()
+	{
 		if (empty($_POST['name'])) {
 			throw new Exception("Missing name");
 		}
@@ -62,7 +65,8 @@ class AdminController extends ModuleAdminController {
 		echo json_encode(array('id'=>$drug->id,'errors'=>array()));
 	}
 
-	public function actionUpdatePostOpDrug() {
+	public function actionUpdatePostOpDrug()
+	{
 		if (!$drug = PostopDrug::model()->findByPk(@$_POST['id'])) {
 			throw new Exception("Drug not found: ".@$_POST['id']);
 		}
@@ -76,7 +80,8 @@ class AdminController extends ModuleAdminController {
 		echo json_encode(array('errors'=>array()));
 	}
 
-	public function actionDeletePostOpDrug($id) {
+	public function actionDeletePostOpDrug($id)
+	{
 		if ($drug = PostopDrug::model()->findByPk($id)) {
 			$drug->deleted = 1;
 			if ($drug->save()) {
@@ -87,7 +92,8 @@ class AdminController extends ModuleAdminController {
 		echo "0";
 	}
 
-	public function actionSortPostOpDrugs() {
+	public function actionSortPostOpDrugs()
+	{
 		if (!empty($_POST['order'])) {
 			foreach ($_POST['order'] as $i => $id) {
 				if ($drug = PostopDrug::model()->findByPk($id)) {
@@ -100,7 +106,8 @@ class AdminController extends ModuleAdminController {
 		}
 	}
 
-	public function actionEditERODRule($id) {
+	public function actionEditERODRule($id)
+	{
 		if (!$erod = OphTrOperationbooking_Operation_EROD_Rule::model()->findByPk($id)) {
 			throw new Exception("EROD rule not found: $id");
 		}
@@ -152,7 +159,8 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionAddERODRule() {
+	public function actionAddERODRule()
+	{
 		$errors = array();
 
 		$erod = new OphTrOperationbooking_Operation_EROD_Rule;
@@ -202,7 +210,8 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionDeleteERODRules() {
+	public function actionDeleteERODRules()
+	{
 		if (!empty($_POST['erod'])) {
 			foreach ($_POST['erod'] as $erod_id) {
 				if ($_erod = OphTrOperationbooking_Operation_EROD_Rule::model()->findByPk($erod_id)) {
@@ -221,7 +230,8 @@ class AdminController extends ModuleAdminController {
 		echo "1";
 	}
 
-	public function actionViewLetterContactRules() {
+	public function actionViewLetterContactRules()
+	{
 		$this->jsVars['OE_rule_model'] = 'LetterContactRule';
 
 		$this->render('lettercontactrules',array(
@@ -229,7 +239,8 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionTestLetterContactRules() {
+	public function actionTestLetterContactRules()
+	{
 		$site_id = @$_POST['lcr_site_id'];
 		$subspecialty_id = @$_POST['lcr_subspecialty_id'];
 		$theatre_id = @$_POST['lcr_theatre_id'];
@@ -252,7 +263,8 @@ class AdminController extends ModuleAdminController {
 		echo json_encode(array());
 	}
 
-	public function actionEditLetterContactRule($id) {
+	public function actionEditLetterContactRule($id)
+	{
 		if (!$rule = OphTrOperationbooking_Letter_Contact_Rule::model()->findByPk($id)) {
 			throw new Exception("Letter contact rule not found: $id");
 		}
@@ -277,7 +289,8 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionDeleteLetterContactRule($id) {
+	public function actionDeleteLetterContactRule($id)
+	{
 		if (!$rule = OphTrOperationbooking_Letter_Contact_Rule::model()->findByPk($id)) {
 			throw new Exception("Letter contact rule not found: $id");
 		}
@@ -302,7 +315,8 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionAddLetterContactRule() {
+	public function actionAddLetterContactRule()
+	{
 		$rule = new OphTrOperationbooking_Letter_Contact_Rule;
 
 		$errors = array();
@@ -329,7 +343,8 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionViewLetterWarningRules() {
+	public function actionViewLetterWarningRules()
+	{
 		$this->jsVars['OE_rule_model'] = 'LetterWarningRule';
 
 		$this->render('letterwarningrules',array(
@@ -337,7 +352,8 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionTestLetterWarningRules() {
+	public function actionTestLetterWarningRules()
+	{
 		$site_id = @$_POST['lcr_site_id'];
 		$subspecialty_id = @$_POST['lcr_subspecialty_id'];
 		$theatre_id = @$_POST['lcr_theatre_id'];
@@ -363,7 +379,8 @@ class AdminController extends ModuleAdminController {
 		echo json_encode(array());
 	}
 
-	public function actionEditLetterWarningRule($id) {
+	public function actionEditLetterWarningRule($id)
+	{
 		if (!$rule = OphTrOperationbooking_Admission_Letter_Warning_Rule::model()->findByPk($id)) {
 			throw new Exception("Letter warning rule not found: $id");
 		}
@@ -388,7 +405,8 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionAddLetterWarningRule() {
+	public function actionAddLetterWarningRule()
+	{
 		$rule = new OphTrOperationbooking_Admission_Letter_Warning_Rule;
 
 		$errors = array();
@@ -415,7 +433,8 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionDeleteLetterWarningRule($id) {
+	public function actionDeleteLetterWarningRule($id)
+	{
 		if (!$rule = OphTrOperationbooking_Admission_Letter_Warning_Rule::model()->findByPk($id)) {
 			throw new Exception("Letter warning rule not found: $id");
 		}
@@ -440,7 +459,8 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionViewWaitingListContactRules() {
+	public function actionViewWaitingListContactRules()
+	{
 		$this->jsVars['OE_rule_model'] = 'WaitingListContactRule';
 
 		$this->render('waitinglistcontactrules',array(
@@ -448,7 +468,8 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionTestWaitingListContactRules() {
+	public function actionTestWaitingListContactRules()
+	{
 		$site_id = @$_POST['lcr_site_id'];
 		$service_id = @$_POST['lcr_service_id'];
 		$firm_id = @$_POST['lcr_firm_id'];
@@ -471,7 +492,8 @@ class AdminController extends ModuleAdminController {
 		echo json_encode(array());
 	}
 
-	public function actionEditWaitingListContactRule($id) {
+	public function actionEditWaitingListContactRule($id)
+	{
 		if (!$rule = OphTrOperationbooking_Waiting_List_Contact_Rule::model()->findByPk($id)) {
 			throw new Exception("Waiting list contact rule not found: $id");
 		}
@@ -496,7 +518,8 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionDeleteWaitingListContactRule($id) {
+	public function actionDeleteWaitingListContactRule($id)
+	{
 		if (!$rule = OphTrOperationbooking_Waiting_List_Contact_Rule::model()->findByPk($id)) {
 			throw new Exception("Waiting list contact rule not found: $id");
 		}
@@ -522,11 +545,13 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionViewOperationNameRules() {
+	public function actionViewOperationNameRules()
+	{
 		$this->render('operationnamerules');
 	}
 
-	public function actionAddOperationNameRule() {
+	public function actionAddOperationNameRule()
+	{
 		$errors = array();
 
 		$rule = new OphTrOperationbooking_Operation_Name_Rule;
@@ -547,7 +572,8 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionEditOperationNameRule($id) {
+	public function actionEditOperationNameRule($id)
+	{
 		if (!$rule = OphTrOperationbooking_Operation_Name_Rule::model()->findByPk($id)) {
 			throw new Exception("Operation name rule not found: $id");
 		}
@@ -570,7 +596,8 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionDeleteOperationNameRules() {
+	public function actionDeleteOperationNameRules()
+	{
 		if (!empty($_POST['operation_name'])) {
 			foreach ($_POST['operation_name'] as $rule_id) {
 				if ($_rule = OphTrOperationbooking_Operation_Name_Rule::model()->findByPk($rule_id)) {
@@ -584,7 +611,8 @@ class AdminController extends ModuleAdminController {
 		echo "1";
 	}
 
-	public function actionViewSequences() {
+	public function actionViewSequences()
+	{
 		if (@$_GET['reset'] == 1) {
 			unset($_GET['reset']);
 			unset(Yii::app()->session['admin_sequences']);
@@ -593,7 +621,7 @@ class AdminController extends ModuleAdminController {
 
 		if (empty($_GET) && !empty(Yii::app()->session['admin_sequences'])) {
 			$this->redirectWith(Yii::app()->session['admin_sequences']);
-		} else if (!empty($_GET)) {
+		} elseif (!empty($_GET)) {
 			Yii::app()->session['admin_sequences'] = $_GET;
 		}
 
@@ -602,7 +630,8 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function redirectWith($params) {
+	public function redirectWith($params)
+	{
 		$uri = preg_replace('/\?.*$/','',$_SERVER['REQUEST_URI']);
 
 		$first=true;
@@ -615,13 +644,14 @@ class AdminController extends ModuleAdminController {
 		$this->redirect(array($uri));
 	}
 
-	public function getSequences($all=false) {
+	public function getSequences($all=false)
+	{
 		$criteria = new CDbCriteria;
 
 		if ($firm = Firm::model()->findByPk(@$_REQUEST['firm_id'])) {
 			$criteria->addCondition('firm_id=:firm_id');
 			$criteria->params[':firm_id'] = $firm->id;
-		} else if (@$_REQUEST['firm_id'] == 'NULL') {
+		} elseif (@$_REQUEST['firm_id'] == 'NULL') {
 			$criteria->addCondition('firm_id is null');
 		}
 
@@ -659,12 +689,12 @@ class AdminController extends ModuleAdminController {
 			$criteria->addCondition('paediatric = :paediatric');
 			$criteria->params[':paediatric'] = @$_REQUEST['paediatric'];
 		}
-		
+
 		if (@$_REQUEST['anaesthetist'] != '') {
 			$criteria->addCondition('anaesthetist = :anaesthetist');
 			$criteria->params[':anaesthetist'] = @$_REQUEST['anaesthetist'];
 		}
-		
+
 		if (@$_REQUEST['general_anaesthetic'] != '') {
 			$criteria->addCondition('general_anaesthetic = :general_anaesthetic');
 			$criteria->params[':general_anaesthetic'] = @$_REQUEST['general_anaesthetic'];
@@ -721,7 +751,7 @@ class AdminController extends ModuleAdminController {
 				'theatre',
 				'interval',
 			))->findAll($criteria);
-			
+
 		return array(
 			'data' => $data,
 			'count' => $count,
@@ -732,14 +762,15 @@ class AdminController extends ModuleAdminController {
 		);
 	}
 
-	public function getUri($elements) {
+	public function getUri($elements)
+	{
 		$uri = preg_replace('/\?.*$/','',$_SERVER['REQUEST_URI']);
 
 		$request = $_REQUEST;
 
 		if (isset($elements['sortby']) && $elements['sortby'] == @$request['sortby']) {
 			$request['order'] = (@$request['order'] == 'desc') ? 'asc' : 'desc';
-		} else if (isset($request['sortby']) && isset($elements['sortby']) && $request['sortby'] != $elements['sortby']) {
+		} elseif (isset($request['sortby']) && isset($elements['sortby']) && $request['sortby'] != $elements['sortby']) {
 			$request['order'] = 'asc';
 		}
 
@@ -753,14 +784,15 @@ class AdminController extends ModuleAdminController {
 		return $uri;
 	}
 
-	public function actionSequenceInlineEdit() {
+	public function actionSequenceInlineEdit()
+	{
 		$errors = array();
 
 		if (!empty($_POST['sequence'])) {
 			$criteria = new CDbCriteria;
 			$criteria->addInCondition('id',$_POST['sequence']);
 			$sequences = OphTrOperationbooking_Operation_Sequence::model()->findAll($criteria);
-		} else if (@$_POST['use_filters']) {
+		} elseif (@$_POST['use_filters']) {
 			$sequences = $this->getSequences(true);
 		}
 
@@ -824,7 +856,8 @@ class AdminController extends ModuleAdminController {
 		echo json_encode($errors);
 	}
 
-	public function actionEditSequence($id) {
+	public function actionEditSequence($id)
+	{
 		if (!$sequence = OphTrOperationbooking_Operation_Sequence::model()->findByPk($id)) {
 			throw new Exception("Sequence not found: $id");
 		}
@@ -868,7 +901,8 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionAddSequence() {
+	public function actionAddSequence()
+	{
 		$sequence = new OphTrOperationbooking_Operation_Sequence;
 
 		$errors = array();
@@ -908,7 +942,8 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionViewSessions() {
+	public function actionViewSessions()
+	{
 		if (@$_GET['reset'] == 1) {
 			unset($_GET['reset']);
 			unset(Yii::app()->session['admin_sessions']);
@@ -917,7 +952,7 @@ class AdminController extends ModuleAdminController {
 
 		if (empty($_GET) && !empty(Yii::app()->session['admin_sessions'])) {
 			$this->redirectWith(Yii::app()->session['admin_sessions']);
-		} else if (!empty($_GET)) {
+		} elseif (!empty($_GET)) {
 			Yii::app()->session['admin_sessions'] = $_GET;
 		}
 
@@ -926,13 +961,14 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function getSessions($all=false) {
+	public function getSessions($all=false)
+	{
 		$criteria = new CDbCriteria;
 
 		if ($firm = Firm::model()->findByPk(@$_REQUEST['firm_id'])) {
 			$criteria->addCondition('t.firm_id=:firm_id');
 			$criteria->params[':firm_id'] = $firm->id;
-		} else if (@$_REQUEST['firm_id'] == 'NULL') {
+		} elseif (@$_REQUEST['firm_id'] == 'NULL') {
 			$criteria->addCondition('t.firm_id is null');
 		}
 
@@ -970,7 +1006,7 @@ class AdminController extends ModuleAdminController {
 			$criteria->addCondition('t.anaesthetist = :anaesthetist');
 			$criteria->params[':anaesthetist'] = @$_REQUEST['anaesthetist'];
 		}
-	 
+
 		if (@$_REQUEST['general_anaesthetic'] != '') {
 			$criteria->addCondition('t.general_anaesthetic = :general_anaesthetic');
 			$criteria->params[':general_anaesthetic'] = @$_REQUEST['general_anaesthetic'];
@@ -991,7 +1027,7 @@ class AdminController extends ModuleAdminController {
 		if ($all) {
 			return OphTrOperationbooking_Operation_Session::model()->with('sequence')->findAll($criteria);
 		}
-		
+
 		$count = OphTrOperationbooking_Operation_Session::model()->with('sequence')->count($criteria);
 		$pages = ceil($count/$this->sessions_items_per_page);
 
@@ -1048,14 +1084,15 @@ class AdminController extends ModuleAdminController {
 		);
 	}
 
-	public function actionSessionInlineEdit() {
+	public function actionSessionInlineEdit()
+	{
 		$errors = array();
 
 		if (!empty($_POST['session'])) {
 			$criteria = new CDbCriteria;
 			$criteria->addInCondition('id',$_POST['session']);
 			$sessions = OphTrOperationbooking_Operation_Session::model()->findAll($criteria);
-		} else if (@$_POST['use_filters']) {
+		} elseif (@$_POST['use_filters']) {
 			$sessions = $this->getSessions(true);
 		}
 
@@ -1074,7 +1111,8 @@ class AdminController extends ModuleAdminController {
 		}
 	}
 
-	public function saveSessions($sessions) {
+	public function saveSessions($sessions)
+	{
 		$errors = array();
 		$_sessions = array();
 
@@ -1114,7 +1152,8 @@ class AdminController extends ModuleAdminController {
 		);
 	}
 
-	public function actionEditSession($id) {
+	public function actionEditSession($id)
+	{
 		if (!$session = OphTrOperationbooking_Operation_Session::model()->findByPk($id)) {
 			throw new Exception("Session not found: $id");
 		}
@@ -1139,7 +1178,8 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionAddSession() {
+	public function actionAddSession()
+	{
 		$session = new OphTrOperationbooking_Operation_Session;
 
 		$errors = array();
@@ -1154,7 +1194,7 @@ class AdminController extends ModuleAdminController {
 					$this->redirect(array('/OphTrOperationbooking/admin/viewSessions'));
 				}
 			}
-		} else if (isset($_GET['sequence_id'])) {
+		} elseif (isset($_GET['sequence_id'])) {
 			$session->sequence_id = $_GET['sequence_id'];
 		}
 
@@ -1164,10 +1204,11 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionVerifyDeleteSessions() {
+	public function actionVerifyDeleteSessions()
+	{
 		if (!empty($_POST['session'])) {
 			$session_ids = $_POST['session'];
-		} else if (@$_POST['use_filters']) {
+		} elseif (@$_POST['use_filters']) {
 			$session_ids = array();
 			foreach ($this->getSessions(true) as $session) {
 				$session_ids[] = $session->id;
@@ -1195,12 +1236,13 @@ class AdminController extends ModuleAdminController {
 		}
 	}
 
-	public function actionDeleteSessions() {
+	public function actionDeleteSessions()
+	{
 		if (!empty($_POST['session'])) {
 			$criteria = new CDbCriteria;
 			$criteria->addInCondition('id',$_POST['session']);
 			$sessions = OphTrOperationbooking_Operation_Session::model()->findAll($criteria);
-		} else if (@$_POST['use_filters']) {
+		} elseif (@$_POST['use_filters']) {
 			$sessions = $this->getSessions(true);
 		}
 
@@ -1214,10 +1256,11 @@ class AdminController extends ModuleAdminController {
 		echo "1";
 	}
 
-	public function actionVerifyDeleteSequences() {
+	public function actionVerifyDeleteSequences()
+	{
 		if (!empty($_POST['sequence'])) {
 			$sequence_ids = $_POST['sequence'];
-		} else if (@$_POST['use_filters']) {
+		} elseif (@$_POST['use_filters']) {
 			$sequence_ids = array();
 			foreach ($this->getSequences(true) as $sequence) {
 				$sequence_ids[] = $sequence->id;
@@ -1246,12 +1289,13 @@ class AdminController extends ModuleAdminController {
 		}
 	}
 
-	public function actionDeleteSequences() {
+	public function actionDeleteSequences()
+	{
 		if (!empty($_POST['sequence'])) {
 			$criteria = new CDbCriteria;
 			$criteria->addInCondition('id',$_POST['sequence']);
 			$sequences = OphTrOperationbooking_Operation_Sequence::model()->findAll($criteria);
-		} else if (@$_POST['use_filters']) {
+		} elseif (@$_POST['use_filters']) {
 			$sequences = $this->getSequences(true);
 		}
 
@@ -1272,11 +1316,13 @@ class AdminController extends ModuleAdminController {
 		echo "1";
 	}
 
-	public function actionViewTheatres() {
+	public function actionViewTheatres()
+	{
 		$this->render('theatres');
 	}
 
-	public function actionAddTheatre() {
+	public function actionAddTheatre()
+	{
 		$errors = array();
 
 		$theatre = new OphTrOperationbooking_Operation_Theatre;
@@ -1296,7 +1342,8 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionEditTheatre($id) {
+	public function actionEditTheatre($id)
+	{
 		if (!$theatre = OphTrOperationbooking_Operation_Theatre::model()->findByPk($id)) {
 			throw new Exception("Theatre not found: $id");
 		}
@@ -1318,7 +1365,8 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionVerifyDeleteTheatres() {
+	public function actionVerifyDeleteTheatres()
+	{
 		$criteria = new CDbCriteria;
 		$criteria->addInCondition('session.theatre_id',$_POST['theatre']);
 		$criteria->addCondition('booking_cancellation_date is null');
@@ -1343,7 +1391,8 @@ class AdminController extends ModuleAdminController {
 		}
 	}
 
-	public function actionDeleteTheatres() {
+	public function actionDeleteTheatres()
+	{
 		$criteria = new CDbCriteria;
 		$criteria->addInCondition('id',$_POST['theatre']);
 		$theatres = OphTrOperationbooking_Operation_Theatre::model()->findAll($criteria);
@@ -1358,11 +1407,13 @@ class AdminController extends ModuleAdminController {
 		echo "1";
 	}
 
-	public function actionViewWards() {
+	public function actionViewWards()
+	{
 		$this->render('wards');
 	}
 
-	public function actionEditWard($id) {
+	public function actionEditWard($id)
+	{
 		if (!$ward = OphTrOperationbooking_Operation_Ward::model()->findByPk($id)) {
 			throw new Exception("Ward not found: $id");
 		}
@@ -1402,7 +1453,8 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionAddWard() {
+	public function actionAddWard()
+	{
 		$errors = array();
 
 		$ward = new OphTrOperationbooking_Operation_Ward;
@@ -1422,11 +1474,13 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionViewSchedulingOptions() {
+	public function actionViewSchedulingOptions()
+	{
 		$this->render('schedulingoptions');
 	}
 
-	public function actionVerifyDeleteSchedulingOptions() {
+	public function actionVerifyDeleteSchedulingOptions()
+	{
 		$criteria = new CDbCriteria;
 		$criteria->addInCondition('schedule_options_id',$_POST['scheduleoption']);
 
@@ -1443,7 +1497,8 @@ class AdminController extends ModuleAdminController {
 		}
 	}
 
-	public function actionDeleteSchedulingOptions() {
+	public function actionDeleteSchedulingOptions()
+	{
 		$criteria = new CDbCriteria;
 		$criteria->addInCondition('id',$_POST['scheduleoption']);
 		$options = OphTrOperationbooking_ScheduleOperation_Options::model()->findAll($criteria);
@@ -1457,7 +1512,8 @@ class AdminController extends ModuleAdminController {
 		echo "1";
 	}
 
-	public function actionEditSchedulingOption($id) {
+	public function actionEditSchedulingOption($id)
+	{
 		if (!$option = OphTrOperationbooking_ScheduleOperation_Options::model()->findByPk($id)) {
 			throw new Exception("Ward not found: $id");
 		}
@@ -1480,7 +1536,8 @@ class AdminController extends ModuleAdminController {
 		));
 	}
 
-	public function actionAddSchedulingOption() {
+	public function actionAddSchedulingOption()
+	{
 		$errors = array();
 
 		$option = new OphTrOperationbooking_ScheduleOperation_Options;

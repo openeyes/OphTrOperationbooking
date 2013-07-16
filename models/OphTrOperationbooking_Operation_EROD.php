@@ -72,7 +72,7 @@ class OphTrOperationbooking_Operation_EROD extends BaseActiveRecord
 			array('element_id, session_id, session_date, session_start_time, firm_id, consultant, paediatric, anaesthetist, general_anaesthetic, session_duration, total_operations_time, available_time', 'safe'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -116,12 +116,13 @@ class OphTrOperationbooking_Operation_EROD extends BaseActiveRecord
 			));
 	}
 
-	public function getFirmName() {
+	public function getFirmName()
+	{
 		return $this->firm->name . ' (' . $this->firm->serviceSubspecialtyAssignment->subspecialty->name . ')';
 	}
 
-	public function getTimeSlot() {
+	public function getTimeSlot()
+	{
 		return date('H:i',strtotime($this->session_start_time)) . ' - ' . date('H:i',strtotime($this->session_end_time));
 	}
 }
-?>

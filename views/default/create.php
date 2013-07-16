@@ -28,7 +28,7 @@
 			'enableAjaxValidation'=>false,
 			'htmlOptions' => array('class'=>'sliding'),
 	));
-	
+
 	// Event actions
 	$this->event_actions[] = EventAction::button('Save and Schedule later', 'scheduleLater', array('id' => 'et_save', 'colour' => 'green'));
 	$this->event_actions[] = EventAction::button('Save and Schedule now', 'scheduleNow', array('id' => 'et_save_and_schedule', 'colour' => 'green'));

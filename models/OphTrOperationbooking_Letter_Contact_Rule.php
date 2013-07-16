@@ -72,7 +72,7 @@ class OphTrOperationbooking_Letter_Contact_Rule extends BaseTree
 			array('id, contact_type_id, site_id, subspecialty_id, theatre_id', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -125,7 +125,8 @@ class OphTrOperationbooking_Letter_Contact_Rule extends BaseTree
 			));
 	}
 
-	public function applies($site_id, $subspecialty_id, $theatre_id, $firm_id) {
+	public function applies($site_id, $subspecialty_id, $theatre_id, $firm_id)
+	{
 		foreach (array('site_id','subspecialty_id','theatre_id','firm_id') as $field) {
 			if ($this->{$field} && $this->{$field} != ${$field}) {
 				return false;
@@ -135,7 +136,8 @@ class OphTrOperationbooking_Letter_Contact_Rule extends BaseTree
 		return true;
 	}
 
-	public function parse($site_id, $subspecialty_id, $theatre_id, $firm_id) {
+	public function parse($site_id, $subspecialty_id, $theatre_id, $firm_id)
+	{
 		foreach ($this->children as $child_rule) {
 			if ($child_rule->applies($site_id, $subspecialty_id, $theatre_id, $firm_id)) {
 				return $child_rule->parse($site_id, $subspecialty_id, $theatre_id, $firm_id);

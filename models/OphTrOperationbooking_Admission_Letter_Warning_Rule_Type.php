@@ -57,7 +57,7 @@ class OphTrOperationbooking_Admission_Letter_Warning_Rule_Type extends BaseActiv
 			array('id, name', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */

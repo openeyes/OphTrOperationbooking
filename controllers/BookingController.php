@@ -17,10 +17,12 @@
 * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
 */
 
-class BookingController extends BaseEventTypeController {
+class BookingController extends BaseEventTypeController
+{
 	public $reschedule = false;
 
-	protected function beforeAction($action) {
+	protected function beforeAction($action)
+	{
 		$this->assetPath = Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.'.$this->getModule()->name.'.assets'), false, -1, YII_DEBUG);
 		Yii::app()->clientScript->registerScriptFile($this->assetPath.'/js/booking.js');
 		Yii::app()->clientScript->registerScriptFile('/js/jquery.validate.min.js');
@@ -29,7 +31,8 @@ class BookingController extends BaseEventTypeController {
 		return parent::beforeAction($action);
 	}
 
-	public function accessRules() {
+	public function accessRules()
+	{
 		return array(
 			// Level 3 or above can do anything
 			array('allow',
@@ -38,8 +41,9 @@ class BookingController extends BaseEventTypeController {
 			array('deny'),
 		);
 	}
-	
-	public function actionSchedule($id) {
+
+	public function actionSchedule($id)
+	{
 		if (!$event = Event::model()->findByPk($id)) {
 			throw new Exception('Unable to find event: '.$id);
 		}
@@ -113,7 +117,7 @@ class BookingController extends BaseEventTypeController {
 					$_POST['Operation']['comments'] = $operation->comments;
 				}
 			}
-		} else if ($operation->booking) {
+		} elseif ($operation->booking) {
 			$selectedDate = $operation->booking->session->date;
 		}
 
@@ -134,13 +138,15 @@ class BookingController extends BaseEventTypeController {
 				), false, true);
 	}
 
-	public function actionReschedule($id) {
+	public function actionReschedule($id)
+	{
 		$this->title = "Reschedule operation";
 		$this->reschedule = true;
 		return $this->actionSchedule($id);
 	}
 
-	public function actionRescheduleLater($id) {
+	public function actionRescheduleLater($id)
+	{
 		if (!$event = Event::model()->findByPk($id)) {
 			throw new Exception('Unable to find event: '.$id);
 		}
@@ -166,7 +172,7 @@ class BookingController extends BaseEventTypeController {
 			}
 			if (!$reason = OphTrOperationbooking_Operation_Cancellation_Reason::model()->findByPk($_POST['cancellation_reason'])) {
 				$errors[] = "Please select a rescheduling reason";
-			} else if (isset($_POST['booking_id']) && empty($errors)) {
+			} elseif (isset($_POST['booking_id']) && empty($errors)) {
 				if (!$booking = OphTrOperationbooking_Operation_Booking::model()->findByPk($_POST['booking_id'])) {
 					throw new Exception('Booking not found: '.@$_POST['booking_id']);
 				}

@@ -49,7 +49,7 @@ $nextYear = mktime(0,0,0, date('m'), 1, date('Y')+1);
 				<?php foreach ($list as $date => $session) {?>
 					<?php if ($session['status'] == 'blank') {?>
 						<td></td>
-					<?php }else{?>
+					<?php } else {?>
 						<td class="<?php echo $session['status']?><?php if ($date == $selectedDate) {?> selected_date<?php }?>">
 							<?php echo date('j', strtotime($date))?>
 						</td>

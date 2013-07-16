@@ -61,7 +61,7 @@ class OphTrOperationbooking_Operation_Cancellation_Reason extends BaseActiveReco
 			array('id, text, parent_id, list_no', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -116,4 +116,3 @@ class OphTrOperationbooking_Operation_Cancellation_Reason extends BaseActiveReco
 		return CHtml::listData(OphTrOperationbooking_Operation_Cancellation_Reason::model()->findAll($criteria),'id','text');
 	}
 }
-?>

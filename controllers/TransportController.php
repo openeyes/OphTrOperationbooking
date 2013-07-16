@@ -25,7 +25,8 @@ class TransportController extends BaseEventTypeController
 	public $total_items = 0;
 	public $pages = 1;
 
-	public function accessRules() {
+	public function accessRules()
+	{
 		return array(
 			// Level 2 or below can't change anything
 			array('deny',
@@ -39,7 +40,7 @@ class TransportController extends BaseEventTypeController
 			array('deny'),
 		);
 	}
-	
+
 	public function actionIndex()
 	{
 		!isset($_GET['include_bookings']) and $_GET['include_bookings'] = 1;
@@ -49,12 +50,14 @@ class TransportController extends BaseEventTypeController
 		$this->render('index');
 	}
 
-	public function actionTCIs() {
+	public function actionTCIs()
+	{
 		if (ctype_digit(@$_GET['page'])) $this->page = $_GET['page'];
 		$this->renderPartial('_list',array('operations'=>$this->getTransportList()));
 	}
 
-	public function getTransportList($all=false) {
+	public function getTransportList($all=false)
+	{
 		if (!empty($_GET)) {
 			if (preg_match('/^[0-9]+ [a-zA-Z]{3} [0-9]{4}$/',@$_GET['date_from']) && preg_match('/^[0-9]+ [a-zA-Z]{3} [0-9]{4}$/',@$_GET['date_to'])) {
 				$date_from = Helper::convertNHS2MySQL($_GET['date_from'])." 00:00:00";
@@ -171,7 +174,8 @@ class TransportController extends BaseEventTypeController
 			->findAll($criteria);
 	}
 
-	public function actionPrintList() {
+	public function actionPrintList()
+	{
 		if (ctype_digit(@$_GET['page'])) $this->page = $_GET['page'];
 		$this->renderPartial('_printList',array('operations' => $this->getTransportList(true)));
 	}
@@ -179,7 +183,8 @@ class TransportController extends BaseEventTypeController
 	/**
 	 * Print transport letters for bookings
 	 */
-	public function actionPrint($id) {
+	public function actionPrint($id)
+	{
 		$operation_ids = (isset($_GET['operations'])) ? $_GET['operations'] : null;
 		if (!is_array($booking_ids)) {
 			throw new CHttpException('400', 'Invalid operation list');
@@ -188,7 +193,7 @@ class TransportController extends BaseEventTypeController
 
 		// Print a letter for booking, separated by a page break
 		$break = false;
-		foreach($bookings as $booking) {
+		foreach ($bookings as $booking) {
 			if ($break) {
 				$this->renderPartial("letters/break");
 			} else {
@@ -213,7 +218,8 @@ class TransportController extends BaseEventTypeController
 		}
 	}
 
-	public function actionConfirm() {
+	public function actionConfirm()
+	{
 		if (is_array(@$_POST['operations'])) {
 			foreach ($_POST['operations'] as $operation_id) {
 				if (!$operation = Element_OphTrOperationbooking_Operation::model()->with('latestBooking')->findByPk($operation_id)) {
@@ -235,7 +241,8 @@ class TransportController extends BaseEventTypeController
 		echo '1';
 	}
 
-	public function actionDownloadcsv() {
+	public function actionDownloadcsv()
+	{
 		header("Content-type: application/csv");
 		header("Content-Disposition: attachment; filename=transport.csv");
 		header("Pragma: no-cache");
@@ -250,7 +257,8 @@ class TransportController extends BaseEventTypeController
 		}
 	}
 
-	public function getUriAppend() {
+	public function getUriAppend()
+	{
 		$return = '';
 		foreach (array('date_from', 'date_to', 'include_bookings' => 0, 'include_reschedules' => 0, 'include_cancellations' => 0) as $token) {
 			if (isset($_GET[$token])) {

@@ -19,7 +19,7 @@
 
 if (empty($diary)) {?>
 	<p class="fullBox"><strong>No theatre schedules match your search criteria.</strong></p>
-<?php }else{
+<?php } else {
 	foreach ($diary as $theatre) {?>
 		<h3 class="theatre"><strong><?php echo $theatre->name?> (<?php echo $theatre->site->name?>)</strong></h3>
 		<?php foreach ($theatre->sessions as $session) {

@@ -65,7 +65,7 @@ class OphTrOperationbooking_Operation_Date_Letter_Sent extends BaseActiveRecord
 			array('id, element_id, date_invitation_letter_sent, date_1st_reminder_letter_sent, date_2nd_reminder_letter_sent, date_gp_letter_sent, date_scheduling_letter_sent', 'safe', 'on'=>'search'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -108,4 +108,3 @@ class OphTrOperationbooking_Operation_Date_Letter_Sent extends BaseActiveRecord
 			));
 	}
 }
-?>

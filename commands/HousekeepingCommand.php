@@ -17,26 +17,31 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class HousekeepingCommand extends CConsoleCommand {
-	public function getName() {
+class HousekeepingCommand extends CConsoleCommand
+{
+	public function getName()
+	{
 		return 'Housekeeping Command.';
 	}
 
-	public function getHelp() {
+	public function getHelp()
+	{
 		return "Cancels operations for deceased patients.\n";
 	}
 
-	public function run($args) {
+	public function run($args)
+	{
 		$this->deceasedPatients();
 	}
 
 	// Check for operations where patient is deceased and cancel them
-	protected function deceasedPatients() {
+	protected function deceasedPatients()
+	{
 		echo "Cancelling operations for deceased patients: ";
-		
+
 		// TODO: This needs to be made more robust
 		$cancellation_reason = OphTrOperationbooking_Operation_Cancellation_Reason::model()->find("text = 'Patient has died'");
-		if(!$cancellation_reason) {
+		if (!$cancellation_reason) {
 			throw new CException('Cannot find cancellation code for "patient has died"');
 		}
 
@@ -60,7 +65,7 @@ class HousekeepingCommand extends CConsoleCommand {
 
 			$operation = Element_OphTrOperationbooking_Operation::model()->findByPk($operation['id']);
 			$operation->cancel($cancellation_reason->id, 'Booking cancelled automatically');
-			
+
 			echo ".";
 		}
 

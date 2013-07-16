@@ -17,13 +17,14 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class OphTrOperationbookingObserver {
-
+class OphTrOperationbookingObserver
+{
 	/**
 	 * Reset search forms when site / firm changes
 	 * @param array $params
 	 */
-	public function resetSearch($params) {
+	public function resetSearch($params)
+	{
 		$so = Yii::app()->session['theatre_searchoptions'];
 		if(isset($so['firm-id'])) unset($so['firm-id']);
 		if(isset($so['specialty-id'])) unset($so['specialty-id']);

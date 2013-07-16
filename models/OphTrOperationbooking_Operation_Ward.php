@@ -78,7 +78,7 @@ class OphTrOperationbooking_Operation_Ward extends BaseActiveRecord
 			array('id, site_id, name, long_name, restriction', 'safe', 'on'=>'search'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -132,15 +132,18 @@ class OphTrOperationbooking_Operation_Ward extends BaseActiveRecord
 			));
 	}
 
-	public function getLongName() {
+	public function getLongName()
+	{
 		return $this->long_name ? $this->long_name : $this->name.' ward';
 	}
 
-	public function getDirectionsText() {
+	public function getDirectionsText()
+	{
 		return $this->directions ? $this->directions : $this->getLongName();
 	}
 
-	public function getRestrictionText() {
+	public function getRestrictionText()
+	{
 		$restrictions = array();
 
 		if ($this->restriction & self::RESTRICTION_MALE) {
@@ -166,24 +169,28 @@ class OphTrOperationbooking_Operation_Ward extends BaseActiveRecord
 		return implode(' ',$restrictions);
 	}
 
-	public function getRestriction_male() {
+	public function getRestriction_male()
+	{
 		return $this->restriction & self::RESTRICTION_MALE ? 1 : 0;
 	}
 
-	public function getRestriction_female() {
+	public function getRestriction_female()
+	{
 		return $this->restriction & self::RESTRICTION_FEMALE ? 1 : 0;
 	}
 
-	public function getRestriction_child() {
+	public function getRestriction_child()
+	{
 		return $this->restriction & self::RESTRICTION_CHILD ? 1 : 0;
 	}
 
-	public function getRestriction_adult() {
+	public function getRestriction_adult()
+	{
 		return $this->restriction & self::RESTRICTION_ADULT ? 1 : 0;
 	}
 
-	public function getRestriction_observation() {
+	public function getRestriction_observation()
+	{
 		return $this->restriction & self::RESTRICTION_OBSERVATION ? 1 : 0;
 	}
 }
-?>

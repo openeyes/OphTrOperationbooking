@@ -66,7 +66,7 @@ class OphTrOperationbooking_Waiting_List_Contact_Rule extends BaseTree
 			array('id, parent_rule_id, site_id, service_id, firm_id, is_child, name, telephone', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -117,7 +117,8 @@ class OphTrOperationbooking_Waiting_List_Contact_Rule extends BaseTree
 			));
 	}
 
-	public function applies($site_id, $service_id, $firm_id, $is_child) {
+	public function applies($site_id, $service_id, $firm_id, $is_child)
+	{
 		foreach (array('site_id','service_id','firm_id','is_child') as $field) {
 			if ($this->{$field} !== null && $this->{$field} != ${$field}) {
 				return false;
@@ -127,7 +128,8 @@ class OphTrOperationbooking_Waiting_List_Contact_Rule extends BaseTree
 		return true;
 	}
 
-	public function parse($site_id, $service_id, $firm_id, $is_child) {
+	public function parse($site_id, $service_id, $firm_id, $is_child)
+	{
 		foreach ($this->children as $child_rule) {
 			if ($child_rule->applies($site_id, $service_id, $firm_id, $is_child)) {
 				return $child_rule->parse($site_id, $service_id, $firm_id, $is_child);
@@ -137,7 +139,8 @@ class OphTrOperationbooking_Waiting_List_Contact_Rule extends BaseTree
 		return $this;
 	}
 
-	public function getIs_child_TreeText() {
+	public function getIs_child_TreeText()
+	{
 		return $this->is_child ? 'Child' : 'Adult';
 	}
 }

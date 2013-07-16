@@ -76,7 +76,8 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		);
 	}
 
-	public function defaultScope() {
+	public function defaultScope()
+	{
 		$table_alias = $this->getTableAlias(false,false);
 		return array(
 			'condition' => $table_alias.'.deleted = 0',
@@ -138,11 +139,13 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 			));
 	}
 
-	public function getDuration() {
+	public function getDuration()
+	{
 		return (mktime(substr($this->end_time,0,2),substr($this->end_time,3,2),0,1,1,date('Y')) - mktime(substr($this->start_time,0,2),substr($this->start_time,3,2),0,1,1,date('Y'))) / 60;
 	}
 
-	public function getBookedMinutes() {
+	public function getBookedMinutes()
+	{
 		$total = 0;
 
 		foreach ($this->activeBookings as $booking) {
@@ -152,23 +155,28 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		return $total;
 	}
 
-	public function getAvailableMinutes() {
+	public function getAvailableMinutes()
+	{
 		return $this->duration - $this->bookedminutes;
 	}
 
-	public function getMinuteStatus() {
+	public function getMinuteStatus()
+	{
 		return $this->availableMinutes >= 0 ? 'available' : 'overbooked';
 	}
 
-	public function getStatus() {
+	public function getStatus()
+	{
 		return $this->availableMinutes >= 0 ? 'available' : 'full';
 	}
 
-	public function getTimeSlot() {
+	public function getTimeSlot()
+	{
 		return date('H:i',strtotime($this->start_time)) . ' - ' . date('H:i',strtotime($this->end_time));
 	}
 
-	public function getFirmName() {
+	public function getFirmName()
+	{
 		if ($this->firm) {
 			return $this->firm->name . ' (' . $this->firm->serviceSubspecialtyAssignment->subspecialty->name . ')';
 		} else {
@@ -176,15 +184,17 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		}
 	}
 
-	public function getTheatreName() {
-		if($this->theatre) {
+	public function getTheatreName()
+	{
+		if ($this->theatre) {
 			return $this->theatre->name . ' (' . $this->theatre->site->short_name . ')';
 		} else {
 			return 'None';
 		}
 	}
 
-	public function operationBookable($operation) {
+	public function operationBookable($operation)
+	{
 		if ($operation->anaesthetist_required && !$this->anaesthetist) {
 			return false;
 		}
@@ -208,7 +218,8 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		return true;
 	}
 
-	public function unbookableReason($operation) {
+	public function unbookableReason($operation)
+	{
 		if ($operation->anaesthetist_required && !$this->anaesthetist) {
 			return "The operation requires an anaesthetist, this session doesn't have one and so cannot be booked into.";
 		}
@@ -230,11 +241,13 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		}
 	}
 
-	public function getWeekdayText() {
+	public function getWeekdayText()
+	{
 		return date('l',strtotime($this->date));
 	}
 
-	protected function beforeValidate() {
+	protected function beforeValidate()
+	{
 		if ($this->date && !preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$this->date)) {
 			$this->date = date('Y-m-d',strtotime($this->date));
 		}
@@ -258,7 +271,8 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		return parent::beforeValidate();
 	}
 
-	protected function beforeSave() {
+	protected function beforeSave()
+	{
 		if ($this->date && !preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$this->date)) {
 			$this->date = date('Y-m-d',strtotime($this->date));
 		}
@@ -266,4 +280,3 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		return parent::beforeSave();
 	}
 }
-?>

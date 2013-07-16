@@ -101,7 +101,7 @@
 					<div class="sortable">
 						<?php
 						foreach ($sequences['data'] as $i => $sequence) {?>
-							<li class="<?php if ($i%2 == 0) {?>even<?php }else{?>odd<?php }?>" data-attr-id="<?php echo $sequence->id?>">
+							<li class="<?php if ($i%2 == 0) {?>even<?php } else {?>odd<?php }?>" data-attr-id="<?php echo $sequence->id?>">
 								<span class="column_checkbox"><input type="checkbox" name="sequence[]" value="<?php echo $sequence->id?>" class="sequences" /></span>
 								<span class="column_firm"><?php echo $sequence->firm ? $sequence->firm->nameAndSubspecialtyCode: 'Emergency'?></span>
 								<span class="column_theatre"><?php echo $sequence->theatre->name?></span>

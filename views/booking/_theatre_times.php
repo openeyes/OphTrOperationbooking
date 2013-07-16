@@ -33,7 +33,7 @@
 			if ($session->id != @$selectedSession->id) {?>
 				<a href="<?php echo Yii::app()->createUrl('/'.$operation->event->eventType->class_name.'/booking/'.($operation->booking?'re':'').'schedule/'.$operation->event_id)?>?firm_id=<?php echo $firm->id ? $firm->id : 'EMG'?>&date=<?php echo date('Ym',strtotime($date))?>&day=<?php echo $_GET['day']?>&session_id=<?php echo $session->id?>#book">
 			<?php }?>
-				<div class="timeBlock <?php echo $session->id == @$selectedSession->id ? 'selected_session' : $session->status ?><?php if (strtotime(date("Y-m-d")) > strtotime($session->date)) { echo ' inthepast'; } else if ($session->operationBookable($operation)) { echo ' bookable';} ?>" id="bookingSession<?php echo $session->id ?>">
+				<div class="timeBlock <?php echo $session->id == @$selectedSession->id ? 'selected_session' : $session->status ?><?php if (strtotime(date("Y-m-d")) > strtotime($session->date)) { echo ' inthepast'; } elseif ($session->operationBookable($operation)) { echo ' bookable';} ?>" id="bookingSession<?php echo $session->id ?>">
 					<div class="mainInfo">
 						<div class="time"><?php echo substr($session->start_time, 0, 5) ?> - <?php echo substr($session->end_time, 0, 5) ?></div>
 						<div class="timeLeft">
@@ -42,11 +42,11 @@
 						</div>
 						<div class="session_id"><?php echo $session->id ?></div>
 					</div>
-					<?php if($session->consultant || $session->anaesthetist || $session->paediatric) { ?>
+					<?php if ($session->consultant || $session->anaesthetist || $session->paediatric) { ?>
 					<div class="metadata">
-						<?php if($session->consultant) { ?><div class="consultant" title="Consultant Present">Consultant</div><?php } ?>
-						<?php if($session->anaesthetist) { ?><div class="anaesthetist" title="Anaesthetist Present">Anaesthetist<?php if ($session->general_anaesthetic) {?> (GA)<?php }?></div><?php } ?>
-						<?php if($session->paediatric) { ?><div class="paediatric" title="Paediatric Session">Paediatric</div><?php } ?>
+						<?php if ($session->consultant) { ?><div class="consultant" title="Consultant Present">Consultant</div><?php } ?>
+						<?php if ($session->anaesthetist) { ?><div class="anaesthetist" title="Anaesthetist Present">Anaesthetist<?php if ($session->general_anaesthetic) {?> (GA)<?php }?></div><?php } ?>
+						<?php if ($session->paediatric) { ?><div class="paediatric" title="Paediatric Session">Paediatric</div><?php } ?>
 					</div>
 					<?php } ?>
 				</div>

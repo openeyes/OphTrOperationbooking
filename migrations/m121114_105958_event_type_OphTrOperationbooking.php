@@ -1,8 +1,8 @@
-<?php 
+<?php
 class m121114_105958_event_type_OphTrOperationbooking extends CDbMigration
 {
-	public function up() {
-
+	public function up()
+	{
 		// --- EVENT TYPE ENTRIES ---
 
 		// create an event_type entry for this event type name if one doesn't already exist
@@ -518,7 +518,8 @@ class m121114_105958_event_type_OphTrOperationbooking extends CDbMigration
 			), 'ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin');
 	}
 
-	public function down() {
+	public function down()
+	{
 		$this->dropTable('ophtroperationbooking_letter_contact_rule');
 		$this->dropTable('et_ophtroperationbooking_diagnosis');
 		$this->dropTable('ophtroperationbooking_operation_procedures_procedures');
@@ -565,4 +566,3 @@ class m121114_105958_event_type_OphTrOperationbooking extends CDbMigration
 		$this->delete('element_type', 'id='.$element_schedule['id']);
 	}
 }
-?>

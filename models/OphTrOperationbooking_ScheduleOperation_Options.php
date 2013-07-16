@@ -66,7 +66,7 @@ class OphTrOperationbooking_ScheduleOperation_Options extends BaseActiveRecord
 			array('id, name', 'safe', 'on' => 'search'),
 		);
 	}
-	
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -135,4 +135,3 @@ class OphTrOperationbooking_ScheduleOperation_Options extends BaseActiveRecord
 		return parent::beforeValidate();
 	}
 }
-?>
