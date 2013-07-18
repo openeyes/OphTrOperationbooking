@@ -22,7 +22,7 @@ class OphTrOperationbooking_API extends BaseAPI
 	public function getBookingsForEpisode($episode_id)
 	{
 		$criteria = new CDbCriteria;
-		$criteria->order = 'created_date asc';
+		$criteria->order = 't.created_date asc';
 		$criteria->addCondition('episode_id',$episode_id);
 
 		return OphTrOperationbooking_Operation_Booking::model()
