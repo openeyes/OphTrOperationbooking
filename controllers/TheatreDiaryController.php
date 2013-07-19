@@ -404,10 +404,8 @@ class TheatreDiaryController extends BaseEventTypeController
 			throw new Exception('Session not found: '.@$_POST['session_id']);
 		}
 
-		$order = 1;
-
+		$errors = array();
 		$bookings = array();
-		$changed_booking_ids = array();
 
 		foreach ($_POST as $key => $value) {
 			if (preg_match('/^admitTime_([0-9]+)$/',$key,$m)) {
@@ -417,37 +415,26 @@ class TheatreDiaryController extends BaseEventTypeController
 				if (!$booking = $operation->booking) {
 					throw new Exception('Operation has no active booking: '.$m[1]);
 				}
-
+				$booking_data = array(
+						'original_display_order' => $booking->display_order,
+						'booking_id' => $booking->id,
+						'changed' => false,
+				);
+				
 				// Check to see if the booking has been changed and so needs saving
 				$confirmed = @$_POST['confirm_'.$m[1]];
-				if ((date('H:i', strtotime($booking->admission_time)) != $value) || $booking->confirmed != $confirmed) {
+				if((date('H:i', strtotime($booking->admission_time)) != $value) || $booking->confirmed != $confirmed) {
+					$booking_data['changed'] = true;
 					$booking->admission_time = $value;
 					$booking->confirmed = @$_POST['confirm_'.$m[1]];
-					$changed_booking_ids[] = $booking->id;
 				}
 
-				$booking->display_order = $order++;
-
-				$bookings[] = $booking;
-				$new_booking_order[] = $booking->id;
-			}
-		}
-
-		$criteria = new CDbCriteria;
-		$criteria->addInCondition('id',$new_booking_order);
-		$criteria->order = 'display_order asc';
-
-		foreach (OphTrOperationbooking_Operation_Booking::model()->findAll($criteria) as $i => $booking) {
-			if ($booking->id != $new_booking_order[$i] && !in_array($booking->id,$changed_booking_ids)) {
-				$changed_booking_ids[] = $booking->id;
-			}
-		}
-
-		foreach ($bookings as $booking) {
-			if (in_array($booking->id,$changed_booking_ids)) {
+				$booking_data['booking'] = $booking;
+				$bookings[] = $booking_data;
+				
 				if (!$booking->validate()) {
 					$formErrors = $booking->getErrors();
-					$errors[$booking->id] = $formErrors['admission_time'][0];
+					$errors[(integer)$m[1]] = $formErrors['admission_time'][0];
 				}
 			}
 		}
@@ -471,10 +458,34 @@ class TheatreDiaryController extends BaseEventTypeController
 			throw new Exception('Unable to save session: '.print_r($session->getErrors(),true));
 		}
 
-		foreach ($bookings as $booking) {
-			if (in_array($booking->id,$changed_booking_ids)) {
-				if (!$booking->save()) {
-					throw new Exception("Unable to save booking: ".print_r($booking->getErrors(),true));
+		// Create array of booking IDs in the original display order
+		$original_bookings = array();
+		foreach($bookings as $booking_data) {
+			$original_bookings[$booking_data['original_display_order']][] = $booking_data['booking_id'];
+		}
+		ksort($original_bookings);
+
+		$original_booking_ids = array();
+		foreach ($original_bookings as $original_display_order => $booking_ids) {
+			foreach ($booking_ids as $booking_id) {
+				$original_booking_ids[] = $booking_id;
+			}
+		}
+
+		$previous_display_order = -1;
+		foreach ($bookings as $new_position => $booking_data) {
+			
+			// Check if relative position of booking has changed and adjust display_order as required
+			if($booking_data['booking_id'] != $original_booking_ids[$new_position]) {
+				$booking_data['booking']->display_order = $previous_display_order +1;
+				$booking_data['changed'] = true;
+			}
+			$previous_display_order = $booking_data['booking']->display_order;
+			
+			// Save booking if it has changed
+			if($booking_data['changed']) {
+				if(!$booking_data['booking']->save()) {
+					throw new Exception('Unable to save booking: '.print_r($booking_data['booking']->getErrors(), true));
 				}
 			}
 		}
