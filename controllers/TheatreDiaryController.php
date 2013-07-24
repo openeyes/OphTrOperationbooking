@@ -461,6 +461,7 @@ class TheatreDiaryController extends BaseEventTypeController
 		// Create array of booking IDs in the original display order
 		$original_bookings = array();
 		foreach($bookings as $booking_data) {
+			// this is an array [] because it's theoretically possible for bad data to occur where there are multiple bookings with the same display_order
 			$original_bookings[$booking_data['original_display_order']][] = $booking_data['booking_id'];
 		}
 		ksort($original_bookings);
