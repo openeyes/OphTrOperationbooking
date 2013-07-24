@@ -867,7 +867,7 @@
 			$this->booking->cancellation_date = date('Y-m-d H:i:s');
 			$this->booking->cancellation_reason_id = $reason_id;
 			$this->booking->cancellation_comment = $comment;
-			$this->booking->cancellation_user_id = Yii::app()->session['user']->id;
+			$this->booking->cancellation_user_id = $cancellation_user_id ? $cancellation_user_id : Yii::app()->session['user']->id;
 
 			if (!$this->booking->save()) {
 				return array(
