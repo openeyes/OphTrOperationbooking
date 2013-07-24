@@ -64,7 +64,7 @@ class HousekeepingCommand extends CConsoleCommand
 			->findAll($criteria) as $operation) {
 
 			$operation = Element_OphTrOperationbooking_Operation::model()->findByPk($operation['id']);
-			$operation->cancel($cancellation_reason->id, 'Booking cancelled automatically');
+			$operation->cancel($cancellation_reason->id, 'Booking cancelled automatically',1);
 
 			echo ".";
 		}
