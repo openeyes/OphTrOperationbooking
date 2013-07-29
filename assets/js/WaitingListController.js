@@ -64,7 +64,9 @@ $(document).ready(function() {
 		});
 
 		if (operations == 0) {
-			alert('No items selected.');
+			new OpenEyes.Dialog.Alert({
+				content: 'No items selected.'
+			}).open();
 		} else {
 			disableButtons();
 
@@ -80,7 +82,7 @@ $(document).ready(function() {
 				}
 			});
 		}
-		
+
 		e.preventDefault();
 	});
 
@@ -168,7 +170,9 @@ function print_items_from_selector(sel,all) {
 
 	if (operations.length == 0) {
 		if (nogp == 0) {
-			alert("No items selected for printing.");
+			new OpenEyes.Dialog.Alert({
+				content: "No items selected for printing."
+			}).open();
 		} else {
 			show_letter_warnings(nogp);
 		}
@@ -186,6 +190,8 @@ function show_letter_warnings(nogp) {
 	}
 
 	if (msg.length >0) {
-		alert(msg);
+		new OpenEyes.Dialog.Alert({
+			content: msg
+		}).open();
 	}
 }
