@@ -892,6 +892,13 @@
 
 		if ($this->booking && !$reschedule) {
 			// race condition, two users attempted to book the same operation at the same time
+			Yii::app()->user->setFlash('notice',"This operation has already been scheduled by ".($this->booking->user->fullName));
+			return Yii::app()->getController()->redirect(array('/OphTrOperationbooking/default/view/'.$this->event_id));
+		}
+
+		if ($reschedule && !isset($_POST['cancellation_reason'])) {
+			// race condition, two users attempted to book the same operation at the same time
+			Yii::app()->user->setFlash('notice',"This operation has already been scheduled by ".($this->booking->user->fullName));
 			return Yii::app()->getController()->redirect(array('/OphTrOperationbooking/default/view/'.$this->event_id));
 		}
 
