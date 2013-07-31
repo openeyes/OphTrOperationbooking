@@ -71,7 +71,7 @@ $(document).ready(function() {
 	$('#date-filter_3').click(function() {
 
 		setDiaryFilter({'date-filter':'custom','date-start':$('#date-start').val(),'date-end':$('#date-end').val()});
-	 
+
 		return true;
 	});
 
@@ -167,8 +167,12 @@ $(document).ready(function() {
 
 	$('#btn_print_diary_list').click(function() {
 		if ($('#site-id').val() == '' || $('#subspecialty-id').val() == '' || $('#date-start').val() == '' || $('#date-end').val() == '') {
-			alert('To print the booking list you must select a site, a subspecialty and a date range.');
-			scrollTo(0,0);
+			new OpenEyes.Dialog.Alert({
+				content: 'To print the booking list you must select a site, a subspecialty and a date range.',
+				onClose: function() {
+					scrollTo(0,0);
+				}
+			}).open();
 			return false;
 		}
 
@@ -303,7 +307,9 @@ $(document).ready(function() {
 					}
 
 					if (first) {
-						alert("One or more admission times were entered incorrectly, please correct the entries highlighted in red.");
+						new OpenEyes.Dialog.Alert({
+							content: "One or more admission times were entered incorrectly, please correct the entries highlighted in red."
+						}).open();
 						enableButtons();
 						return false;
 					}
@@ -538,16 +544,24 @@ function checkRequired(type, session_id) {
 				$('#'+type+'_'+session_id).attr('checked',true);
 				switch (type) {
 					case 'consultant':
-						alert("Sorry, you cannot remove the 'Consultant required' flag from this session because there are one or more patients booked into it who require a consultant.");
+						new OpenEyes.Dialog.Alert({
+							content: "Sorry, you cannot remove the 'Consultant required' flag from this session because there are one or more patients booked into it who require a consultant."
+						}).open();
 						break;
 					case 'paediatric':
-						alert("Sorry, you cannot remove the 'Paediatric' flag from this session because there are one or more patients booked into it who are paediatric.");
+						new OpenEyes.Dialog.Alert({
+							content: "Sorry, you cannot remove the 'Paediatric' flag from this session because there are one or more patients booked into it who are paediatric."
+						}).open();
 						break;
 					case 'anaesthetist':
-						alert("Sorry, you cannot remove the 'Anaesthetist required' flag from this session because there are one or more patients booked into it who require an anaesthetist.");
+						new OpenEyes.Dialog.Alert({
+							content: "Sorry, you cannot remove the 'Anaesthetist required' flag from this session because there are one or more patients booked into it who require an anaesthetist."
+						}).open();
 						break;
 					case 'general_anaesthetic':
-						alert("Sorry, you cannot remove the 'General anaesthetic available' flag from this session because there are one or more patients booked into it who require a general anaesthetic.");
+						new OpenEyes.Dialog.Alert({
+							content: "Sorry, you cannot remove the 'General anaesthetic available' flag from this session because there are one or more patients booked into it who require a general anaesthetic."
+						}).open();
 						break;
 				}
 
