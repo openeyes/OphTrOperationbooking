@@ -49,7 +49,7 @@ class AdminController extends ModuleAdminController
 		}
 
 		// TODO: this is a hack for the Orbis demo and should be removed when full site/subspecialty functionality has been implemented
-		$specialty = Specialty::model()->find('code=?',array('OPH'));
+		$specialty = Specialty::model()->find('code=?',array(130));
 		foreach (Site::model()->findAll('institution_id=?',array(1)) as $site) {
 			foreach (Subspecialty::model()->findAll('specialty_id=?',array($specialty->id)) as $subspecialty) {
 				$ssd = new PostopSiteSubspecialtyDrug;
