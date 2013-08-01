@@ -65,6 +65,7 @@ $(document).ready(function() {
 
 		if (operations == 0) {
 			alert('No items selected.');
+			enableButtons();
 		} else {
 			disableButtons();
 
