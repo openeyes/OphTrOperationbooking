@@ -76,7 +76,9 @@
 		e.preventDefault();
 
 		if ($('input[type="checkbox"][name="theatre[]"]:checked').length <1) {
-			alert("Please select the theatre(s) you wish to delete.");
+			new OpenEyes.Dialog.Alert({
+				content: "Please select the theatre(s) you wish to delete."
+			}).open();
 			enableButtons();
 			return;
 		}
@@ -105,7 +107,9 @@
 						width: 560
 					});
 				} else {
-					alert("One or more of the selected theatres have active future bookings and so cannot be deleted.");
+					new OpenEyes.Dialog.Alert({
+						content: "One or more of the selected theatres have active future bookings and so cannot be deleted."
+					}).open();
 					enableButtons();
 				}
 			}
@@ -135,16 +139,24 @@
 							if (resp == "1") {
 								window.location.reload();
 							} else {
-								alert("There was an unexpected error deleting the theatres, please try again or contact support for assistance");
-								enableButtons();
-								$('#confirm_delete_theatres').dialog('close');
+								new OpenEyes.Dialog.Alert({
+									content: "There was an unexpected error deleting the theatres, please try again or contact support for assistance",
+									onClose: function() {
+										enableButtons();
+										$('#confirm_delete_theatres').dialog('close');
+									}
+								}).open();
 							}
 						}
 					});
 				} else {
-					alert("One or more of the selected theatres now have active future bookings and so cannot be deleted.");
-					enableButtons();
-					$('#confirm_delete_theatres').dialog('close');
+					new OpenEyes.Dialog.Alert({
+						content: "One or more of the selected theatres now have active future bookings and so cannot be deleted.",
+						onClose: function() {
+							enableButtons();
+							$('#confirm_delete_theatres').dialog('close');
+						}
+					}).open();
 				}
 			}
 		});

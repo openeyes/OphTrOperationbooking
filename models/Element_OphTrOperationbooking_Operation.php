@@ -797,7 +797,7 @@
 		return parent::audit($target, $action, $data, $log, $properties);
 	}
 
-	public function cancel($reason_id, $comment = null)
+	public function cancel($reason_id, $comment = null, $cancellation_user_id=false)
 	{
 		if (!$reason = OphTrOperationbooking_Operation_Cancellation_Reason::model()->findByPk($reason_id)) {
 			return array(
@@ -809,7 +809,7 @@
 		$this->operation_cancellation_date = date('Y-m-d H:i:s');
 		$this->cancellation_reason_id = $reason_id;
 		$this->cancellation_comment = $comment;
-		$this->cancellation_user_id = Yii::app()->session['user']->id;
+		$this->cancellation_user_id = $cancellation_user_id ? $cancellation_user_id : Yii::app()->session['user']->id;
 
 		$this->status_id = OphTrOperationbooking_Operation_Status::model()->find('name=?',array('Cancelled'))->id;
 
@@ -835,7 +835,7 @@
 			$this->booking->booking_cancellation_date = date('Y-m-d H:i:s');
 			$this->booking->cancellation_reason_id = $reason_id;
 			$this->booking->cancellation_comment = $comment;
-			$this->booking->cancellation_user_id = Yii::app()->session['user']->id;
+			$this->booking->cancellation_user_id = $cancellation_user_id ? $cancellation_user_id : Yii::app()->session['user']->id;
 
 			if (!$this->booking->save()) {
 				return array(
@@ -892,6 +892,13 @@
 
 		if ($this->booking && !$reschedule) {
 			// race condition, two users attempted to book the same operation at the same time
+			Yii::app()->user->setFlash('notice',"This operation has already been scheduled by ".($this->booking->user->fullName));
+			return Yii::app()->getController()->redirect(array('/OphTrOperationbooking/default/view/'.$this->event_id));
+		}
+
+		if ($reschedule && !isset($_POST['cancellation_reason'])) {
+			// race condition, two users attempted to book the same operation at the same time
+			Yii::app()->user->setFlash('notice',"This operation has already been scheduled by ".($this->booking->user->fullName));
 			return Yii::app()->getController()->redirect(array('/OphTrOperationbooking/default/view/'.$this->event_id));
 		}
 
