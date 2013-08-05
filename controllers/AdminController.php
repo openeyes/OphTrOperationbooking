@@ -24,86 +24,9 @@ class AdminController extends ModuleAdminController
 
 	public function actionViewERODRules()
 	{
+		Audit::add('admin','list',null,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_EROD_Rule'));
+
 		$this->render('erodrules');
-	}
-
-	public function actionCreatePostOpDrug()
-	{
-		if (empty($_POST['name'])) {
-			throw new Exception("Missing name");
-		}
-
-		if ($drug = PostopDrug::model()->find(array('order'=>'display_order desc'))) {
-			$display_order = $drug->display_order+1;
-		} else {
-			$display_order = 1;
-		}
-
-		$drug = new PostopDrug;
-		$drug->name = @$_POST['name'];
-		$drug->display_order = $display_order;
-
-		if (!$drug->save()) {
-			echo json_encode(array('errors'=>$drug->getErrors()));
-			return;
-		}
-
-		// TODO: this is a hack for the Orbis demo and should be removed when full site/subspecialty functionality has been implemented
-		$specialty = Specialty::model()->find('code=?',array(130));
-		foreach (Site::model()->findAll('institution_id=?',array(1)) as $site) {
-			foreach (Subspecialty::model()->findAll('specialty_id=?',array($specialty->id)) as $subspecialty) {
-				$ssd = new PostopSiteSubspecialtyDrug;
-				$ssd->site_id = $site->id;
-				$ssd->subspecialty_id = $subspecialty->id;
-				$ssd->drug_id = $drug->id;
-				if (!$ssd->save()) {
-					echo json_encode(array('errors'=>$ssd->getErrors()));
-				}
-			}
-		}
-
-		echo json_encode(array('id'=>$drug->id,'errors'=>array()));
-	}
-
-	public function actionUpdatePostOpDrug()
-	{
-		if (!$drug = PostopDrug::model()->findByPk(@$_POST['id'])) {
-			throw new Exception("Drug not found: ".@$_POST['id']);
-		}
-
-		$drug->name = @$_POST['name'];
-		if (!$drug->save()) {
-			echo json_encode(array('errors'=>$drug->getErrors()));
-			return;
-		}
-
-		echo json_encode(array('errors'=>array()));
-	}
-
-	public function actionDeletePostOpDrug($id)
-	{
-		if ($drug = PostopDrug::model()->findByPk($id)) {
-			$drug->deleted = 1;
-			if ($drug->save()) {
-				echo "1";
-				return;
-			}
-		}
-		echo "0";
-	}
-
-	public function actionSortPostOpDrugs()
-	{
-		if (!empty($_POST['order'])) {
-			foreach ($_POST['order'] as $i => $id) {
-				if ($drug = PostopDrug::model()->findByPk($id)) {
-					$drug->display_order = $i+1;
-					if (!$drug->save()) {
-						throw new Exception("Unable to save drug: ".print_r($drug->getErrors(),true));
-					}
-				}
-			}
-		}
 	}
 
 	public function actionEditERODRule($id)
@@ -148,10 +71,13 @@ class AdminController extends ModuleAdminController
 				}
 
 				if (empty($errors)) {
+					Audit::add('admin','update',serialize(array_merge(array('id'=>$id),$_POST)),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_EROD_Rule'));
 					$this->redirect(array('/OphTrOperationbooking/admin/viewERODRules'));
 				}
 			}
 		}
+
+		Audit::add('admin','view',$id,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_EROD_Rule'));
 
 		$this->render('/admin/editerodrule',array(
 			'erod' => $erod,
@@ -199,6 +125,7 @@ class AdminController extends ModuleAdminController
 				}
 
 				if (empty($errors)) {
+					Audit::add('admin','create',serialize($_POST),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_EROD_Rule'));
 					$this->redirect(array('/OphTrOperationbooking/admin/viewERODRules'));
 				}
 			}
@@ -225,6 +152,8 @@ class AdminController extends ModuleAdminController
 					}
 				}
 			}
+
+			Audit::add('admin','delete',serialize($_POST),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_EROD_Rule'));
 		}
 
 		echo "1";
@@ -233,6 +162,8 @@ class AdminController extends ModuleAdminController
 	public function actionViewLetterContactRules()
 	{
 		$this->jsVars['OE_rule_model'] = 'LetterContactRule';
+
+		Audit::add('admin','list',null,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Letter_Contact_Rule'));
 
 		$this->render('lettercontactrules',array(
 			'data' => OphTrOperationbooking_Letter_Contact_Rule::model()->findAllAsTree(),
@@ -277,11 +208,14 @@ class AdminController extends ModuleAdminController
 			if (!$rule->save()) {
 				$errors = $rule->getErrors();
 			} else {
+				Audit::add('admin','update',serialize(array_merge(array('id'=>$id),$_POST)),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Letter_Contact_Rule'));
 				$this->redirect(array('/OphTrOperationbooking/admin/viewLetterContactRules'));
 			}
 		}
 
 		$this->jsVars['OE_rule_model'] = 'LetterContactRule';
+
+		Audit::add('admin','view',$id,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Letter_Contact_Rule'));
 
 		$this->render('editlettercontactrule',array(
 			'rule' => $rule,
@@ -302,6 +236,7 @@ class AdminController extends ModuleAdminController
 				if (!$rule->delete()) {
 					$errors = $rule->getErrors();
 				} else {
+					Audit::add('admin','delete',$id,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Letter_Contact_Rule'));
 					$this->redirect(array('/OphTrOperationbooking/admin/viewLetterContactRules'));
 				}
 			}
@@ -327,6 +262,7 @@ class AdminController extends ModuleAdminController
 			if (!$rule->save()) {
 				$errors = $rule->getErrors();
 			} else {
+				Audit::add('admin','create',serialize($_POST),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Letter_Contact_Rule'));
 				$this->redirect(array('/OphTrOperationbooking/admin/viewLetterContactRules'));
 			}
 		} else {
@@ -346,6 +282,8 @@ class AdminController extends ModuleAdminController
 	public function actionViewLetterWarningRules()
 	{
 		$this->jsVars['OE_rule_model'] = 'LetterWarningRule';
+
+		Audit::add('admin','list',null,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Admission_Letter_Warning_Rule'));
 
 		$this->render('letterwarningrules',array(
 			'data' => OphTrOperationbooking_Admission_Letter_Warning_Rule::model()->findAllAsTree(),
@@ -393,9 +331,12 @@ class AdminController extends ModuleAdminController
 			if (!$rule->save()) {
 				$errors = $rule->getErrors();
 			} else {
+				Audit::add('admin','update',$id,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Admission_Letter_Warning_Rule'));
 				$this->redirect(array('/OphTrOperationbooking/admin/viewLetterWarningRules'));
 			}
 		}
+
+		Audit::add('admin','view',$id,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Admission_Letter_Warning_Rule'));
 
 		$this->jsVars['OE_rule_model'] = 'LetterWarningRule';
 
@@ -417,6 +358,7 @@ class AdminController extends ModuleAdminController
 			if (!$rule->save()) {
 				$errors = $rule->getErrors();
 			} else {
+				Audit::add('admin','create',serialize($_POST),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Admission_Letter_Warning_Rule'));
 				$this->redirect(array('/OphTrOperationbooking/admin/viewLetterWarningRules'));
 			}
 		} else {
@@ -446,6 +388,7 @@ class AdminController extends ModuleAdminController
 				if (!$rule->delete()) {
 					$errors = $rule->getErrors();
 				} else {
+					Audit::add('admin','delete',$id,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Admission_Letter_Warning_Rule'));
 					$this->redirect(array('/OphTrOperationbooking/admin/viewLetterWarningRules'));
 				}
 			}
@@ -462,6 +405,8 @@ class AdminController extends ModuleAdminController
 	public function actionViewWaitingListContactRules()
 	{
 		$this->jsVars['OE_rule_model'] = 'WaitingListContactRule';
+
+		Audit::add('admin','list',null,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Waiting_List_Contact_Rule'));
 
 		$this->render('waitinglistcontactrules',array(
 			'data' => OphTrOperationbooking_Waiting_List_Contact_Rule::model()->findAllAsTree(),
@@ -506,11 +451,14 @@ class AdminController extends ModuleAdminController
 			if (!$rule->save()) {
 				$errors = $rule->getErrors();
 			} else {
+				Audit::add('admin','update',serialize(array_merge(array('id'=>$id),$_POST)),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Waiting_List_Contact_Rule'));
 				$this->redirect(array('/OphTrOperationbooking/admin/viewWaitingListContactRules'));
 			}
 		}
 
 		$this->jsVars['OE_rule_model'] = 'WaitingListContactRule';
+
+		Audit::add('admin','list',null,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Waiting_List_Contact_Rule'));
 
 		$this->render('editwaitinglistcontactrule',array(
 			'rule' => $rule,
@@ -531,6 +479,7 @@ class AdminController extends ModuleAdminController
 				if (!$rule->delete()) {
 					$errors = $rule->getErrors();
 				} else {
+					Audit::add('admin','delete',serialize($_POST),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Waiting_List_Contact_Rule'));
 					$this->redirect(array('/OphTrOperationbooking/admin/viewWaitingListContactRules'));
 				}
 			}
@@ -547,6 +496,8 @@ class AdminController extends ModuleAdminController
 
 	public function actionViewOperationNameRules()
 	{
+		Audit::add('admin','list',null,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Name_Rule'));
+
 		$this->render('operationnamerules');
 	}
 
@@ -562,6 +513,7 @@ class AdminController extends ModuleAdminController
 			if (!$rule->save()) {
 				$errors = $erod->getErrors();
 			} else {
+				Audit::add('admin','create',serialize($_POST),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Name_Rule'));
 				$this->redirect(array('/OphTrOperationbooking/admin/viewOperationNameRules'));
 			}
 		}
@@ -586,9 +538,12 @@ class AdminController extends ModuleAdminController
 			if (!$rule->save()) {
 				$errors = $rule->getErrors();
 			} else {
+				Audit::add('admin','update',serialize(array_merge(array('id'=>$id),$_POST)),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Name_Rule'));
 				$this->redirect(array('/OphTrOperationbooking/admin/viewOperationNameRules'));
 			}
 		}
+
+		Audit::add('admin','view',$id,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Name_Rule'));
 
 		$this->render('/admin/editoperationnamerule',array(
 			'rule' => $rule,
@@ -606,6 +561,8 @@ class AdminController extends ModuleAdminController
 					}
 				}
 			}
+
+			Audit::add('admin','delete',serialize($_POST),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Name_Rule'));
 		}
 
 		echo "1";
@@ -624,6 +581,8 @@ class AdminController extends ModuleAdminController
 		} elseif (!empty($_GET)) {
 			Yii::app()->session['admin_sequences'] = $_GET;
 		}
+
+		Audit::add('admin','list',null,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Sequence'));
 
 		$this->render('/admin/sequences',array(
 			'sequences' => $this->getSequences(),
@@ -850,6 +809,8 @@ class AdminController extends ModuleAdminController
 					echo json_encode($sequence->getErrors());
 					return;
 				}
+
+				Audit::add('admin','update',serialize(array_merge(array('id'=>$sequence->id),$_POST)),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Sequence'));
 			}
 		}
 
@@ -890,10 +851,13 @@ class AdminController extends ModuleAdminController
 				$errors = $sequence->getErrors();
 			} else {
 				if (empty($errors)) {
+					Audit::add('admin','update',serialize(array_merge(array('id'=>$id),$_POST)),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Sequence'));
 					$this->redirect(array('/OphTrOperationbooking/admin/viewSequences'));
 				}
 			}
 		}
+
+		Audit::add('admin','view',$id,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Sequence'));
 
 		$this->render('/admin/editsequence',array(
 			'sequence' => $sequence,
@@ -931,6 +895,7 @@ class AdminController extends ModuleAdminController
 				$errors = $sequence->getErrors();
 			} else {
 				if (empty($errors)) {
+					Audit::add('admin','create',serialize($_POST),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Sequence'));
 					$this->redirect(array('/OphTrOperationbooking/admin/viewSequences'));
 				}
 			}
@@ -955,6 +920,8 @@ class AdminController extends ModuleAdminController
 		} elseif (!empty($_GET)) {
 			Yii::app()->session['admin_sessions'] = $_GET;
 		}
+
+		Audit::add('admin','list',null,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Session'));
 
 		$this->render('/admin/sessions',array(
 			'sessions' => $this->getSessions(),
@@ -1104,6 +1071,7 @@ class AdminController extends ModuleAdminController
 					echo json_encode($session->getErrors());
 					return;
 				}
+				Audit::add('admin','update',serialize($session->getAuditAttributes()),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Session'));
 			}
 			echo json_encode(array());
 		} else {
@@ -1167,10 +1135,13 @@ class AdminController extends ModuleAdminController
 				$errors = $session->getErrors();
 			} else {
 				if (empty($errors)) {
+					Audit::add('admin','update',serialize(array_merge(array('id'=>$id),$_POST)),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Session'));
 					$this->redirect(array('/OphTrOperationbooking/admin/viewSessions'));
 				}
 			}
 		}
+
+		Audit::add('admin','view',$id,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Session'));
 
 		$this->render('/admin/editsession',array(
 			'session' => $session,
@@ -1191,12 +1162,15 @@ class AdminController extends ModuleAdminController
 				$errors = $session->getErrors();
 			} else {
 				if (empty($errors)) {
+					Audit::add('admin','create',serialize($_POST),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Session'));
 					$this->redirect(array('/OphTrOperationbooking/admin/viewSessions'));
 				}
 			}
 		} elseif (isset($_GET['sequence_id'])) {
 			$session->sequence_id = $_GET['sequence_id'];
 		}
+
+		Audit::add('admin','view',serialize($_POST),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Session'));
 
 		$this->render('/admin/editsession',array(
 			'session' => $session,
@@ -1251,6 +1225,7 @@ class AdminController extends ModuleAdminController
 			if (!$session->save()) {
 				throw new Exception("Unable to mark session deleted: ".print_r($session->getErrors(),true));
 			}
+			Audit::add('admin','delete',$session->id,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Session'));
 		}
 
 		echo "1";
@@ -1311,6 +1286,8 @@ class AdminController extends ModuleAdminController
 					throw new Exception("Unable to mark session deleted: ".print_r($session->getErrors(),true));
 				}
 			}
+
+			Audit::add('admin','delete',$sequence->id,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Sequence'));
 		}
 
 		echo "1";
@@ -1318,6 +1295,8 @@ class AdminController extends ModuleAdminController
 
 	public function actionViewTheatres()
 	{
+		Audit::add('admin','list',null,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Theatre'));
+
 		$this->render('theatres');
 	}
 
@@ -1332,6 +1311,7 @@ class AdminController extends ModuleAdminController
 			if (!$theatre->save()) {
 				$errors = $theatre->getErrors();
 			} else {
+				Audit::add('admin','create',serialize($_POST),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Theatre'));
 				$this->redirect(array('/OphTrOperationbooking/admin/viewTheatres'));
 			}
 		}
@@ -1355,9 +1335,13 @@ class AdminController extends ModuleAdminController
 			if (!$theatre->save()) {
 				$errors = $theatre->getErrors();
 			} else {
+				Audit::add('admin','update',serialize(array_merge(array('id'=>$id),$_POST)),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Theatre'));
+
 				$this->redirect(array('/OphTrOperationbooking/admin/viewTheatres'));
 			}
 		}
+
+		Audit::add('admin','view',$id,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Theatre'));
 
 		$this->render('/admin/edittheatre',array(
 			'theatre' => $theatre,
@@ -1402,6 +1386,7 @@ class AdminController extends ModuleAdminController
 			if (!$theatre->save()) {
 				throw new Exception("Unable to mark theatre deleted: ".print_r($theatre->getErrors(),true));
 			}
+			Audit::add('admin','delete',serialize($_POST['theatre']),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Theatre'));
 		}
 
 		echo "1";
@@ -1409,6 +1394,8 @@ class AdminController extends ModuleAdminController
 
 	public function actionViewWards()
 	{
+		Audit::add('admin','list',null,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Ward'));
+
 		$this->render('wards');
 	}
 
@@ -1443,9 +1430,13 @@ class AdminController extends ModuleAdminController
 			if (!$ward->save()) {
 				$errors = $ward->getErrors();
 			} else {
+				Audit::add('admin','update',serialize(array_merge(array('id'=>$id),$_POST)),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Ward'));
+
 				$this->redirect(array('/OphTrOperationbooking/admin/viewWards'));
 			}
 		}
+
+		Audit::add('admin','view',$id,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Ward'));
 
 		$this->render('/admin/editward',array(
 			'ward' => $ward,
@@ -1461,9 +1452,12 @@ class AdminController extends ModuleAdminController
 
 		if (!empty($_POST)) {
 			$ward->attributes = $_POST['OphTrOperationbooking_Operation_Ward'];
+
 			if (!$ward->save()) {
 				$errors = $ward->getErrors();
 			} else {
+				Audit::add('admin','create',serialize($_POST),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Ward'));
+
 				$this->redirect(array('/OphTrOperationbooking/admin/viewWards'));
 			}
 		}
@@ -1476,6 +1470,8 @@ class AdminController extends ModuleAdminController
 
 	public function actionViewSchedulingOptions()
 	{
+		Audit::add('admin','list',null,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_ScheduleOperation_Options'));
+
 		$this->render('schedulingoptions');
 	}
 
@@ -1507,6 +1503,7 @@ class AdminController extends ModuleAdminController
 			if (!$option->delete()) {
 				throw new Exception("Unable to delete scheduling option: ".print_r($option->getErrors(),true));
 			}
+			Audit::add('admin','delete',$option->id,false,array('OphTrOperationbooking','model'=>'OphTrOperationbooking_ScheduleOperation_Options'));
 		}
 
 		echo "1";
@@ -1526,9 +1523,13 @@ class AdminController extends ModuleAdminController
 			if (!$option->save()) {
 				$errors = $option->getErrors();
 			} else {
+				Audit::add('admin','update',serialize(array_merge(array('id'=>$id),$_POST)),false,array('OphTrOperationbooking','model'=>'OphTrOperationbooking_ScheduleOperation_Options'));
+
 				$this->redirect(array('/OphTrOperationbooking/admin/viewSchedulingOptions'));
 			}
 		}
+
+		Audit::add('admin','view',$id,false,array('OphTrOperationbooking','model'=>'OphTrOperationbooking_ScheduleOperation_Options'));
 
 		$this->render('/admin/editschedulingoption',array(
 			'option' => $option,
@@ -1547,6 +1548,7 @@ class AdminController extends ModuleAdminController
 			if (!$option->save()) {
 				$errors = $option->getErrors();
 			} else {
+				Audit::add('admin','create',serialize($_POST),false,array('OphTrOperationbooking','model'=>'OphTrOperationbooking_ScheduleOperation_Options'));
 				$this->redirect(array('/OphTrOperationbooking/admin/viewSchedulingOptions'));
 			}
 		}
