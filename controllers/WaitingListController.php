@@ -418,7 +418,7 @@ class WaitingListController extends BaseEventTypeController
 			$salutation = Gp::UNKNOWN_SALUTATION;
 		}
 		$body = $this->render('../letters/gp_letter', array(
-				'to' => $salutation,
+				'to' => $to_name,
 				'patient' => $patient,
 				'consultantName' => $operation->event->episode->firm->consultant->fullName,
 		), true);
