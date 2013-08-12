@@ -95,19 +95,19 @@ $this->header();
 		<div id="calendar">
 			<div id="session_dates">
 				<div id="details">
-					<?php echo $this->renderPartial('_calendar', array('operation'=>$operation, 'date'=>$date, 'firm' => $firm, 'selectedDate' => $selectedDate, 'sessions' => $sessions), false, true); ?>
+					<?php echo $this->renderPartial('_calendar', array('operation'=>$operation, 'date'=>$date, 'firm' => $firm, 'selectedDate' => $selectedDate, 'sessions' => $sessions), false, false); ?>
 				</div>
 			</div>
 		</div>
 
 		<div id="theatres">
 			<?php if ($theatres) {?>
-				<?php echo $this->renderPartial('_theatre_times', array('operation'=>$operation, 'date'=>$selectedDate, 'theatres'=>$theatres, 'reschedule' => $operation->booking, 'firm' => $firm, 'selectedDate' => $selectedDate, 'selectedSession' => $session), false,true)?>
+				<?php echo $this->renderPartial('_theatre_times', array('operation'=>$operation, 'date'=>$selectedDate, 'theatres'=>$theatres, 'reschedule' => $operation->booking, 'firm' => $firm, 'selectedDate' => $selectedDate, 'selectedSession' => $session), false,false)?>
 			<?php }?>
 		</div>
 		<div id="sessionDetails">
 			<?php if ($session) {?>
-				<?php echo $this->renderPartial('_list', array('operation'=>$operation, 'session'=>$session, 'bookings'=>$bookings, 'reschedule'=>$operation->booking, 'bookable'=>$bookable, 'errors' => $errors),false,true)?>
+				<?php echo $this->renderPartial('_list', array('operation'=>$operation, 'session'=>$session, 'bookings'=>$bookings, 'reschedule'=>$operation->booking, 'bookable'=>$bookable, 'errors' => $errors),false,false)?>
 			<?php }?>
 		</div>
 	</div>

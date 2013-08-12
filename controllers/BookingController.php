@@ -120,7 +120,9 @@ class BookingController extends BaseEventTypeController
 		} elseif ($operation->booking) {
 			$selectedDate = $operation->booking->session->date;
 		}
-
+		
+		$this->processJsVars();
+		
 		$this->renderPartial('schedule', array(
 				'event' => $event,
 				'operation' => $operation,
@@ -183,7 +185,9 @@ class BookingController extends BaseEventTypeController
 				$this->redirect(array('default/view/'.$event->id));
 			}
 		}
-
+		
+		$this->processJsVars();
+		
 		$this->renderPartial('reschedule_later', array(
 				'operation' => $operation,
 				'date' => $operation->minDate,

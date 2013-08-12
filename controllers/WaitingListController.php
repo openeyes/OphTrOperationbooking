@@ -419,7 +419,7 @@ class WaitingListController extends BaseEventTypeController
 		$body = $this->render('../letters/gp_letter', array(
 				'to' => $salutation,
 				'patient' => $patient,
-				'consultantName' => $operation->event->episode->firm->fullName,
+				'consultantName' => $operation->event->episode->firm->consultant->fullName,
 		), true);
 		$letter = new OELetter($to_address, $this->getFromAddress($operation), $body);
 		$letter->setBarcode('E:'.$operation->event_id);
@@ -433,7 +433,7 @@ class WaitingListController extends BaseEventTypeController
 		$body = $this->render('../letters/gp_letter_patient', array(
 				'to' => $patient->salutationname,
 				'patient' => $patient,
-				'consultantName' => $operation->event->episode->firm->fullName,
+				'consultantName' => $operation->event->episode->firm->consultant->fullName,
 		), true);
 		$letter = new OELetter($to_address, $this->getFromAddress($operation), $body);
 		$letter->setBarcode('E:'.$operation->event_id);
