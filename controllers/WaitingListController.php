@@ -406,6 +406,7 @@ class WaitingListController extends BaseEventTypeController
 				$to_address = $patient->gp->getLetterAddress(array(
 					'patient' => $patient,
 					'include_name' => true,
+					'delimiter' => "\n"
 				));
 			} else {
 				throw new CException('Patient has no practice address');
