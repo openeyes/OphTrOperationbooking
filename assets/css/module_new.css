@@ -34,35 +34,44 @@
   background: #f08a6f;
 }
 /* line 23, ../sass/components/tables/_waiting-list-table.scss */
+.waiting-list tfoot td {
+  font-size: 0.8125em;
+  font-weight: normal;
+}
+/* line 27, ../sass/components/tables/_waiting-list-table.scss */
 .waiting-list tfoot h3 {
   float: left;
   margin: 0;
   font-size: 1em;
 }
-/* line 28, ../sass/components/tables/_waiting-list-table.scss */
+/* line 32, ../sass/components/tables/_waiting-list-table.scss */
 .waiting-list tfoot .inline-list {
   float: left;
   margin: 0;
 }
-/* line 32, ../sass/components/tables/_waiting-list-table.scss */
+/* line 36, ../sass/components/tables/_waiting-list-table.scss */
 .waiting-list tfoot .inline-list li * {
   display: inline-block;
 }
-/* line 38, ../sass/components/tables/_waiting-list-table.scss */
+/* line 42, ../sass/components/tables/_waiting-list-table.scss */
 .waiting-list tfoot .letters-sent-out li {
   line-height: 1.0625em;
 }
 
-/* line 51, ../sass/components/tables/_waiting-list-table.scss */
+/* line 55, ../sass/components/tables/_waiting-list-table.scss */
 .waiting-list-key {
   padding-top: 1.25em;
 }
-/* line 53, ../sass/components/tables/_waiting-list-table.scss */
+/* line 57, ../sass/components/tables/_waiting-list-table.scss */
 .waiting-list-key .key-box {
   width: 10px;
   height: 10px;
   border: 1px solid #999999;
   display: inline-block;
+}
+/* line 64, ../sass/components/tables/_waiting-list-table.scss */
+.waiting-list-key .inline-list li {
+  font-size: 1em;
 }
 
 /* line 13, ../sass/components/tables/_theatre-bookings-table.scss */
@@ -158,4 +167,9 @@
   -ms-border-radius: 3px 3px 0 0;
   -o-border-radius: 3px 3px 0 0;
   border-radius: 3px 3px 0 0;
+}
+
+/* line 5, ../sass/components/_search-filters.scss */
+.search-filters.theatre-diaries table {
+  margin: 0 0 0.3125em 0;
 }
