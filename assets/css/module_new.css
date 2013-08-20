@@ -1,1 +1,161 @@
+@charset "UTF-8";
 /** Operating booking module styles */
+/**
+ * OpenEyes
+ *
+ * (C) Moorfields Eye Hospital NHS Foundation Trust, 2008-2011
+ * (C) OpenEyes Foundation, 2011-2013
+ * This file is part of OpenEyes.
+ * OpenEyes is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * OpenEyes is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with OpenEyes in a file titled COPYING. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @package OpenEyes
+ * @link http://www.openeyes.org.uk
+ * @author OpenEyes <info@openeyes.org.uk>
+ * @copyright Copyright (c) 2008-2011, Moorfields Eye Hospital NHS Foundation Trust
+ * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
+ * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
+ */
+/* line 10, ../sass/components/tables/_waiting-list-table.scss */
+.waiting-list .send-another-reminder {
+  background: #b8eaa6;
+}
+/* line 13, ../sass/components/tables/_waiting-list-table.scss */
+.waiting-list .send-invitation-letter {
+  background: #77b8d3;
+}
+/* line 16, ../sass/components/tables/_waiting-list-table.scss */
+.waiting-list .send-gp-removal-letter {
+  background: #f7bf8d;
+}
+/* line 19, ../sass/components/tables/_waiting-list-table.scss */
+.waiting-list .patient-due-removed {
+  background: #f08a6f;
+}
+/* line 23, ../sass/components/tables/_waiting-list-table.scss */
+.waiting-list tfoot h3 {
+  float: left;
+  margin: 0;
+  font-size: 1em;
+}
+/* line 28, ../sass/components/tables/_waiting-list-table.scss */
+.waiting-list tfoot .inline-list {
+  float: left;
+  margin: 0;
+}
+/* line 32, ../sass/components/tables/_waiting-list-table.scss */
+.waiting-list tfoot .inline-list li * {
+  display: inline-block;
+}
+/* line 38, ../sass/components/tables/_waiting-list-table.scss */
+.waiting-list tfoot .letters-sent-out li {
+  line-height: 1.0625em;
+}
+
+/* line 51, ../sass/components/tables/_waiting-list-table.scss */
+.waiting-list-key {
+  padding-top: 1.25em;
+}
+/* line 53, ../sass/components/tables/_waiting-list-table.scss */
+.waiting-list-key .key-box {
+  width: 10px;
+  height: 10px;
+  border: 1px solid #999999;
+  display: inline-block;
+}
+
+/* line 13, ../sass/components/tables/_theatre-bookings-table.scss */
+.theatre-bookings {
+  margin: 0;
+}
+/* line 15, ../sass/components/tables/_theatre-bookings-table.scss */
+.theatre-bookings input[type="text"] {
+  max-width: 4.375em;
+  text-align: center;
+}
+/* line 20, ../sass/components/tables/_theatre-bookings-table.scss */
+.theatre-bookings tfoot td {
+  background: #bde0b3;
+  font-size: 1em;
+  line-height: 1;
+}
+/* line 26, ../sass/components/tables/_theatre-bookings-table.scss */
+.theatre-bookings .time-left {
+  float: left;
+  font-size: 0.8125em;
+  font-weight: bold;
+}
+/* line 31, ../sass/components/tables/_theatre-bookings-table.scss */
+.theatre-bookings .specialists {
+  background: white;
+  border: 2px solid #cccccc;
+  float: right;
+  font-size: 0.6875em;
+  line-height: 1.2;
+  padding: 0.375em 0.5em 0.375em 1.0625em;
+  text-align: right;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
+  opacity: 0.8;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+}
+
+/* line 25, ../sass/components/panels/_theatre-booking-heading-panel.scss */
+.panel.theatre-booking-heading {
+  background: #fafafa;
+  border-bottom: 0;
+  display: inline-block;
+  font-size: 0.8125em;
+  margin: 0 0 0 0.625em;
+  padding: 0.375em 0.75em;
+  -moz-border-radius-bottomleft: 0;
+  -webkit-border-bottom-left-radius: 0;
+  border-bottom-left-radius: 0;
+  -moz-border-radius-bottomright: 0;
+  -webkit-border-bottom-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* line 12, ../sass/components/panels/_theatre-sessions-panel.scss */
+.panel.theatre-sessions {
+  background: #fafafa;
+}
+/* line 14, ../sass/components/panels/_theatre-sessions-panel.scss */
+.panel.theatre-sessions .theatre-booking-edit-actions {
+  padding-top: 0.625em;
+}
+
+/* line 22, ../sass/components/tabs/_theatre-booking-actions-tabs.scss */
+.tabs.theatre-booking-actions {
+  margin: 0 0.625em 0 0;
+  float: right;
+  position: relative;
+  bottom: -0.0625em;
+  z-index: 1;
+}
+/* line 28, ../sass/components/tabs/_theatre-booking-actions-tabs.scss */
+.tabs.theatre-booking-actions li {
+  margin: 0;
+}
+/* line 30, ../sass/components/tabs/_theatre-booking-actions-tabs.scss */
+.tabs.theatre-booking-actions li:first-child {
+  margin-right: 0.3125em;
+}
+/* line 34, ../sass/components/tabs/_theatre-booking-actions-tabs.scss */
+.tabs.theatre-booking-actions li.selected a {
+  background: #fafafa;
+}
+/* line 39, ../sass/components/tabs/_theatre-booking-actions-tabs.scss */
+.tabs.theatre-booking-actions a {
+  background: #dadada;
+  padding: 0.375em 0.75em;
+  -webkit-border-radius: 3px 3px 0 0;
+  -moz-border-radius: 3px 3px 0 0;
+  -ms-border-radius: 3px 3px 0 0;
+  -o-border-radius: 3px 3px 0 0;
+  border-radius: 3px 3px 0 0;
+}
