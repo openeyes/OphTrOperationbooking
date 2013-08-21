@@ -113,7 +113,7 @@
   border-radius: 5px;
 }
 
-/* line 25, ../sass/components/panels/_theatre-booking-heading-panel.scss */
+/* line 7, ../sass/components/panels/_theatre-booking-heading-panel.scss */
 .panel.theatre-booking-heading {
   background: #fafafa;
   border-bottom: 0;
@@ -129,16 +129,16 @@
   border-bottom-right-radius: 0;
 }
 
-/* line 12, ../sass/components/panels/_theatre-sessions-panel.scss */
+/* line 6, ../sass/components/panels/_theatre-sessions-panel.scss */
 .panel.theatre-sessions {
   background: #fafafa;
 }
-/* line 14, ../sass/components/panels/_theatre-sessions-panel.scss */
+/* line 8, ../sass/components/panels/_theatre-sessions-panel.scss */
 .panel.theatre-sessions .theatre-booking-edit-actions {
   padding-top: 0.625em;
 }
 
-/* line 22, ../sass/components/tabs/_theatre-booking-actions-tabs.scss */
+/* line 10, ../sass/components/tabs/_theatre-booking-actions-tabs.scss */
 .tabs.theatre-booking-actions {
   margin: 0 0.625em 0 0;
   float: right;
@@ -146,19 +146,19 @@
   bottom: -0.0625em;
   z-index: 1;
 }
-/* line 28, ../sass/components/tabs/_theatre-booking-actions-tabs.scss */
+/* line 16, ../sass/components/tabs/_theatre-booking-actions-tabs.scss */
 .tabs.theatre-booking-actions li {
   margin: 0;
 }
-/* line 30, ../sass/components/tabs/_theatre-booking-actions-tabs.scss */
+/* line 18, ../sass/components/tabs/_theatre-booking-actions-tabs.scss */
 .tabs.theatre-booking-actions li:first-child {
   margin-right: 0.3125em;
 }
-/* line 34, ../sass/components/tabs/_theatre-booking-actions-tabs.scss */
+/* line 22, ../sass/components/tabs/_theatre-booking-actions-tabs.scss */
 .tabs.theatre-booking-actions li.selected a {
   background: #fafafa;
 }
-/* line 39, ../sass/components/tabs/_theatre-booking-actions-tabs.scss */
+/* line 27, ../sass/components/tabs/_theatre-booking-actions-tabs.scss */
 .tabs.theatre-booking-actions a {
   background: #dadada;
   padding: 0.375em 0.75em;
@@ -172,4 +172,18 @@
 /* line 5, ../sass/components/_search-filters.scss */
 .search-filters.theatre-diaries table {
   margin: 0 0 0.3125em 0;
+}
+
+/* line 2, ../sass/components/_event.scss */
+.event.booking {
+  background-image: url('../img/new/watermark.png?1376482186');
+  border-color: #fd6892;
+}
+/* line 5, ../sass/components/_event.scss */
+.event.booking .event-title {
+  background: url('../img/new/medium.png?1376482186') no-repeat left center;
+}
+/* line 9, ../sass/components/_event.scss */
+.event.booking.view .element-value {
+  font-size: 1em;
 }

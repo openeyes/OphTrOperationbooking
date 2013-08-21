@@ -7,43 +7,43 @@ $oe-table-waiting-list-footer-heading-font-size: 1em !default;
 $oe-table-waiting-list-letters-sent-line-height: emCalc(17px) !default;
 
 .waiting-list {
-    .send-another-reminder {
-        background: $oe-table-waiting-list-send-another-reminder-bg-color;
-    }
-    .send-invitation-letter {
-        background: $oe-table-waiting-list-send-invitation-letter-bg-color;
-    }
-    .send-gp-removal-letter {
-        background: $oe-table-waiting-list-send-gp-removal-letter-bg-color;
-    }
-    .patient-due-removed {
-        background: $oe-table-waiting-list-patient-due-removed;
-    }
-    tfoot {
-    	td {
-    		font-size: $default-font-size;
-    		font-weight: normal;
-    	}
-        h3 {
-            float: left;
-            margin: 0;
-            font-size: $oe-table-waiting-list-footer-heading-font-size;
-        }
-        .inline-list {
-            float: left;
-            margin: 0;
-            li {
-                * {
-                    display: inline-block;
-                }
-            }
-        }
-        .letters-sent-out {
-            li {
-                line-height: emCalc(17px);
-            }
-        }
-    }
+	.send-another-reminder {
+		background: $oe-table-waiting-list-send-another-reminder-bg-color;
+	}
+	.send-invitation-letter {
+		background: $oe-table-waiting-list-send-invitation-letter-bg-color;
+	}
+	.send-gp-removal-letter {
+		background: $oe-table-waiting-list-send-gp-removal-letter-bg-color;
+	}
+	.patient-due-removed {
+		background: $oe-table-waiting-list-patient-due-removed;
+	}
+	tfoot {
+		td {
+			font-size: $default-font-size;
+			font-weight: normal;
+		}
+		h3 {
+			float: left;
+			margin: 0;
+			font-size: $oe-table-waiting-list-footer-heading-font-size;
+		}
+		.inline-list {
+			float: left;
+			margin: 0;
+			li {
+				* {
+					display: inline-block;
+				}
+			}
+		}
+		.letters-sent-out {
+			li {
+				line-height: emCalc(17px);
+			}
+		}
+	}
 }
 
 // Waiting list key vars
@@ -53,16 +53,16 @@ $oe-waiting-list-key-height: 10px !default;
 $oe-waiting-list-border-color: #999999 !default;
 
 .waiting-list-key {
-    padding-top: $oe-waiting-list-key-padding-top;
-    .key-box {
-        width: $oe-waiting-list-key-width;
-        height: $oe-waiting-list-key-height;
-        border: 1px solid $oe-waiting-list-border-color;
-        display: inline-block;
-    }
-    .inline-list {
-    	li {
-    		font-size: 1em;
-    	}
-    }
+	padding-top: $oe-waiting-list-key-padding-top;
+	.key-box {
+		width: $oe-waiting-list-key-width;
+		height: $oe-waiting-list-key-height;
+		border: 1px solid $oe-waiting-list-border-color;
+		display: inline-block;
+	}
+	.inline-list {
+		li {
+			font-size: 1em;
+		}
+	}
 }

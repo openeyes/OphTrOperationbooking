@@ -1,0 +1,14 @@
+.event {
+	&.booking {
+		background-image: image-url("watermark.png");
+		border-color: #fd6892;
+		.event-title {
+			background: image-url("medium.png") no-repeat left center;
+		}
+		&.view {
+			.element-value {
+				font-size: emCalc(16px);
+			}
+		}
+	}
+}

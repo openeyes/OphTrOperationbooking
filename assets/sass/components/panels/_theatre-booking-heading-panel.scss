@@ -1,21 +1,3 @@
-// Theatre booking heading panel
-//
-// Markup:
-// <h3 class="panel theatre-booking-heading">
-//     <span class="date">
-//         <strong>05 Sep </strong> 2013
-//     </span>
-//     -
-//     <strong>
-//         <span class="day">Thursday</span>,
-//         <span class="time">08:30:00 - 17:30:00 </span>
-//     </strong>
-//     for Barton Keith for (Glaucoma) -
-//     <strong>Theatre Three (City Road)</strong>
-// </h3>
-//
-// Styleguide 16.5
-
 // Theatre booking heading panel vars
 $oe-panel-theatre-booking-heading-font-size: $default-font-size !default;
 $oe-panel-theatre-booking-heading-margin: 0 0 0 emCalc(10px) !default;
