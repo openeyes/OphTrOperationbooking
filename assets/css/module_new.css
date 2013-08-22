@@ -176,14 +176,16 @@
 
 /* line 2, ../sass/components/_event.scss */
 .event.booking {
-  background-image: url('../img/new/watermark.png?1376482186');
+  background-image: url('../img/new/watermark.png?1376996432');
   border-color: #fd6892;
 }
 /* line 5, ../sass/components/_event.scss */
 .event.booking .event-title {
-  background: url('../img/new/medium.png?1376482186') no-repeat left center;
+  background: url('../img/new/medium.png?1376996432') no-repeat left center;
 }
 /* line 9, ../sass/components/_event.scss */
 .event.booking.view .element-value {
+  padding: 10px;
   font-size: 1em;
+  margin-bottom: 10px;
 }
