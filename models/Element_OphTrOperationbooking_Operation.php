@@ -745,7 +745,21 @@
 		if ($this->event->episode->patient->isChild()) {
 			$where .= " and ophtroperationbooking_operation_session.paediatric = 1";
 
-			$service_subspecialty_assignment_id = OphTrOperationbooking_Operation_Session::model()->findByPk($booking_session_id)->firm->serviceSubspecialtyAssignment->id;
+			$session = OphTrOperationbooking_Operation_Session::model()->findByPk($booking_session_id);
+
+			if ($session->firm) {
+				$service_subspecialty_assignment_id = $session->firm->serviceSubspecialtyAssignment->id;
+			} else {
+				if (!$subspecialty = Subspecialty::model()->find('ref_spec=?',array('AE'))) {
+					throw new Exception("A&E subspecialty not found");
+				}
+
+				if (!$service_subspecialty_assignment = ServiceSubspecialtyAssignment::model()->find('subspecialty_id=?',array($subspecialty->id))) {
+					throw new Exception("A&E service_subspecialty_assignment not found");
+				}
+			}
+
+			$service_subspecialty_assignment_id = $service_subspecialty_assignment->id;
 		}
 
 		if ($this->anaesthetist_required || $this->anaesthetic_type->code == 'GA') {
