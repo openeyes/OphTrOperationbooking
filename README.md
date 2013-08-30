@@ -1,11 +1,11 @@
 OphTrOperationbooking
 =====================
 
-Operation booking event type. This module is designed to replace the original core code for handling bookings, and is targeted at the 1.3 release.
+Operation booking event type. 
 
-Migration
-=========
+This module was developed to replace core functionality for operation booking, and was part of the 1.3 release.
 
-If you have live or nearly live booking data that is defined in the original core implementation, please contact mike.smith@openeyes.org.uk for assistance with migration.
+Migration From Core (1.2 or lower)
+----------------------------------
 
-Otherwise, the advice is to reset your database and proceed with this module in place.
+The OpenEyes team may be able to help if you have any mission critical bookings from core that need to be migrated, but if this can be avoided you are advised to reset your database and set up a clean system with the modularisation of booking in place.
