@@ -310,11 +310,16 @@ class TheatreDiaryController extends BaseEventTypeController
 		$from = Helper::convertNHS2MySQL($_POST['date-start']);
 		$to = Helper::convertNHS2MySQL($_POST['date-end']);
 
-		$whereSql = 't.site_id = :siteId and sp.id = :subspecialtyId and eo.status_id in (2,4) and date >= :dateFrom and date <= :dateTo';
-		$whereParams = array(':siteId' => $_POST['site-id'], ':subspecialtyId' => $_POST['subspecialty-id'], ':dateFrom' => $from, ':dateTo' => $to);
+		if (@$_POST['emergency_list']) {
+			$whereSql = 's.firm_id is null and eo.status_id in (2,4) and date >= :dateFrom and date <= :dateTo';
+			$whereParams = array(':dateFrom' => $from, ':dateTo' => $to);
+		} else {
+			$whereSql = 't.site_id = :siteId and sp.id = :subspecialtyId and eo.status_id in (2,4) and date >= :dateFrom and date <= :dateTo';
+			$whereParams = array(':siteId' => $_POST['site-id'], ':subspecialtyId' => $_POST['subspecialty-id'], ':dateFrom' => $from, ':dateTo' => $to);
+		}
 		$order = 'w.name ASC, p.hos_num ASC';
 
-		if ($_POST['ward-id']) {
+		if (@$_POST['ward-id']) {
 			$whereSql .= ' and w.id = :wardId';
 			$whereParams[':wardId'] = $_POST['ward-id'];
 			$order = 'p.hos_num ASC';
@@ -334,9 +339,9 @@ class TheatreDiaryController extends BaseEventTypeController
 			->from('ophtroperationbooking_operation_booking b')
 			->join('ophtroperationbooking_operation_session s','b.session_id = s.id')
 			->join('ophtroperationbooking_operation_theatre t','s.theatre_id = t.id')
-			->join('firm f','f.id = s.firm_id')
-			->join('service_subspecialty_assignment ssa','ssa.id = f.service_subspecialty_assignment_id')
-			->join('subspecialty sp','sp.id = ssa.subspecialty_id')
+			->leftJoin('firm f','f.id = s.firm_id')
+			->leftJoin('service_subspecialty_assignment ssa','ssa.id = f.service_subspecialty_assignment_id')
+			->leftJoin('subspecialty sp','sp.id = ssa.subspecialty_id')
 			->join('et_ophtroperationbooking_operation eo','b.element_id = eo.id')
 			->join('event e','eo.event_id = e.id')
 			->join('episode ep','e.episode_id = ep.id')
