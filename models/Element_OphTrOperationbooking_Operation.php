@@ -748,7 +748,7 @@
 			$session = OphTrOperationbooking_Operation_Session::model()->findByPk($booking_session_id);
 
 			if ($session->firm) {
-				$service_subspecialty_assignment_id = $session->firm->serviceSubspecialtyAssignment->id;
+				$service_subspecialty_assignment = $session->firm->serviceSubspecialtyAssignment;
 			} else {
 				if (!$subspecialty = Subspecialty::model()->find('ref_spec=?',array('AE'))) {
 					throw new Exception("A&E subspecialty not found");
