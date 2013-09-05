@@ -25,7 +25,7 @@ class WaitingListController extends BaseEventTypeController
 			// Level 2 or below can't change anything
 			array('deny',
 				'actions' => array('confirmprinted', 'printletters'),
-				'expression' => '!BaseController::checkUserLevel(4)',
+				'expression' => '!BaseController::checkUserLevel(3)',
 			),
 			// Level 2 or above can do anything else
 			array('allow',
