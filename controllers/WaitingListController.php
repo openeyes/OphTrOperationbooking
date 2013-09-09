@@ -396,27 +396,31 @@ class WaitingListController extends BaseEventTypeController
 	/**
 	 * @param OEPDFPrint $pdf
 	 * @param Element_OphTrOperationbooking_Operation $operation
+	 *
+	 * @throws CException
 	 */
 	protected function print_gp_letter($pdf, $operation)
 	{
-		// GP Letter
 		$patient = $operation->event->episode->patient;
-		if ($gp = $patient->gp) {
-			if ($patient->practice && $patient->practice->contact->address) {
-				$to_address = $patient->gp->getLetterAddress(array(
+
+		// GP Letter
+		if ($patient->practice && $patient->practice->contact->address) {
+			$to_address = $patient->practice->getLetterAddress(array(
 					'patient' => $patient,
 					'include_name' => true,
 					'delimiter' => "\n"
 				));
-			} else {
-				throw new CException('Patient has no practice address');
-			}
+		} else {
+			throw new CException('Patient has no practice address');
+		}
+		if ($gp = $patient->gp) {
 			$to_name = $gp->contact->fullname;
 			$salutation = $gp->getLetterIntroduction();
 		} else {
 			$to_name = Gp::UNKNOWN_NAME;
 			$salutation = Gp::UNKNOWN_SALUTATION;
 		}
+
 		$body = $this->render('../letters/gp_letter', array(
 				'to' => $to_name,
 				'patient' => $patient,
