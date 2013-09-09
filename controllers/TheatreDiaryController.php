@@ -73,7 +73,7 @@ class TheatreDiaryController extends BaseEventTypeController
 			} else {
 				$_POST = Yii::app()->session['theatre_searchoptions'] = array(
 					'firm-id' => Yii::app()->session['selected_firm_id'],
-					'subspecialty-id' => $firm->serviceSubspecialtyAssignment->subspecialty_id
+					'subspecialty-id' => $firm->getSubspecialtyID()
 				);
 
 				Yii::app()->session['theatre_searchoptions'] = $_POST;
