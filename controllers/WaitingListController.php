@@ -53,7 +53,7 @@ class WaitingListController extends BaseEventTypeController
 			} else {
 				$_POST = array(
 					'firm-id' => YiiSession::get('selected_firm_id'),
-					'subspecialty-id' => Firm::Model()->findByPk(YiiSession::get('selected_firm_id'))->serviceSubspecialtyAssignment->subspecialty_id,
+					'subspecialty-id' => Firm::Model()->findByPk(YiiSession::get('selected_firm_id'))->getSubspecialtyID(),
 				);
 			}
 
