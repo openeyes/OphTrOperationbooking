@@ -1,9 +1,11 @@
 .event {
 	&.booking {
-		background-image: image-url("watermark.png");
 		border-color: #fd6892;
 		.event-title {
 			background: image-url("medium.png") no-repeat left center;
+		}
+		.event-content {
+			background-image: image-url("watermark.png");
 		}
 		&.view {
 			.element-value {
