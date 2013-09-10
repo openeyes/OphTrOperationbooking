@@ -730,6 +730,9 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			$session = OphTrOperationbooking_Operation_Session::model()->findByPk($booking_session_id);
 
 			if ($session->firm) {
+				if (!$session->firm->serviceSubspecialtyAssignment) {
+					throw new Exception("Booking session firm must have a subspecialty assignment");
+				}
 				$service_subspecialty_assignment_id = $session->firm->serviceSubspecialtyAssignment->id;
 			} else {
 				if (!$subspecialty = Subspecialty::model()->find('ref_spec=?',array('AE'))) {
@@ -739,9 +742,8 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 				if (!$service_subspecialty_assignment = ServiceSubspecialtyAssignment::model()->find('subspecialty_id=?',array($subspecialty->id))) {
 					throw new Exception("A&E service_subspecialty_assignment not found");
 				}
+				$service_subspecialty_assignment_id = $service_subspecialty_assignment->id;
 			}
-
-			$service_subspecialty_assignment_id = $service_subspecialty_assignment->id;
 		}
 
 		if ($this->anaesthetist_required || $this->anaesthetic_type->code == 'GA') {
