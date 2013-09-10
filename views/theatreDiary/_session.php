@@ -111,7 +111,7 @@
 			<tbody id="tbody_<?php echo $session->id?>">
 				<?php foreach ($session->activeBookings as $booking) {
 					// FIXME: this conditional is here because the query that is built to pull in the activebookings is not excluding those events that have been deleted
-					// this works around that fact. 
+					// this works around that fact.
 					if ($booking->operation->event) { ?>
 						<tr id="oprow_<?php echo $booking->element_id?>">
 							<td class="session">
@@ -153,7 +153,7 @@
 								<?php if ($booking->operation->consultant_required) {?>
 									<img src="<?php echo $assetPath?>/img/diaryIcons/consultant.png" alt="Consultant required" title="Consultant required" width="17" height="17" />
 								<?php }?>
-								<img src="<?php echo $assetPath?>/img/diaryIcons/booked_user.png" alt="Created by: <?php echo $booking->operation->op_user->fullName."\n"?>Last modified by: <?php echo $booking->operation->op_usermodified->fullName?>" title="Created by: <?php echo $booking->operation->op_user->fullName."\n"?>Last modified by: <?php echo $booking->operation->op_usermodified->fullName?>" width="17" height="17" />
+								<img src="<?php echo $assetPath?>/img/diaryIcons/booked_user.png" alt="Created by: <?php echo $booking->user->fullName."\n"?>Last modified by: <?php echo $booking->usermodified->fullName?>" title="Created by: <?php echo $booking->user->fullName."\n"?>Last modified by: <?php echo $booking->usermodified->fullName?>" width="17" height="17" />
 							</td>
 						</tr>
 				<?php }
