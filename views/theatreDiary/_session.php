@@ -150,7 +150,7 @@
 							<?php if ($booking->operation->consultant_required) {?>
 								<img src="<?php echo $assetPath?>/img/diaryIcons/consultant.png" alt="Consultant required" title="Consultant required" width="17" height="17" />
 							<?php }?>
-							<img src="<?php echo $assetPath?>/img/diaryIcons/booked_user.png" alt="Created by: <?php echo $booking->operation->op_user->fullName."\n"?>Last modified by: <?php echo $booking->operation->op_usermodified->fullName?>" title="Created by: <?php echo $booking->operation->op_user->fullName."\n"?>Last modified by: <?php echo $booking->operation->op_usermodified->fullName?>" width="17" height="17" />
+							<img src="<?php echo $assetPath?>/img/diaryIcons/booked_user.png" alt="Created by: <?php echo $booking->user->fullName."\n"?>Last modified by: <?php echo $booking->usermodified->fullName?>" title="Created by: <?php echo $booking->user->fullName."\n"?>Last modified by: <?php echo $booking->usermodified->fullName?>" width="17" height="17" />
 						</td>
 					</tr>
 				<?php }?>
