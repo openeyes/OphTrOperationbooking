@@ -198,29 +198,13 @@ class WaitingListController extends BaseEventTypeController
 		*/
 	protected function getFilteredFirms($subspecialtyId)
 	{
-		$medical = SpecialtyType::model()->find('name=?',array('Medical'));
-
 		$criteria = new CDbCriteria;
-		$criteria->addCondition('subspecialty_id = :subspecialtyId and specialty_type_id = :specialty_type_id');
+		$criteria->addCondition('subspecialty_id = :subspecialtyId');
 		$criteria->params[':subspecialtyId'] = $subspecialtyId;
-		$criteria->params[':specialty_type_id'] = $medical->id;
 		$criteria->order = '`t`.name asc';
 
-		$sp_surgical = SpecialtyType::model()->find('name=?',array('Surgical'));
-		$sp_medical = SpecialtyType::model()->find('name=?',array('Medical'));
-
-		$criteria->addInCondition('specialty_type_id',array($sp_surgical->id,$sp_medical->id));
-
 		return CHtml::listData(Firm::model()
-			->with(array(
-				'serviceSubspecialtyAssignment' => array(
-					'with' => array(
-						'subspecialty' => array(
-							'with' => 'specialty',
-						),
-					),
-				),
-			))
+			->with(array('serviceSubspecialtyAssignment'))
 			->findAll($criteria),'id','name');
 	}
 
