@@ -305,6 +305,8 @@ class TheatreDiaryController extends BaseEventTypeController
 
 		$criteria->order = 'ward.code, patient.hos_num';
 
+		Yii::app()->event->dispatch('start_batch_mode');
+
 		return OphTrOperationbooking_Operation_Booking::model()
 			->with(array(
 				'session' => array(
