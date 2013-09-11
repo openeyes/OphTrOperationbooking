@@ -161,7 +161,8 @@ $(document).ready(function() {
 	$("#btn_print_diary").click(function() {
 		printElem('printDiary', {
 			pageTitle:'openeyes printout',
-			printBodyOptions:{styleToAdd:'width:auto !important; margin: 0.75em !important;',classNameToAdd:'openeyesPrintout'},overrideElementCSS:['css/style.css',{href:'css/style.css',media:'print'}]
+			printBodyOptions:{styleToAdd:'width:auto !important; margin: 0.75em !important;',classNameToAdd:'openeyesPrintout'},
+			//overrideElementCSS:['css/module.css',{href:'css/module.css',media:'print'}]
 		});
 	});
 
@@ -182,7 +183,7 @@ $(document).ready(function() {
 				styleToAdd:'width:auto !important; margin: 0.75em !important;',
 				classNameToAdd:'openeyesPrintout'
 			},
-			overrideElementCSS:['css/style.css',{href:'css/style.css',media:'print'}]
+			//overrideElementCSS:['css/module.css',{href:'css/module.css',media:'print'}]
 		});
 	});
 
