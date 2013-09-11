@@ -450,15 +450,6 @@ class TheatreDiaryController extends BaseEventTypeController
 
 		$session->comments = $_POST['comments_'.$session->id];
 
-		if (!$session->validate()) {
-			$errors = array();
-			foreach ($session->getErrors() as $error) {
-				$errors[] = $error[0];
-			}
-			echo json_encode($errors);
-			return;
-		}
-
 		if (!$session->save()) {
 			throw new Exception('Unable to save session: '.print_r($session->getErrors(),true));
 		}
@@ -578,6 +569,8 @@ class TheatreDiaryController extends BaseEventTypeController
 			throw new Exception('Session not found: '.$_POST['session_id']);
 		}
 
+		Yii::app()->event->dispatch('start_batch_mode');
+
 		switch (@$_POST['type']) {
 			case 'consultant':
 				$criteria = new CDbCriteria;
@@ -596,8 +589,9 @@ class TheatreDiaryController extends BaseEventTypeController
 				$child_age = isset(Yii::app()->params['child_age_limit']) ? Yii::app()->params['child_age_limit'] : Patient::CHILD_AGE_LIMIT;
 
 				$criteria = new CDbCriteria;
-				$criteria->addCondition('booking.booking_cancellation_date is null and patient.dob >= :ageLimitDate');
+				$criteria->addCondition('session.id = :sessionId and booking.booking_cancellation_date is null and patient.dob >= :ageLimitDate');
 				$criteria->params[':ageLimitDate'] = date('Y')-$child_age.date('-m-d',time()+86400);
+				$criteria->params[':sessionId'] = $session->id;
 				$criteria->addInCondition('`t`.status_id',array(2,4));
 
 				if (Element_OphTrOperationbooking_Operation::model()->with(array(
