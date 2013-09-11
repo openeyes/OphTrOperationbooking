@@ -391,19 +391,21 @@ class WaitingListController extends BaseEventTypeController
 		if ($patient->practice && $patient->practice->contact->address) {
 			$to_address = $patient->practice->getLetterAddress(array(
 					'patient' => $patient,
-					'include_name' => true,
+					'include_name' => false,
 					'delimiter' => "\n"
 				));
 		} else {
 			throw new CException('Patient has no practice address');
 		}
+
 		if ($gp = $patient->gp) {
+			error_log($gp->contact->fullname);
 			$to_name = $gp->contact->fullname;
-			$salutation = $gp->getLetterIntroduction();
 		} else {
 			$to_name = Gp::UNKNOWN_NAME;
-			$salutation = Gp::UNKNOWN_SALUTATION;
 		}
+
+		$to_address = $to_name . "\n" . $to_address;
 
 		$body = $this->render('../letters/gp_letter', array(
 				'to' => $to_name,
