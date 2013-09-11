@@ -20,8 +20,11 @@
 <?php
 foreach ($diary as $theatre) {?>
 	<h3 class="theatre"><strong><?php echo $theatre->name?> (<?php echo $theatre->site->name?>)</strong></h3>
-	<?php foreach ($theatre->sessions as $session) {?>
-		<div id="diaryTemplate">
+	<?php
+	$limit = count($theatre->sessions - 1);
+	foreach ($theatre->sessions as $i => $session) {?>
+		<div id="diaryTemplate"
+			 <?php if ($i < $limit) { ?>style="page-break-after:always" <?php } ?>>
 			<div id="d_title">OPERATION LIST FORM</div>
 			<table class="d_overview">
 				<tbody>
@@ -81,6 +84,5 @@ foreach ($diary as $theatre) {?>
 				</tbody>
 			</table>
 		</div>
-		<div style="page-break-after:always"></div>
 	<?php }
 }
