@@ -26,8 +26,12 @@ class TheatreDiaryController extends BaseEventTypeController
 		return array(
 			// Level 2 or below can't change anything
 			array('deny',
-				'actions' => array('savesessions', 'printdiary', 'printlist'),
+				'actions' => array('savesessions'),
 				'expression' => '!BaseController::checkUserLevel(4)',
+			),
+			array('deny',
+				'actions' => array('printdiary', 'printlist'),
+				'expression' => '!BaseController::checkUserLevel(3)',
 			),
 			// Level 2 or above can do anything else
 			array('allow',
