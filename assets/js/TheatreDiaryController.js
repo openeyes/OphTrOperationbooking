@@ -159,11 +159,12 @@ $(document).ready(function() {
 	});
 
 	$("#btn_print_diary").click(function() {
+		disableButtons();
 		printElem('printDiary', {
 			pageTitle:'openeyes printout',
 			printBodyOptions:{styleToAdd:'width:auto !important; margin: 0.75em !important;',classNameToAdd:'openeyesPrintout'},
 			//overrideElementCSS:['css/module.css',{href:'css/module.css',media:'print'}]
-		});
+		}, enableButtons);
 	});
 
 	$('#btn_print_diary_list').click(function() {
@@ -176,7 +177,7 @@ $(document).ready(function() {
 			}).open();
 			return false;
 		}
-
+		disableButtons();
 		printElem('printList',{
 			pageTitle:'openeyes printout',
 			printBodyOptions:{
@@ -184,7 +185,7 @@ $(document).ready(function() {
 				classNameToAdd:'openeyesPrintout'
 			},
 			//overrideElementCSS:['css/module.css',{href:'css/module.css',media:'print'}]
-		});
+		}, enableButtons);
 	});
 
 	$(this).undelegate('a.edit-session','click').delegate('a.edit-session','click',function() {
@@ -299,12 +300,6 @@ $(document).ready(function() {
 					$('#tbody_'+session_id).children('tr').attr('style','');
 
 					for (var operation_id in errors) {
-						if (errors[operation_id] == 'One or more active bookings are for a child') {
-							alert("Unable to remove paediatric flag - one or more active bookings are for a child.");
-							enableButtons();
-							return;
-						}
-
 						$('#oprow_'+operation_id).attr('style','background-color: #f00;');
 
 						if (!first) {
@@ -483,7 +478,7 @@ function theatreDiaryIconHovers() {
 	});
 }
 
-function printElem(method,options){
+function printElem(method,options, callback){
 	$.ajax({
 		'url': baseUrl+'/OphTrOperationbooking/theatreDiary/'+method,
 		'type': 'POST',
@@ -491,6 +486,9 @@ function printElem(method,options){
 		'success': function(data) {
 			$('#printable').html(data);
 			$('#printable').printElement(options);
+			if ($.isFunction(callback)) {
+				callback();
+			}
 			return false;
 		}
 	});
