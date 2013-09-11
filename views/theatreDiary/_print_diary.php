@@ -21,7 +21,7 @@
 foreach ($diary as $theatre) {?>
 	<h3 class="theatre"><strong><?php echo $theatre->name?> (<?php echo $theatre->site->name?>)</strong></h3>
 	<?php
-	$limit = count($theatre->sessions - 1);
+	$limit = count($theatre->sessions) - 1;
 	foreach ($theatre->sessions as $i => $session) {?>
 		<div id="diaryTemplate"
 			 <?php if ($i < $limit) { ?>style="page-break-after:always" <?php } ?>>
