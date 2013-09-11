@@ -197,6 +197,8 @@ class TheatreDiaryController extends BaseEventTypeController
 		$criteria->params[':deleted'] = 0;
 		$criteria->order = 'site.short_name, `t`.display_order, `t`.code, sessions.date, sessions.start_time, sessions.end_time, activeBookings.display_order';
 
+		Yii::app()->mehpas_buffer->setBuffering(true);
+
 		return OphTrOperationbooking_Operation_Theatre::model()
 			->with(array(
 				'site',
