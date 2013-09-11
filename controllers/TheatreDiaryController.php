@@ -273,13 +273,19 @@ class TheatreDiaryController extends BaseEventTypeController
 
 		$criteria = new CDbCriteria;
 
-		$criteria->addCondition('theatre.site_id = :siteId and subspecialty_id = :subspecialtyId and session.date >= :dateFrom and session.date <= :dateTo');
+		$criteria->addCondition('session.date >= :dateFrom and session.date <= :dateTo');
 		$criteria->addInCondition('operation.status_id',array(2,4));
 
-		$criteria->params[':siteId'] = $_POST['site-id'];
-		$criteria->params[':subspecialtyId'] = $_POST['subspecialty-id'];
 		$criteria->params[':dateFrom'] = Helper::convertNHS2MySQL($_POST['date-start']);
 		$criteria->params[':dateTo'] = Helper::convertNHS2MySQL($_POST['date-end']);
+
+		if (@$_POST['emergency_list']) {
+			$criteria->addCondition('firm.id IS NULL');
+		} else {
+			$criteria->addCondition('theatre.site_id = :siteId and subspecialty_id = :subspecialtyId');
+			$criteria->params[':siteId'] = $_POST['site-id'];
+			$criteria->params[':subspecialtyId'] = $_POST['subspecialty-id'];
+		}
 
 		if (@$_POST['ward-id']) {
 			$criteria->addCondition('ward.id = :wardId');
