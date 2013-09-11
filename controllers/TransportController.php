@@ -138,6 +138,8 @@ class TransportController extends BaseEventTypeController
 
 		$criteria->order = 'session_date, session_start_time, decision_date';
 
+		Yii::app()->event->dispatch('start_batch_mode');
+
 		return Element_OphTrOperationbooking_Operation::model()
 			->with(array(
 				'latestBooking' => array(
