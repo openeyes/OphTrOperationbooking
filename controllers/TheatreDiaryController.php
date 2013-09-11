@@ -448,6 +448,15 @@ class TheatreDiaryController extends BaseEventTypeController
 
 		$session->comments = $_POST['comments_'.$session->id];
 
+		if (!$session->validate()) {
+			$errors = array();
+			foreach ($session->getErrors() as $error) {
+				$errors[] = $error[0];
+			}
+			echo json_encode($errors);
+			return;
+		}
+
 		if (!$session->save()) {
 			throw new Exception('Unable to save session: '.print_r($session->getErrors(),true));
 		}
