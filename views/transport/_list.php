@@ -56,8 +56,8 @@
 						<td style="width: 95px;"><?php echo $operation->latestBooking->theatre->site->shortName?></td>
 						<td style="width: 170px;"><?php echo $operation->latestBooking->ward->name?></td>
 						<td style="width: 53px;"><?php echo $operation->transportStatus?></td>
-						<td style="width: 43px;"><?php echo $operation->event->episode->firm->pas_code?></td>
-						<td style="width: 53px;"><?php echo $operation->event->episode->firm->serviceSubspecialtyAssignment->subspecialty->ref_spec?></td>
+						<td style="width: 43px;"><?php echo $operation->event->episode->firm ? $operation->event->episode->firm->pas_code : 'Support service'?></td>
+						<td style="width: 53px;"><?php echo $operation->event->episode->firm ? $operation->event->episode->firm->serviceSubspecialtyAssignment->subspecialty->ref_spec : ''?></td>
 						<td style="width: 80px;"><?php echo $operation->NHSDate('decision_date')?></td>
 						<td><?php echo $operation->priority->name?></td>
 						<td style="width: 20px;"><input type="checkbox" name="operations[]" value="<?php echo $operation->id?>" /></td>
