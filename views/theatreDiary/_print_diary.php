@@ -18,9 +18,9 @@
 */
 ?>
 <?php
-$diarycount = count($diary) - 1;
+$diary_count = count($diary) - 1;
 foreach ($diary as $i => $theatre) {?>
-	<div<?php if ($i < $diary_count) {?> style="page-break-after:always"<?php}?>>
+	<div<?php if ($i < $diary_count) { ?> style="page-break-after:always"<?php } ?>>
 	<h3 class="theatre"><strong><?php echo $theatre->name?> (<?php echo $theatre->site->name?>)</strong></h3>
 	<?php
 	$sessions_count= count($theatre->sessions) - 1;
