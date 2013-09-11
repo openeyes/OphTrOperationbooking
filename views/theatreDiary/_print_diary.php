@@ -18,13 +18,15 @@
 */
 ?>
 <?php
-foreach ($diary as $theatre) {?>
+$diarycount = count($diary) - 1;
+foreach ($diary as $i => $theatre) {?>
+	<div<?php if ($i < $diary_count) {?>style="page-break-after:always"<?php}?>>
 	<h3 class="theatre"><strong><?php echo $theatre->name?> (<?php echo $theatre->site->name?>)</strong></h3>
 	<?php
-	$limit = count($theatre->sessions) - 1;
-	foreach ($theatre->sessions as $i => $session) {?>
+	$sessions_count= count($theatre->sessions) - 1;
+	foreach ($theatre->sessions as $j => $session) {?>
 		<div id="diaryTemplate"
-			 <?php if ($i < $limit) { ?>style="page-break-after:always" <?php } ?>>
+			 <?php if ($j < $sessions_count) { ?>style="page-break-after:always" <?php } ?>>
 			<div id="d_title">OPERATION LIST FORM</div>
 			<table class="d_overview">
 				<tbody>
@@ -84,5 +86,6 @@ foreach ($diary as $theatre) {?>
 				</tbody>
 			</table>
 		</div>
-	<?php }
-}
+	<?php } ?>
+	</div>
+<?php }
