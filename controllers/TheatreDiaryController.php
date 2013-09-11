@@ -263,18 +263,11 @@ class TheatreDiaryController extends BaseEventTypeController
 
 	public function getBookingList()
 	{
-		$_POST = array(
-			'date-start' => '2013-05-01',
-			'date-end' => '2013-05-31',
-			'subspecialty-id' => 4,
-			'site-id' => 1,
-			'firm-id' => '',
-			'ward-id' => '',
-			'firm-id' => '',
-		);
-
-		$from = Helper::convertNHS2MySQL($_POST['date-start']);
-		$to = Helper::convertNHS2MySQL($_POST['date-end']);
+		foreach (array('date-start', 'date-end', 'subspecialty-id', 'site-id') as $required) {
+			if (!isset($_POST[$required])) {
+				throw new CHttpException('invalid request for booking list');
+			}
+		}
 
 		$criteria = new CDbCriteria;
 
@@ -283,10 +276,10 @@ class TheatreDiaryController extends BaseEventTypeController
 
 		$criteria->params[':siteId'] = $_POST['site-id'];
 		$criteria->params[':subspecialtyId'] = $_POST['subspecialty-id'];
-		$criteria->params[':dateFrom'] = $_POST['date-start'];
-		$criteria->params[':dateTo'] = $_POST['date-end'];
+		$criteria->params[':dateFrom'] = Helper::convertNHS2MySQL($_POST['date-start']);
+		$criteria->params[':dateTo'] = Helper::convertNHS2MySQL($_POST['date-end']);
 
-		if ($_POST['ward-id']) {
+		if (@$_POST['ward-id']) {
 			$criteria->addCondition('ward.id = :wardId');
 			$criteria->params[':wardId'] = $_POST['ward-id'];
 		}

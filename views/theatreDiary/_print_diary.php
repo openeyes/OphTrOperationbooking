@@ -62,20 +62,22 @@ foreach ($diary as $theatre) {?>
 						<th>PROCEDURES AND COMMENTS</th>
 						<th>ADMISSION TIME</th>
 					</tr>
-					<?php foreach ($session->activeBookings as $booking) {?>
-						<tr>
-							<td><?php echo $booking->operation->event->episode->patient->hos_num?></td>
-							<td><?php echo strtoupper($booking->operation->event->episode->patient->last_name)?>, <?php echo $booking->operation->event->episode->patient->first_name?></td>
-							<td><?php echo $booking->operation->event->episode->patient->age?></td>
-							<td><?php echo htmlspecialchars($booking->ward->name)?></td>
-							<td><?php echo htmlspecialchars($booking->operation->anaesthetic_type->name)?></td>
-							<td><?php echo $booking->operation->priority->name?></td>
-							<td style="max-width: 500px; word-wrap:break-word; overflow: hidden;">
-							<?php echo $booking->operation->procedures ? '['.$booking->operation->eye->adjective.'] '.$booking->operation->getProceduresCommaSeparated() : 'No procedures'?><br/>
-							<?php echo htmlspecialchars($booking->operation->comments)?>
-							<td><?php echo substr($booking->admission_time,0,5)?></td>
-						</tr>
-					<?php }?>
+					<?php foreach ($session->activeBookings as $booking) {
+						if ($booking->operation->event) { ?>
+							<tr>
+								<td><?php echo $booking->operation->event->episode->patient->hos_num?></td>
+								<td><?php echo strtoupper($booking->operation->event->episode->patient->last_name)?>, <?php echo $booking->operation->event->episode->patient->first_name?></td>
+								<td><?php echo $booking->operation->event->episode->patient->age?></td>
+								<td><?php echo htmlspecialchars($booking->ward->name)?></td>
+								<td><?php echo htmlspecialchars($booking->operation->anaesthetic_type->name)?></td>
+								<td><?php echo $booking->operation->priority->name?></td>
+								<td style="max-width: 500px; word-wrap:break-word; overflow: hidden;">
+								<?php echo $booking->operation->procedures ? '['.$booking->operation->eye->adjective.'] '.$booking->operation->getProceduresCommaSeparated() : 'No procedures'?><br/>
+								<?php echo htmlspecialchars($booking->operation->comments)?>
+								<td><?php echo substr($booking->admission_time,0,5)?></td>
+							</tr>
+						<?php }
+					} ?>
 				</tbody>
 			</table>
 		</div>
