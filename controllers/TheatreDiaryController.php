@@ -197,6 +197,8 @@ class TheatreDiaryController extends BaseEventTypeController
 		$criteria->params[':deleted'] = 0;
 		$criteria->order = 'site.short_name, `t`.display_order, `t`.code, sessions.date, sessions.start_time, sessions.end_time, activeBookings.display_order';
 
+		Yii::app()->event->dispatch('start_batch_mode');
+
 		return OphTrOperationbooking_Operation_Theatre::model()
 			->with(array(
 				'site',
@@ -447,6 +449,15 @@ class TheatreDiaryController extends BaseEventTypeController
 		}
 
 		$session->comments = $_POST['comments_'.$session->id];
+
+		if (!$session->validate()) {
+			$errors = array();
+			foreach ($session->getErrors() as $error) {
+				$errors[] = $error[0];
+			}
+			echo json_encode($errors);
+			return;
+		}
 
 		if (!$session->save()) {
 			throw new Exception('Unable to save session: '.print_r($session->getErrors(),true));

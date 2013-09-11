@@ -298,6 +298,12 @@ $(document).ready(function() {
 					$('#tbody_'+session_id).children('tr').attr('style','');
 
 					for (var operation_id in errors) {
+						if (errors[operation_id] == 'One or more active bookings are for a child') {
+							alert("Unable to remove paediatric flag - one or more active bookings are for a child.");
+							enableButtons();
+							return;
+						}
+
 						$('#oprow_'+operation_id).attr('style','background-color: #f00;');
 
 						if (!first) {
