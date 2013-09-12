@@ -195,6 +195,10 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 
 	public function operationBookable($operation)
 	{
+		if (!$this->available) {
+			return false;
+		}
+		
 		if ($operation->anaesthetist_required && !$this->anaesthetist) {
 			return false;
 		}
