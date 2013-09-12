@@ -26,7 +26,7 @@
 		foreach ($theatres as $i => $theatre) {
 	?>
 
-	<h5><?php echo $theatre->name ?></h5>
+	<h5><?php echo $theatre->name ?><?php if ($theatre->site) { echo " (" . $theatre->site->name . ")"; } ?></h5>
 	<div id="theatre-times_tab_<?php echo $i ?>" class="sessionTimes">
 
 		<?php foreach ($theatre->sessions as $j => $session) {
