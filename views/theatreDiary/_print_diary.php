@@ -44,7 +44,7 @@ foreach ($diary as $i => $theatre) {?>
 			<table class="d_overview">
 				<tbody>
 					<tr>
-						<td>SURGICAL FIRM:<?php echo htmlspecialchars($session->firm->name, ENT_QUOTES)?></td>
+						<td>SURGICAL FIRM:<?php echo htmlspecialchars($session->firmName, ENT_QUOTES)?></td>
 						<td>ANAESTHETIST:</td>
 						<td>&nbsp;</td>
 						<td>DATE:</td>
