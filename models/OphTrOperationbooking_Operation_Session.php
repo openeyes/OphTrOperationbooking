@@ -260,7 +260,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 			if ($booking->operation->consultant_required && !$this->consultant) {
 				$this->addError('consultant','One or more active bookings require a consultant');
 			}
-			if ($booking->operation->event->episode->patient->isChild() && !$this->paediatric) {
+			if ($booking->operation->event && $booking->operation->event->episode->patient->isChild() && !$this->paediatric) {
 				$this->addError('paediatric','One or more active bookings are for a child');
 			}
 			if ($booking->operation->anaesthetic_type->name == 'GA' && !$this->general_anaesthetic) {
