@@ -198,7 +198,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		if (!$this->available) {
 			return false;
 		}
-		
+
 		if ($operation->anaesthetist_required && !$this->anaesthetist) {
 			return false;
 		}
@@ -224,6 +224,10 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 
 	public function unbookableReason($operation)
 	{
+		if (!$this->available) {
+			return "This session is unavailable at this time";
+		}
+		
 		if ($operation->anaesthetist_required && !$this->anaesthetist) {
 			return "The operation requires an anaesthetist, this session doesn't have one and so cannot be booked into.";
 		}
