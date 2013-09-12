@@ -115,7 +115,13 @@ class TransportController extends BaseEventTypeController
 			->with(array(
 				'latestBooking' => array(
 					'with' => array(
-						'session',
+						'session' => array(
+							'with' => array(
+								'theatre' => array(
+									'with' => 'site',
+								),
+							),
+						),
 					),
 				),
 				'event' => array(
