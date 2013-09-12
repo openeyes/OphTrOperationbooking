@@ -8,7 +8,13 @@
 			background-image: image-url("watermark.png");
 		}
 		&.view {
-			.element-value {
+			.field-title {
+				color: $oe-element-title-color;
+				font-size: $oe-element-title-font-size;
+				padding: $oe-element-title-padding;
+				margin: $oe-element-title-margin;
+			}
+			.field-value {
 				padding: 10px;
 				font-size: emCalc(16px);
 				margin-bottom: 10px;

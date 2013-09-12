@@ -179,14 +179,21 @@
 }
 /* line 4, ../sass/components/_event.scss */
 .event.booking .event-title {
-  background: url('../img/new/medium.png?1378387106') no-repeat left center;
+  background: url('../img/new/medium.png?1378815394') no-repeat left center;
 }
 /* line 7, ../sass/components/_event.scss */
 .event.booking .event-content {
-  background-image: url('../img/new/watermark.png?1378387106');
+  background-image: url('../img/new/watermark.png?1378815394');
 }
 /* line 11, ../sass/components/_event.scss */
-.event.booking.view .element-value {
+.event.booking.view .field-title {
+  color: #56a7f1;
+  font-size: 0.8125em;
+  padding: 8px 10px;
+  margin: 0;
+}
+/* line 17, ../sass/components/_event.scss */
+.event.booking.view .field-value {
   padding: 10px;
   font-size: 1em;
   margin-bottom: 10px;
