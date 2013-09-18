@@ -30,7 +30,7 @@ class OphTrOperationbooking_API extends BaseAPI
 		$api = Yii::app()->moduleAPI->get('OphTrOperationnote');
 		$booking_id = $api -> getLetterProceduresBookingEventID($patient);
 
-		if(!$booking_id) return 'Emergency operation';
+		if(!$booking_id) return $patient->getEpd(); //default to episode diagnosis
 
 		//use this to find the matching operation booking event  id
 		$criteria = new CDbCriteria;
