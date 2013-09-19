@@ -239,7 +239,8 @@ class TransportController extends BaseEventTypeController
 				if (!$booking->transport_arranged) {
 					$booking->transport_arranged = 1;
 					$booking->transport_arranged_date = date('Y-m-d');
-					if (!$booking->save()) {
+
+					if (!$booking->save(true,null,true)) {
 						throw new Exception('Unable to save booking: '.print_r($booking->getErrors(),true));
 					}
 				}
