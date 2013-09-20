@@ -100,7 +100,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
 			'theatre' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Theatre', 'theatre_id'),
 			'firm' => array(self::BELONGS_TO, 'Firm', 'firm_id'),
-			'activeBookings' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Booking', 'session_id', 'condition' => 'booking_cancellation_date is null'),
+			'activeBookings' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Booking', 'session_id', 'on' => 'booking_cancellation_date is null'),
 			'sequence' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Sequence', 'sequence_id'),
 		);
 	}
@@ -195,6 +195,10 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 
 	public function operationBookable($operation)
 	{
+		if (!$this->available) {
+			return false;
+		}
+
 		if ($operation->anaesthetist_required && !$this->anaesthetist) {
 			return false;
 		}
@@ -220,6 +224,10 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 
 	public function unbookableReason($operation)
 	{
+		if (!$this->available) {
+			return "This session is unavailable at this time";
+		}
+
 		if ($operation->anaesthetist_required && !$this->anaesthetist) {
 			return "The operation requires an anaesthetist, this session doesn't have one and so cannot be booked into.";
 		}
@@ -260,7 +268,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 			if ($booking->operation->consultant_required && !$this->consultant) {
 				$this->addError('consultant','One or more active bookings require a consultant');
 			}
-			if ($booking->operation->event->episode->patient->isChild() && !$this->paediatric) {
+			if ($booking->operation->event && $booking->operation->event->episode->patient->isChild() && !$this->paediatric) {
 				$this->addError('paediatric','One or more active bookings are for a child');
 			}
 			if ($booking->operation->anaesthetic_type->name == 'GA' && !$this->general_anaesthetic) {
