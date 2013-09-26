@@ -123,7 +123,9 @@ class TheatreDiaryController extends BaseEventTypeController
 	{
 		Audit::add('diary','search',serialize($_POST));
 
-		$this->renderPartial('_list', array('diary' => $this->getDiary(), 'assetPath'=>Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.OphTrOperationbooking.assets'), false, -1, YII_DEBUG)), false, true);
+		$list = $this->renderPartial('_list', array('diary' => $this->getDiary(), 'assetPath'=>Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.OphTrOperationbooking.assets'), false, -1, YII_DEBUG)), true, true);
+
+		echo json_encode(array('status'=>'success','data'=>$list));
 	}
 
 	public function getDiary()
@@ -152,7 +154,8 @@ class TheatreDiaryController extends BaseEventTypeController
 			}
 
 			if (!strtotime($startDate) || !strtotime($endDate)) {
-				throw new Exception('Invalid start and end dates.');
+				echo json_encode(array('status'=>'error','message'=>'Invalid start and end dates.'));
+				Yii::app()->end();
 			}
 
 			if (strtotime($endDate) < strtotime($startDate)) {
