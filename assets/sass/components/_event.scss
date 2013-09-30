@@ -7,17 +7,10 @@
 		.event-content {
 			background-image: image-url("watermark.png");
 		}
-		&.view {
-			.field-title {
-				color: $oe-element-title-color;
-				font-size: $oe-element-title-font-size;
-				padding: $oe-element-title-padding;
-				margin: $oe-element-title-margin;
-			}
-			.field-value {
-				padding: 10px;
-				font-size: emCalc(16px);
-				margin-bottom: 10px;
+		&.schedule {
+			.event-title {
+				background: none;
+				padding-left: 0;
 			}
 		}
 	}

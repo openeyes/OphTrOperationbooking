@@ -137,6 +137,18 @@
   padding-top: 0.625em;
 }
 
+/* line 2, ../sass/components/panels/_patient-reminder.scss */
+.panel.patient-reminder {
+  background: #fff2d7;
+  border: 0;
+  font-size: 0.8125em;
+  margin: 0.625em 0;
+}
+/* line 7, ../sass/components/panels/_patient-reminder.scss */
+.panel.patient-reminder .surname {
+  font-weight: bold;
+}
+
 /* line 10, ../sass/components/tabs/_theatre-booking-actions-tabs.scss */
 .tabs.theatre-booking-actions {
   margin: 0 0.625em 0 0;
@@ -179,22 +191,14 @@
 }
 /* line 4, ../sass/components/_event.scss */
 .event.booking .event-title {
-  background: url('../img/new/medium.png?1378815394') no-repeat left center;
+  background: url('../img/new/medium.png?1379063967') no-repeat left center;
 }
 /* line 7, ../sass/components/_event.scss */
 .event.booking .event-content {
-  background-image: url('../img/new/watermark.png?1378815394');
+  background-image: url('../img/new/watermark.png?1379063967');
 }
 /* line 11, ../sass/components/_event.scss */
-.event.booking.view .field-title {
-  color: #56a7f1;
-  font-size: 0.8125em;
-  padding: 8px 10px;
-  margin: 0;
-}
-/* line 17, ../sass/components/_event.scss */
-.event.booking.view .field-value {
-  padding: 10px;
-  font-size: 1em;
-  margin-bottom: 10px;
+.event.booking.schedule .event-title {
+  background: none;
+  padding-left: 0;
 }
