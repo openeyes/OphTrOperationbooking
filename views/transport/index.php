@@ -71,6 +71,7 @@
 				<input type="checkbox" name="include_cancellations" id="include_cancellations" class="filter" value="1"<?php if (@$_GET['include_cancellations']) {?> checked="checked"<?php }?> /> Cancellations
 			</form>
 			<form id="csvform" method="post" action="<?php echo Yii::app()->createUrl('/OphTrOperationbooking/transport/downloadcsv')?>">
+				<input type="hidden" name="YII_CSRF_TOKEN" value="<?php echo Yii::app()->request->csrfToken; ?>" />
 				<input type="hidden" name="date_from" value="<?php echo @$_GET['date_from']?>" />
 				<input type="hidden" name="date_to" value="<?php echo @$_GET['date_to']?>" />
 				<input type="hidden" name="include_bookings" value="<?php echo (@$_GET['include_bookings'] ? 1 : 0)?>" />

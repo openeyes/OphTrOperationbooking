@@ -18,10 +18,15 @@
 */
 ?>
 <?php
-foreach ($diary as $theatre) {?>
+$diary_count = count($diary) - 1;
+foreach ($diary as $i => $theatre) {?>
+	<div<?php if ($i < $diary_count) { ?> style="page-break-after:always"<?php } ?>>
 	<h3 class="theatre"><strong><?php echo $theatre->name?> (<?php echo $theatre->site->name?>)</strong></h3>
-	<?php foreach ($theatre->sessions as $session) {?>
-		<div id="diaryTemplate">
+	<?php
+	$sessions_count= count($theatre->sessions) - 1;
+	foreach ($theatre->sessions as $j => $session) {?>
+		<div id="diaryTemplate"
+			 <?php if ($j < $sessions_count) { ?>style="page-break-after:always" <?php } ?>>
 			<div id="d_title">OPERATION LIST FORM</div>
 			<table class="d_overview">
 				<tbody>
@@ -62,23 +67,25 @@ foreach ($diary as $theatre) {?>
 						<th>PROCEDURES AND COMMENTS</th>
 						<th>ADMISSION TIME</th>
 					</tr>
-					<?php foreach ($session->activeBookings as $booking) {?>
-						<tr>
-							<td><?php echo $booking->operation->event->episode->patient->hos_num?></td>
-							<td><?php echo strtoupper($booking->operation->event->episode->patient->last_name)?>, <?php echo $booking->operation->event->episode->patient->first_name?></td>
-							<td><?php echo $booking->operation->event->episode->patient->age?></td>
-							<td><?php echo htmlspecialchars($booking->ward->name)?></td>
-							<td><?php echo htmlspecialchars($booking->operation->anaesthetic_type->name)?></td>
-							<td><?php echo $booking->operation->priority->name?></td>
-							<td style="max-width: 500px; word-wrap:break-word; overflow: hidden;">
-							<?php echo $booking->operation->procedures ? '['.$booking->operation->eye->adjective.'] '.$booking->operation->getProceduresCommaSeparated() : 'No procedures'?><br/>
-							<?php echo htmlspecialchars($booking->operation->comments)?>
-							<td><?php echo substr($booking->admission_time,0,5)?></td>
-						</tr>
-					<?php }?>
+					<?php foreach ($session->activeBookings as $booking) {
+						if ($booking->operation->event) { ?>
+							<tr>
+								<td><?php echo $booking->operation->event->episode->patient->hos_num?></td>
+								<td><?php echo strtoupper($booking->operation->event->episode->patient->last_name)?>, <?php echo $booking->operation->event->episode->patient->first_name?></td>
+								<td><?php echo $booking->operation->event->episode->patient->age?></td>
+								<td><?php echo htmlspecialchars($booking->ward->name)?></td>
+								<td><?php echo htmlspecialchars($booking->operation->anaesthetic_type->name)?></td>
+								<td><?php echo $booking->operation->priority->name?></td>
+								<td style="max-width: 500px; word-wrap:break-word; overflow: hidden;">
+								<?php echo $booking->operation->procedures ? '['.$booking->operation->eye->adjective.'] '.$booking->operation->getProceduresCommaSeparated() : 'No procedures'?><br/>
+								<?php echo htmlspecialchars($booking->operation->comments)?>
+								<td><?php echo substr($booking->admission_time,0,5)?></td>
+							</tr>
+						<?php }
+					} ?>
 				</tbody>
 			</table>
 		</div>
-		<div style="page-break-after:always"></div>
-	<?php }
-}
+	<?php } ?>
+	</div>
+<?php }

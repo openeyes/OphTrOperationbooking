@@ -46,56 +46,56 @@
  * @property Element_OphTrOperationbooking_Operation_Priority $priority
  */
 
-	class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
+class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
+{
+	public $count;
+
+	const LETTER_INVITE = 0;
+	const LETTER_REMINDER_1 = 1;
+	const LETTER_REMINDER_2 = 2;
+	const LETTER_GP = 3;
+	const LETTER_REMOVAL = 4;
+
+	// these reflect an actual status, relating to actions required rather than letters sent
+	const STATUS_WHITE = 0; // no action required.	the default status.
+	const STATUS_PURPLE = 1; // no invitation letter has been sent
+	const STATUS_GREEN1 = 2; // it's two weeks since an invitation letter was sent with no further letters going out
+	const STATUS_GREEN2 = 3; // it's two weeks since 1st reminder was sent with no further letters going out
+	const STATUS_ORANGE = 4; // it's two weeks since 2nd reminder was sent with no further letters going out
+	const STATUS_RED = 5; // it's one week since gp letter was sent and they're still on the list
+	const STATUS_NOTWAITING = null;
+
+	public $service;
+
+	/**
+	 * Returns the static model of the specified AR class.
+	 * @return the static model class
+	 */
+	public static function model($className = __CLASS__)
 	{
-		public $count;
+		return parent::model($className);
+	}
 
-		const LETTER_INVITE = 0;
-		const LETTER_REMINDER_1 = 1;
-		const LETTER_REMINDER_2 = 2;
-		const LETTER_GP = 3;
-		const LETTER_REMOVAL = 4;
+	/**
+	 * @return string the associated database table name
+	 */
+	public function tableName()
+	{
+		return 'et_ophtroperationbooking_operation';
+	}
 
-		// these reflect an actual status, relating to actions required rather than letters sent
-		const STATUS_WHITE = 0; // no action required.	the default status.
-		const STATUS_PURPLE = 1; // no invitation letter has been sent
-		const STATUS_GREEN1 = 2; // it's two weeks since an invitation letter was sent with no further letters going out
-		const STATUS_GREEN2 = 3; // it's two weeks since 1st reminder was sent with no further letters going out
-		const STATUS_ORANGE = 4; // it's two weeks since 2nd reminder was sent with no further letters going out
-		const STATUS_RED = 5; // it's one week since gp letter was sent and they're still on the list
-		const STATUS_NOTWAITING = null;
-
-		public $service;
-
-		/**
-		 * Returns the static model of the specified AR class.
-		 * @return the static model class
-		 */
-		public static function model($className = __CLASS__)
-		{
-			return parent::model($className);
-		}
-
-		/**
-		 * @return string the associated database table name
-		 */
-		public function tableName()
-		{
-			return 'et_ophtroperationbooking_operation';
-		}
-
-		/**
-		 * @return array validation rules for model attributes.
-		 */
-		public function rules()
-		{
-			// NOTE: you should only define rules for those attributes that
-			// will receive user inputs.
-			return array(
-				array('event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments, anaesthetist_required, total_duration, status_id, operation_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id, latest_booking_id', 'safe'),
-				array('eye_id', 'matchDiagnosisEye'),
-				array('cancellation_comment', 'length', 'max' => 200),
-				array('eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date', 'required'),
+	/**
+	 * @return array validation rules for model attributes.
+	 */
+	public function rules()
+	{
+		// NOTE: you should only define rules for those attributes that
+		// will receive user inputs.
+		return array(
+			array('event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments, anaesthetist_required, total_duration, status_id, operation_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id, latest_booking_id', 'safe'),
+			array('eye_id', 'matchDiagnosisEye'),
+			array('cancellation_comment', 'length', 'max' => 200),
+			array('eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments, ', 'safe', 'on' => 'search'),
@@ -390,6 +390,14 @@
 		}
 	}
 
+	/**
+	 * get the code for the letter that is due on this operation, based on the current status
+	 * will return null if in an unknown state
+	 *
+	 * @TODO: throw an exception for unknown state instead of returning null.
+	 *
+	 * @return int|null
+	 */
 	public function getDueLetter()
 	{
 		$lastletter = $this->getLastLetter();
@@ -405,7 +413,8 @@
 		} elseif ($this->getWaitingListStatus() == self::STATUS_ORANGE) {
 			return self::LETTER_GP;
 		} elseif ($this->getWaitingListStatus() == self::STATUS_RED) {
-			return null; // possibly this should return the gp letter, though it's already been sent?
+			// this used to return null, but now returning GP so that gp letters can be re-printed if necessary
+			return self::LETTER_GP;
 		} else {
 			return null; // possibly this should return $lastletter ?
 		}
@@ -718,7 +727,23 @@
 		if ($this->event->episode->patient->isChild()) {
 			$criteria->addCondition('`t`.paediatric = :one');
 
-			$service_subspecialty_assignment_id = OphTrOperationbooking_Operation_Session::model()->findByPk($booking_session_id)->firm->serviceSubspecialtyAssignment->id;
+			$session = OphTrOperationbooking_Operation_Session::model()->findByPk($booking_session_id);
+
+			if ($session->firm) {
+				if (!$session->firm->serviceSubspecialtyAssignment) {
+					throw new Exception("Booking session firm must have a subspecialty assignment");
+				}
+				$service_subspecialty_assignment_id = $session->firm->serviceSubspecialtyAssignment->id;
+			} else {
+				if (!$subspecialty = Subspecialty::model()->find('ref_spec=?',array('AE'))) {
+					throw new Exception("A&E subspecialty not found");
+				}
+
+				if (!$service_subspecialty_assignment = ServiceSubspecialtyAssignment::model()->find('subspecialty_id=?',array($subspecialty->id))) {
+					throw new Exception("A&E service_subspecialty_assignment not found");
+				}
+				$service_subspecialty_assignment_id = $service_subspecialty_assignment->id;
+			}
 		}
 
 		if ($this->anaesthetist_required || $this->anaesthetic_type->code == 'GA') {

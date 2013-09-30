@@ -26,8 +26,12 @@ class TheatreDiaryController extends BaseEventTypeController
 		return array(
 			// Level 2 or below can't change anything
 			array('deny',
-				'actions' => array('savesessions', 'printdiary', 'printlist'),
+				'actions' => array('savesessions'),
 				'expression' => '!BaseController::checkUserLevel(4)',
+			),
+			array('deny',
+				'actions' => array('printdiary', 'printlist'),
+				'expression' => '!BaseController::checkUserLevel(3)',
 			),
 			// Level 2 or above can do anything else
 			array('allow',
@@ -65,7 +69,7 @@ class TheatreDiaryController extends BaseEventTypeController
 
 				if (!isset($_POST['firm-id'])) {
 					$_POST['firm-id'] = $theatre_searchoptions['firm-id'] = Yii::app()->session['selected_firm_id'];
-					$_POST['subspecialty-id'] = $theatre_searchoptions['subspecialty-id'] = $firm->serviceSubspecialtyAssignment->subspecialty_id;
+					$_POST['subspecialty-id'] = $theatre_searchoptions['subspecialty-id'] = $firm->getSubspecialtyID();
 				}
 
 				Yii::app()->session['theatre_searchoptions'] = $theatre_searchoptions;
@@ -73,7 +77,7 @@ class TheatreDiaryController extends BaseEventTypeController
 			} else {
 				$_POST = Yii::app()->session['theatre_searchoptions'] = array(
 					'firm-id' => Yii::app()->session['selected_firm_id'],
-					'subspecialty-id' => $firm->serviceSubspecialtyAssignment->subspecialty_id
+					'subspecialty-id' => $firm->getSubspecialtyID()
 				);
 
 				Yii::app()->session['theatre_searchoptions'] = $_POST;
@@ -197,6 +201,8 @@ class TheatreDiaryController extends BaseEventTypeController
 		$criteria->params[':deleted'] = 0;
 		$criteria->order = 'site.short_name, `t`.display_order, `t`.code, sessions.date, sessions.start_time, sessions.end_time, activeBookings.display_order';
 
+		Yii::app()->event->dispatch('start_batch_mode');
+
 		return OphTrOperationbooking_Operation_Theatre::model()
 			->with(array(
 				'site',
@@ -263,30 +269,29 @@ class TheatreDiaryController extends BaseEventTypeController
 
 	public function getBookingList()
 	{
-		$_POST = array(
-			'date-start' => '2013-05-01',
-			'date-end' => '2013-05-31',
-			'subspecialty-id' => 4,
-			'site-id' => 1,
-			'firm-id' => '',
-			'ward-id' => '',
-			'firm-id' => '',
-		);
-
-		$from = Helper::convertNHS2MySQL($_POST['date-start']);
-		$to = Helper::convertNHS2MySQL($_POST['date-end']);
+		foreach (array('date-start', 'date-end', 'subspecialty-id', 'site-id') as $required) {
+			if (!isset($_POST[$required])) {
+				throw new CHttpException('invalid request for booking list');
+			}
+		}
 
 		$criteria = new CDbCriteria;
 
-		$criteria->addCondition('theatre.site_id = :siteId and subspecialty_id = :subspecialtyId and session.date >= :dateFrom and session.date <= :dateTo');
+		$criteria->addCondition('session.date >= :dateFrom and session.date <= :dateTo');
 		$criteria->addInCondition('operation.status_id',array(2,4));
 
-		$criteria->params[':siteId'] = $_POST['site-id'];
-		$criteria->params[':subspecialtyId'] = $_POST['subspecialty-id'];
-		$criteria->params[':dateFrom'] = $_POST['date-start'];
-		$criteria->params[':dateTo'] = $_POST['date-end'];
+		$criteria->params[':dateFrom'] = Helper::convertNHS2MySQL($_POST['date-start']);
+		$criteria->params[':dateTo'] = Helper::convertNHS2MySQL($_POST['date-end']);
 
-		if ($_POST['ward-id']) {
+		if (@$_POST['emergency_list']) {
+			$criteria->addCondition('firm.id IS NULL');
+		} else {
+			$criteria->addCondition('theatre.site_id = :siteId and subspecialty_id = :subspecialtyId');
+			$criteria->params[':siteId'] = $_POST['site-id'];
+			$criteria->params[':subspecialtyId'] = $_POST['subspecialty-id'];
+		}
+
+		if (@$_POST['ward-id']) {
 			$criteria->addCondition('ward.id = :wardId');
 			$criteria->params[':wardId'] = $_POST['ward-id'];
 		}
@@ -299,6 +304,8 @@ class TheatreDiaryController extends BaseEventTypeController
 		$criteria->addCondition('`t`.booking_cancellation_date is null');
 
 		$criteria->order = 'ward.code, patient.hos_num';
+
+		Yii::app()->event->dispatch('start_batch_mode');
 
 		return OphTrOperationbooking_Operation_Booking::model()
 			->with(array(
@@ -574,6 +581,8 @@ class TheatreDiaryController extends BaseEventTypeController
 			throw new Exception('Session not found: '.$_POST['session_id']);
 		}
 
+		Yii::app()->event->dispatch('start_batch_mode');
+
 		switch (@$_POST['type']) {
 			case 'consultant':
 				$criteria = new CDbCriteria;
@@ -592,8 +601,9 @@ class TheatreDiaryController extends BaseEventTypeController
 				$child_age = isset(Yii::app()->params['child_age_limit']) ? Yii::app()->params['child_age_limit'] : Patient::CHILD_AGE_LIMIT;
 
 				$criteria = new CDbCriteria;
-				$criteria->addCondition('booking.booking_cancellation_date is null and patient.dob >= :ageLimitDate');
+				$criteria->addCondition('session.id = :sessionId and booking.booking_cancellation_date is null and patient.dob >= :ageLimitDate');
 				$criteria->params[':ageLimitDate'] = date('Y')-$child_age.date('-m-d',time()+86400);
+				$criteria->params[':sessionId'] = $session->id;
 				$criteria->addInCondition('`t`.status_id',array(2,4));
 
 				if (Element_OphTrOperationbooking_Operation::model()->with(array(

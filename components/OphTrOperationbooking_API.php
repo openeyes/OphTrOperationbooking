@@ -19,6 +19,31 @@
 
 class OphTrOperationbooking_API extends BaseAPI
 {
+
+	/**
+	 * Gets latest booking diagnosis from operation booking or defaults to episode diagnosis
+	 * @return string
+	 */
+	public function getLatestOperationBookingDiagnosis($patient)
+	{
+		//get latest compelted operation note booking_event_id
+		$api = Yii::app()->moduleAPI->get('OphTrOperationnote');
+		$booking_id = $api -> getLetterProceduresBookingEventID($patient);
+
+		if(!$booking_id) return $patient->getEpd(); //default to episode diagnosis
+
+		//use this to find the matching operation booking event  id
+		$criteria = new CDbCriteria;
+		$criteria->condition ='id ='.$booking_id ;
+		$event=Event::model()->find($criteria); // get latest op booking event for episode
+
+		//get the diagnosis from the operation booking
+		$diagnosis =  Element_OphTrOperationbooking_Diagnosis::model()->find('event_id=?',array($event->id));
+
+		//return diagnosis string
+		return $diagnosis->disorder->term;
+	}
+
 	public function getBookingsForEpisode($episode_id)
 	{
 		$criteria = new CDbCriteria;

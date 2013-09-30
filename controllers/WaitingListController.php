@@ -25,7 +25,7 @@ class WaitingListController extends BaseEventTypeController
 			// Level 2 or below can't change anything
 			array('deny',
 				'actions' => array('confirmprinted', 'printletters'),
-				'expression' => '!BaseController::checkUserLevel(4)',
+				'expression' => '!BaseController::checkUserLevel(3)',
 			),
 			// Level 2 or above can do anything else
 			array('allow',
@@ -53,7 +53,7 @@ class WaitingListController extends BaseEventTypeController
 			} else {
 				$_POST = array(
 					'firm-id' => YiiSession::get('selected_firm_id'),
-					'subspecialty-id' => Firm::Model()->findByPk(YiiSession::get('selected_firm_id'))->serviceSubspecialtyAssignment->subspecialty_id,
+					'subspecialty-id' => Firm::Model()->findByPk(YiiSession::get('selected_firm_id'))->getSubspecialtyID(),
 				);
 			}
 
@@ -198,29 +198,13 @@ class WaitingListController extends BaseEventTypeController
 		*/
 	protected function getFilteredFirms($subspecialtyId)
 	{
-		$medical = SpecialtyType::model()->find('name=?',array('Medical'));
-
 		$criteria = new CDbCriteria;
-		$criteria->addCondition('subspecialty_id = :subspecialtyId and specialty_type_id = :specialty_type_id');
+		$criteria->addCondition('subspecialty_id = :subspecialtyId');
 		$criteria->params[':subspecialtyId'] = $subspecialtyId;
-		$criteria->params[':specialty_type_id'] = $medical->id;
 		$criteria->order = '`t`.name asc';
 
-		$sp_surgical = SpecialtyType::model()->find('name=?',array('Surgical'));
-		$sp_medical = SpecialtyType::model()->find('name=?',array('Medical'));
-
-		$criteria->addInCondition('specialty_type_id',array($sp_surgical->id,$sp_medical->id));
-
 		return CHtml::listData(Firm::model()
-			->with(array(
-				'serviceSubspecialtyAssignment' => array(
-					'with' => array(
-						'subspecialty' => array(
-							'with' => 'specialty',
-						),
-					),
-				),
-			))
+			->with(array('serviceSubspecialtyAssignment'))
 			->findAll($criteria),'id','name');
 	}
 
@@ -396,27 +380,33 @@ class WaitingListController extends BaseEventTypeController
 	/**
 	 * @param OEPDFPrint $pdf
 	 * @param Element_OphTrOperationbooking_Operation $operation
+	 *
+	 * @throws CException
 	 */
 	protected function print_gp_letter($pdf, $operation)
 	{
-		// GP Letter
 		$patient = $operation->event->episode->patient;
-		if ($gp = $patient->gp) {
-			if ($patient->practice && $patient->practice->contact->address) {
-				$to_address = $patient->gp->getLetterAddress(array(
+
+		// GP Letter
+		if ($patient->practice && $patient->practice->contact->address) {
+			$to_address = $patient->practice->getLetterAddress(array(
 					'patient' => $patient,
-					'include_name' => true,
+					'include_name' => false,
 					'delimiter' => "\n"
 				));
-			} else {
-				throw new CException('Patient has no practice address');
-			}
+		} else {
+			throw new CException('Patient has no practice address');
+		}
+
+		if ($gp = $patient->gp) {
+			error_log($gp->contact->fullname);
 			$to_name = $gp->contact->fullname;
-			$salutation = $gp->getLetterIntroduction();
 		} else {
 			$to_name = Gp::UNKNOWN_NAME;
-			$salutation = Gp::UNKNOWN_SALUTATION;
 		}
+
+		$to_address = $to_name . "\n" . $to_address;
+
 		$body = $this->render('../letters/gp_letter', array(
 				'to' => $to_name,
 				'patient' => $patient,

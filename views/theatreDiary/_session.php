@@ -109,43 +109,55 @@
 				</tr>
 			</thead>
 			<tbody id="tbody_<?php echo $session->id?>">
-				<?php foreach ($session->activeBookings as $booking) {?>
-					<tr id="oprow_<?php echo $booking->element_id?>">
-						<td class="session">
-							<input style="display: none;" type="text" class="admitTime diaryEditMode" name="admitTime_<?php echo $booking->element_id?>" data-id="<?php echo $session->id?>" data-operation-id="<?php echo $booking->element_id?>" value="<?php echo substr($booking->admission_time,0,5)?>" size="4">
-							<span class="admitTime_ro diaryViewMode" data-id="<?php echo $session->id?>" data-operation-id="<?php echo $booking->element_id?>"><?php echo substr($booking->admission_time,0,5)?></span>
-						</td>
-						<td class="td_sort diaryEditMode" data-id="<?php echo $session->id?>" style="display: none;">
-							<img src="<?php echo $assetPath?>/img/diaryIcons/draggable_row.png" alt="draggable_row" width="25" height="28" />
-						</td>
-						<td class="hospital"><?php echo CHtml::link($booking->operation->event->episode->patient->hos_num, Yii::app()->createUrl('/OphTrOperationbooking/default/view/'.$booking->operation->event_id));
-						?></td>
-						<td class="confirm"><input type="hidden" name="confirm_<?php echo $booking->element_id?>" value="0" /><input id="confirm_<?php echo $booking->element_id?>" type="checkbox" value="1" name="confirm_<?php echo $booking->element_id?>" disabled="disabled" <?php if ($booking->confirmed) {?>checked="checked" <?php }?>/></td>
-						<td class="patient leftAlign"><?php echo strtoupper($booking->operation->event->episode->patient->last_name)?>, <?php echo $booking->operation->event->episode->patient->first_name?> (<?php echo $booking->operation->event->episode->patient->age?>)</td>
-						<td class="operation leftAlign"><?php echo $booking->operation->procedures ? '['.$booking->operation->eye->adjective.'] '.$booking->operation->getProceduresCommaSeparated() : 'No procedures'?></td>
-						<td class=""><?php echo $booking->operation->priority->name?></td>
-						<td class="anesthetic"><?php echo $booking->operation->anaesthetic_type->name?></td>
-						<td class="ward"><?php echo $booking->ward->name?></td>
-						<td class="alerts">
-							<?php if ($booking->operation->event->episode->patient->gender == 'M') {?>
-								<img src="<?php echo $assetPath?>/img/diaryIcons/male.png" alt="male" title="male" width="17" height="17" />
-							<?php } else {?>
-								<img src="<?php echo $assetPath?>/img/diaryIcons/female.png" alt="female" title="female" width="17" height="17" />
-							<?php }?>
-							<img src="<?php echo $assetPath?>/img/diaryIcons/confirmed.png" alt="confirmed" width="17" height="17" class="confirmed" title="confirmed"<?php if (!$booking->confirmed) {?> style="display: none;"<?php }?>>
-							<?php if ($booking->operation->comments && preg_match('/\w/', $booking->operation->comments)) {?>
-								<img src="<?php echo $assetPath?>/img/diaryIcons/comment.png" alt="<?php echo htmlentities($booking->operation->comments) ?>" title="<?php echo htmlentities($booking->operation->comments) ?>" width="17" height="17" />
-							<?php }?>
-							<?php if ($booking->operation->overnight_stay) {?>
-								<img src="<?php echo $assetPath?>/img/diaryIcons/overnight.png" alt="Overnight stay required" title="Overnight stay required" width="17" height="17" />
-							<?php }?>
-							<?php if ($booking->operation->consultant_required) {?>
-								<img src="<?php echo $assetPath?>/img/diaryIcons/consultant.png" alt="Consultant required" title="Consultant required" width="17" height="17" />
-							<?php }?>
-							<img src="<?php echo $assetPath?>/img/diaryIcons/booked_user.png" alt="Created by: <?php echo $booking->operation->op_user->fullName."\n"?>Last modified by: <?php echo $booking->operation->op_usermodified->fullName?>" title="Created by: <?php echo $booking->operation->op_user->fullName."\n"?>Last modified by: <?php echo $booking->operation->op_usermodified->fullName?>" width="17" height="17" />
-						</td>
-					</tr>
-				<?php }?>
+				<?php foreach ($session->activeBookings as $booking) {
+					// FIXME: this conditional is here because the query that is built to pull in the activebookings is not excluding those events that have been deleted
+					// this works around that fact.
+					if ($booking->operation->event) { ?>
+						<tr id="oprow_<?php echo $booking->element_id?>">
+							<td class="session">
+								<input style="display: none;" type="text" class="admitTime diaryEditMode" name="admitTime_<?php echo $booking->element_id?>" data-id="<?php echo $session->id?>" data-operation-id="<?php echo $booking->element_id?>" value="<?php echo substr($booking->admission_time,0,5)?>" size="4">
+								<span class="admitTime_ro diaryViewMode" data-id="<?php echo $session->id?>" data-operation-id="<?php echo $booking->element_id?>"><?php echo substr($booking->admission_time,0,5)?></span>
+							</td>
+							<td class="td_sort diaryEditMode" data-id="<?php echo $session->id?>" style="display: none;">
+								<img src="<?php echo $assetPath?>/img/diaryIcons/draggable_row.png" alt="draggable_row" width="25" height="28" />
+							</td>
+							<td class="hospital"><?php echo CHtml::link($booking->operation->event->episode->patient->hos_num, Yii::app()->createUrl('/OphTrOperationbooking/default/view/'.$booking->operation->event_id));
+							?></td>
+							<td class="confirm"><input type="hidden" name="confirm_<?php echo $booking->element_id?>" value="0" /><input id="confirm_<?php echo $booking->element_id?>" type="checkbox" value="1" name="confirm_<?php echo $booking->element_id?>" disabled="disabled" <?php if ($booking->confirmed) {?>checked="checked" <?php }?>/></td>
+							<td class="patient leftAlign"><?php echo strtoupper($booking->operation->event->episode->patient->last_name)?>, <?php echo $booking->operation->event->episode->patient->first_name?> (<?php echo $booking->operation->event->episode->patient->age?>)</td>
+							<td class="operation leftAlign"><?php echo $booking->operation->procedures ? '['.$booking->operation->eye->adjective.'] '.$booking->operation->getProceduresCommaSeparated() : 'No procedures'?></td>
+							<td class=""><?php echo $booking->operation->priority->name?></td>
+							<td class="anesthetic"><?php echo $booking->operation->anaesthetic_type->name?></td>
+							<td class="ward"><?php echo $booking->ward->name?></td>
+							<td class="alerts">
+								<?php if ($booking->operation->event->episode->patient->gender == 'M') {?>
+									<img src="<?php echo $assetPath?>/img/diaryIcons/male.png" alt="male" title="male" width="17" height="17" />
+								<?php } else {?>
+									<img src="<?php echo $assetPath?>/img/diaryIcons/female.png" alt="female" title="female" width="17" height="17" />
+								<?php }?>
+								<?php if ($warnings = $booking->operation->event->episode->patient->getWarnings()) {
+									$msgs = array();
+									foreach ($warnings as $warn) {
+										$msgs[] = $warn['short_msg'];
+									}
+								?>
+								<img src="<?php echo $assetPath?>/img/diaryIcons/warning.png" alt="<?php echo implode(' / ', $msgs); ?>" title="<?php echo implode(' / ', $msgs); ?>" width="17" height="17" />
+								<?php } ?>
+								<img src="<?php echo $assetPath?>/img/diaryIcons/confirmed.png" alt="confirmed" width="17" height="17" class="confirmed" title="confirmed"<?php if (!$booking->confirmed) {?> style="display: none;"<?php }?>>
+								<?php if ($booking->operation->comments && preg_match('/\w/', $booking->operation->comments)) {?>
+									<img src="<?php echo $assetPath?>/img/diaryIcons/comment.png" alt="<?php echo htmlentities($booking->operation->comments) ?>" title="<?php echo htmlentities($booking->operation->comments) ?>" width="17" height="17" />
+								<?php }?>
+								<?php if ($booking->operation->overnight_stay) {?>
+									<img src="<?php echo $assetPath?>/img/diaryIcons/overnight.png" alt="Overnight stay required" title="Overnight stay required" width="17" height="17" />
+								<?php }?>
+								<?php if ($booking->operation->consultant_required) {?>
+									<img src="<?php echo $assetPath?>/img/diaryIcons/consultant.png" alt="Consultant required" title="Consultant required" width="17" height="17" />
+								<?php }?>
+								<img src="<?php echo $assetPath?>/img/diaryIcons/booked_user.png" alt="Created by: <?php echo $booking->user->fullName."\n"?>Last modified by: <?php echo $booking->usermodified->fullName?>" title="Created by: <?php echo $booking->user->fullName."\n"?>Last modified by: <?php echo $booking->usermodified->fullName?>" width="17" height="17" />
+							</td>
+						</tr>
+				<?php }
+				}?>
 			</tbody>
 			<tfoot>
 				<tr>

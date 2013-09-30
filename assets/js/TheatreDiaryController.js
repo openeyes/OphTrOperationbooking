@@ -159,10 +159,12 @@ $(document).ready(function() {
 	});
 
 	$("#btn_print_diary").click(function() {
+		disableButtons();
 		printElem('printDiary', {
 			pageTitle:'openeyes printout',
-			printBodyOptions:{styleToAdd:'width:auto !important; margin: 0.75em !important;',classNameToAdd:'openeyesPrintout'},overrideElementCSS:['css/style.css',{href:'css/style.css',media:'print'}]
-		});
+			printBodyOptions:{styleToAdd:'width:auto !important; margin: 0.75em !important;',classNameToAdd:'openeyesPrintout'},
+			//overrideElementCSS:['css/module.css',{href:'css/module.css',media:'print'}]
+		}, enableButtons);
 	});
 
 	$('#btn_print_diary_list').click(function() {
@@ -175,15 +177,15 @@ $(document).ready(function() {
 			}).open();
 			return false;
 		}
-
+		disableButtons();
 		printElem('printList',{
 			pageTitle:'openeyes printout',
 			printBodyOptions:{
 				styleToAdd:'width:auto !important; margin: 0.75em !important;',
 				classNameToAdd:'openeyesPrintout'
 			},
-			overrideElementCSS:['css/style.css',{href:'css/style.css',media:'print'}]
-		});
+			//overrideElementCSS:['css/module.css',{href:'css/module.css',media:'print'}]
+		}, enableButtons);
 	});
 
 	$(this).undelegate('a.edit-session','click').delegate('a.edit-session','click',function() {
@@ -216,7 +218,7 @@ $(document).ready(function() {
 		$('#tbody_'+theatre_edit_session_id+' .diaryViewMode').hide();
 		$('div.session_options.diaryViewMode').hide();
 		$('div.comments_ro.diaryViewMode').hide();
-		$('.printButtons .diaryViewMode').hide();
+		$('button.diaryViewMode').hide();
 		$('.diaryEditMode[data-id="'+theatre_edit_session_id+'"]').show();
 		$('.action_options[data-id="'+theatre_edit_session_id+'"]').show();
 
@@ -476,7 +478,7 @@ function theatreDiaryIconHovers() {
 	});
 }
 
-function printElem(method,options){
+function printElem(method,options, callback){
 	$.ajax({
 		'url': baseUrl+'/OphTrOperationbooking/theatreDiary/'+method,
 		'type': 'POST',
@@ -484,6 +486,9 @@ function printElem(method,options){
 		'success': function(data) {
 			$('#printable').html(data);
 			$('#printable').printElement(options);
+			if ($.isFunction(callback)) {
+				callback();
+			}
 			return false;
 		}
 	});
