@@ -257,9 +257,10 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 
 			foreach ($existing_ids as $id) {
 				if (!in_array($id,$_POST['Procedures_procs'])) {
-					$item = OphTrOperationbooking_Operation_Procedures::model()->find('element_id = :elementId and proc_id = :lookupfieldId',array(':elementId' => $this->id, ':lookupfieldId' => $id));
-					if (!$item->delete()) {
-						throw new Exception('Unable to delete MultiSelect item: '.print_r($item->getErrors(),true));
+					if ($item = OphTrOperationbooking_Operation_Procedures::model()->find('element_id = :elementId and proc_id = :lookupfieldId',array(':elementId' => $this->id, ':lookupfieldId' => $id))) {
+						if (!$item->delete()) {
+							throw new Exception('Unable to delete MultiSelect item: '.print_r($item->getErrors(),true));
+						}
 					}
 				}
 			}
