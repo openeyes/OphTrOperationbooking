@@ -33,7 +33,6 @@
 	<?php echo $form->radioBoolean($element, 'overnight_stay')?>
 	<?php
 	$criteria = new CDbCriteria;
-	$criteria->compare('institution_id',1);
 	$criteria->order = 'short_name asc';
 	?>
 	<?php echo $form->dropDownList($element, 'site_id', CHtml::listData(Site::model()->findAll($criteria),'id','short_name'))?>
