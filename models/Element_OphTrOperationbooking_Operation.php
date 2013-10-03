@@ -851,7 +851,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		$this->audit('operation','cancel');
 
 		$episode = $this->event->episode;
-		$episode->episode_status_id = 5;
+		$episode->episode_status_id = EpisodeStatus::model()->find('name=?',array('Follow-up'))->id;
 
 		if (!$episode->save()) {
 			throw new Exception('Unable to change episode status for episode '.$episode->id);
@@ -965,7 +965,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			$this->calculateEROD($session->id);
 		}
 
-		$this->event->episode->episode_status_id = 3;
+		$this->event->episode->episode_status_id = EpisodeStatus::model()->find('name=?',array('Listed/booked'))->id;
 
 		if (!$this->event->episode->save()) {
 			throw new Exception('Unable to change episode status id for episode '.$this->event->episode->id);

@@ -183,7 +183,8 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecord
 
 			$this->audit('booking','cancel');
 
-			$this->operation->event->episode->episode_status_id = 3;
+			$this->operation->event->episode->episode_status_id = EpisodeStatus::model()->find('name=?',array('Listed/booked'))->id;
+
 			if (!$this->operation->event->episode->save()) {
 				throw new Exception('Unable to update episode status for episode: '.print_r($operation->event->episode->getErrors(),true));
 			}
