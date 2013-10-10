@@ -7,6 +7,9 @@ $oe-table-waiting-list-footer-heading-font-size: 1em !default;
 $oe-table-waiting-list-letters-sent-line-height: emCalc(17px) !default;
 
 .waiting-list {
+	.letter-status {
+		white-space: nowrap;
+	}
 	.send-another-reminder {
 		background: $oe-table-waiting-list-send-another-reminder-bg-color;
 	}
@@ -18,6 +21,11 @@ $oe-table-waiting-list-letters-sent-line-height: emCalc(17px) !default;
 	}
 	.patient-due-removed {
 		background: $oe-table-waiting-list-patient-due-removed;
+	}
+	.error {
+		font-size: emCalc(13px);
+		font-weight: bold;
+		white-space: nowrap;
 	}
 	tfoot {
 		td {
