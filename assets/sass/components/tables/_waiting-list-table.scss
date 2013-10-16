@@ -9,6 +9,9 @@ $oe-table-waiting-list-letters-sent-line-height: emCalc(17px) !default;
 .waiting-list {
 	.letter-status {
 		white-space: nowrap;
+		img {
+			max-width: none;
+		}
 	}
 	.send-another-reminder {
 		background: $oe-table-waiting-list-send-another-reminder-bg-color;

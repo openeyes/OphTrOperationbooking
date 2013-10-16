@@ -20,65 +20,69 @@
 .waiting-list .letter-status {
   white-space: nowrap;
 }
-/* line 13, ../sass/components/tables/_waiting-list-table.scss */
+/* line 12, ../sass/components/tables/_waiting-list-table.scss */
+.waiting-list .letter-status img {
+  max-width: none;
+}
+/* line 16, ../sass/components/tables/_waiting-list-table.scss */
 .waiting-list .send-another-reminder {
   background: #b8eaa6;
 }
-/* line 16, ../sass/components/tables/_waiting-list-table.scss */
+/* line 19, ../sass/components/tables/_waiting-list-table.scss */
 .waiting-list .send-invitation-letter {
   background: #77b8d3;
 }
-/* line 19, ../sass/components/tables/_waiting-list-table.scss */
+/* line 22, ../sass/components/tables/_waiting-list-table.scss */
 .waiting-list .send-gp-removal-letter {
   background: #f7bf8d;
 }
-/* line 22, ../sass/components/tables/_waiting-list-table.scss */
+/* line 25, ../sass/components/tables/_waiting-list-table.scss */
 .waiting-list .patient-due-removed {
   background: #f08a6f;
 }
-/* line 25, ../sass/components/tables/_waiting-list-table.scss */
+/* line 28, ../sass/components/tables/_waiting-list-table.scss */
 .waiting-list .error {
   font-size: 0.8125em;
   font-weight: bold;
   white-space: nowrap;
 }
-/* line 31, ../sass/components/tables/_waiting-list-table.scss */
+/* line 34, ../sass/components/tables/_waiting-list-table.scss */
 .waiting-list tfoot td {
   font-size: 0.8125em;
   font-weight: normal;
 }
-/* line 35, ../sass/components/tables/_waiting-list-table.scss */
+/* line 38, ../sass/components/tables/_waiting-list-table.scss */
 .waiting-list tfoot h3 {
   float: left;
   margin: 0;
   font-size: 1em;
 }
-/* line 40, ../sass/components/tables/_waiting-list-table.scss */
+/* line 43, ../sass/components/tables/_waiting-list-table.scss */
 .waiting-list tfoot .inline-list {
   float: left;
   margin: 0;
 }
-/* line 44, ../sass/components/tables/_waiting-list-table.scss */
+/* line 47, ../sass/components/tables/_waiting-list-table.scss */
 .waiting-list tfoot .inline-list li * {
   display: inline-block;
 }
-/* line 50, ../sass/components/tables/_waiting-list-table.scss */
+/* line 53, ../sass/components/tables/_waiting-list-table.scss */
 .waiting-list tfoot .letters-sent-out li {
   line-height: 1.0625em;
 }
 
-/* line 63, ../sass/components/tables/_waiting-list-table.scss */
+/* line 66, ../sass/components/tables/_waiting-list-table.scss */
 .waiting-list-key {
   padding-top: 1.25em;
 }
-/* line 65, ../sass/components/tables/_waiting-list-table.scss */
+/* line 68, ../sass/components/tables/_waiting-list-table.scss */
 .waiting-list-key .key-box {
   width: 10px;
   height: 10px;
   border: 1px solid #999999;
   display: inline-block;
 }
-/* line 72, ../sass/components/tables/_waiting-list-table.scss */
+/* line 75, ../sass/components/tables/_waiting-list-table.scss */
 .waiting-list-key .inline-list li {
   font-size: 1em;
 }
