@@ -220,7 +220,7 @@ class WaitingListController extends BaseEventTypeController
 
 		if (isset($_REQUEST['event_id'])) {
 			$operations = Element_OphTrOperationbooking_Operation::model()->findAll('event_id=?',array($_REQUEST['event_id']));
-			$auto_confirm = false;
+			$auto_confirm = true;
 		} else {
 			$operation_ids = (isset($_REQUEST['operations'])) ? $_REQUEST['operations'] : null;
 			$auto_confirm = (isset($_REQUEST['confirm']) && $_REQUEST['confirm'] == 1);

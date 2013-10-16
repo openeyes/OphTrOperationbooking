@@ -50,11 +50,11 @@
 					<input type="hidden" name="OphTrOperationbooking_Operation_Sequence[week_selection_week3]" value="0" />
 					<input type="hidden" name="OphTrOperationbooking_Operation_Sequence[week_selection_week4]" value="0" />
 					<input type="hidden" name="OphTrOperationbooking_Operation_Sequence[week_selection_week5]" value="0" />
-					<input type="checkbox" name="OphTrOperationbooking_Operation_Sequence[week_selection_week1]" value="1" />1st&nbsp;
-					<input type="checkbox" name="OphTrOperationbooking_Operation_Sequence[week_selection_week2]" value="1" />2nd&nbsp;
-					<input type="checkbox" name="OphTrOperationbooking_Operation_Sequence[week_selection_week3]" value="1" />3rd&nbsp;
-					<input type="checkbox" name="OphTrOperationbooking_Operation_Sequence[week_selection_week4]" value="1" />4th&nbsp;
-					<input type="checkbox" name="OphTrOperationbooking_Operation_Sequence[week_selection_week5]" value="1" />5th
+					<input type="checkbox" name="OphTrOperationbooking_Operation_Sequence[week_selection_week1]" value="1" <?php if ($sequence->week_selection & 1) {?> checked="checked"<?php }?>/>1st&nbsp;
+					<input type="checkbox" name="OphTrOperationbooking_Operation_Sequence[week_selection_week2]" value="1" <?php if ($sequence->week_selection & 2) {?> checked="checked"<?php }?>/>2nd&nbsp;
+					<input type="checkbox" name="OphTrOperationbooking_Operation_Sequence[week_selection_week3]" value="1" <?php if ($sequence->week_selection & 4) {?> checked="checked"<?php }?>/>3rd&nbsp;
+					<input type="checkbox" name="OphTrOperationbooking_Operation_Sequence[week_selection_week4]" value="1" <?php if ($sequence->week_selection & 8) {?> checked="checked"<?php }?>/>4th&nbsp;
+					<input type="checkbox" name="OphTrOperationbooking_Operation_Sequence[week_selection_week5]" value="1" <?php if ($sequence->week_selection & 16) {?> checked="checked"<?php }?>/>5th
 				</div>
 			</div>
 			<?php $this->endWidget()?>
