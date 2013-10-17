@@ -112,12 +112,12 @@ class DefaultController extends BaseEventTypeController
 
 		$this->processJsVars();
 
-		$this->renderPartial('cancel', array(
-				'operation' => $operation,
-				'patient' => $operation->event->episode->patient,
-				'date' => $operation->minDate,
-				'errors' => $errors
-			), false, true);
+		$this->render('cancel', array(
+			'operation' => $operation,
+			'patient' => $operation->event->episode->patient,
+			'date' => $operation->minDate,
+			'errors' => $errors
+		));
 	}
 
 	public function actionAdmissionLetter($id)
