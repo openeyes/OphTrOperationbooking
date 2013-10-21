@@ -207,7 +207,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 			return false;
 		}
 
-		if ($operation->event->episode->patient->isChild() && !$this->paediatric) {
+		if ($operation->event->episode->patient->isChild($this->date) && !$this->paediatric) {
 			return false;
 		}
 
@@ -236,7 +236,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 			return "The operation requires a consultant, this session doesn't have one and so cannot be booked into.";
 		}
 
-		if ($operation->event->episode->patient->isChild() && !$this->paediatric) {
+		if ($operation->event->episode->patient->isChild($this->date) && !$this->paediatric) {
 			return "The operation is for a paediatric patient, this session isn't paediatric and so cannot be booked into.";
 		}
 
@@ -268,7 +268,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 			if ($booking->operation->consultant_required && !$this->consultant) {
 				$this->addError('consultant','One or more active bookings require a consultant');
 			}
-			if ($booking->operation->event && $booking->operation->event->episode->patient->isChild() && !$this->paediatric) {
+			if ($booking->operation->event && $booking->operation->event->episode->patient->isChild($this->date) && !$this->paediatric) {
 				$this->addError('paediatric','One or more active bookings are for a child');
 			}
 			if ($booking->operation->anaesthetic_type->name == 'GA' && !$this->general_anaesthetic) {

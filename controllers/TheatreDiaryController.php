@@ -605,6 +605,7 @@ class TheatreDiaryController extends BaseEventTypeController
 
 				$criteria = new CDbCriteria;
 				$criteria->addCondition('session.id = :sessionId and booking.booking_cancellation_date is null and patient.dob >= :ageLimitDate');
+				// TODO: Need to take session date into account for patient age
 				$criteria->params[':ageLimitDate'] = date('Y')-$child_age.date('-m-d',time()+86400);
 				$criteria->params[':sessionId'] = $session->id;
 				$criteria->addInCondition('`t`.status_id',array(2,4));

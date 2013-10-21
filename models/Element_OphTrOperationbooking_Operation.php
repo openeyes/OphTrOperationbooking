@@ -679,7 +679,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 
 			$genderRestrict = $ageRestrict = 0;
 			$genderRestrict = ('M' == $patient->gender) ? OphTrOperationbooking_Operation_Ward::RESTRICTION_MALE : OphTrOperationbooking_Operation_Ward::RESTRICTION_FEMALE;
-			$ageRestrict = ($patient->isChild()) ? OphTrOperationbooking_Operation_Ward::RESTRICTION_CHILD : OphTrOperationbooking_Operation_Ward::RESTRICTION_ADULT;
+			$ageRestrict = ($patient->isChild($session->date)) ? OphTrOperationbooking_Operation_Ward::RESTRICTION_CHILD : OphTrOperationbooking_Operation_Ward::RESTRICTION_ADULT;
 
 			$criteria = new CDbCriteria;
 			$criteria->addCondition('`t`.site_id = :siteId');
@@ -715,10 +715,11 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			$criteria->addCondition('`t`.consultant = :one');
 		}
 
-		if ($this->event->episode->patient->isChild()) {
+		$session = OphTrOperationbooking_Operation_Session::model()->findByPk($booking_session_id);
+
+		if ($this->event->episode->patient->isChild($session->date)) {
 			$criteria->addCondition('`t`.paediatric = :one');
 
-			$session = OphTrOperationbooking_Operation_Session::model()->findByPk($booking_session_id);
 
 			if ($session->firm) {
 				if (!$session->firm->serviceSubspecialtyAssignment) {
@@ -1049,7 +1050,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		$subspecialty_id = $this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty_id;
 		$theatre_id = $this->booking->session->theatre_id;
 		$firm_id = $this->booking->session->firm_id;
-		$is_child = $this->event->episode->patient->isChild();
+		$is_child = $this->event->episode->patient->isChild($this->booking->session->date);
 
 		$criteria = new CDbCriteria;
 		$criteria->addCondition('parent_rule_id is null');
