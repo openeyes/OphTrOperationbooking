@@ -43,7 +43,7 @@ class OphTrOperationbooking_API extends BaseAPI
 	 *  @params integer $episode_id
 	 *  @return OphTrOperationbooking_Operation_Booking[]
 	 */
-	public function getOpenBookingsForEpisode($episode_id)
+	public function getOpenBookingsForEpisode($episode_id, $until=false)
 	{
 		$criteria = new CDbCriteria;
 		$criteria->order = 'event.created_date asc';
@@ -53,11 +53,25 @@ class OphTrOperationbooking_API extends BaseAPI
 		$status_scheduled = OphTrOperationbooking_Operation_Status::model()->find('name=?',array('Scheduled'));
 		$status_rescheduled = OphTrOperationbooking_Operation_Status::model()->find('name=?',array('Rescheduled'));
 
+		$condition = "episode_id = :episode_id and status_id in (:scheduled,:rescheduled)";
+
+		$params = array(
+			':episode_id' => $episode_id,
+			':scheduled' => $status_scheduled->id,
+			':rescheduled' => $status_rescheduled->id,
+		);
+
+		if ($until) {
+			$condition .= " and t.session_date <= :until";
+			$params[':until'] = $until;
+		}
+
 		return OphTrOperationbooking_Operation_Booking::model()
 			->with('session')
 			->with(array(
 				'operation' => array(
-					'condition' => "episode_id = $episode_id and status_id in ($status_scheduled->id,$status_rescheduled->id)",
+					'condition' => $condition,
+					'params' => $params,
 					'with' => 'event'
 				)
 			))
