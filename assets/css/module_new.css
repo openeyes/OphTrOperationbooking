@@ -200,19 +200,19 @@
 }
 
 /* line 2, ../sass/components/_event.scss */
-.event.booking {
+.event.ophtroperationbooking {
   border-color: #fd6892;
 }
 /* line 4, ../sass/components/_event.scss */
-.event.booking .event-title {
-  background: url('../img/new/medium.png?1379063967') no-repeat left center;
+.event.ophtroperationbooking .event-title {
+  background: url('../img/new/medium.png?1382093883') no-repeat left center;
 }
 /* line 7, ../sass/components/_event.scss */
-.event.booking .event-content {
-  background-image: url('../img/new/watermark.png?1379063967');
+.event.ophtroperationbooking .event-content {
+  background-image: url('../img/new/watermark.png?1382093883');
 }
 /* line 11, ../sass/components/_event.scss */
-.event.booking.schedule .event-title {
+.event.ophtroperationbooking.schedule .event-title {
   background: none;
   padding-left: 0;
 }
