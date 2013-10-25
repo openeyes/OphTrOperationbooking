@@ -1,0 +1,12 @@
+table {
+	&.transport {
+		.status {
+			&.Red {
+				background-color: #F08A6F;
+			}
+			&.Green {
+				background-color: #B8EAA6;
+			}
+		}
+	}
+}

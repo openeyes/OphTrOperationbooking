@@ -126,6 +126,15 @@
   border-radius: 5px;
 }
 
+/* line 4, ../sass/components/tables/_transport-table.scss */
+table.transport .status.Red {
+  background-color: #F08A6F;
+}
+/* line 7, ../sass/components/tables/_transport-table.scss */
+table.transport .status.Green {
+  background-color: #B8EAA6;
+}
+
 /* line 7, ../sass/components/panels/_theatre-booking-heading-panel.scss */
 .panel.theatre-booking-heading {
   background: #fafafa;
