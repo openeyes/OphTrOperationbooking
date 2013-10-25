@@ -35,7 +35,6 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 		//disable foreign keys check
 		Yii::app()->cache->flush();
 		$this->execute("SET foreign_key_checks = 0");
-		$this->execute("SET foreign_key_checks = 0");
 
 		$event_type_id = $this->insertOEEventType( 'Operation booking', 'OphTrOperationbooking', 'Tr');
 		$this->insertOEElementType($this->element_types , $event_type_id);
