@@ -20,6 +20,7 @@
 class TheatreDiaryController extends BaseEventTypeController
 {
 	public $layout='//layouts/main';
+	public $renderPatientPanel = false;
 
 	public function accessRules()
 	{

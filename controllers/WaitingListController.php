@@ -19,6 +19,8 @@
 
 class WaitingListController extends BaseEventTypeController
 {
+	public $renderPatientPanel = false;
+
 	public function accessRules()
 	{
 		return array(
