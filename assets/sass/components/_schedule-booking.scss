@@ -1,6 +1,37 @@
 /* FIXME */
 
+.ophtroperationbooking {
+	.schedule {
+		.eventDetail {
+			background: #dae6f1;
+			padding: 10px;
+		}
+	}
+}
+
 #operation {
+
+	h3 {
+		padding: 10px 10px 0 10px;
+		margin: 0;
+	}
+	h4 {
+		color: #56a7f1;
+		font-size: 13px;
+		padding: 5px 10px 0 10px;
+		margin-bottom: 5px;
+		font-weight: bold;
+	}
+	form {
+		h4 {
+			color: #56a7f1;
+			font-size: 13px;
+			font-style: italic;
+			border-top: 1px dotted #97c6f1;
+			padding: 10px 10px 0 10px;
+			margin-bottom: 10px;
+		}
+	}
 	#dates {
 		background: #dae6f1;
 		width: 100%;
@@ -136,7 +167,6 @@
 		}
 	}
 }
-
 
 /* theatres */
 
