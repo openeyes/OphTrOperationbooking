@@ -376,9 +376,14 @@ function getDiary() {
 		$.ajax({
 			'url': baseUrl+'/OphTrOperationbooking/theatreDiary/search',
 			'type': 'POST',
+			'dataType': 'json',
 			'data': searchData,
 			'success': function(data) {
-				$('#theatreList').html(data);
+				if (data['status'] == 'success') {
+					$('#theatreList').html(data['data']);
+				} else {
+					$('#theatreList').html('<h3 class="theatre firstTheatre">'+data['message']+'</h3>');
+				}
 				enableButtons();
 				return false;
 			},
