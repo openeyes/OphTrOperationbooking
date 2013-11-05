@@ -361,11 +361,15 @@ $(document).ready(function() {
 });
 
 function getDiary() {
+
 	var button = $('#theatre-filter button[type="submit"]');
+	var loadingMessage = $('#theatre-search-loading');
+	var noResultsMessage = $('#theatre-search-no-results');
 
 	if (!button.hasClass('inactive')) {
 		disableButtons();
-		$('#theatreList').html('<h3 class="theatre firstTheatre">Please wait...</h3>');
+		loadingMessage.show();
+		noResultsMessage.hide();
 
 		searchData = $('#theatre-filter').serialize()+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN;
 
@@ -382,6 +386,9 @@ function getDiary() {
 				}
 				enableButtons();
 				return false;
+			},
+			complete: function() {
+				loadingMessage.hide();
 			}
 		});
 	}
@@ -464,20 +471,33 @@ function theatreDiaryIconHovers() {
 	var tipWidth = 0;
 
 	$('.alerts img').hover(function(e){
-		var titleText = $(this).attr('title');
-		$(this).data('tipText',titleText).removeAttr('title');
 
-		$('<p class="alertIconHelp"></p>').text(titleText).appendTo('body');
-		$('<img />').attr({width:'17',height:'17',src:$(this).attr('src')}).prependTo('.alertIconHelp');
-		tipWidth = $('.alertIconHelp').outerWidth();
-		$('.alertIconHelp').css('top', (e.pageY - offsetY) + 'px').css('left', (e.pageX - (tipWidth + offsetX)) + 'px').fadeIn('fast');
+		var img = $(this);
+		var titleText = $(this).attr('title');
+		var tooltip = $('<div class="tooltip alerts"></div>').appendTo('body');
+
+		img.data({
+			'tipText': titleText,
+			'tooltip': tooltip
+		});
+		img.removeAttr('title');
+
+		tooltip.text(' ' + titleText);
+
+		$('<img />').attr({
+				width:'17',
+				height:'17',
+				src:img.attr('src')
+		}).prependTo(tooltip);
+
+		tipWidth = tooltip.outerWidth();
+		tooltip.css('top', (e.pageY - offsetY) + 'px').css('left', (e.pageX - (tipWidth + offsetX)) + 'px').fadeIn('fast');
 
 	},function(e){
 		$(this).attr('title',$(this).data('tipText'));
-		$('.alertIconHelp').remove();
-
+		$(this).data('tooltip').remove();
 	}).mousemove(function(e) {
-		$('.alertIconHelp')
+		$(this).data('tooltip')
 			.css('top', (e.pageY - offsetY) + 'px')
 			.css('left', (e.pageX - (tipWidth + offsetX)) + 'px');
 	});
