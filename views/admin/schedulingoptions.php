@@ -1,4 +1,3 @@
-<?php /* DEPRECATED */ ?>
 <?php
 /**
  * OpenEyes
@@ -18,40 +17,38 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-<div class="report curvybox white">
-	<div class="reportInputs">
-		<h3 class="georgia">Scheduling options</h3>
-		<div>
-			<form id="admin_schedulingoptions">
-				<ul class="grid reduceheight">
-					<li class="header">
-						<span class="column_checkbox"><input type="checkbox" id="checkall" class="scheduleoptions" /></span>
-						<span class="column_name">Name</span>
-					</li>
-					<div class="sortable">
-						<?php
-						$criteria = new CDbCriteria;
-						$criteria->order = "display_order asc";
-						foreach (OphTrOperationbooking_ScheduleOperation_Options::model()->findAll() as $i => $scheduleoption) {?>
-							<li class="<?php if ($i%2 == 0) {?>even<?php } else {?>odd<?php }?>" data-attr-id="<?php echo $scheduleoption->id?>">
-								<span class="column_checkbox"><input type="checkbox" name="scheduleoption[]" value="<?php echo $scheduleoption->id?>" class="scheduleoptions" /></span>
-								<span class="column_name"><?php echo $scheduleoption->name?></span>
-							</li>
-						<?php }?>
-					</div>
-				</ul>
-			</form>
-		</div>
-	</div>
+<div class="box admin">
+	<h2>Scheduling options</h2>
+	<form id="admin_schedulingoptions">
+		<table class="grid">
+			<thead>
+			<tr>
+				<th><input type="checkbox" id="checkall" class="scheduleoptions" /></th>
+				<th>Name</th>
+			</tr>
+			</thead>
+			<tbody>
+			<?php
+			$criteria = new CDbCriteria;
+			$criteria->order = "display_order asc";
+			foreach (OphTrOperationbooking_ScheduleOperation_Options::model()->findAll() as $i => $scheduleoption) {?>
+				<tr class="clickable sortable" data-attr-id="<?php echo $scheduleoption->id?>?>" data-uri="OphTrOperationbooking/admin/editschedulingoption/<?php echo $scheduleoption->id?>">
+					<td><input type="checkbox" name="scheduleoption[]" value="<?php echo $scheduleoption->id?>" class="scheduleoptions" /></td>
+					<td><?php echo $scheduleoption->name?></td>
+				</tr>
+			<?php }?>
+			</tbody>
+		</table>
+	</form>
 </div>
-<div>
-	<?php echo EventAction::button('Add', 'add_scheduleoption', array('colour' => 'blue'))->toHtml()?>
-	<?php echo EventAction::button('Delete', 'delete_scheduleoption', array('colour' => 'blue'))->toHtml()?>
-</div>
+
+<?php echo EventAction::button('Add', 'add_scheduleoption', null,array('class'=>'button small'))->toHtml()?>&nbsp;
+<?php echo EventAction::button('Delete', 'delete_scheduleoption', array('level' => 'warning'),array('class'=>'button small'))->toHtml()?>
+
 <div id="confirm_delete_scheduleoptions" title="Confirm delete scheduleoption" style="display: none;">
 	<div>
 		<div id="delete_scheduleoptions">
-			<div class="alertBox" style="margin-top: 10px; margin-bottom: 15px;">
+			<div class="alert-box alert with-icon">
 				<strong>WARNING: This will remove the scheduleoptions from the system.<br/>This action cannot be undone.</strong>
 			</div>
 			<p>

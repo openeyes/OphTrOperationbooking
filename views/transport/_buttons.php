@@ -16,28 +16,17 @@
  * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
-
-if (empty($diary)) {?>
-	<div class="row" id="theatre-search-no-results">
-		<div class="large-12 column">
-			<div class="alert-box"><strong>No theatre schedules match your search criteria.</strong></div>
-		</div>
-	</div>
-<?php } else {
-	foreach ($diary as $theatre) {?>
-		<div class="row">
-			<div class="large-12 column">
-				<h2><?php echo $theatre->name?> (<?php echo $theatre->site->name?>)</h2>
-			</div>
-		</div>
-		<?php foreach ($theatre->sessions as $session) {
-			$this->renderPartial('_session',array('session'=>$session, 'theatre'=>$theatre, 'assetPath'=>$assetPath));
-		}
-	}
-}
 ?>
-<script type="text/javascript">
-	$(document).ready(function() {
-		theatreDiaryIconHovers();
-	});
-</script>
+<?php if (BaseController::checkUserLevel(4)) { ?>
+	<button type="submit" class="btn_transport_confirm">
+		Confirm
+	</button>
+<?php } ?>
+<?php if ($this->canPrint()) { ?>
+	<button type="submit" class="btn_transport_print">
+		Print list
+	</button>
+	<button type="submit" class="btn_transport_download">
+		Download CSV
+	</button>
+<?php } ?>

@@ -1,4 +1,3 @@
-<?php /* DEPRECATED */ ?>
 <?php
 /**
  * OpenEyes
@@ -19,47 +18,43 @@
  */
 
 ?>
-<div class="curvybox white">
-	<div class="admin">
-		<h3 class="georgia"><?php echo $rule->id ? 'Edit' : 'Add'?> letter contact rule</h3>
-		<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
+<div class="box admin">
+	<h2><?php echo $rule->id ? 'Edit' : 'Add'?> letter contact rule</h2>
+	<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
+	<?php
+	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
+			'id'=>'adminform',
+			'enableAjaxValidation'=>false,
+			'focus'=>'#contactname'
+		))?>
+	<?php echo $form->dropDownList($rule,'parent_rule_id',CHtml::listData(OphTrOperationbooking_Letter_Contact_Rule::model()->getListAsTree(),'id','treeName'),array('empty'=>'- None -'))?>
+	<?php echo $form->textField($rule,'rule_order')?>
+	<?php echo $form->dropDownList($rule,'site_id',CHtml::listData(Site::model()->findAll(array('order'=>'name asc','condition'=>'institution_id = 1')),'id','name'),array('empty'=>'- Not set -'))?>
+	<?php echo $form->dropDownList($rule,'firm_id',Firm::model()->getListWithSpecialties(),array('empty'=>'- Not set -'))?>
+	<?php echo $form->dropDownList($rule,'subspecialty_id',CHtml::listData(Subspecialty::model()->findAllByCurrentSpecialty(),'id','name'),array('empty'=>'- Not set -'))?>
+	<?php echo $form->dropDownList($rule,'theatre_id',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Not set -'))?>
+	<?php echo $form->textField($rule,'refuse_telephone',array('size'=>20))?>
+	<?php echo $form->textField($rule,'refuse_title',array('size'=>90))?>
+	<?php echo $form->textField($rule,'health_telephone',array('size'=>90))?>
+	<?php $this->endWidget()?>
+	<?php if ($rule->children) {?>
 		<div>
+			<p style="font-size: 13px; margin: 0; padding: 0; margin-top: 10px; margin-bottom: 10px;"><strong>Descendants</strong></p>
 			<?php
-			$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-				'id'=>'adminform',
-				'enableAjaxValidation'=>false,
-				'htmlOptions' => array('class'=>'sliding'),
-				'focus'=>'#contactname'
-			))?>
-			<?php echo $form->dropDownList($rule,'parent_rule_id',CHtml::listData(OphTrOperationbooking_Letter_Contact_Rule::model()->getListAsTree(),'id','treeName'),array('empty'=>'- None -'))?>
-			<?php echo $form->textField($rule,'rule_order')?>
-			<?php echo $form->dropDownList($rule,'site_id',CHtml::listData(Site::model()->findAll(array('order'=>'name asc','condition'=>'institution_id = 1')),'id','name'),array('empty'=>'- Not set -'))?>
-			<?php echo $form->dropDownList($rule,'firm_id',Firm::model()->getListWithSpecialties(),array('empty'=>'- Not set -'))?>
-			<?php echo $form->dropDownList($rule,'subspecialty_id',CHtml::listData(Subspecialty::model()->findAllByCurrentSpecialty(),'id','name'),array('empty'=>'- Not set -'))?>
-			<?php echo $form->dropDownList($rule,'theatre_id',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Not set -'))?>
-			<?php echo $form->textField($rule,'refuse_telephone',array('size'=>20))?>
-			<?php echo $form->textField($rule,'refuse_title',array('size'=>90))?>
-			<?php echo $form->textField($rule,'health_telephone',array('size'=>90))?>
-			<?php $this->endWidget()?>
-		</div>
-		<?php if ($rule->children) {?>
-			<div>
-				<p style="font-size: 13px; margin: 0; padding: 0; margin-top: 10px; margin-bottom: 10px;"><strong>Descendants</strong></p>
-				<?php
-				$this->widget('CTreeView',array(
+			$this->widget('CTreeView',array(
 					'data' => OphTrOperationbooking_Letter_Contact_Rule::model()->findAllAsTree($rule,true,'textPlain'),
 				))?>
-			</div>
-		<?php }?>
-	</div>
+		</div>
+	<?php }?>
 </div>
+
 <?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
-<div>
-	<?php echo EventAction::button('Save', 'save', array('colour' => 'green'))->toHtml()?>
-	<?php echo EventAction::button('Cancel', 'cancel', array('colour' => 'red'))->toHtml()?>
-	<?php if ($rule->id) echo EventAction::button('Delete', 'delete', array('colour' => 'blue'))->toHtml()?>
-	<img class="loader" src="<?php echo Yii::app()->createUrl('/img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
-</div>
+
+<?php echo EventAction::button('Save', 'save', array('level' => 'primary'), array('class' => 'button small'))->toHtml()?>&nbsp;
+<?php echo EventAction::button('Cancel', 'cancel', array('level' => 'warning'), array('class' => 'button small'))->toHtml()?>&nbsp;
+<?php if ($rule->id) echo EventAction::button('Delete', 'delete', null, array('class' => 'button small'))->toHtml()?>
+<img class="loader" src="<?php echo Yii::app()->createUrl('/img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
+
 <script type="text/javascript">
 	handleButton($('#et_cancel'),function() {
 		window.location.href = baseUrl+'/OphTrOperationbooking/admin/view'+OE_rule_model+'s';

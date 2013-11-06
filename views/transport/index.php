@@ -1,4 +1,3 @@
-<?php /* DEPRECATED */ ?>
 <?php
 /**
  * OpenEyes
@@ -18,77 +17,96 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-<h2>Transport</h2>
+<h1 class="badge">Transport</h1>
 
-<div class="fullWidth fullBox clearfix">
-	<div id="waitinglist_display">
-		<h3>TCIs for today onwards.</h3>
-		<?php if ($this->canPrint()) { ?>
-		<button type="submit" class="classy blue venti btn_transport_download" style="margin-right: 10px; margin-top: 20px; margin-bottom: 20px; float: right; z-index: 1"><span class="button-span button-span-blue">Download CSV</span></button>
-		<button type="submit" class="classy blue tall btn_transport_print" style="margin-right: 10px; margin-top: 20px; margin-bottom: 20px; float: right; z-index: 1"><span class="button-span button-span-blue">Print list</span></button>
-		<?php } ?>
-		<?php if (BaseController::checkUserLevel(4)) { ?>
-		<button type="submit" class="classy blue tall btn_transport_confirm" style="margin-right: 10px; margin-top: 20px; margin-bottom: 20px; float: right; z-index: 1"><span class="button-span button-span-blue">Confirm</span></button>
-		<?php } ?>
+<div class="box content">
+	<div class="row">
+		<div class="large-12 column">
+			<h2>TCIs for today onwards.</h2>
 
-		<div id="searchResults" class="whiteBox">
-			<form id="transport_form" method="post" action="<?php echo Yii::app()->createUrl('/OphTrOperationbooking/transport/index')?>">
-				<label for="transport_date_from">
-					From:
-				</label>
-				<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-					'name' => 'transport_date_from',
-					'id' => 'transport_date_from',
-					'options' => array(
-						'showAnim'=>'fold',
-						'dateFormat'=>Helper::NHS_DATE_FORMAT_JS
-					),
-					'value' => @$_GET['date_from'],
-					'htmlOptions' => array('style' => "width: 95px;"),
-				))?>
-				<label for="transport_date_to">
-					To:
-				</label>
-				<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-					'name' => 'transport_date_to',
-					'id' => 'transport_date_to',
-					'options' => array(
-						'showAnim'=>'fold',
-						'dateFormat'=>Helper::NHS_DATE_FORMAT_JS
-					),
-					'value' => @$_GET['date_to'],
-					'htmlOptions' => array('style' => "width: 95px;"),
-				))?>
-				<button type="submit" class="classy blue mini btn_transport_filter"><span class="button-span button-span-blue">Filter</span></button>
-				<button type="submit" class="classy blue mini btn_transport_viewall"><span class="button-span button-span-blue">View all</span></button>
-				<img src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" class="loader" style="display: none;" />
-				<div style="height: 0.4em;"></div>
-				<label>
-					Include:
-				</label>
-				&nbsp;
-				<input type="checkbox" name="include_bookings" id="include_bookings" class="filter" value="1"<?php if (@$_GET['include_bookings']) {?> checked="checked"<?php }?> /> Bookings
-				<input type="checkbox" name="include_reschedules" id="include_reschedules" class="filter" value="1"<?php if (@$_GET['include_reschedules']) {?> checked="checked"<?php }?> /> Reschedules
-				<input type="checkbox" name="include_cancellations" id="include_cancellations" class="filter" value="1"<?php if (@$_GET['include_cancellations']) {?> checked="checked"<?php }?> /> Cancellations
-			</form>
-			<form id="csvform" method="post" action="<?php echo Yii::app()->createUrl('/OphTrOperationbooking/transport/downloadcsv')?>">
-				<input type="hidden" name="YII_CSRF_TOKEN" value="<?php echo Yii::app()->request->csrfToken; ?>" />
-				<input type="hidden" name="date_from" value="<?php echo @$_GET['date_from']?>" />
-				<input type="hidden" name="date_to" value="<?php echo @$_GET['date_to']?>" />
-				<input type="hidden" name="include_bookings" value="<?php echo (@$_GET['include_bookings'] ? 1 : 0)?>" />
-				<input type="hidden" name="include_reschedules" value="<?php echo (@$_GET['include_reschedules'] ? 1 : 0)?>" />
-				<input type="hidden" name="include_cancellations" value="<?php echo (@$_GET['include_cancellations'] ? 1 : 0)?>" />
-			</form>
-			<div id="transport_data">
-				<?php echo $this->renderPartial('/transport/_list_header')?>
+			<div class="box generic transport">
+
+				<div class="row">
+					<div class="large-6 column date-filter">
+						<form id="transport_form" method="post" action="<?php echo Yii::app()->createUrl('/OphTrOperationbooking/transport/index')?>">
+							<div class="field-row">
+								<label for="transport_date_from" class="inline align">
+									From:
+								</label>
+								<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+									'name' => 'transport_date_from',
+									'id' => 'transport_date_from',
+									'options' => array(
+										'showAnim'=>'fold',
+										'dateFormat'=>Helper::NHS_DATE_FORMAT_JS
+									),
+									'value' => @$_GET['date_from'],
+									'htmlOptions' => array('class' => "inline fixed-width"),
+								))?>
+								<label for="transport_date_to" class="inline align">
+									To:
+								</label>
+								<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+									'name' => 'transport_date_to',
+									'id' => 'transport_date_to',
+									'options' => array(
+										'showAnim'=>'fold',
+										'dateFormat'=>Helper::NHS_DATE_FORMAT_JS
+									),
+									'value' => @$_GET['date_to'],
+									'htmlOptions' => array('class' => 'inline fixed-width'),
+								))?>
+								<button type="submit" class="small btn_transport_filter">
+									Filter
+								</button>
+								<button type="submit" class="small btn_transport_viewall">
+									View all
+								</button>
+								<img src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" class="loader" style="display: none;" />
+							</div>
+							<div class="field-row">
+								<fieldset class="inline">
+									<legend>
+										Include:
+									</legend>
+									<label class="inline">
+										<input type="checkbox" name="include_bookings" id="include_bookings" class="filter" value="1"<?php if (@$_GET['include_bookings']) {?> checked="checked"<?php }?> />
+										Bookings
+									</label>
+									<label class="inline">
+										<input type="checkbox" name="include_reschedules" id="include_reschedules" class="filter" value="1"<?php if (@$_GET['include_reschedules']) {?> checked="checked"<?php }?> />
+										Reschedules
+									</label>
+									<label class="inline">
+										<input type="checkbox" name="include_cancellations" id="include_cancellations" class="filter" value="1"<?php if (@$_GET['include_cancellations']) {?> checked="checked"<?php }?> />
+										Cancellations
+									</label>
+								</fieldset>
+							</div>
+						</form>
+					</div>
+					<div class="large-6 column end text-right">
+						<?php echo $this->renderPartial('/transport/_buttons')?>
+					</div>
+				</div>
+
+				<div id="searchResults">
+					<form id="csvform" method="post" class="csvform" action="<?php echo Yii::app()->createUrl('/OphTrOperationbooking/transport/downloadcsv')?>">
+						<input type="hidden" name="YII_CSRF_TOKEN" value="<?php echo Yii::app()->request->csrfToken; ?>" />
+						<input type="hidden" name="date_from" value="<?php echo @$_GET['date_from']?>" />
+						<input type="hidden" name="date_to" value="<?php echo @$_GET['date_to']?>" />
+						<input type="hidden" name="include_bookings" value="<?php echo (@$_GET['include_bookings'] ? 1 : 0)?>" />
+						<input type="hidden" name="include_reschedules" value="<?php echo (@$_GET['include_reschedules'] ? 1 : 0)?>" />
+						<input type="hidden" name="include_cancellations" value="<?php echo (@$_GET['include_cancellations'] ? 1 : 0)?>" />
+					</form>
+					<div id="transport_data">
+						<?php echo $this->renderPartial('/transport/_list_header')?>
+					</div>
+				</div>
+				<div class="text-right">
+					<?php echo $this->renderPartial('/transport/_buttons')?>
+				</div>
 			</div>
 		</div>
-		<?php if ($this->canPrint()) { ?>
-		<button type="submit" class="classy blue venti btn_transport_download" style="margin-right: 10px; margin-top: 20px; margin-bottom: 20px; float: right;"><span class="button-span button-span-blue">Download CSV</span></button>
-		<button type="submit" class="classy blue tall btn_transport_print" style="margin-right: 10px; margin-top: 20px; margin-bottom: 20px; float: right;"><span class="button-span button-span-blue">Print list</span></button>
-		<?php } ?>
-		<?php if (BaseController::checkUserLevel(4)) { ?>
-		<button type="submit" class="classy blue tall btn_transport_confirm" style="margin-right: 10px; margin-top: 20px; margin-bottom: 20px; float: right;"><span class="button-span button-span-blue">Confirm</span></button>
-		<?php } ?>
 	</div>
 </div>

@@ -1,4 +1,3 @@
-<?php /* DEPRECATED */ ?>
 <?php
 /**
  * OpenEyes
@@ -19,71 +18,103 @@
  */
 
 ?>
-<div class="curvybox white">
-	<div class="admin">
-		<h3 class="georgia">Delete letter contact rule</h3>
-		<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
-		<div>
-			<?php
-			$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-				'id'=>'lcr_deleteform',
-				'enableAjaxValidation'=>false,
-				'htmlOptions' => array('class'=>'sliding'),
-				'focus'=>'#contactname'
-			))?>
-			<input type="hidden" name="delete" value="1" />
-			<div>
-				<span class="lcr_field"><?php echo $rule->getAttributeLabel('parent_rule_id')?>:</span>
-				<span><?php echo $rule->parent ? $rule->parent->treeName : 'None'?></span>
+<div class="box admin">
+	<h2>Delete letter contact rule</h2>
+	<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
+	<?php
+	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
+			'id'=>'lcr_deleteform',
+			'enableAjaxValidation'=>false,
+			'focus'=>'#contactname'
+		))?>
+	<input type="hidden" name="delete" value="1" />
+	<div class="element-data">
+		<div class="row data-row">
+			<div class="large-2 column">
+				<div class="data-label"><?php echo $rule->getAttributeLabel('parent_rule_id')?>:</div>
 			</div>
-			<div>
-				<span class="lcr_field"><?php echo $rule->getAttributeLabel('site_id')?>:</span>
-				<span><?php echo $rule->site ? $rule->site->name : 'Not set'?></span>
+			<div class="large-10 column">
+				<div class="data-value"><?php echo $rule->parent ? $rule->parent->treeName : 'None'?></div>
 			</div>
-			<div>
-				<span class="lcr_field"><?php echo $rule->getAttributeLabel('firm_id')?>:</span>
-				<span><?php echo $rule->firm ? $rule->firm->name : 'Not set'?></span>
-			</div>
-			<div>
-				<span class="lcr_field"><?php echo $rule->getAttributeLabel('subspecialty_id')?>:</span>
-				<span><?php echo $rule->subspecialty ? $rule->subspecialty->name : 'Not set'?></span>
-			</div>
-			<div>
-				<span class="lcr_field"><?php echo $rule->getAttributeLabel('theatre_id')?>:</span>
-				<span><?php echo $rule->theatre ? $rule->theatre->name : 'Not set'?></span>
-			</div>
-			<div>
-				<span class="lcr_field"><?php echo $rule->getAttributeLabel('refuse_telephone')?>:</span>
-				<span><?php echo $rule->refuse_telephone ? $rule->refuse_telephone : 'Not set'?></span>
-			</div>
-			<div>
-				<span class="lcr_field"><?php echo $rule->getAttributeLabel('refuse_title')?>:</span>
-				<span><?php echo $rule->refuse_title ? $rule->refuse_title : 'Not set'?></span>
-			</div>
-			<div>
-				<span class="lcr_field"><?php echo $rule->getAttributeLabel('health_telephone')?>:</span>
-				<span><?php echo $rule->health_telephone ? $rule->health_telephone : 'Not set'?></span>
-			</div>
-			<?php $this->endWidget()?>
 		</div>
-		<?php if ($rule->children) {?>
-			<div>
-				<p style="font-size: 15px; margin: 0; padding: 0; margin-top: 10px; margin-bottom: 10px;"><strong><span style="color: #f00;">WARNING:</span> this rule has one or more descendants, if you proceed these will all be deleted.</strong></p>
-				<?php
-				$this->widget('CTreeView',array(
-					'data' => OphTrOperationbooking_Letter_Contact_Rule::model()->findAllAsTree($rule,true,'textPlain'),
-				))?>
+		<div class="row data-row">
+			<div class="large-2 column">
+				<div class="data-label"><?php echo $rule->getAttributeLabel('site_id')?>:</div>
 			</div>
-		<?php }?>
-		<div>
-			<p style="font-size: 15px; margin: 0; padding: 0; margin-top: 10px; margin-bottom: 10px;"><strong>Are you sure you want to delete this rule<?php if ($rule->children) {?> and its descendants<?php }?>?</strong></p>
+			<div class="large-10 column">
+				<div class="data-value"><?php echo $rule->site ? $rule->site->name : 'Not set'?></div>
+			</div>
+		</div>
+		<div class="row data-row">
+			<div class="large-2 column">
+				<div class="data-label"><?php echo $rule->getAttributeLabel('firm_id')?>:</div>
+			</div>
+			<div class="large-10 column">
+				<div class="data-value"><?php echo $rule->firm ? $rule->firm->name : 'Not set'?></div>
+			</div>
+		</div>
+		<div class="row data-row">
+			<div class="large-2 column">
+				<div class="data-label"><?php echo $rule->getAttributeLabel('subspecialty_id')?>:</div>
+			</div>
+			<div class="large-10 column">
+				<div class="data-value"><?php echo $rule->subspecialty ? $rule->subspecialty->name : 'Not set'?></div>
+			</div>
+		</div>
+		<div class="row data-row">
+			<div class="large-2 column">
+				<div class="data-label"><?php echo $rule->getAttributeLabel('theatre_id')?>:</div>
+			</div>
+			<div class="large-10 column">
+				<div class="data-value"><?php echo $rule->theatre ? $rule->theatre->name : 'Not set'?></div>
+			</div>
+		</div>
+		<div class="row data-row">
+			<div class="large-2 column">
+				<div class="data-label"><?php echo $rule->getAttributeLabel('refuse_telephone')?>:</div>
+			</div>
+			<div class="large-10 column">
+				<div class="data-value"><?php echo $rule->refuse_telephone ? $rule->refuse_telephone : 'Not set'?></div>
+			</div>
+		</div>
+		<div class="row data-row">
+			<div class="large-2 column">
+				<div class="data-label"><?php echo $rule->getAttributeLabel('refuse_title')?>:</div>
+			</div>
+			<div class="large-10 column">
+				<div class="data-value"><?php echo $rule->refuse_title ? $rule->refuse_title : 'Not set'?></div>
+			</div>
+		</div>
+		<div class="row data-row">
+			<div class="large-2 column">
+				<div class="data-label"><?php echo $rule->getAttributeLabel('health_telephone')?>:</div>
+			</div>
+			<div class="large-10 column">
+				<div class="data-value"><?php echo $rule->health_telephone ? $rule->health_telephone : 'Not set'?></div>
+			</div>
 		</div>
 	</div>
+	<?php $this->endWidget()?>
+
+
+	<?php if ($rule->children) {?>
+		<div>
+			<p style="font-size: 15px; margin: 0; padding: 0; margin-top: 10px; margin-bottom: 10px;"><strong><span style="color: #f00;">WARNING:</span> this rule has one or more descendants, if you proceed these will all be deleted.</strong></p>
+			<?php
+			$this->widget('CTreeView',array(
+					'data' => OphTrOperationbooking_Letter_Contact_Rule::model()->findAllAsTree($rule,true,'textPlain'),
+				))?>
+		</div>
+	<?php }?>
 </div>
+<div>
+	<p style="font-size: 15px; margin: 0; padding: 0; margin-top: 10px; margin-bottom: 10px;"><strong>Are you sure you want to delete this rule<?php if ($rule->children) {?> and its descendants<?php }?>?</strong></p>
+</div>
+
 <?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
 <div>
-	<?php echo EventAction::button('Delete', 'delete', array('colour' => 'green'))->toHtml()?>
-	<?php echo EventAction::button('Cancel', 'cancel', array('colour' => 'red'))->toHtml()?>
+	<?php echo EventAction::button('Delete', 'delete', array('level' => 'warning'), array('class' => 'button small'))->toHtml()?>
+	<?php echo EventAction::button('Cancel', 'cancel', null, array('class' => 'button small'))->toHtml()?>
 	<img class="loader" src="<?php echo Yii::app()->createUrl('/img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 </div>
 <script type="text/javascript">

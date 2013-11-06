@@ -1,4 +1,3 @@
-<?php /* DEPRECATED */ ?>
 <?php
 /**
  * OpenEyes
@@ -18,46 +17,42 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-<div class="report curvybox white">
-	<div class="reportInputs">
-		<h3 class="georgia">Wards</h3>
-		<div>
-			<form id="admin_wards">
-				<ul class="grid reduceheight">
-					<li class="header">
-						<span class="column_checkbox"><input type="checkbox" id="checkall" class="wards" /></span>
-						<span class="column_site">Site</span>
-						<span class="column_name">Name</span>
-						<span class="column_code">Code</span>
-						<span class="column_restrictions">Restrictions</span>
-					</li>
-					<div class="sortable">
-						<?php
-						$criteria = new CDbCriteria;
-						$criteria->order = "display_order asc";
-						foreach (OphTrOperationbooking_Operation_Ward::model()->findAll() as $i => $ward) {?>
-							<li class="<?php if ($i%2 == 0) {?>even<?php } else {?>odd<?php }?>" data-attr-id="<?php echo $ward->id?>">
-								<span class="column_checkbox"><input type="checkbox" name="ward[]" value="<?php echo $ward->id?>" class="wards" /></span>
-								<span class="column_site"><?php echo $ward->site->name?></span>
-								<span class="column_name"><?php echo $ward->name?></span>
-								<span class="column_code"><?php echo $ward->code?>&nbsp;</span>
-								<span class="column_restrictions"><?php echo $ward->restrictionText?></span>
-							</li>
-						<?php }?>
-					</div>
-				</ul>
-			</form>
-		</div>
-	</div>
+<div class="box admin">
+	<h2>Wards</h2>
+	<form id="admin_wards" class="panel">
+		<table class="grid">
+			<thead>
+			<tr>
+			<th><input type="checkbox" id="checkall" class="wards" /></th>
+			<th>Site</th>
+			<th>Name</th>
+			<th>Code</th>
+			<th>Restrictions</th>
+			</tr>
+			</thead>
+			<tbody>
+			<?php
+			$criteria = new CDbCriteria;
+			$criteria->order = "display_order asc";
+			foreach (OphTrOperationbooking_Operation_Ward::model()->findAll() as $i => $ward) {?>
+				<tr class="clickable sortable "<?php if ($i%2 == 0) {?>even<?php } else {?>odd<?php }?>" data-attr-id="<?php echo $ward->id?>">
+				<td><input type="checkbox" name="ward[]" value="<?php echo $ward->id?>" class="wards" /></td>
+				<td><?php echo $ward->site->name?></td>
+				<td><?php echo $ward->name?></td>
+				<td><?php echo $ward->code?>&nbsp;</td>
+				<td><?php echo $ward->restrictionText?></td>
+			<?php }?>
+			</tbody>
+		</table>
+		<?php echo EventAction::link('Add', '#', null, array('class' => 'small button', 'id'=>'et_add_ward'))->toHtml()?>
+		<?php echo EventAction::link('Delete', '#', null, array('class' => 'small button','id'=>'et_delete_ward'))->toHtml()?>
+	</form>
 </div>
-<div>
-	<?php echo EventAction::button('Add', 'add_ward', array('colour' => 'blue'))->toHtml()?>
-	<?php echo EventAction::button('Delete', 'delete_ward', array('colour' => 'blue'))->toHtml()?>
-</div>
+
 <div id="confirm_delete_wards" title="Confirm delete ward" style="display: none;">
 	<div>
 		<div id="delete_wards">
-			<div class="alertBox" style="margin-top: 10px; margin-bottom: 15px;">
+			<div class="alert-box alert with-icon">
 				<strong>WARNING: This will remove the wards from the system.<br/>This action cannot be undone.</strong>
 			</div>
 			<p>

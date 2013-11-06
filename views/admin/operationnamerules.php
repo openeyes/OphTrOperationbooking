@@ -1,4 +1,3 @@
-<?php /* DEPRECATED */ ?>
 <?php
 /**
  * OpenEyes
@@ -18,35 +17,33 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-<div class="report curvybox white">
-	<div class="reportInputs">
-		<h3 class="georgia">Operation name rules</h3>
-		<div>
-			<form id="operation_name_rules">
-				<ul class="grid reduceheight">
-					<li class="header">
-						<span class="column_checkbox"><input type="checkbox" id="checkall" class="operation_name_rules" /></span>
-						<span class="column_theatre">Theatre</span>
-						<span class="column_name">Operation name</span>
-					</li>
-					<div class="sortable">
-						<?php
-						$criteria = new CDbCriteria;
-						$criteria->order = "display_order asc";
-						foreach (OphTrOperationbooking_Operation_Name_Rule::model()->findAll() as $i => $rule) {?>
-							<li class="<?php if ($i%2 == 0) {?>even<?php } else {?>odd<?php }?>" data-attr-id="<?php echo $rule->id?>">
-								<span class="column_checkbox"><input type="checkbox" name="operation_name[]" value="<?php echo $rule->id?>" class="operation_name_rules" /></span>
-								<span class="column_theatre"><?php echo $rule->theatre->name?></span>
-								<span class="column_name"><?php echo $rule->name?></span>
-							</li>
-						<?php }?>
-					</div>
-				</ul>
-			</form>
-		</div>
-	</div>
+<div class="box admin">
+	<h2>Operation name rules</h2>
+	<form id="operation_name_rules">
+		<table class="grid">
+			<thead>
+			<tr>
+				<td><input type="checkbox" id="checkall" class="operation_name_rules" /></td>
+				<td>Theatre</td>
+				<td>Operation name</td>
+			</tr>
+			</thead>
+			<tbody>
+			<?php
+			$criteria = new CDbCriteria;
+			$criteria->order = "display_order asc";
+			foreach (OphTrOperationbooking_Operation_Name_Rule::model()->findAll() as $i => $rule) {?>
+				<tr class="clickable sortable" data-attr-id="<?php echo $rule->id?>?>" data-uri="OphTrOperationbooking/admin/editoperationnamerule/<?php echo $rule->id?>">
+					<td><input type="checkbox" name="operation_name[]" value="<?php echo $rule->id?>" class="operation_name_rules" /></td>
+					<td><?php echo $rule->theatre->name?></td>
+					<td><?php echo $rule->name?></td>
+				</tr>
+			<?php }?>
+			</tbody>
+		</table>
+	</form>
 </div>
-<div>
-	<?php echo EventAction::button('Add', 'add_operation_name_rule', array('colour' => 'blue'))->toHtml()?>
-	<?php echo EventAction::button('Delete', 'delete_operation_name_rule', array('colour' => 'blue'))->toHtml()?>
-</div>
+
+<?php echo EventAction::button('Add', 'add_operation_name_rule',null, array('class' => 'button small'))->toHtml()?>&nbsp;
+<?php echo EventAction::button('Delete', 'delete_operation_name_rule',array('level' => 'warning'), array('class' => 'button small'))->toHtml()?>
+

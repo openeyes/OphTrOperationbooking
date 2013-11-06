@@ -1,4 +1,3 @@
-<?php /* DEPRECATED */ ?>
 <?php
 /**
  * OpenEyes
@@ -19,58 +18,58 @@
  */
 
 ?>
-<div class="report curvybox white">
-	<div class="admin">
-		<h3 class="georgia"><?php echo $session->id ? 'Edit' : 'Add'?> session</h3>
-		<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
-		<div>
-			<?php
-			$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
+<div class="box admin">
+	<h2><?php echo $session->id ? 'Edit' : 'Add'?> session</h2>
+	<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
+	<div>
+		<?php
+		$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 				'id'=>'adminform',
 				'enableAjaxValidation'=>false,
-				'htmlOptions' => array('class'=>'sliding'),
 				'focus'=>'#username'
 			))?>
-			<?php if (!$session->id) {?>
-				<?php echo $form->textField($session,'sequence_id',array('size'=>10))?>
-			<?php }?>
-			<?php echo $form->dropDownList($session,'firm_id',Firm::model()->getListWithSpecialties(),array('empty'=>'- Emergency -'))?>
-			<?php echo $form->dropDownList($session,'theatre_id',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- None -'))?>
-			<?php if ($session->id) {?>
-				<div id="div_OphTrOperationbooking_Operation_Session_date" class="eventDetail">
-					<div class="label">Date:</div>
-					<div class="data">
-						<span class="label" style="margin-bottom: 0;"><?php echo $session->NHSDate('date')?></span>
-					</div>
+		<?php if (!$session->id) {?>
+			<?php echo $form->textField($session,'sequence_id',array('size'=>10))?>
+		<?php }?>
+		<?php echo $form->dropDownList($session,'firm_id',Firm::model()->getListWithSpecialties(),array('empty'=>'- Emergency -'))?>
+		<?php echo $form->dropDownList($session,'theatre_id',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- None -'))?>
+		<?php if ($session->id) {?>
+			<div id="div_OphTrOperationbooking_Operation_Session_date" class="row field-row">
+				<div class="large-2 column">
+					<label>Date:</label>
 				</div>
-			<?php } else {?>
-				<?php echo $form->datePicker($session,'date',array('size'=>10))?>
-			<?php }?>
-			<?php echo $form->textField($session,'start_time',array('size'=>10))?>
-			<?php echo $form->textField($session,'end_time',array('size'=>10))?>
-			<?php echo $form->radioBoolean($session,'consultant')?>
-			<?php echo $form->radioBoolean($session,'paediatric')?>
-			<?php echo $form->radioBoolean($session,'anaesthetist')?>
-			<?php echo $form->radioBoolean($session,'general_anaesthetic')?>
-			<?php echo $form->radioBoolean($session,'available')?>
-			<?php $this->endWidget()?>
-		</div>
+				<div class="large-5 column end">
+					<span class="label" style="margin-bottom: 0;"><?php echo $session->NHSDate('date')?></span>
+				</div>
+			</div>
+		<?php } else {?>
+			<?php echo $form->datePicker($session,'date',array('size'=>10))?>
+		<?php }?>
+		<?php echo $form->textField($session,'start_time',array('size'=>10))?>
+		<?php echo $form->textField($session,'end_time',array('size'=>10))?>
+		<?php echo $form->radioBoolean($session,'consultant')?>
+		<?php echo $form->radioBoolean($session,'paediatric')?>
+		<?php echo $form->radioBoolean($session,'anaesthetist')?>
+		<?php echo $form->radioBoolean($session,'general_anaesthetic')?>
+		<?php echo $form->radioBoolean($session,'available')?>
+		<?php $this->endWidget()?>
 	</div>
 </div>
+
 <?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
 <div>
-	<?php echo EventAction::button('Save', 'save', array('colour' => 'green'))->toHtml()?>
-	<?php echo EventAction::button('Cancel', 'cancel', array('colour' => 'red'))->toHtml()?>
+	<?php echo EventAction::button('Save', 'save', null , array('class' => 'small'))->toHtml()?>
+	<?php echo EventAction::button('Cancel', 'cancel', array('level' => 'warning'), array('class' => 'small'))->toHtml()?>
 	<?php if ($session->id) {?>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<?php echo EventAction::button('Delete session','delete_session',array('colour'=>'red'))->toHtml()?>
+		<?php echo EventAction::button('Delete session','delete_session',array('level' => 'warning'), array('class' => 'small'))->toHtml()?>
 	<?php }?>
 	<img class="loader" src="<?php echo Yii::app()->createUrl('/img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 </div>
 <div id="confirm_delete_session" title="Confirm delete session" style="display: none;">
 	<div>
 		<div id="delete_session">
-			<div class="alertBox" style="margin-top: 10px; margin-bottom: 15px;">
+			<div class="alert-box alert with-icon">
 				<strong>WARNING: This will remove the session from the system.<br/>This action cannot be undone.</strong>
 			</div>
 			<p>

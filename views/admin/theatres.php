@@ -1,4 +1,3 @@
-<?php /* DEPRECATED */ ?>
 <?php
 /**
  * OpenEyes
@@ -18,41 +17,41 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-<div class="report curvybox white">
-	<div class="reportInputs">
-		<h3 class="georgia">Theatres</h3>
-		<div>
-			<form id="theatres">
-				<ul class="grid reduceheight">
-					<li class="header">
-						<span class="column_checkbox"><input type="checkbox" id="checkall" class="theatres" /></span>
-						<span class="column_site">Site</span>
-						<span class="column_name">Name</span>
-						<span class="column_code">Code</span>
-						<span class="column_ward">Ward</span>
-					</li>
-					<div class="sortable">
-						<?php
-						$criteria = new CDbCriteria;
-						$criteria->order = "display_order asc";
-						foreach (OphTrOperationbooking_Operation_Theatre::model()->findAll() as $i => $theatre) {?>
-							<li class="<?php if ($i%2 == 0) {?>even<?php } else {?>odd<?php }?>" data-attr-id="<?php echo $theatre->id?>">
-								<span class="column_checkbox"><input type="checkbox" name="theatre[]" value="<?php echo $theatre->id?>" class="theatres" /></span>
-								<span class="column_site"><?php echo $theatre->site->name?></span>
-								<span class="column_name"><?php echo $theatre->name?></span>
-								<span class="column_code"><?php echo $theatre->code?></span>
-								<span class="column_ward"><?php echo $theatre->ward ? $theatre->ward->name : 'None'?></span>
-							</li>
-						<?php }?>
-					</div>
-				</ul>
-			</form>
-		</div>
+<div class="box admin">
+	<h2>Theatres</h2>
+	<div>
+		<form id="theatres">
+			<table class="grid">
+				<thead>
+				<tr>
+					<th><input type="checkbox" id="checkall" class="theatres" /></th>
+					<th>Site</th>
+					<th>Name</th>
+					<th>Code</th>
+					<th>Ward</th>
+				</tr>
+				</thead>
+				<tbody>
+				<?php
+				$criteria = new CDbCriteria;
+				$criteria->order = "display_order asc";
+				foreach (OphTrOperationbooking_Operation_Theatre::model()->findAll() as $i => $theatre) {?>
+					<tr class="clickable sortable" data-attr-id="<?php echo $theatre->id?>" data-uri="OphTrOperationbooking/admin/editTheatre/<?php echo $theatre->id?>">
+						<td><input type="checkbox" name="theatre[]" value="<?php echo $theatre->id?>" class="theatres" /></td>
+						<td><?php echo $theatre->site->name?></td>
+						<td><?php echo $theatre->name?></td>
+						<td><?php echo $theatre->code?></td>
+						<td><?php echo $theatre->ward ? $theatre->ward->name : 'None'?></td>
+					</tr>
+				<?php }?>
+				</tbody>
+			</table>
+		</form>
 	</div>
 </div>
 <div>
-	<?php echo EventAction::button('Add', 'add_theatre', array('colour' => 'blue'))->toHtml()?>
-	<?php echo EventAction::button('Delete', 'delete_theatre', array('colour' => 'blue'))->toHtml()?>
+	<?php echo EventAction::button('Add', 'add_theatre', null,array('class'=>'button small'))->toHtml()?>
+	<?php echo EventAction::button('Delete', 'delete_theatre', array('level' => 'warning'),array('class'=>'button small'))->toHtml()?>
 </div>
 <div id="confirm_delete_theatres" title="Confirm delete theatre" style="display: none;">
 	<div>

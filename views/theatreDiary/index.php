@@ -1,4 +1,3 @@
-<?php /* DEPRECATED */ ?>
 <?php
 /**
  * OpenEyes
@@ -19,119 +18,165 @@
  */
 
 ?>
-<h2>Theatre Schedules</h2>
+<h1 class="badge">Theatre Diaries</h1>
 
-<div class="fullWidth fullBox clearfix">
-	<div id="whiteBox">
-		<?php if ($this->canPrint()) {?>
-			<div style="float: right; margin-top: 4px; margin-right: 3px;">
-				<button type="submit" class="classy blue mini diaryViewMode" id="btn_print_diary"><span class="button-span button-span-blue">Print</span></button>
-				<button type="submit" class="classy blue mini diaryViewMode" id="btn_print_diary_list"><span class="button-span button-span-blue">Print list</span></button>
+<div class="box content">
+
+	<div class="panel panel actions row">
+
+		<div class="large-12 column">
+			<div class="label">
+				Use the filters below to view Theatre schedules:
 			</div>
-		<?php }?>
-		<p><strong>Use the filters below to view Theatre schedules:</strong></p>
+			<?php if ($this->canPrint()) {?>
+				<div class="button-bar">
+					<button id="btn_print_diary" class="small">Print</button>
+					<button id="btn_print_diary_list" class="small">Print list</button>
+				</div>
+			<?php }?>
+		</div>
 	</div>
 
-	<div id="theatre_display">
-		<?php $this->beginWidget('CActiveForm', array('id'=>'theatre-filter', 'action'=>Yii::app()->createUrl('/OphTrOperationbooking/theatre/search'), 'enableAjaxValidation'=>false))?>
-		<div id="search-options">
-			<div id="main-search" class="grid-view">
-				<h3>Search schedules by:</h3>
-					<table>
-						<tbody>
-						<tr>
-							<th>Site:</th>
-							<th>Theatre:</th>
-							<th>Subspecialty:</th>
-							<th>Firm:</th>
-							<th>Ward:</th>
-							<th>Emergency List:</th>
-						</tr>
-						<tr class="even">
-							<td>
-								<?php echo CHtml::dropDownList('site-id', @$_POST['site-id'], Site::model()->getListForCurrentInstitution(), array('empty'=>'All sites', 'disabled' => (@$_POST['emergency_list']==1 ? 'disabled' : '')))?>
-							</td>
-							<td>
-								<?php echo CHtml::dropDownList('theatre-id', @$_POST['theatre-id'], $theatres, array('empty'=>'All theatres', 'disabled' => (@$_POST['emergency_list']==1 ? 'disabled' : '')))?>
-							</td>
-							<td>
-								<?php echo CHtml::dropDownList('subspecialty-id', @$_POST['subspecialty-id'], Subspecialty::model()->getList(), array('empty'=>'All specialties', 'disabled' => (@$_POST['emergency_list']==1 ? 'disabled' : '')))?>
-							</td>
-							<td>
-								<?php if (!@$_POST['subspecialty-id']) {?>
-									<?php echo CHtml::dropDownList('firm-id', '', array(), array('empty'=>'All firms', 'disabled' => 'disabled'))?>
-								<?php } else {?>
-									<?php echo CHtml::dropDownList('firm-id', @$_POST['firm-id'], Firm::model()->getList(@$_POST['subspecialty-id']), array('empty'=>'All firms', 'disabled' => (@$_POST['emergency_list']==1 ? 'disabled' : '')))?>
-								<?php }?>
-							</td>
-							<td>
-								<?php echo CHtml::dropDownList('ward-id', @$_POST['ward-id'], $wards, array('empty'=>'All wards', 'disabled' => (@$_POST['emergency_list']==1 ? 'disabled' : '')))?>
-							</td>
-							<td>
-								<?php echo CHtml::checkBox('emergency_list', (@$_POST['emergency_list'] == 1))?>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<div id="extra-search" class="eventDetail clearfix">
-				<div class="data">
-					<span class="group">
-						<input type="radio" name="date-filter" id="date-filter_0" value="today"<?php if (@$_POST['date-filter'] == 'today') {?>checked="checked"<?php }?>>
-						<label for="date-filter_0">Today</label>
-					</span>
-					<span class="group">
-						<input type="radio" name="date-filter" id="date-filter_1" value="week"<?php if (@$_POST['date-filter'] == 'week') {?>checked="checked"<?php }?>>
-						<label for="date-filter_1">Next 7 days</label>
-					</span>
-					<span class="group">
-						<input type="radio" name="date-filter" id="date-filter_2" value="month"<?php if (@$_POST['date-filter'] == 'month') {?>checked="checked"<?php }?>>
-						<label for="date-filter_2">Next 30 days</label>
-					</span>
-					<span class="group">
-						<input type="radio" name="date-filter" id="date-filter_3" value="custom"<?php if (@$_POST['date-filter'] == 'custom') {?>checked="checked"<?php }?>>
-						<label for="date-filter_3">or select date range:</label>
-						<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-							'name'=>'date-start',
-							'id'=>'date-start',
-							'options'=>array(
-								'showAnim'=>'fold',
-								'dateFormat'=>Helper::NHS_DATE_FORMAT_JS
-							),
-							'value' => @$_POST['date-start'],
-							'htmlOptions'=>array('style'=>'width: 110px;')
-						))?>
-						to
-						<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-							'name'=>'date-end',
-							'id'=>'date-end',
-							'options'=>array(
-								'showAnim'=>'fold',
-								'dateFormat'=>Helper::NHS_DATE_FORMAT_JS
-							),
-							'value' => @$_POST['date-end'],
-							'htmlOptions'=>array('style'=>'width: 110px;')
-						))?>
-					</span>
-					<span class="group">
-						<a href="" id="last_week">Last week</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="" id="next_week">Next week</a>
-					</span>
+	<div class="row">
+		<div class="large-12 column">
+			<h2>Search schedules by:</h2>
+		</div>
+	</div>
+	<div class="search-filters theatre-diaries">
+		<?php $this->beginWidget('CActiveForm', array(
+			'id'=>'theatre-filter',
+			'action'=>Yii::app()->createUrl('/OphTrOperationbooking/theatre/search'),
+			'htmlOptions'=>array(
+				'class' => 'row'
+			),
+			'enableAjaxValidation'=>false
+		))?>
+			<div class="large-12 column">
+				<div class="panel">
+					<div class="row">
+						<div class="large-12 column">
+
+							<table class="grid">
+								<thead>
+								<tr>
+									<th>Site:</th>
+									<th>Theatre:</th>
+									<th>Subspeciality:</th>
+									<th>Firm:</th>
+									<th>Ward:</th>
+									<th>Emergency list:</th>
+								</tr>
+								</thead>
+								<tbody>
+								<tr>
+									<td>
+										<?php echo CHtml::dropDownList('site-id', @$_POST['site-id'], Site::model()->getListForCurrentInstitution(), array('empty'=>'All sites', 'disabled' => (@$_POST['emergency_list']==1 ? 'disabled' : '')))?>
+									</td>
+									<td>
+										<?php echo CHtml::dropDownList('theatre-id', @$_POST['theatre-id'], $theatres, array('empty'=>'All theatres', 'disabled' => (@$_POST['emergency_list']==1 ? 'disabled' : '')))?>
+									</td>
+									<td>
+										<?php echo CHtml::dropDownList('subspecialty-id', @$_POST['subspecialty-id'], Subspecialty::model()->getList(), array('empty'=>'All specialties', 'disabled' => (@$_POST['emergency_list']==1 ? 'disabled' : '')))?>
+									</td>
+									<td>
+										<?php if (!@$_POST['subspecialty-id']) {?>
+											<?php echo CHtml::dropDownList('firm-id', '', array(), array('empty'=>'All firms', 'disabled' => 'disabled'))?>
+										<?php } else {?>
+											<?php echo CHtml::dropDownList('firm-id', @$_POST['firm-id'], Firm::model()->getList(@$_POST['subspecialty-id']), array('empty'=>'All firms', 'disabled' => (@$_POST['emergency_list']==1 ? 'disabled' : '')))?>
+										<?php }?>
+									</td>
+									<td>
+										<?php echo CHtml::dropDownList('ward-id', @$_POST['ward-id'], $wards, array('empty'=>'All wards', 'disabled' => (@$_POST['emergency_list']==1 ? 'disabled' : '')))?>
+									</td>
+									<td>
+										<?php echo CHtml::checkBox('emergency_list', (@$_POST['emergency_list'] == 1))?>
+									</td>
+								</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="row">
+
+						<div class="large-10 column">
+
+							<div class="search-filters-extra clearfix">
+								<label class="inline highlight">
+									<input type="radio" name="date-filter" id="date-filter_0" value="today"<?php if (@$_POST['date-filter'] == 'today') {?> checked="checked"<?php }?>>
+									Today
+								</label>
+								<label class="inline highlight">
+									<input type="radio" name="date-filter" id="date-filter_1" value="week"<?php if (@$_POST['date-filter'] == 'week') {?> checked="checked"<?php }?>>
+									Next 7 days
+								</label>
+								<label class="inline highlight">
+									<input type="radio" name="date-filter" id="date-filter_2" value="month"<?php if (@$_POST['date-filter'] == 'month') {?> checked="checked"<?php }?>>
+									Next 30 days
+								</label>
+								<fieldset class="inline highlight">
+									<label>
+										<input type="radio" name="date-filter" id="date-filter_3" value="custom"<?php if (@$_POST['date-filter'] == 'custom') {?> checked="checked"<?php }?>>
+										or select date range:
+									</label>
+									<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+											'name'=>'date-start',
+											'id'=>'date-start',
+											'options'=>array(
+												'showAnim'=>'fold',
+												'dateFormat'=>Helper::NHS_DATE_FORMAT_JS
+											),
+											'value' => @$_POST['date-start'],
+											'htmlOptions'=>array('class'=>'small fixed-width')
+										))?>
+									to
+									<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+											'name'=>'date-end',
+											'id'=>'date-end',
+											'options'=>array(
+												'showAnim'=>'fold',
+												'dateFormat'=>Helper::NHS_DATE_FORMAT_JS
+											),
+											'value' => @$_POST['date-end'],
+											'htmlOptions'=>array('class'=>'small fixed-width')
+										))?>
+									<ul class="button-group small">
+										<li><a href="#" id="last_week" class="small button">Last week</a></li>
+										<li><a href="#" id="next_week" class="small button">Next week</a></li>
+									</ul>
+								</fieldset>
+							</div>
+						</div>
+						<div class="large-2 column text-right">
+
+							<span style="width: 30px;">
+								<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
+							</span>
+
+							<button id="search_button" class="secondary" type="submit">
+								Search
+							</button>
+						</div>
+					</div>
 				</div>
-				<div style="float:right;">
-					<span style="width: 30px;">
-						<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
-					</span>
-					&nbsp;&nbsp;
-					<button id="search_button" type="submit" class="classy green tall"><span class="button-span button-span-green">Search</span></button>
+			</div>
+		<?php $this->endWidget()?>
+
+		<div class="row hide" id="theatre-search-loading">
+			<div class="large-12 column">
+				<div class="alert-box">
+					<img src="/img/ajax-loader.gif" class="spinner" /> <strong>Please wait...</strong>
 				</div>
 			</div>
 		</div>
-		<?php $this->endWidget()?>
-		<div id="theatreList"></div>
+
+		<div id="theatreList" class="theatres-list"></div>
 		<div class="printable" id="printable"></div>
+
 	</div>
 </div>
+
 <div id="iframeprintholder" style="display: none;"></div>
+
 <script type="text/javascript">
 	$(document).ready(function() {
 		return getDiary();

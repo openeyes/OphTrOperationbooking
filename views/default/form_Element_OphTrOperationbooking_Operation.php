@@ -1,4 +1,3 @@
-<?php /* DEPRECATED */ ?>
 <?php /**
  * OpenEyes
  *
@@ -17,13 +16,15 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
  ?>
-<div class="element <?php echo $element->elementType->class_name?>"
+<section class="element <?php echo $element->elementType->class_name?>"
 	data-element-type-id="<?php echo $element->elementType->id?>"
 	data-element-type-class="<?php echo $element->elementType->class_name?>"
 	data-element-type-name="<?php echo $element->elementType->name?>"
 	data-element-display-order="<?php echo $element->elementType->display_order?>">
-	<h4 class="elementTypeName"><?php  echo $element->elementType->name; ?></h4>
-
+	<header class="element-header">
+		<h3 class="element-title"><?php  echo $element->elementType->name; ?></h3>
+	</header>
+	<fieldset class="element-fields">
 	<?php echo $form->radioButtons($element, 'eye_id', 'eye')?>
 	<?php $form->widget('application.widgets.ProcedureSelection',array(
 		'element' => $element,
@@ -39,6 +40,7 @@
 	?>
 	<?php echo $form->dropDownList($element, 'site_id', CHtml::listData(Site::model()->findAll($criteria),'id','short_name'))?>
 	<?php echo $form->radioButtons($element, 'priority_id', 'ophtroperationbooking_operation_priority')?>
-	<?php echo $form->datePicker($element, 'decision_date', array('maxDate' => 'today'), array('style'=>'width: 110px;'))?>
-	<?php echo $form->textArea($element, 'comments', array('rows' => 4, 'cols' => 50))?>
-</div>
+	<?php echo $form->datePicker($element, 'decision_date', array('maxDate' => 'today'), array(), array_merge($form->layoutColumns, array('field' => 2)))?>
+	<?php echo $form->textArea($element, 'comments', array('rows' => 4), false, array(), array_merge($form->layoutColumns, array('field' => 4)))?>
+	</fieldset>
+</section>

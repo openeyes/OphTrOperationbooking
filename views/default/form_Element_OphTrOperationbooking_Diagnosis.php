@@ -1,4 +1,3 @@
-<?php /* DEPRECATED */ ?>
 <?php /**
  * OpenEyes
  *
@@ -17,18 +16,25 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
  ?>
-<div class="element <?php echo $element->elementType->class_name?>"
+<section class="element <?php echo $element->elementType->class_name?>"
 	data-element-type-id="<?php echo $element->elementType->id?>"
 	data-element-type-class="<?php echo $element->elementType->class_name?>"
 	data-element-type-name="<?php echo $element->elementType->name?>"
 	data-element-display-order="<?php echo $element->elementType->display_order?>">
-	<h4 class="elementTypeName"><?php  echo $element->elementType->name; ?></h4>
-
-	<?php echo $form->radioButtons($element, 'eye_id', 'eye')?>
-	<?php $form->widget('application.widgets.DiagnosisSelection',array(
+	<header class="element-header">
+		<h3 class="element-title"><?php  echo $element->elementType->name; ?></h3>
+	</header>
+	<fieldset class="element-fields" id="editDiagnosis">
+		<?php echo $form->radioButtons($element, 'eye_id', 'eye')?>
+		<?php $form->widget('application.widgets.DiagnosisSelection',array(
 			'field' => 'disorder_id',
 			'element' => $element,
-			'options' => CommonOphthalmicDisorder::getList(Firm::model()->findByPk($this->selectedFirmId))
-	));
-	?>
-</div>
+			'options' => CommonOphthalmicDisorder::getList(Firm::model()->findByPk($this->selectedFirmId)),
+			'layoutColumns' => array(
+				'label' => $form->layoutColumns['label'],
+				'field' => 4
+			)
+		));
+		?>
+	</fieldset>
+</section>
