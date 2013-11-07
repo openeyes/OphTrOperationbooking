@@ -164,8 +164,6 @@ class BookingController extends BaseEventTypeController
 		$this->patient = $operation->event->episode->patient;
 		$this->title = 'Reschedule later';
 
-		Yii::app()->clientScript->registerCSSFile(Yii::app()->createUrl('css/theatre_calendar.css'), 'all');
-
 		$errors = array();
 
 		if (!empty($_POST)) {
