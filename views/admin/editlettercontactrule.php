@@ -20,13 +20,17 @@
 ?>
 <div class="box admin">
 	<h2><?php echo $rule->id ? 'Edit' : 'Add'?> letter contact rule</h2>
-	<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
 	<?php
 	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 			'id'=>'adminform',
 			'enableAjaxValidation'=>false,
-			'focus'=>'#contactname'
+			'focus'=>'#contactname',
+			'layoutColumns' => array(
+				'label' => 2,
+				'field' => 5
+			)
 		))?>
+	<?php echo $form->errorSummary($rule); ?>
 	<?php echo $form->dropDownList($rule,'parent_rule_id',CHtml::listData(OphTrOperationbooking_Letter_Contact_Rule::model()->getListAsTree(),'id','treeName'),array('empty'=>'- None -'))?>
 	<?php echo $form->textField($rule,'rule_order')?>
 	<?php echo $form->dropDownList($rule,'site_id',CHtml::listData(Site::model()->findAll(array('order'=>'name asc','condition'=>'institution_id = 1')),'id','name'),array('empty'=>'- Not set -'))?>
@@ -36,7 +40,12 @@
 	<?php echo $form->textField($rule,'refuse_telephone',array('size'=>20))?>
 	<?php echo $form->textField($rule,'refuse_title',array('size'=>90))?>
 	<?php echo $form->textField($rule,'health_telephone',array('size'=>90))?>
-	<?php $this->endWidget()?>
+	<?php echo $form->formActions(array(
+		'submit' => 'Save',
+		'cancel' => 'Cancel',
+		'delete' => $rule->id ? 'Delete' : false
+	));?>
+	<?php echo $form->errorSummary($rule); ?>
 	<?php if ($rule->children) {?>
 		<div>
 			<p style="font-size: 13px; margin: 0; padding: 0; margin-top: 10px; margin-bottom: 10px;"><strong>Descendants</strong></p>
@@ -46,14 +55,8 @@
 				))?>
 		</div>
 	<?php }?>
+	<?php $this->endWidget()?>
 </div>
-
-<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
-
-<?php echo EventAction::button('Save', 'save', array('level' => 'primary'), array('class' => 'button small'))->toHtml()?>&nbsp;
-<?php echo EventAction::button('Cancel', 'cancel', array('level' => 'warning'), array('class' => 'button small'))->toHtml()?>&nbsp;
-<?php if ($rule->id) echo EventAction::button('Delete', 'delete', null, array('class' => 'button small'))->toHtml()?>
-<img class="loader" src="<?php echo Yii::app()->createUrl('/img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 
 <script type="text/javascript">
 	handleButton($('#et_cancel'),function() {
