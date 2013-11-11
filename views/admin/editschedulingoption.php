@@ -19,21 +19,22 @@
 
 ?>
 <div class="box admin">
-	<h2><?php echo $option->id ? 'Edit' : 'Add'?> ward</h2>
-	<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
+	<h2><?php echo $option->id ? 'Edit' : 'Add'?> scheduling option</h2>
 	<?php
 	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 			'id'=>'adminform',
 			'enableAjaxValidation'=>false,
 			'focus'=>'#OphTrOperationbooking_ScheduleOperation_Options_name',
+			'layoutColumns' => array(
+				'label' => 2,
+				'field' => 5
+			)
 		))?>
+	<?php echo $form->errorSummary($option); ?>
 	<?php echo $form->textField($option,'name')?>
+	<?php echo $form->formActions();?>
 	<?php $this->endWidget()?>
 </div>
-<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
-<?php echo EventAction::button('Save', 'save', array('level' => 'secondary'), array('class' => 'button small'))->toHtml()?>
-<?php echo EventAction::button('Cancel', 'cancel', array('level' => 'warning'), array('class' => 'button small'))->toHtml()?>
-<img class="loader" src="<?php echo Yii::app()->createUrl('/img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 <script type="text/javascript">
 	handleButton($('#et_cancel'),function(e) {
 		e.preventDefault();

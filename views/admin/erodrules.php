@@ -22,26 +22,33 @@
 	<form id="erod_rules">
 		<table class="grid">
 			<thead>
-			<tr>
-				<th><input type="checkbox" id="checkall" class="erod_rules" /></th>
-				<th>Subspecialty</th>
-				<th>Firms</th>
-			</tr>
+				<tr>
+					<th><input type="checkbox" id="checkall" class="erod_rules" /></th>
+					<th>Subspecialty</th>
+					<th>Firms</th>
+				</tr>
 			</thead>
 			<tbody>
-			<?php
-			$criteria = new CDbCriteria;
-			$criteria->order = "display_order asc";
-			foreach (OphTrOperationbooking_Operation_EROD_Rule::model()->findAll() as $i => $erod) {?>
-				<tr class="clickable sortable" data-attr-id="<?php echo $erod->id?>?>" data-uri="OphTrOperationbooking/admin/editerodrule/<?php echo $erod->id?>">
-					<td><input type="checkbox" name="erod[]" value="<?php echo $erod->id?>" class="erod_rules" /></td>
-					<td><?php echo $erod->subspecialty->name?></td>
-					<td><?php echo $erod->firmString?></td>
-				</tr>
-			<?php }?>
+				<?php
+				$criteria = new CDbCriteria;
+				$criteria->order = "display_order asc";
+				foreach (OphTrOperationbooking_Operation_EROD_Rule::model()->findAll() as $i => $erod) {?>
+					<tr class="clickable sortable" data-id="<?php echo $erod->id?>?>" data-uri="OphTrOperationbooking/admin/editerodrule/<?php echo $erod->id?>">
+						<td><input type="checkbox" name="erod[]" value="<?php echo $erod->id?>" class="erod_rules" /></td>
+						<td><?php echo $erod->subspecialty->name?></td>
+						<td><?php echo $erod->firmString?></td>
+					</tr>
+				<?php }?>
 			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="3">
+						<?php echo EventAction::button('Add', 'add_erod_rule', null,array('class'=>'button small'))->toHtml()?>
+						<?php echo EventAction::button('Delete', 'delete_erod_rule', null,array('class'=>'button small'))->toHtml()?>
+					</td>
+				</tr>
+			</tfoot>
 		</table>
 	</form>
 </div>
-<?php echo EventAction::button('Add', 'add_erod_rule', null,array('class'=>'button small'))->toHtml()?>&nbsp;
-<?php echo EventAction::button('Delete', 'delete_erod_rule', array('level' => 'warning'),array('class'=>'button small'))->toHtml()?>
+

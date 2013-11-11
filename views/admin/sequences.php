@@ -132,7 +132,7 @@ $sequences = $sequences['data'];
 			<tbody>
 				<?php
 				foreach ($sequences as $i => $sequence) {?>
-					<tr class="clickable" data-attr-id="<?php echo $sequence->id?>" data-uri="OphTrOperationbooking/admin/editSequence/<?php echo $sequence->id?>">
+					<tr class="clickable" data-id="<?php echo $sequence->id?>" data-uri="OphTrOperationbooking/admin/editSequence/<?php echo $sequence->id?>">
 						<td><input type="checkbox" name="sequence[]" value="<?php echo $sequence->id?>" class="sequences" /></td>
 						<td><?php echo $sequence->firm ? $sequence->firm->nameAndSubspecialtyCode: 'Emergency'?></td>
 						<td><?php echo $sequence->theatre->name?></td>

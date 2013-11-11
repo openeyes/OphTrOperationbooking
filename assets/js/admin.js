@@ -1,13 +1,7 @@
 $(document).ready(function() {
-	$('#erod_rules li .column_subspecialty, #erod_rules li .column_firms').click(function(e) {
+
+	$('#et_add_erod_rule').click(function(e) {
 		e.preventDefault();
-
-		if ($(this).parent().attr('data-attr-id')) {
-			window.location.href = baseUrl+'/OphTrOperationbooking/admin/editERODRule/'+$(this).parent().attr('data-attr-id');
-		}
-	});
-
-	$('#et_add_erod_rule').click(function() {
 		window.location.href = baseUrl+'/OphTrOperationbooking/admin/addERODRule';
 	});
 
@@ -156,27 +150,13 @@ $(document).ready(function() {
 		window.location.href = baseUrl+'/OphTrOperationbooking/admin/addSession';
 	});
 
-	$('#et_add_theatre').click(function() {
+	$('#et_add_theatre').click(function(e) {
+		e.preventDefault();
 		window.location.href = baseUrl+'/OphTrOperationbooking/admin/addTheatre';
 	});
 
-	$('form#theatres li.even .column_site, form#theatres li.even .column_name, form#theatres li.even .column_code, form#theatres li.odd .column_site, form#theatres li.odd .column_name, form#theatres li.odd .column_code').click(function(e) {
+	$('#et_add_ward').click(function(e) {
 		e.preventDefault();
-
-		if ($(this).parent().attr('data-attr-id')) {
-			window.location.href = baseUrl+'/OphTrOperationbooking/admin/editTheatre/'+$(this).parent().attr('data-attr-id');
-		}
-	});
-
-	$('#admin_wards li.even .column_site, #admin_wards li.even .column_name, #admin_wards li.even .column_code, #admin_wards li.even .column_theatre, #admin_wards li.even .column_restrictions, #admin_wards li.odd .column_site, #admin_wards li.odd .column_name, #admin_wards li.odd .column_code, #admin_wards li.odd .column_theatre, #admin_wards li.odd .column_restrictions').click(function(e) {
-		e.preventDefault();
-
-		if ($(this).parent().attr('data-attr-id')) {
-			window.location.href = baseUrl+'/OphTrOperationbooking/admin/editWard/'+$(this).parent().attr('data-attr-id');
-		}
-	});
-
-	$('#et_add_ward').click(function() {
 		window.location.href = baseUrl+'/OphTrOperationbooking/admin/addWard';
 	});
 
@@ -188,7 +168,8 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#et_add_scheduleoption').click(function() {
+	$('#et_add_scheduleoption').click(function(e) {
+		e.preventDefault();
 		window.location.href = baseUrl+'/OphTrOperationbooking/admin/addSchedulingOption';
 	});
 });

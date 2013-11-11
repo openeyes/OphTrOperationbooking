@@ -19,55 +19,56 @@
 ?>
 <div class="box admin">
 	<h2>Theatres</h2>
-	<div>
-		<form id="theatres">
-			<table class="grid">
-				<thead>
-				<tr>
-					<th><input type="checkbox" id="checkall" class="theatres" /></th>
-					<th>Site</th>
-					<th>Name</th>
-					<th>Code</th>
-					<th>Ward</th>
+	<form id="theatres">
+		<table class="grid">
+			<thead>
+			<tr>
+				<th><input type="checkbox" id="checkall" class="theatres" /></th>
+				<th>Site</th>
+				<th>Name</th>
+				<th>Code</th>
+				<th>Ward</th>
+			</tr>
+			</thead>
+			<tbody>
+			<?php
+			$criteria = new CDbCriteria;
+			$criteria->order = "display_order asc";
+			foreach (OphTrOperationbooking_Operation_Theatre::model()->findAll() as $i => $theatre) {?>
+				<tr class="clickable sortable" data-attr-id="<?php echo $theatre->id?>" data-uri="OphTrOperationbooking/admin/editTheatre/<?php echo $theatre->id?>">
+					<td><input type="checkbox" name="theatre[]" value="<?php echo $theatre->id?>" class="theatres" /></td>
+					<td><?php echo $theatre->site->name?></td>
+					<td><?php echo $theatre->name?></td>
+					<td><?php echo $theatre->code?></td>
+					<td><?php echo $theatre->ward ? $theatre->ward->name : 'None'?></td>
 				</tr>
-				</thead>
-				<tbody>
-				<?php
-				$criteria = new CDbCriteria;
-				$criteria->order = "display_order asc";
-				foreach (OphTrOperationbooking_Operation_Theatre::model()->findAll() as $i => $theatre) {?>
-					<tr class="clickable sortable" data-attr-id="<?php echo $theatre->id?>" data-uri="OphTrOperationbooking/admin/editTheatre/<?php echo $theatre->id?>">
-						<td><input type="checkbox" name="theatre[]" value="<?php echo $theatre->id?>" class="theatres" /></td>
-						<td><?php echo $theatre->site->name?></td>
-						<td><?php echo $theatre->name?></td>
-						<td><?php echo $theatre->code?></td>
-						<td><?php echo $theatre->ward ? $theatre->ward->name : 'None'?></td>
-					</tr>
-				<?php }?>
-				</tbody>
-			</table>
-		</form>
-	</div>
+			<?php }?>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="5">
+						<?php echo EventAction::button('Add', 'add_theatre', null,array('class'=>'button small'))->toHtml()?>
+						<?php echo EventAction::button('Delete', 'delete_theatre', null,array('class'=>'button small'))->toHtml()?>
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+	</form>
 </div>
-<div>
-	<?php echo EventAction::button('Add', 'add_theatre', null,array('class'=>'button small'))->toHtml()?>
-	<?php echo EventAction::button('Delete', 'delete_theatre', array('level' => 'warning'),array('class'=>'button small'))->toHtml()?>
-</div>
+
 <div id="confirm_delete_theatres" title="Confirm delete theatre" style="display: none;">
-	<div>
-		<div id="delete_theatres">
-			<div class="alertBox" style="margin-top: 10px; margin-bottom: 15px;">
-				<strong>WARNING: This will remove the theatres from the system.<br/>This action cannot be undone.</strong>
-			</div>
-			<p>
-				<strong>Are you sure you want to proceed?</strong>
-			</p>
-			<div class="buttonwrapper" style="margin-top: 15px; margin-bottom: 5px;">
-				<input type="hidden" id="medication_id" value="" />
-				<button type="submit" class="classy red venti btn_remove_theatres"><span class="button-span button-span-red">Remove theatre(s)</span></button>
-				<button type="submit" class="classy green venti btn_cancel_remove_theatres"><span class="button-span button-span-green">Cancel</span></button>
-				<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
-			</div>
+	<div id="delete_theatres">
+		<div class="alert-box alert with-icon">
+			<strong>WARNING: This will remove the theatres from the system.<br/>This action cannot be undone.</strong>
+		</div>
+		<p>
+			<strong>Are you sure you want to proceed?</strong>
+		</p>
+		<div class="buttons">
+			<input type="hidden" id="medication_id" value="" />
+			<button type="submit" class="warning btn_remove_theatres">Remove theatre(s)</button>
+			<button type="submit" class="secondary btn_cancel_remove_theatres">Cancel</button>
+			<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 		</div>
 	</div>
 </div>

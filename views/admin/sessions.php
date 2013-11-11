@@ -144,7 +144,7 @@ $sessions = $sessions['data'];
 		<tbody>
 		<?php
 		foreach ($sessions as $i => $session) {?>
-			<tr class="clickable sortable" data-attr-id="<?php echo $session->id?>" data-uri="OphTrOperationbooking/admin/editSession/<?php echo $session->id?>">
+			<tr class="clickable sortable" data-id="<?php echo $session->id?>" data-uri="OphTrOperationbooking/admin/editSession/<?php echo $session->id?>">
 				<td><input type="checkbox" name="session[]" value="<?php echo $session->id?>" class="sessions" /></td>
 				<td><?php echo $session->firm ? $session->firm->nameAndSubspecialtyCode: 'Emergency'?></td>
 				<td><?php echo $session->theatre->name?></td>

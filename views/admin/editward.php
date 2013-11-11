@@ -20,13 +20,17 @@
 ?>
 <div class="box admin">
 	<h2><?php echo $ward->id ? 'Edit' : 'Add'?> ward</h2>
-	<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
 	<?php
 	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 			'id'=>'adminform',
 			'enableAjaxValidation'=>false,
-			'focus'=>'#username'
+			'focus'=>'#username',
+			'layoutColumns' => array(
+				'label' => 2,
+				'field' => 5
+			)
 		))?>
+	<?php echo $form->errorSummary($ward); ?>
 	<?php echo $form->dropDownList($ward,'site_id',Site::model()->getListForCurrentInstitution(),array('empty'=>'- Site -'))?>
 	<?php echo $form->textField($ward,'name')?>
 	<?php echo $form->textField($ward,'long_name')?>
@@ -36,14 +40,12 @@
 	<?php echo $form->radioBoolean($ward,'restriction_child')?>
 	<?php echo $form->radioBoolean($ward,'restriction_adult')?>
 	<?php echo $form->radioBoolean($ward,'restriction_observation')?>
+	<?php echo $form->formActions();?>
 	<?php $this->endWidget()?>
-
-	<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
+	<?php echo $form->errorSummary($ward); ?>
 </div>
 
-<?php echo EventAction::button('Save', 'save', array('level' => 'secondary'), array('class' => 'button small'))->toHtml()?>
-<?php echo EventAction::button('Cancel', 'cancel', array('level' => 'warning'), array('class' => 'button small'))->toHtml()?>
-<img class="loader" src="<?php echo Yii::app()->createUrl('/img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
+
 
 <script type="text/javascript">
 	handleButton($('#et_cancel'),function(e) {s

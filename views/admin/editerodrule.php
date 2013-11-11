@@ -19,23 +19,23 @@
 
 ?>
 <div class="box admin">
-	<h2 class="georgia"><?php echo $erod->id ? 'Edit' : 'Add'?> EROD rule</h2>
-	<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
+	<h2><?php echo $erod->id ? 'Edit' : 'Add'?> EROD rule</h2>
 	<?php
 	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 			'id'=>'adminform',
 			'enableAjaxValidation'=>false,
-			'focus'=>'#username'
+			'focus'=>'#username',
+			'layoutColumns' => array(
+				'label' => 2,
+				'field' => 5
+			)
 		))?>
+	<?php echo $form->errorSummary($erod); ?>
 	<?php echo $form->dropDownList($erod,'subspecialty_id',CHtml::listData(Subspecialty::model()->findAll(array('order'=>'name')),'id','name'),array('style'=>'margin-bottom:6px;','empty'=>'- Subspecialty -'))?>
 	<?php echo $form->multiSelectList($erod, 'Firms', 'firms', 'item_id', Firm::model()->getListWithSpecialties(), array(), array('empty' => '- Firms -', 'label' => 'Firms'))?>
+	<?php echo $form->formActions();?>
 	<?php $this->endWidget()?>
 </div>
-<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
-
-<?php echo EventAction::button('Save', 'save', null,array('class'=>'button small'))->toHtml()?>&nbsp;
-<?php echo EventAction::button('Cancel', 'cancel',  array('level' => 'warning'),array('class'=>'button small'))->toHtml()?>
-<img class="loader" src="<?php echo Yii::app()->createUrl('/img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 
 <script type="text/javascript">
 	handleButton($('#et_cancel'),function(e) {
