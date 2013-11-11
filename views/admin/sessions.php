@@ -17,20 +17,24 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
+<?php
+$pagination = $sessions['pagination'];
+$sessions = $sessions['data'];
+?>
 <div class="box admin">
 <h2>Filters</h2>
 <form id="admin_sessions_filters" class="panel">
 	<div class="row field-row">
-		<div class="large-3 column">
+		<div class="large-2 column">
 			<?php echo CHtml::dropDownList('firm_id',@$_GET['firm_id'],Firm::model()->getListWithSpecialtiesAndEmergency(),array('empty'=>'- Firm -'))?>
 		</div>
-		<div class="large-3 column">
+		<div class="large-2 column">
 			<?php echo CHtml::dropDownList('theatre_id',@$_GET['theatre_id'],CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Theatre -'))?>
 		</div>
-		<div class="large-2 column">
+		<div class="large-3 column">
 			<div class="row">
 				<div class="large-3 column">
-					From:
+					<label class="align" for="date_from">From:</label>
 				</div>
 				<div class="large-9 column">
 					<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
@@ -42,17 +46,16 @@
 								'dateFormat'=>Helper::NHS_DATE_FORMAT_JS,
 							),
 							'value'=>@$_GET['date_from'],
-							'htmlOptions'=>array('style'=>'width: 110px;')
 						))?>
 				</div>
 			</div>
 		</div>
-		<div class="large-2 column">
+		<div class="large-3 column">
 			<div class="row">
-				<div class="large-3 column">
-					To:
+				<div class="large-2 column">
+					<label class="align" for="date_to">To:</label>
 				</div>
-				<div class="large-9 column">
+				<div class="large-10 column">
 					<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
 							'name'=>'date_to',
 							'id'=>'date_to',
@@ -62,7 +65,6 @@
 								'dateFormat'=>Helper::NHS_DATE_FORMAT_JS,
 							),
 							'value'=>@$_GET['date_to'],
-							'htmlOptions'=>array('style'=>'width: 110px;')
 						))?>
 				</div>
 			</div>
@@ -70,7 +72,7 @@
 		<div class="large-2 column end">
 			<div class="row">
 				<div class="large-3 column">
-					Seq:
+					<label class="align" for="sequence_id">Seq:</label>
 				</div>
 				<div class="large-9 column">
 					<?php echo CHtml::textField('sequence_id',@$_GET['sequence_id'],array('size'=>10))?>
@@ -121,22 +123,25 @@
 		</tr>
 		</thead>
 		<tbody>
-		<?php if ($sessions['more_items']) {?>
+		<?php if ($pagination->getCurrentPage() !== $pagination->getPageCount()) {?>
 			<li class="checkall_message" style="display: none;">
-							<span class="column_checkall_message">
-								All <?php echo count($sessions['data'])?> sessions on this page are selected. <a href="#" id="select_all_items">Select all <?php echo $sessions['count']?> sessions that match the current search criteria</a>
-							</span>
+				<span class="column_checkall_message">
+					All <?php echo count($sessions)?> sessions on this page are selected.
+					<a href="#" id="select_all_items">
+						Select all <?php echo $pagination->getItemCount();?> sessions that match the current search criteria
+					</a>
+				</span>
 			</li>
 		<?php }?>
-		<?php if (count($sessions['data']) <1) {?>
+		<?php if (count($sessions) <1) {?>
 			<li class="no_results">
-							<span class="column_no_results">
-								No items matched your search criteria.
-							</span>
+				<span class="column_no_results">
+					No items matched your search criteria.
+				</span>
 			</li>
 		<?php }?>
 		<?php
-		foreach ($sessions['data'] as $i => $session) {?>
+		foreach ($sessions as $i => $session) {?>
 			<tr class="clickable sortable" data-attr-id="<?php echo $session->id?>" data-uri="OphTrOperationbooking/admin/editSession/<?php echo $session->id?>">
 				<td><input type="checkbox" name="session[]" value="<?php echo $session->id?>" class="sessions" /></td>
 				<td><?php echo $session->firm ? $session->firm->nameAndSubspecialtyCode: 'Emergency'?></td>
@@ -155,17 +160,16 @@
 		<?php }?>
 		</tbody>
 		<tfoot class="pagination-container">
-		<tr>
-			<td colspan="8">
-				<?php echo $this->renderPartial('_pagination',array(
-						'page' => $sessions['page'],
-						'pages' => $sessions['pages'],
+			<tr>
+				<td colspan="8">
+					<?php echo $this->renderPartial('//admin/_pagination',array(
+						'pagination' => $pagination
 					))?>
-				<?php echo EventAction::button('Add', 'add_session', null, array('class' => 'small'))->toHtml()?>
-				<?php echo EventAction::button('Delete', 'delete_session', null, array('class' => 'small'))->toHtml()?>
-				<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
-			</td>
-		</tr>
+					<?php echo EventAction::button('Add', 'add_session', null, array('class' => 'small'))->toHtml()?>
+					<?php echo EventAction::button('Delete', 'delete_session', null, array('class' => 'small'))->toHtml()?>
+					<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
+				</td>
+			</tr>
 		</tfoot>
 	</table>
 </form>
@@ -372,7 +376,7 @@ $('#checkall').unbind('click').click(function() {
 		$('#update_inline').hide();
 		$('#select_all').val(0);
 		$('li.checkall_message').hide();
-		$('span.column_checkall_message').html("All <?php echo $sessions['items_per_page']?> sessions on this page are selected. <a href=\"#\" id=\"select_all_items\">Select all <?php echo $sessions['count']?> sessions that match the current search criteria</a>");
+		$('span.column_checkall_message').html("All <?php echo $pagination->getPageSize();?> sessions on this page are selected. <a href=\"#\" id=\"select_all_items\">Select all <?php echo $pagination->getItemCount();?> sessions that match the current search criteria</a>");
 	}
 });
 
@@ -414,7 +418,7 @@ handleButton($('#et_update_inline'),function(e) {
 $('#select_all_items').live('click',function(e) {
 	e.preventDefault();
 	$('#select_all').val(1);
-	$('span.column_checkall_message').html("All <?php echo $sessions['count']?> sessions that match the current search criteria are selected. <a href=\"#\" id=\"clear_selection\">Clear selection</a>");
+	$('span.column_checkall_message').html("All <?php echo $pagination->getItemCount();?> sessions that match the current search criteria are selected. <a href=\"#\" id=\"clear_selection\">Clear selection</a>");
 });
 
 $('#clear_selection').live('click',function(e) {
@@ -423,7 +427,7 @@ $('#clear_selection').live('click',function(e) {
 	$('#checkall').removeAttr('checked');
 	$('input[type="checkbox"][name="session[]"]').removeAttr('checked');
 	$('li.checkall_message').hide();
-	$('span.column_checkall_message').html("All <?php echo $sessions['items_per_page']?> sessions on this page are selected. <a href=\"#\" id=\"select_all_items\">Select all <?php echo $sessions['count']?> sessions that match the current search criteria</a>");
+	$('span.column_checkall_message').html("All <?php echo $pagination->getPageSize();?> sessions on this page are selected. <a href=\"#\" id=\"select_all_items\">Select all <?php echo $pagination->getItemCount();?> sessions that match the current search criteria</a>");
 	$('#update_inline').hide();
 });
 
