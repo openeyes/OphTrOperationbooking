@@ -108,6 +108,25 @@ $sessions = $sessions['data'];
 
 <h2>Sessions<?php if (@$_GET['sequence_id']!='') {?> for sequence <?php echo $_GET['sequence_id']?><?php }?></h2>
 <form id="admin_sessions">
+
+	<?php if ($pagination->getCurrentPage() !== $pagination->getPageCount()) {?>
+		<div class="alert-box checkall_message" style="display: none;">
+			<span class="column_checkall_message">
+				All <?php echo count($sessions)?> sessions on this page are selected.
+				<a href="#" id="select_all_items">
+					Select all <?php echo $pagination->getItemCount();?> sessions that match the current search criteria
+				</a>
+			</span>
+		</div>
+	<?php }?>
+	<?php if (count($sessions) <1) {?>
+		<div class="alert-box alert with-icon no_results">
+			<span class="column_no_results">
+				No items matched your search criteria.
+			</span>
+		</div>
+	<?php }?>
+
 	<table class="grid">
 		<thead>
 		<tr>
@@ -123,23 +142,6 @@ $sessions = $sessions['data'];
 		</tr>
 		</thead>
 		<tbody>
-		<?php if ($pagination->getCurrentPage() !== $pagination->getPageCount()) {?>
-			<li class="checkall_message" style="display: none;">
-				<span class="column_checkall_message">
-					All <?php echo count($sessions)?> sessions on this page are selected.
-					<a href="#" id="select_all_items">
-						Select all <?php echo $pagination->getItemCount();?> sessions that match the current search criteria
-					</a>
-				</span>
-			</li>
-		<?php }?>
-		<?php if (count($sessions) <1) {?>
-			<li class="no_results">
-				<span class="column_no_results">
-					No items matched your search criteria.
-				</span>
-			</li>
-		<?php }?>
 		<?php
 		foreach ($sessions as $i => $session) {?>
 			<tr class="clickable sortable" data-attr-id="<?php echo $session->id?>" data-uri="OphTrOperationbooking/admin/editSession/<?php echo $session->id?>">
@@ -293,24 +295,23 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 <?php $this->endWidget()?>
 </div>
 
-<div id="confirm_delete_sessions" title="Confirm delete session" style="display: none;">
-	<div>
-		<div id="delete_sessions">
-			<div class="alert-box alert with-icon">
-				<strong>WARNING: This will remove the sessions from the system.<br/>This action cannot be undone.</strong>
-			</div>
-			<p>
-				<strong>Are you sure you want to proceed?</strong>
-			</p>
-			<div class="buttonwrapper" style="margin-top: 15px; margin-bottom: 5px;">
-				<input type="hidden" id="medication_id" value="" />
-				<button type="submit" class="classy red venti btn_remove_sessions"><span class="button-span button-span-red">Remove session(s)</span></button>
-				<button type="submit" class="classy green venti btn_cancel_remove_sessions"><span class="button-span button-span-green">Cancel</span></button>
-				<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
-			</div>
+<div id="confirm_delete_sessions" title="Confirm delete session" class="hidden">
+	<div id="delete_sessions">
+		<div class="alert-box alert with-icon">
+			<strong>WARNING: This will remove the sessions from the system.<br/>This action cannot be undone.</strong>
+		</div>
+		<p>
+			<strong>Are you sure you want to proceed?</strong>
+		</p>
+		<div class="buttons">
+			<input type="hidden" id="medication_id" value="" />
+			<button type="submit" class="warning btn_remove_sessions">Remove session(s)</button>
+			<button type="submit" class="secondary btn_cancel_remove_sessions">Cancel</button>
+			<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 		</div>
 	</div>
 </div>
+
 <script type="text/javascript">
 handleButton($('#et_filter'),function(e) {
 	e.preventDefault();
@@ -371,11 +372,11 @@ $('#checkall').unbind('click').click(function() {
 	$('input.'+$(this).attr('class')).attr('checked',$(this).is(':checked') ? 'checked' : false);
 	if ($(this).is(':checked')) {
 		$('#update_inline').show();
-		$('li.checkall_message').show();
+		$('.checkall_message').show();
 	} else {
 		$('#update_inline').hide();
 		$('#select_all').val(0);
-		$('li.checkall_message').hide();
+		$('.checkall_message').hide();
 		$('span.column_checkall_message').html("All <?php echo $pagination->getPageSize();?> sessions on this page are selected. <a href=\"#\" id=\"select_all_items\">Select all <?php echo $pagination->getItemCount();?> sessions that match the current search criteria</a>");
 	}
 });
@@ -426,7 +427,7 @@ $('#clear_selection').live('click',function(e) {
 	$('#select_all').val(0);
 	$('#checkall').removeAttr('checked');
 	$('input[type="checkbox"][name="session[]"]').removeAttr('checked');
-	$('li.checkall_message').hide();
+	$('.checkall_message').hide();
 	$('span.column_checkall_message').html("All <?php echo $pagination->getPageSize();?> sessions on this page are selected. <a href=\"#\" id=\"select_all_items\">Select all <?php echo $pagination->getItemCount();?> sessions that match the current search criteria</a>");
 	$('#update_inline').hide();
 });
@@ -459,11 +460,11 @@ handleButton($('#et_delete_session'),function(e) {
 				if ($('input[type="checkbox"][name="session[]"]:checked').length == 1) {
 					$('#confirm_delete_sessions').attr('title','Confirm delete session');
 					$('#delete_sessions').children('div').children('strong').html("WARNING: This will remove the session from the system.<br/><br/>This action cannot be undone.");
-					$('button.btn_remove_sessions').children('span').text('Remove session');
+					$('.btn_remove_sessions').children('span').text('Remove session');
 				} else {
 					$('#confirm_delete_sessions').attr('title','Confirm delete sessions');
 					$('#delete_sessions').children('div').children('strong').html("WARNING: This will remove the sessions from the system.<br/><br/>This action cannot be undone.");
-					$('button.btn_remove_sessions').children('span').text('Remove sessions');
+					$('.btn_remove_sessions').children('span').text('Remove sessions');
 				}
 
 				$('#confirm_delete_sessions').dialog({
@@ -481,12 +482,12 @@ handleButton($('#et_delete_session'),function(e) {
 	});
 });
 
-$('button.btn_cancel_remove_sessions').click(function(e) {
+$('.btn_cancel_remove_sessions').click(function(e) {
 	e.preventDefault();
 	$('#confirm_delete_sessions').dialog('close');
 });
 
-handleButton($('button.btn_remove_sessions'),function(e) {
+handleButton($('.btn_remove_sessions'),function(e) {
 	e.preventDefault();
 
 	if ($('#select_all').val() == 0) {

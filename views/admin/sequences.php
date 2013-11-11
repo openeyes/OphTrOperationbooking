@@ -17,6 +17,10 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
+<?php
+$pagination = $sequences['pagination'];
+$sequences = $sequences['data'];
+?>
 <div class="box admin">
 	<h2>Filters</h2>
 	<form id="admin_sequences_filters" class="panel">
@@ -97,15 +101,15 @@
 	<form id="admin_sequences">
 		<input type="hidden" id="select_all" value="0" />
 
-		<?php if ($sequences['more_items']) {?>
+		<?php if ($pagination->getCurrentPage() !== $pagination->getPageCount()) {?>
 			<div class="alert-box checkall_message" style="display: none;">
 				<span class="column_checkall_message">
-					All <?php echo count($sequences['data'])?> sequences on this page are selected. <a href="#" id="select_all_items">Select all <?php echo $sequences['count']?> sequences that match the current search criteria</a>
+					All <?php echo count($sequences)?> sequences on this page are selected. <a href="#" id="select_all_items">Select all <?php echo $pagination->getItemCount();?> sequences that match the current search criteria</a>
 				</span>
 			</div>
 		<?php }?>
-		<?php if (count($sequences['data']) <1) {?>
-			<div class="alert-box no_results">
+		<?php if (count($sequences) <1) {?>
+			<div class="alert-box alert with-icon no_results">
 				<span class="column_no_results">
 					No items matched your search criteria.
 				</span>
@@ -127,7 +131,7 @@
 			</thead>
 			<tbody>
 				<?php
-				foreach ($sequences['data'] as $i => $sequence) {?>
+				foreach ($sequences as $i => $sequence) {?>
 					<tr class="clickable" data-attr-id="<?php echo $sequence->id?>" data-uri="OphTrOperationbooking/admin/editSequence/<?php echo $sequence->id?>">
 						<td><input type="checkbox" name="sequence[]" value="<?php echo $sequence->id?>" class="sequences" /></td>
 						<td><?php echo $sequence->firm ? $sequence->firm->nameAndSubspecialtyCode: 'Emergency'?></td>
@@ -150,9 +154,8 @@
 					<td colspan="8">
 						<?php echo EventAction::button('Add', 'add_sequence', null, array('class' => 'small'))->toHtml()?>
 						<?php echo EventAction::button('Delete', 'delete_sequence', null, array('class' => 'small'))->toHtml()?>
-						<?php echo $this->renderPartial('_pagination',array(
-							'page' => $sequences['page'],
-							'pages' => $sequences['pages'],
+						<?php echo $this->renderPartial('//admin/_pagination',array(
+							'pagination' => $pagination,
 						))?>
 					</td>
 				</tr>
@@ -338,10 +341,10 @@
 		<p>
 			<strong>Are you sure you want to proceed?</strong>
 		</p>
-		<div class="buttonwrapper" style="margin-top: 15px; margin-bottom: 5px;">
+		<div class="buttons">
 			<input type="hidden" id="medication_id" value="" />
-			<button type="submit" class="classy red venti btn_remove_sequences"><span class="button-span button-span-red">Remove sequence(s)</span></button>
-			<button type="submit" class="classy green venti btn_cancel_remove_sequences"><span class="button-span button-span-green">Cancel</span></button>
+			<button type="submit" class="warning btn_remove_sequences">Remove sequence(s)</button>
+			<button type="submit" class="secondary btn_cancel_remove_sequences">Cancel</button>
 			<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 		</div>
 	</div>
@@ -411,7 +414,7 @@
 			$('#update_inline').hide();
 			$('#select_all').val(0);
 			$('.checkall_message').hide();
-			$('span.column_checkall_message').html("All <?php echo $sequences['items_per_page']?> sequences on this page are selected. <a href=\"#\" id=\"select_all_items\">Select all <?php echo $sequences['count']?> sequences that match the current search criteria</a>");
+			$('span.column_checkall_message').html("All <?php echo $pagination->getPageSize();?> sequences on this page are selected. <a href=\"#\" id=\"select_all_items\">Select all <?php echo $pagination->getItemCount();?> sequences that match the current search criteria</a>");
 		}
 	});
 
@@ -452,7 +455,7 @@
 	$('#select_all_items').live('click',function(e) {
 		e.preventDefault();
 		$('#select_all').val(1);
-		$('span.column_checkall_message').html("All <?php echo $sequences['count']?> sequences that match the current search criteria are selected. <a href=\"#\" id=\"clear_selection\">Clear selection</a>");
+		$('span.column_checkall_message').html("All <?php echo $pagination->getItemCount();?> sequences that match the current search criteria are selected. <a href=\"#\" id=\"clear_selection\">Clear selection</a>");
 	});
 
 	$('#clear_selection').live('click',function(e) {
@@ -461,7 +464,7 @@
 		$('#checkall').removeAttr('checked');
 		$('input[type="checkbox"][name="sequence[]"]').removeAttr('checked');
 		$('.checkall_message').hide();
-		$('span.column_checkall_message').html("All <?php echo $sequences['items_per_page']?> sequences on this page are selected. <a href=\"#\" id=\"select_all_items\">Select all <?php echo $sequences['count']?> sequences that match the current search criteria</a>");
+		$('span.column_checkall_message').html("All <?php echo $pagination->getPageSize();?> sequences on this page are selected. <a href=\"#\" id=\"select_all_items\">Select all <?php echo $pagination->getItemCount();?> sequences that match the current search criteria</a>");
 		$('#update_inline').hide();
 	});
 
@@ -493,11 +496,11 @@
 					if ($('input[type="checkbox"][name="sequence[]"]:checked').length == 1) {
 						$('#confirm_delete_sequences').attr('title','Confirm delete sequence');
 						$('#delete_sequences').children('div').children('strong').html("WARNING: This will remove the sequence from the system.<br/><br/>This action cannot be undone.");
-						$('button.btn_remove_sequences').children('span').text('Remove sequence');
+						$('.btn_remove_sequences').children('span').text('Remove sequence');
 					} else {
 						$('#confirm_delete_sequences').attr('title','Confirm delete sequences');
 						$('#delete_sequences').children('div').children('strong').html("WARNING: This will remove the sequences from the system.<br/><br/>This action cannot be undone.");
-						$('button.btn_remove_sequences').children('span').text('Remove sequences');
+						$('.btn_remove_sequences').children('span').text('Remove sequences');
 					}
 
 					$('#confirm_delete_sequences').dialog({
@@ -515,12 +518,12 @@
 		});
 	});
 
-	$('button.btn_cancel_remove_sequences').click(function(e) {
+	$('.btn_cancel_remove_sequences').click(function(e) {
 		e.preventDefault();
 		$('#confirm_delete_sequences').dialog('close');
 	});
 
-	handleButton($('button.btn_remove_sequences'),function(e) {
+	handleButton($('.btn_remove_sequences'),function(e) {
 		e.preventDefault();
 
 		if ($('#select_all').val() == 0) {
