@@ -23,9 +23,9 @@
 		<table class="grid">
 			<thead>
 			<tr>
-				<td><input type="checkbox" id="checkall" class="operation_name_rules" /></td>
-				<td>Theatre</td>
-				<td>Operation name</td>
+				<th><input type="checkbox" id="checkall" class="operation_name_rules" /></th>
+				<th>Theatre</th>
+				<th>Operation name</th>
 			</tr>
 			</thead>
 			<tbody>
@@ -40,10 +40,17 @@
 				</tr>
 			<?php }?>
 			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="3">
+						<?php echo EventAction::button('Add', 'add_operation_name_rule',null, array('class' => 'button small'))->toHtml()?>
+						<?php echo EventAction::button('Delete', 'delete_operation_name_rule',null, array('class' => 'button small'))->toHtml()?>
+					</td>
+				</tr>
+			</tfoot>
 		</table>
 	</form>
 </div>
 
-<?php echo EventAction::button('Add', 'add_operation_name_rule',null, array('class' => 'button small'))->toHtml()?>&nbsp;
-<?php echo EventAction::button('Delete', 'delete_operation_name_rule',array('level' => 'warning'), array('class' => 'button small'))->toHtml()?>
+
 

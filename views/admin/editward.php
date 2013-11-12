@@ -45,8 +45,6 @@
 	<?php echo $form->errorSummary($ward); ?>
 </div>
 
-
-
 <script type="text/javascript">
 	handleButton($('#et_cancel'),function(e) {s
 		e.preventDefault();

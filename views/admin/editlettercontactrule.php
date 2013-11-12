@@ -40,6 +40,24 @@
 	<?php echo $form->textField($rule,'refuse_telephone',array(),array(),array('field'=>2))?>
 	<?php echo $form->textField($rule,'refuse_title',array(),array(),array('field'=>3))?>
 	<?php echo $form->textField($rule,'health_telephone',array(),array(),array('field'=>3))?>
+	<?php if ($rule->children) {?>
+		<div class="row field-row">
+			<div class="large-<?php echo $form->layoutColumns['label'];?> column">
+				<div class="field-label">
+					Descendants:
+				</div>
+			</div>
+			<div class="large-<?php echo (12 - $form->layoutColumns['label']);?> column">
+				<div class="panel" style="margin:0">
+					<?php
+						$this->widget('CTreeView',array(
+							'data' => OphTrOperationbooking_Letter_Contact_Rule::model()->findAllAsTree($rule,true,'textPlain'),
+						));
+					?>
+				</div>
+			</div>
+		</div>
+	<?php }?>
 	<?php echo $form->errorSummary($rule); ?>
 	<?php echo $form->formActions(array(
 		'delete' => $rule->id ? 'Delete' : false
@@ -47,17 +65,6 @@
 	<?php $this->endWidget()?>
 </div>
 
-<?php if ($rule->children) {?>
-	<div class="box admin">
-		<h3>Descendants:</h3>
-		<div class="panel">
-			<?php
-			$this->widget('CTreeView',array(
-					'data' => OphTrOperationbooking_Letter_Contact_Rule::model()->findAllAsTree($rule,true,'textPlain'),
-				))?>
-		</div>
-	</div>
-<?php }?>
 
 <script type="text/javascript">
 	handleButton($('#et_cancel'),function() {
@@ -66,7 +73,8 @@
 	handleButton($('#et_save'),function() {
 		$('#adminform').submit();
 	});
-	handleButton($('#et_delete'),function() {
+	handleButton($('#et_delete'),function(e) {
+		e.preventDefault();
 		window.location.href = baseUrl+'/OphTrOperationbooking/admin/delete'+OE_rule_model+'/<?php echo $rule->id?>';
 	});
 </script>
