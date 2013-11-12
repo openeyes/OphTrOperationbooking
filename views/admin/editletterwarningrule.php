@@ -20,13 +20,17 @@
 ?>
 <div class="box admin">
 	<h2><?php echo $rule->id ? 'Edit' : 'Add'?> letter warning rule</h2>
-	<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
 	<?php
 	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 			'id'=>'adminform',
 			'enableAjaxValidation'=>false,
-			'focus'=>'#contactname'
+			'focus'=>'#contactname',
+			'layoutColumns' => array(
+				'label' => 2,
+				'field' => 5
+			)
 		))?>
+	<?php echo $form->errorSummary($rule); ?>
 	<?php echo $form->dropDownList($rule,'rule_type_id',CHtml::listData(OphTrOperationbooking_Admission_Letter_Warning_Rule_Type::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Rule type -'))?>
 	<?php echo $form->dropDownList($rule,'parent_rule_id',CHtml::listData(OphTrOperationbooking_Admission_Letter_Warning_Rule::model()->getListAsTree(),'id','treeName'),array('empty'=>'- None -'))?>
 	<?php echo $form->textField($rule,'rule_order')?>
@@ -39,23 +43,29 @@
 	<?php echo $form->textArea($rule,'warning_text',array('rows'=>5,'cols'=>80))?>
 	<?php echo $form->radioBoolean($rule,'emphasis')?>
 	<?php echo $form->radioBoolean($rule,'strong')?>
-	<?php $this->endWidget()?>
 	<?php if ($rule->children) {?>
-		<div>
-			<p style="font-size: 13px; margin: 0; padding: 0; margin-top: 10px; margin-bottom: 10px;"><strong>Descendants</strong></p>
-			<?php
-			$this->widget('CTreeView',array(
-					'data' => OphTrOperationbooking_Admission_Letter_Warning_Rule::model()->findAllAsTree($rule,true,'textPlain'),
-				))?>
+		<div class="row field-row">
+			<div class="large-<?php echo $form->layoutColumns['label'];?> column">
+				<div class="field-label">
+					Descendants
+				</div>
+			</div>
+			<div class="large-<?php echo (12 - $form->layoutColumns['label']);?> column">
+				<div class="panel" style="margin:0">
+					<?php
+					$this->widget('CTreeView',array(
+						'data' => OphTrOperationbooking_Admission_Letter_Warning_Rule::model()->findAllAsTree($rule,true,'textPlain'),
+					))?>
+				</div>
+			</div>
 		</div>
 	<?php }?>
+	<?php echo $form->errorSummary($rule); ?>
+	<?php echo $form->formActions(array(
+		'delete' => $rule->id ? 'Delete' : false
+	));?>
+	<?php $this->endWidget()?>
 </div>
-<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
-
-<?php echo EventAction::button('Save', 'save', array('level'=>'secondary'),array('class' => 'button small'))->toHtml()?>&nbsp;
-<?php echo EventAction::button('Cancel', 'cancel', array('level'=>'warning'), array('class' => 'button small'))->toHtml()?>&nbsp;
-<?php if ($rule->id) echo EventAction::button('Delete', 'delete', array('level' => 'warning'), array('class' => 'button small'))->toHtml()?>
-<img class="loader" src="<?php echo Yii::app()->createUrl('/img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 
 <script type="text/javascript">
 	handleButton($('#et_cancel'),function() {

@@ -18,37 +18,38 @@
  */
 ?>
 <div class="box admin">
+	<header class="box-header">
+		<h2 class="box-title">Letter contact rules</h2>
+		<div class="box-actions">
+			<?php echo EventAction::button('Add', 'add_letter_contact_rule', null, array('class' => 'button small'))->toHtml()?>
+		</div>
+	</header>
 	<form id="rulestest" class="panel">
-		<h2>Test:</h2>
-		<div class="row field-row">
-			<div class="large-3 column">
+		<fieldset class="row field-row">
+			<legend class="large-1 column align">
+				Test:
+			</legend>
+			<div class="large-2 column">
 				<?php echo CHtml::dropDownList('lcr_site_id','',CHtml::listData(Site::model()->findAll(array('order'=>'name asc','condition'=>'institution_id = 1')),'id','name'),array('empty'=>'- Site -'))?>
 			</div>
-			<div class="large-3 column">
+			<div class="large-2 column">
 				<?php echo CHtml::dropDownList('lcr_subspecialty_id','',CHtml::listData(Subspecialty::model()->findAllByCurrentSpecialty(),'id','name'),array('empty'=>'- Subspecialty -'))?>
 			</div>
-			<div class="large-3 column">
+			<div class="large-2 column">
 				<?php echo CHtml::dropDownList('lcr_firm_id','',array(),array('empty'=>'- Firm -'))?>
 			</div>
-			<div class="large-3 column">
+			<div class="large-2 column end">
 				<?php echo CHtml::dropDownList('lcr_theatre_id','',array(),array('empty'=>'- Theatre -'))?>
 			</div>
-		</div>
-		<div id="nomatch" style="display: none; color: #f00;">No match</div>
+		</fieldset>
 	</form>
 
-	<div class="reportInputs">
-		<h3 class="georgia">Letter contact rules</h3>
-		<div>
-			<form id="rules">
-				<?php
-				$this->widget('CTreeView',array(
-						'data' => $data,
-					))?>
-			</form>
-		</div>
-	</div>
+	<div id="nomatch" class="alert-box alert hide">No match</div>
+
+	<form id="rules" class="panel">
+		<?php
+		$this->widget('CTreeView',array(
+			'data' => $data,
+		))?>
+	</form>
 </div>
-
-<?php echo EventAction::button('Add', 'add_letter_contact_rule', null, array('class' => 'button small'))->toHtml()?>
-
