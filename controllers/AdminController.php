@@ -699,25 +699,26 @@ class AdminController extends ModuleAdminController
 				$criteria->order = "firm.name $order, subspecialty.name $order";
 		}
 
-		$data = OphTrOperationbooking_Operation_Sequence::model()->with(array(
-				'firm' => array(
-					'with' => array(
-						'serviceSubspecialtyAssignment' => array(
-							'with' => 'subspecialty',
-						),
+
+		$with = array(
+			'firm' => array(
+				'with' => array(
+					'serviceSubspecialtyAssignment' => array(
+						'with' => 'subspecialty',
 					),
 				),
-				'theatre',
-				'interval',
-			))->findAll($criteria);
+			),
+			'theatre',
+			'interval',
+		);
+
+		$this->items_per_page = $this->sessions_items_per_page;
+		$pagination = $this->initPagination(OphTrOperationbooking_Operation_Sequence::model()->with($with), $criteria);
+		$data = OphTrOperationbooking_Operation_Sequence::model()->with($with)->findAll($criteria);
 
 		return array(
 			'data' => $data,
-			'count' => $count,
-			'page' => $page,
-			'pages' => $pages,
-			'more_items' => ($count > count($data)),
-			'items_per_page' => $this->sequences_items_per_page,
+			'pagination' => $pagination
 		);
 	}
 
@@ -1029,7 +1030,7 @@ class AdminController extends ModuleAdminController
 				$criteria->order = "firm.name $order, subspecialty.name $order";
 		}
 
-		$data = OphTrOperationbooking_Operation_Session::model()->with(array(
+		$with = array(
 			'sequence',
 			'firm' => array(
 				'with' => array(
@@ -1039,15 +1040,15 @@ class AdminController extends ModuleAdminController
 				),
 			),
 			'theatre',
-		))->findAll($criteria);
+		);
+
+		$this->items_per_page = $this->sessions_items_per_page;
+		$pagination = $this->initPagination(OphTrOperationbooking_Operation_Session::model()->with($with), $criteria);
+		$data = OphTrOperationbooking_Operation_Session::model()->with($with)->findAll($criteria);
 
 		return array(
 			'data' => $data,
-			'count' => $count,
-			'page' => $page,
-			'pages' => $pages,
-			'more_items' => ($count > count($data)),
-			'items_per_page' => $this->sessions_items_per_page,
+			'pagination' => $pagination
 		);
 	}
 

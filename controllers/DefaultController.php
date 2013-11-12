@@ -78,8 +78,6 @@ class DefaultController extends BaseEventTypeController
 			return $this->redirect(array('default/view/'.$event->id));
 		}
 
-		Yii::app()->clientScript->registerCSSFile(Yii::app()->createUrl('css/theatre_calendar.css'), 'all');
-
 		$errors = array();
 
 		if (isset($_POST['cancellation_reason']) && isset($_POST['operation_id'])) {
@@ -112,12 +110,12 @@ class DefaultController extends BaseEventTypeController
 
 		$this->processJsVars();
 
-		$this->renderPartial('cancel', array(
-				'operation' => $operation,
-				'patient' => $operation->event->episode->patient,
-				'date' => $operation->minDate,
-				'errors' => $errors
-			), false, true);
+		$this->render('cancel', array(
+			'operation' => $operation,
+			'patient' => $operation->event->episode->patient,
+			'date' => $operation->minDate,
+			'errors' => $errors
+		));
 	}
 
 	public function actionAdmissionLetter($id)

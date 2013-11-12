@@ -17,32 +17,29 @@
 * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
 */
 ?>
-<?php $this->header() ?>
+<?php $this->beginContent('//patient/event_container'); ?>
 
-<h3 class="withEventIcon"><?php echo $this->event_type->name ?></h3>
+	<h2 class="event-title"><?php echo $this->event_type->name ?></h2>
 
-<div>
 	<?php
 	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 			'id'=>'clinical-create',
 			'enableAjaxValidation'=>false,
-			'htmlOptions' => array('class'=>'sliding'),
 	));
 
-	// Event actions
-	$this->event_actions[] = EventAction::button('Save and Schedule later', 'scheduleLater', array('id' => 'et_save', 'colour' => 'green'));
-	$this->event_actions[] = EventAction::button('Save and Schedule now', 'scheduleNow', array('id' => 'et_save_and_schedule', 'colour' => 'green'));
-	$this->renderPartial('//patient/event_actions');
-	?>
-	<input type="hidden" name="schedule_now" id="schedule_now" value="0" />
-	<?php
-	$this->displayErrors($errors);
-	$this->renderDefaultElements($this->action->id, $form);
-	$this->renderOptionalElements($this->action->id, $form);
-	$this->displayErrors($errors);
-	?>
-	<div class="cleartall"></div>
-	<?php $this->endWidget()?>
-</div>
+		// Event actions
+		$this->event_actions[] = EventAction::button('Save and Schedule later','#', null, array('name'=> 'scheduleLater', 'id' => 'et_save', 'class' => 'button small', 'form'=>'clinical-create'));
+		$this->event_actions[] = EventAction::button('Save and Schedule now', '#', array('level'=>'secondary'),  array('name'=> 'scheduleNow','id' => 'et_save_and_schedule', 'class' => 'button small', 'form' => 'clinical-create'));
 
-<?php $this->footer()?>
+		?>
+		<input type="hidden" name="schedule_now" id="schedule_now" value="0" />
+		<?php
+		$this->displayErrors($errors);
+		$this->renderDefaultElements($this->action->id, $form);
+		$this->renderOptionalElements($this->action->id, $form);
+		$this->displayErrors($errors, true);
+		?>
+	<?php $this->endWidget()?>
+
+<?php $this->endContent() ;?>
+

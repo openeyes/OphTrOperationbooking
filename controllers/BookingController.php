@@ -120,24 +120,24 @@ class BookingController extends BaseEventTypeController
 		} elseif ($operation->booking) {
 			$selectedDate = $operation->booking->session->date;
 		}
-		
+
 		$this->processJsVars();
-		
-		$this->renderPartial('schedule', array(
-				'event' => $event,
-				'operation' => $operation,
-				'firm' => $firm,
-				'firmList' => Firm::model()->listWithSpecialties,
-				'date' => $date,
-				'selectedDate' => @$selectedDate,
-				'sessions' => $operation->getFirmCalendarForMonth($firm, $date),
-				'theatres' => @$theatres,
-				'session' => @$session,
-				'bookings' => @$bookings,
-				'bookable' => @$bookable,
-				'inthepast' => @$inthepast,
-				'errors' => @$errors,
-				), false, true);
+
+		$this->render('schedule', array(
+			'event' => $event,
+			'operation' => $operation,
+			'firm' => $firm,
+			'firmList' => Firm::model()->listWithSpecialties,
+			'date' => $date,
+			'selectedDate' => @$selectedDate,
+			'sessions' => $operation->getFirmCalendarForMonth($firm, $date),
+			'theatres' => @$theatres,
+			'session' => @$session,
+			'bookings' => @$bookings,
+			'bookable' => @$bookable,
+			'inthepast' => @$inthepast,
+			'errors' => @$errors,
+		));
 	}
 
 	public function actionReschedule($id)
@@ -164,8 +164,6 @@ class BookingController extends BaseEventTypeController
 		$this->patient = $operation->event->episode->patient;
 		$this->title = 'Reschedule later';
 
-		Yii::app()->clientScript->registerCSSFile(Yii::app()->createUrl('css/theatre_calendar.css'), 'all');
-
 		$errors = array();
 
 		if (!empty($_POST)) {
@@ -185,17 +183,14 @@ class BookingController extends BaseEventTypeController
 				$this->redirect(array('default/view/'.$event->id));
 			}
 		}
-		
+
 		$this->processJsVars();
-		
-		$this->renderPartial('reschedule_later', array(
-				'operation' => $operation,
-				'date' => $operation->minDate,
-				'patient' => $operation->event->episode->patient,
-				'errors' => $errors,
-			),
-			false,
-			true
-		);
+
+		$this->render('reschedule_later', array(
+			'operation' => $operation,
+			'date' => $operation->minDate,
+			'patient' => $operation->event->episode->patient,
+			'errors' => $errors,
+		));
 	}
 }

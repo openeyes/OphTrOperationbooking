@@ -1,3 +1,4 @@
+<?php /* DEPRECATED */ ?>
 <?php
 /**
  * OpenEyes
@@ -18,45 +19,52 @@
  */
 
 ?>
-<div class="curvybox white">
-	<div class="admin">
-		<h3 class="georgia"><?php echo $rule->id ? 'Edit' : 'Add'?> waiting list contact rule</h3>
-		<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
-		<div>
-			<?php
-			$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-				'id'=>'adminform',
-				'enableAjaxValidation'=>false,
-				'htmlOptions' => array('class'=>'sliding'),
-				'focus'=>'#contactname'
-			))?>
-			<?php echo $form->dropDownList($rule,'parent_rule_id',CHtml::listData(OphTrOperationbooking_Waiting_List_Contact_Rule::model()->getListAsTree(),'id','treeName'),array('empty'=>'- None -'))?>
-			<?php echo $form->textField($rule,'rule_order')?>
-			<?php echo $form->dropDownList($rule,'site_id',CHtml::listData(Site::model()->findAll(array('order'=>'name asc','condition'=>'institution_id = 1')),'id','name'),array('empty'=>'- Not set -'))?>
-			<?php echo $form->dropDownList($rule,'firm_id',Firm::model()->getListWithSpecialties(),array('empty'=>'- Not set -'))?>
-			<?php echo $form->dropDownList($rule,'service_id',CHtml::listData(Service::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Not set -'))?>
-			<?php echo $form->textField($rule,'name')?>
-			<?php echo $form->textField($rule,'telephone')?>
-			<?php $this->endWidget()?>
-		</div>
-		<?php if ($rule->children) {?>
-			<div>
-				<p style="font-size: 13px; margin: 0; padding: 0; margin-top: 10px; margin-bottom: 10px;"><strong>Descendants</strong></p>
-				<?php
-				$this->widget('CTreeView',array(
-					'data' => OphTrOperationbooking_Waiting_List_Contact_Rule::model()->findAllAsTree($rule,true,'textPlain'),
-				))?>
+<div class="box admin">
+	<h2><?php echo $rule->id ? 'Edit' : 'Add'?> waiting list contact rule</h2>
+	<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
+	<?php
+	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
+		'id'=>'adminform',
+		'enableAjaxValidation'=>false,
+		'htmlOptions' => array('class'=>'sliding'),
+		'focus'=>'#contactname',
+		'layoutColumns' => array(
+			'label' => 2,
+			'field' => 5
+		)
+	))?>
+	<?php echo $form->errorSummary($rule); ?>
+	<?php echo $form->dropDownList($rule,'parent_rule_id',CHtml::listData(OphTrOperationbooking_Waiting_List_Contact_Rule::model()->getListAsTree(),'id','treeName'),array('empty'=>'- None -'))?>
+	<?php echo $form->textField($rule,'rule_order',array(),array(),array('field'=>2))?>
+	<?php echo $form->dropDownList($rule,'site_id',CHtml::listData(Site::model()->findAll(array('order'=>'name asc','condition'=>'institution_id = 1')),'id','name'),array('empty'=>'- Not set -'))?>
+	<?php echo $form->dropDownList($rule,'firm_id',Firm::model()->getListWithSpecialties(),array('empty'=>'- Not set -'))?>
+	<?php echo $form->dropDownList($rule,'service_id',CHtml::listData(Service::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Not set -'))?>
+	<?php echo $form->textField($rule,'name')?>
+	<?php echo $form->textField($rule,'telephone',array(),array(),array('field'=>3))?>
+	<?php if ($rule->children) {?>
+		<div class="row field-row">
+			<div class="large-<?php echo $form->layoutColumns['label'];?> column">
+				<div class="field-label">
+					Descendants:
+				</div>
 			</div>
-		<?php }?>
-	</div>
+			<div class="large-<?php echo (12 - $form->layoutColumns['label']);?> column">
+				<div class="panel" style="margin:0">
+					<?php
+					$this->widget('CTreeView',array(
+						'data' => OphTrOperationbooking_Waiting_List_Contact_Rule::model()->findAllAsTree($rule,true,'textPlain'),
+					))?>
+				</div>
+			</div>
+		</div>
+	<?php }?>
+	<?php echo $form->errorSummary($rule); ?>
+	<?php echo $form->formActions(array(
+		'delete' => $rule->id ? 'Delete' : false
+	));?>
+	<?php $this->endWidget()?>
 </div>
-<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
-<div>
-	<?php echo EventAction::button('Save', 'save', array('colour' => 'green'))->toHtml()?>
-	<?php echo EventAction::button('Cancel', 'cancel', array('colour' => 'red'))->toHtml()?>
-	<?php if ($rule->id) echo EventAction::button('Delete', 'delete', array('colour' => 'blue'))->toHtml()?>
-	<img class="loader" src="<?php echo Yii::app()->createUrl('/img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
-</div>
+
 <script type="text/javascript">
 	handleButton($('#et_cancel'),function() {
 		window.location.href = baseUrl+'/OphTrOperationbooking/admin/view'+OE_rule_model+'s';

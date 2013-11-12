@@ -24,19 +24,25 @@ $nextYear = mktime(0,0,0, date('m'), 1, date('Y')+1);
 ?>
 <div id="dates" class="clearfix">
 	<div id="current_month" class="column"><?php echo date('F Y', $date)?></div>
-	<div class="column" id="month_back">
-		<span class="button">
-			<button type="submit" class="classy blue venti" name="yt1" id="previous_month"><?php echo CHtml::link('<span class="button-span button-span-blue">&#x25C0;&nbsp;&nbsp;previous month</span>',array('booking/'.($operation->booking?'re':'').'schedule/'.$operation->event_id.'?firm_id='.($firm->id?$firm->id:'EMG').'&date='.date('Ym',$lastMonth)))?></button>
-		</span>
+	<div class="left" id="month_back">
+		<div class="primary" id="previous_month">
+			<?php echo CHtml::link('&#x25C0;&nbsp;&nbsp;previous month',
+				array('booking/'.($operation->booking?'re':'').'schedule/'.$operation->event_id.'?firm_id='.($firm->id?$firm->id:'EMG').'&date='.date('Ym',$lastMonth)),
+				array('class'=>'button primary')
+			)?>
+		</div>
 	</div>
-	<div class="column" id="month_forward">
-		<?php if ($nextMonth > $nextYear) {
-			echo '<button type="submit" class="classy blue inactive" name="yt1" id="next_month"><span class="button-span button-span-inactive">next month&nbsp;&nbsp;&#x25B6;</span></button>';
-		} else {?>
-			<span class="button">
-				<button type="submit" class="classy blue venti" name="yt1" id="next_month"><?php echo CHtml::link('<span class="button-span button-span-blue">next month&nbsp;&nbsp;&#x25B6;</span>',array('booking/'.($operation->booking?'re':'').'schedule/'.$operation->event_id.'?firm_id='.($firm->id?$firm->id:'EMG').'&date='.date('Ym',$nextMonth)))?></button>
-			</span>
-		<?php }?>
+	<div class="right" id="month_forward">
+		<div id="next_month">
+			<?php if ($nextMonth > $nextYear) {
+				echo '<a href="#" class="button primary disabled" id="next_month">next month&nbsp;&nbsp;&#x25B6;</a>';
+			} else {?>
+				<?php echo CHtml::link('<span class="button-span button-span-blue">next month&nbsp;&nbsp;&#x25B6;</span>',
+					array('booking/'.($operation->booking?'re':'').'schedule/'.$operation->event_id.'?firm_id='.($firm->id?$firm->id:'EMG').'&date='.date('Ym',$nextMonth)),
+					array('class'=>'button primary')
+				)?>
+			<?php }?>
+		</div>
 	</div>
 </div>
 <table id="calendar">

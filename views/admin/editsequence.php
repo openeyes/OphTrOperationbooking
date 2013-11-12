@@ -18,77 +18,90 @@
  */
 
 ?>
-<div class="report curvybox white">
-	<div class="admin">
-		<h3 class="georgia"><?php echo $sequence->id ? 'Edit' : 'Add'?> sequence</h3>
-		<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
-		<div>
-			<?php
-			$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-				'id'=>'adminform',
-				'enableAjaxValidation'=>false,
-				'htmlOptions' => array('class'=>'sliding'),
-				'focus'=>'#username'
-			))?>
-			<?php echo $form->dropDownList($sequence,'firm_id',Firm::model()->getListWithSpecialties(),array('empty'=>'- Emergency -'))?>
-			<?php echo $form->dropDownList($sequence,'theatre_id',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- None -'))?>
-			<?php echo $form->datePicker($sequence,'start_date',array(),array('null'=>true))?>
-			<?php echo $form->datePicker($sequence,'end_date',array(),array('null'=>true))?>
-			<?php echo $form->dropDownList($sequence,'weekday',array(1=>'Monday',2=>'Tuesday',3=>'Wednesday',4=>'Thursday',5=>'Friday',6=>'Saturday',7=>'Sunday'),array('empty'=>'- Weekday -'))?>
-			<?php echo $form->textField($sequence,'start_time',array('size'=>10))?>
-			<?php echo $form->textField($sequence,'end_time',array('size'=>10))?>
-			<?php echo $form->dropDownList($sequence,'interval_id',CHtml::listData(OphTrOperationbooking_Operation_Sequence_Interval::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- None -'))?>
-			<?php echo $form->radioBoolean($sequence,'consultant')?>
-			<?php echo $form->radioBoolean($sequence,'paediatric')?>
-			<?php echo $form->radioBoolean($sequence,'anaesthetist')?>
-			<?php echo $form->radioBoolean($sequence,'general_anaesthetic')?>
-			<div id="OphTrOperationbooking_Operation_Sequence_week_selection" class="eventDetail">
-				<div class="label">Week selection:</div>
-				<div class="data">
-					<input type="hidden" name="OphTrOperationbooking_Operation_Sequence[week_selection_week1]" value="0" />
-					<input type="hidden" name="OphTrOperationbooking_Operation_Sequence[week_selection_week2]" value="0" />
-					<input type="hidden" name="OphTrOperationbooking_Operation_Sequence[week_selection_week3]" value="0" />
-					<input type="hidden" name="OphTrOperationbooking_Operation_Sequence[week_selection_week4]" value="0" />
-					<input type="hidden" name="OphTrOperationbooking_Operation_Sequence[week_selection_week5]" value="0" />
-					<input type="checkbox" name="OphTrOperationbooking_Operation_Sequence[week_selection_week1]" value="1" <?php if ($sequence->week_selection & 1) {?> checked="checked"<?php }?>/>1st&nbsp;
-					<input type="checkbox" name="OphTrOperationbooking_Operation_Sequence[week_selection_week2]" value="1" <?php if ($sequence->week_selection & 2) {?> checked="checked"<?php }?>/>2nd&nbsp;
-					<input type="checkbox" name="OphTrOperationbooking_Operation_Sequence[week_selection_week3]" value="1" <?php if ($sequence->week_selection & 4) {?> checked="checked"<?php }?>/>3rd&nbsp;
-					<input type="checkbox" name="OphTrOperationbooking_Operation_Sequence[week_selection_week4]" value="1" <?php if ($sequence->week_selection & 8) {?> checked="checked"<?php }?>/>4th&nbsp;
-					<input type="checkbox" name="OphTrOperationbooking_Operation_Sequence[week_selection_week5]" value="1" <?php if ($sequence->week_selection & 16) {?> checked="checked"<?php }?>/>5th
-				</div>
-			</div>
-			<?php $this->endWidget()?>
+<div class="box admin">
+	<h2><?php echo $sequence->id ? 'Edit' : 'Add'?> sequence</h2>
+	<?php
+	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
+		'id'=>'adminform',
+		'enableAjaxValidation'=>false,
+		'focus'=>'#username',
+		'layoutColumns' => array(
+			'label' => 2,
+			'field' => 5
+		)
+	))?>
+	<?php echo $form->errorSummary($sequence); ?>
+	<?php echo $form->dropDownList($sequence,'firm_id',Firm::model()->getListWithSpecialties(),array('empty'=>'- Emergency -'))?>
+	<?php echo $form->dropDownList($sequence,'theatre_id',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- None -'))?>
+	<?php echo $form->datePicker($sequence,'start_date',array(),array('null'=>true),array('field'=>2))?>
+	<?php echo $form->datePicker($sequence,'end_date',array(),array('null'=>true),array('field'=>2))?>
+	<?php echo $form->dropDownList($sequence,'weekday',array(1=>'Monday',2=>'Tuesday',3=>'Wednesday',4=>'Thursday',5=>'Friday',6=>'Saturday',7=>'Sunday'),array('empty'=>'- Weekday -'))?>
+	<?php echo $form->textField($sequence,'start_time',array(),array(),array('field'=>2))?>
+	<?php echo $form->textField($sequence,'end_time',array(),array(),array('field'=>2))?>
+	<?php echo $form->dropDownList($sequence,'interval_id',CHtml::listData(OphTrOperationbooking_Operation_Sequence_Interval::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- None -'))?>
+	<?php echo $form->radioBoolean($sequence,'consultant')?>
+	<?php echo $form->radioBoolean($sequence,'paediatric')?>
+	<?php echo $form->radioBoolean($sequence,'anaesthetist')?>
+	<?php echo $form->radioBoolean($sequence,'general_anaesthetic')?>
+	<fieldset id="OphTrOperationbooking_Operation_Sequence_week_selection" class="row field-row">
+		<legend class="large-2 column">
+			Week selection:
+		</legend>
+		<div class="large-5 column end">
+			<input type="hidden" name="OphTrOperationbooking_Operation_Sequence[week_selection_week1]" value="0" />
+			<input type="hidden" name="OphTrOperationbooking_Operation_Sequence[week_selection_week2]" value="0" />
+			<input type="hidden" name="OphTrOperationbooking_Operation_Sequence[week_selection_week3]" value="0" />
+			<input type="hidden" name="OphTrOperationbooking_Operation_Sequence[week_selection_week4]" value="0" />
+			<input type="hidden" name="OphTrOperationbooking_Operation_Sequence[week_selection_week5]" value="0" />
+
+			<label class="inline">
+				<input type="checkbox" name="OphTrOperationbooking_Operation_Sequence[week_selection_week1]" value="1" <?php if ($sequence->week_selection & 1) {?> checked="checked"<?php }?>/> 1st
+			</label>
+			<label class="inline">
+				<input type="checkbox" name="OphTrOperationbooking_Operation_Sequence[week_selection_week2]" value="1" <?php if ($sequence->week_selection & 2) {?> checked="checked"<?php }?>/> 2nd
+			</label>
+			<label class="inline">
+				<input type="checkbox" name="OphTrOperationbooking_Operation_Sequence[week_selection_week3]" value="1" <?php if ($sequence->week_selection & 4) {?> checked="checked"<?php }?>/> 3rd
+			</label>
+			<label class="inline">
+				<input type="checkbox" name="OphTrOperationbooking_Operation_Sequence[week_selection_week4]" value="1" <?php if ($sequence->week_selection & 8) {?> checked="checked"<?php }?>/> 4th
+			</label>
+			<label class="inline">
+				<input type="checkbox" name="OphTrOperationbooking_Operation_Sequence[week_selection_week5]" value="1" <?php if ($sequence->week_selection & 16) {?> checked="checked"<?php }?>/> 5th
+			</label>
+		</div>
+	</fieldset>
+	<?php echo $form->errorSummary($sequence); ?>
+	<div class="field-row row">
+		<div class="large-10 large-offset-2 column">
+			<?php echo EventAction::button('Save', 'save', null,array('class'=>'button small'))->toHtml()?>
+			<?php echo EventAction::button('Cancel', 'cancel', array('level' => 'warning'),array('class'=>'button small'))->toHtml()?>
+			<?php if ($sequence->id) {?>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<?php echo EventAction::button('View sessions','view_sessions',array(),array('class'=>'button small'))->toHtml()?>
+				<?php echo EventAction::button('Add session','add_session_to_sequence',array(),array('class'=>'button small'))->toHtml()?>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<?php echo EventAction::button('Delete sequence','delete_sequence',array('level'=>'warning'),array('class'=>'button small'))->toHtml()?>
+			<?php }?>
+			<img class="loader" src="<?php echo Yii::app()->createUrl('/img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 		</div>
 	</div>
+	<?php $this->endWidget()?>
 </div>
-<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
-<div>
-	<?php echo EventAction::button('Save', 'save', array('colour' => 'green'))->toHtml()?>
-	<?php echo EventAction::button('Cancel', 'cancel', array('colour' => 'red'))->toHtml()?>
-	<?php if ($sequence->id) {?>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<?php echo EventAction::button('View sessions','view_sessions',array('colour'=>'blue'))->toHtml()?>
-		<?php echo EventAction::button('Add session','add_session_to_sequence',array('colour'=>'blue'))->toHtml()?>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<?php echo EventAction::button('Delete sequence','delete_sequence',array('colour'=>'red'))->toHtml()?>
-	<?php }?>
-	<img class="loader" src="<?php echo Yii::app()->createUrl('/img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
-</div>
+
 <div id="confirm_delete_sequence" title="Confirm delete sequence" style="display: none;">
-	<div>
-		<div id="delete_sequence">
-			<div class="alertBox" style="margin-top: 10px; margin-bottom: 15px;">
-				<strong>WARNING: This will remove the sequence from the system.<br/>This action cannot be undone.</strong>
-			</div>
-			<p>
-				<strong>Are you sure you want to proceed?</strong>
-			</p>
-			<div class="buttonwrapper" style="margin-top: 15px; margin-bottom: 5px;">
-				<input type="hidden" id="medication_id" value="" />
-				<button type="submit" class="classy red venti btn_remove_sequence"><span class="button-span button-span-red">Remove sequence</span></button>
-				<button type="submit" class="classy green venti btn_cancel_remove_sequence"><span class="button-span button-span-green">Cancel</span></button>
-				<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
-			</div>
+	<div id="delete_sequence">
+		<div class="alert-box alert with-icon">
+			<strong>WARNING: This will remove the sequence from the system.<br/>This action cannot be undone.</strong>
+		</div>
+		<p>
+			<strong>Are you sure you want to proceed?</strong>
+		</p>
+		<div class="buttons">
+			<input type="hidden" id="medication_id" value="" />
+			<button type="submit" class="warning btn_remove_sequence">Remove sequence</button>
+			<button type="submit" class="secondary btn_cancel_remove_sequence">Cancel</button>
+			<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 		</div>
 	</div>
 </div>
@@ -121,6 +134,7 @@
 	});
 
 	handleButton($('#et_delete_sequence'),function(e) {
+		e.preventDefault();
 		$.ajax({
 			'type': 'POST',
 			'url': baseUrl+'/OphTrOperationbooking/admin/verifyDeleteSequences',

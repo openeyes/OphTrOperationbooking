@@ -17,10 +17,11 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-<div class="transport_pagination"><span class="transport_pagination_back"> &laquo; back &nbsp; </span><span class="transport_pagination_selected">&nbsp;1 </span><span class="transport_pagination_next"> &nbsp; next &raquo;</span></div>
-<div id="no_gp_warning" class="alertBox" style="display: none;">One or more patients has no GP practice, please correct in PAS before printing GP letter.</div>
-<div id="transportList" class="grid-view-waitinglist">
-	<table>
+<div id="no_gp_warning" class="alert-box alert with-icon hide">
+	One or more patients has no GP practice, please correct in PAS before printing GP letter.
+</div>
+<div id="transportList">
+	<table class="grid transport">
 		<thead>
 			<tr>
 				<th>Hospital number</th>
@@ -34,7 +35,7 @@
 				<th>Subspecialty</th>
 				<th>DTA</th>
 				<th>Priority</th>
-				<th><input style="margin-top: 0.4em;" type="checkbox" id="transport_checkall" value="" /></th>
+				<th><input type="checkbox" id="transport_checkall" value="" /></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -44,9 +45,18 @@
 				</td>
 			</tr>
 		</tbody>
+		<tfoot class="pagination-container">
+			<tr>
+				<td colspan="12">
+					<ul class="pagination right" id="yw0">
+						<li class="previous unavailable"><a href="/admin/users">&lt; Previous</a></li>
+						<li class="next unavailable"><a href="/admin/users?page=2">Next &gt;</a></li>
+					</ul>
+				</td>
+			</tr>
+		</tfoot>
 	</table>
 </div>
-<div class="transport_pagination"><span class="transport_pagination_back"> &laquo; back &nbsp; </span><span class="transport_pagination_selected">&nbsp;1 </span><span class="transport_pagination_next"> &nbsp; next &raquo;</span></div>
 <script type="text/javascript">
 	$(document).ready(function() { transport_load_tcis(); });
 </script>

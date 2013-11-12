@@ -83,8 +83,8 @@ $(document).ready(function() {
 				if (n == 0) {
 					window.location.href = window.location.href.replace(/\/cancel\//,'/view/');
 				} else {
-					$('div.alertBox').show();
-					$('div.alertBox').html(html);
+					$('#cancelForm .alert-box').show();
+					$('#cancelForm .alert-box').html(html);
 				}
 
 				enableButtons();
@@ -118,7 +118,7 @@ $(document).ready(function() {
 		var m = window.location.href.match(/\/view\/([0-9]+)$/);
 		printIFrameUrl(baseUrl+'/OphTrOperationbooking/waitingList/printLetters',{'event_id': m[1]});
 	});
-	
+
 	handleButton($('#btn_print-admissionletter'),function() {
 		var m = window.location.href.match(/\/view\/([0-9]+)$/);
 		printIFrameUrl(baseUrl+'/OphTrOperationbooking/default/admissionLetter/'+m[1]);

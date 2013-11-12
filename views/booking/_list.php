@@ -25,7 +25,7 @@ if (!$reschedule) {
 ?>
 	<h4>Other operations in this session: <?php echo abs($session->availableMinutes) . " min {$session->minuteStatus}"; ?></h4>
 	<div class="theatre-sessions">
-	<table id="appointment_list">
+	<table id="appointment_list" class="grid">
 		<thead>
 			<tr>
 				<th>Operation list overview</th>
@@ -76,21 +76,29 @@ if (!$reschedule) {
 <a id="book"></a>
 
 <?php if ($bookable) {?>
+
 	<div class="eventDetail clearfix">
-		<div class="label"><strong>Admission Time:</strong></div>
-		<div class="data">
-			<input type="text" id="Booking_admission_time" name="Booking[admission_time]" value="<?php echo $_POST['Booking']['admission_time']?>" size="6" />
-			<span id="Booking_admission_time_error"></span>
+		<div class="row field-row">
+			<div class="large-2 column">
+				<label for="Booking_admission_time"><strong>Admission Time:</strong></label>
+			</div>
+			<div class="large-2 column end">
+				<input type="text" id="Booking_admission_time" name="Booking[admission_time]" value="<?php echo $_POST['Booking']['admission_time']?>" size="6" />
+				<span id="Booking_admission_time_error"></span>
+			</div>
 		</div>
 	</div>
 
-	<div class="eventDetail clearfix" style="position:relative;">
-		<div class="label"><strong>Session Comments:</strong>
-			<img src="<?php echo Yii::app()->createUrl('img/_elements/icons/alerts/comment.png')?>" alt="comment" width="17" height="17" style="position:absolute; bottom:10px; left:10px;" />
-		</div>
-		<div class="data">
-			<div class="sessionComments" style="width:400px; display:inline-block; margin-bottom:0; ">
-				<textarea id="Session_comments" name="Session[comments]" rows="2" style="width:395px;"><?php echo htmlspecialchars($_POST['Session']['comments'])?></textarea>
+	<div class="eventDetail">
+		<div class="row field-row" style="position:relative;">
+			<div class="large-2 column">
+				<label for="Session_comments"><strong>Session Comments:</strong></label>
+				<!-- <img src="<?php echo Yii::app()->createUrl('img/_elements/icons/alerts/comment.png')?>" alt="comment" width="17" height="17" style="position:absolute; bottom:10px; left:10px;" /> -->
+			</div>
+			<div class="large-5 column end">
+				<div class="sessionComments">
+					<textarea id="Session_comments" name="Session[comments]" rows="2"><?php echo htmlspecialchars($_POST['Session']['comments'])?></textarea>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -105,41 +113,52 @@ if (!$reschedule) {
 
 	<?php if ($reschedule) { ?>
 		<h3>Reason for Reschedule</h3>
-		<div class="eventDetail clearfix" style="position:relative;">
-			<div class="label"><strong><?php echo CHtml::label('Reschedule Reason: ', 'cancellation_reason'); ?></strong></div>
-			<?php if (date('Y-m-d') == date('Y-m-d', strtotime($operation->booking->session->date))) {
-				$listIndex = 3;
-			} else {
-				$listIndex = 2;
-			} ?>
-			<div class="data">
-			<?php echo CHtml::dropDownList('cancellation_reason', '',
-				OphTrOperationbooking_Operation_Cancellation_Reason::getReasonsByListNumber($listIndex),
-				array('empty' => 'Select a reason')
-			); ?>
+		<div class="eventDetail">
+			<div class="row field-row">
+				<div class="large-2 column">
+					<?php echo CHtml::label('<strong>Reschedule Reason:</strong> ', 'cancellation_reason'); ?>
+				</div>
+				<div class="large-5 column end">
+					<?php if (date('Y-m-d') == date('Y-m-d', strtotime($operation->booking->session->date))) {
+						$listIndex = 3;
+					} else {
+						$listIndex = 2;
+					} ?>
+					<?php echo CHtml::dropDownList('cancellation_reason', '',
+						OphTrOperationbooking_Operation_Cancellation_Reason::getReasonsByListNumber($listIndex),
+						array('empty' => 'Select a reason')
+					); ?>
+				</div>
 			</div>
-		</div>
-		<div class="eventDetail clearfix" style="position:relative;">
-			<div class="label"><strong><?php echo CHtml::label('Reschedule Comments: ', 'cancellation_comment'); ?></strong></div>
-			<div class="data">
-				<textarea name="cancellation_comment" rows=3 cols=50></textarea>
+			<div class="row field-row">
+				<div class="large-2 column">
+					<?php echo CHtml::label('<strong>Reschedule Comments:</strong> ', 'cancellation_comment'); ?>
+				</div>
+				<div class="large-5 column end">
+					<textarea name="cancellation_comment" rows=3 cols=50></textarea>
+				</div>
 			</div>
 		</div>
 	<?php }?>
 
-	<div class="eventDetail clearfix" style="position:relative;">
-		<div class="label"><strong><?php echo CHtml::label('Operation Comments: ', 'operation_comments'); ?></strong></div>
-		<div class="data">
-			<textarea id="operation_comments" name="Operation[comments]" rows=3 cols=50><?php echo htmlspecialchars($_POST['Operation']['comments'])?></textarea>
+	<div class="eventDetail">
+		<div class="row field-row">
+			<div class="large-2 column">
+				<?php echo CHtml::label('<strong>Operation Comments:</strong>', 'operation_comments'); ?>
+			</div>
+			<div class="large-5 column end">
+				<textarea id="operation_comments" name="Operation[comments]" rows=3 cols=50><?php echo htmlspecialchars($_POST['Operation']['comments'])?></textarea>
+			</div>
 		</div>
 	</div>
 
-	<div style="margin: 0.5em 0;">
+	<div class="field-row" style="margin-top: 1em">
 		<span id="dateSelected">Date/Time currently selected: <span class="highlighted"><?php echo Helper::convertDate2NHS($session['date']); ?>, <?php echo substr($session['start_time'], 0, 5) . ' - ' . substr($session['end_time'], 0, 5); ?></span></span>
 	</div>
-	<div style="margin-top:10px;">
-	<button type="submit" class="classy green venti" id="confirm_slot"><span class="button-span button-span-green">Confirm slot</span></button>
-	<button type="button" class="classy red venti" id="cancel_scheduling"><?php echo CHtml::link('<span class="button-span button-span-red">Cancel '.($reschedule ? 're-' : '').'scheduling</span>',array('default/view/'.$operation->event_id))?></button>
+
+	<div class="field-row">
+		<button type="submit" class="secondary" id="confirm_slot">Confirm slot</button>
+		<button type="button" class="warning" id="cancel_scheduling"><?php echo 'Cancel '.($reschedule ? 're-' : '').'scheduling';?></button>
 	</div>
 
 	<?php

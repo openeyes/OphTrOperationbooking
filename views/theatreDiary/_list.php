@@ -18,10 +18,18 @@
  */
 
 if (empty($diary)) {?>
-	<p class="fullBox"><strong>No theatre schedules match your search criteria.</strong></p>
+	<div class="row" id="theatre-search-no-results">
+		<div class="large-12 column">
+			<div class="alert-box"><strong>No theatre schedules match your search criteria.</strong></div>
+		</div>
+	</div>
 <?php } else {
 	foreach ($diary as $theatre) {?>
-		<h3 class="theatre"><strong><?php echo $theatre->name?> (<?php echo $theatre->site->name?>)</strong></h3>
+		<div class="row">
+			<div class="large-12 column">
+				<h2><?php echo $theatre->name?> (<?php echo $theatre->site->name?>)</h2>
+			</div>
+		</div>
 		<?php foreach ($theatre->sessions as $session) {
 			$this->renderPartial('_session',array('session'=>$session, 'theatre'=>$theatre, 'assetPath'=>$assetPath));
 		}

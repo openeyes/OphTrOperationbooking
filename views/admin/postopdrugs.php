@@ -1,3 +1,4 @@
+<?php /* DEPRECATED */ ?>
 <div class="report curvybox white">
 	<div class="reportInputs">
 		<h3 class="georgia">Post-operative drugs</h3>

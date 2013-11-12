@@ -17,35 +17,38 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-<div class="report curvybox white">
-	<div class="reportInputs">
-		<h3 class="georgia">EROD rules</h3>
-		<div>
-			<form id="erod_rules">
-				<ul class="grid reduceheight">
-					<li class="header">
-						<span class="column_checkbox"><input type="checkbox" id="checkall" class="erod_rules" /></span>
-						<span class="column_subspecialty">Subspecialty</span>
-						<span class="column_firms">Firms</span>
-					</li>
-					<div class="sortable">
-						<?php
-						$criteria = new CDbCriteria;
-						$criteria->order = "display_order asc";
-						foreach (OphTrOperationbooking_Operation_EROD_Rule::model()->findAll() as $i => $erod) {?>
-							<li class="<?php if ($i%2 == 0) {?>even<?php } else {?>odd<?php }?>" data-attr-id="<?php echo $erod->id?>">
-								<span class="column_checkbox"><input type="checkbox" name="erod[]" value="<?php echo $erod->id?>" class="erod_rules" /></span>
-								<span class="column_subspecialty"><?php echo $erod->subspecialty->name?></span>
-								<span class="column_firms"><?php echo $erod->firmString?></span>
-							</li>
-						<?php }?>
-					</div>
-				</ul>
-			</form>
-		</div>
-	</div>
+<div class="box admin">
+	<h2>EROD rules</h2>
+	<form id="erod_rules">
+		<table class="grid">
+			<thead>
+				<tr>
+					<th><input type="checkbox" id="checkall" class="erod_rules" /></th>
+					<th>Subspecialty</th>
+					<th>Firms</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php
+				$criteria = new CDbCriteria;
+				$criteria->order = "display_order asc";
+				foreach (OphTrOperationbooking_Operation_EROD_Rule::model()->findAll() as $i => $erod) {?>
+					<tr class="clickable sortable" data-id="<?php echo $erod->id?>?>" data-uri="OphTrOperationbooking/admin/editerodrule/<?php echo $erod->id?>">
+						<td><input type="checkbox" name="erod[]" value="<?php echo $erod->id?>" class="erod_rules" /></td>
+						<td><?php echo $erod->subspecialty->name?></td>
+						<td><?php echo $erod->firmString?></td>
+					</tr>
+				<?php }?>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="3">
+						<?php echo EventAction::button('Add', 'add_erod_rule', null,array('class'=>'button small'))->toHtml()?>
+						<?php echo EventAction::button('Delete', 'delete_erod_rule', null,array('class'=>'button small'))->toHtml()?>
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+	</form>
 </div>
-<div>
-	<?php echo EventAction::button('Add', 'add_erod_rule', array('colour' => 'blue'))->toHtml()?>
-	<?php echo EventAction::button('Delete', 'delete_erod_rule', array('colour' => 'blue'))->toHtml()?>
-</div>
+

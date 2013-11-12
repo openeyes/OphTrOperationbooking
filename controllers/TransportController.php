@@ -24,6 +24,7 @@ class TransportController extends BaseEventTypeController
 	public $page = 1;
 	public $total_items = 0;
 	public $pages = 1;
+	public $renderPatientPanel = false;
 
 	public function accessRules()
 	{

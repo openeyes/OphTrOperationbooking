@@ -18,30 +18,26 @@
  */
 
 ?>
-<div class="report curvybox white">
-	<div class="admin">
-		<h3 class="georgia"><?php echo $rule->id ? 'Edit' : 'Add'?> operation name rule</h3>
-		<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
-		<div>
-			<?php
-			$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-				'id'=>'adminform',
-				'enableAjaxValidation'=>false,
-				'htmlOptions' => array('class'=>'sliding'),
-				'focus'=>'#username'
-			))?>
-			<?php echo $form->dropDownList($rule,'theatre_id',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll(array('order'=>'name')),'id','name'),array('style'=>'margin-bottom:6px;','empty'=>'- Theatre -'))?>
-			<?php echo $form->textField($rule,'name')?>
-			<?php $this->endWidget()?>
-		</div>
-	</div>
+<div class="box admin">
+	<h2><?php echo $rule->id ? 'Edit' : 'Add'?> operation name rule</h2>
+	<?php
+	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
+		'id'=>'adminform',
+		'enableAjaxValidation'=>false,
+		'focus'=>'#username',
+		'layoutColumns' => array(
+			'label' => 2,
+			'field' => 5
+		)
+	))?>
+	<?php echo $form->errorSummary($rule); ?>
+	<?php echo $form->dropDownList($rule,'theatre_id',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll(array('order'=>'name')),'id','name'),array('style'=>'margin-bottom:6px;','empty'=>'- Theatre -'))?>
+	<?php echo $form->textField($rule,'name')?>
+	<?php echo $form->errorSummary($rule); ?>
+	<?php echo $form->formActions();?>
+	<?php $this->endWidget()?>
 </div>
-<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
-<div>
-	<?php echo EventAction::button('Save', 'save', array('colour' => 'green'))->toHtml()?>
-	<?php echo EventAction::button('Cancel', 'cancel', array('colour' => 'red'))->toHtml()?>
-	<img class="loader" src="<?php echo Yii::app()->createUrl('/img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
-</div>
+
 <script type="text/javascript">
 	handleButton($('#et_cancel'),function(e) {
 		e.preventDefault();
