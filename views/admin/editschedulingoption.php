@@ -22,14 +22,14 @@
 	<h2><?php echo $option->id ? 'Edit' : 'Add'?> scheduling option</h2>
 	<?php
 	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-			'id'=>'adminform',
-			'enableAjaxValidation'=>false,
-			'focus'=>'#OphTrOperationbooking_ScheduleOperation_Options_name',
-			'layoutColumns' => array(
-				'label' => 2,
-				'field' => 5
-			)
-		))?>
+		'id'=>'adminform',
+		'enableAjaxValidation'=>false,
+		'focus'=>'#OphTrOperationbooking_ScheduleOperation_Options_name',
+		'layoutColumns' => array(
+			'label' => 2,
+			'field' => 5
+		)
+	))?>
 	<?php echo $form->errorSummary($option); ?>
 	<?php echo $form->textField($option,'name')?>
 	<?php echo $form->formActions();?>

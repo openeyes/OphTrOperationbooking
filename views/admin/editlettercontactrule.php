@@ -32,7 +32,7 @@
 		))?>
 	<?php echo $form->errorSummary($rule); ?>
 	<?php echo $form->dropDownList($rule,'parent_rule_id',CHtml::listData(OphTrOperationbooking_Letter_Contact_Rule::model()->getListAsTree(),'id','treeName'),array('empty'=>'- None -'))?>
-	<?php echo $form->textField($rule,'rule_order')?>
+	<?php echo $form->textField($rule,'rule_order',array(),array(),array('field'=>2))?>
 	<?php echo $form->dropDownList($rule,'site_id',CHtml::listData(Site::model()->findAll(array('order'=>'name asc','condition'=>'institution_id = 1')),'id','name'),array('empty'=>'- Not set -'))?>
 	<?php echo $form->dropDownList($rule,'firm_id',Firm::model()->getListWithSpecialties(),array('empty'=>'- Not set -'))?>
 	<?php echo $form->dropDownList($rule,'subspecialty_id',CHtml::listData(Subspecialty::model()->findAllByCurrentSpecialty(),'id','name'),array('empty'=>'- Not set -'))?>
@@ -40,21 +40,29 @@
 	<?php echo $form->textField($rule,'refuse_telephone',array('size'=>20))?>
 	<?php echo $form->textField($rule,'refuse_title',array('size'=>90))?>
 	<?php echo $form->textField($rule,'health_telephone',array('size'=>90))?>
-	<?php echo $form->formActions(array(
-		'submit' => 'Save',
-		'cancel' => 'Cancel',
-		'delete' => $rule->id ? 'Delete' : false
-	));?>
-	<?php echo $form->errorSummary($rule); ?>
 	<?php if ($rule->children) {?>
-		<div>
-			<p style="font-size: 13px; margin: 0; padding: 0; margin-top: 10px; margin-bottom: 10px;"><strong>Descendants</strong></p>
-			<?php
-			$this->widget('CTreeView',array(
-					'data' => OphTrOperationbooking_Letter_Contact_Rule::model()->findAllAsTree($rule,true,'textPlain'),
-				))?>
+		<div class="row field-row">
+			<div class="large-<?php echo $form->layoutColumns['label'];?> column">
+				<div class="field-label">
+					Descendants:
+				</div>
+			</div>
+			<div class="large-<?php echo (12 - $form->layoutColumns['label']);?> column">
+				<div class="panel" style="margin:0">
+					<?php
+						$this->widget('CTreeView',array(
+							'data' => OphTrOperationbooking_Letter_Contact_Rule::model()->findAllAsTree($rule,true,'textPlain'),
+						));
+					?>
+				</div>
+			</div>
 		</div>
 	<?php }?>
+
+	<?php echo $form->errorSummary($rule); ?>
+	<?php echo $form->formActions(array(
+		'delete' => $rule->id ? 'Delete' : false
+	));?>
 	<?php $this->endWidget()?>
 </div>
 
@@ -65,7 +73,8 @@
 	handleButton($('#et_save'),function() {
 		$('#adminform').submit();
 	});
-	handleButton($('#et_delete'),function() {
+	handleButton($('#et_delete'),function(e) {
+		e.preventDefault();
 		window.location.href = baseUrl+'/OphTrOperationbooking/admin/delete'+OE_rule_model+'/<?php echo $rule->id?>';
 	});
 </script>

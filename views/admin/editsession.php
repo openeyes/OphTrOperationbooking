@@ -20,67 +20,61 @@
 ?>
 <div class="box admin">
 	<h2><?php echo $session->id ? 'Edit' : 'Add'?> session</h2>
-	<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
-	<div>
-		<?php
-		$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-				'id'=>'adminform',
-				'enableAjaxValidation'=>false,
-				'focus'=>'#username'
-			))?>
-		<?php if (!$session->id) {?>
-			<?php echo $form->textField($session,'sequence_id',array('size'=>10))?>
-		<?php }?>
-		<?php echo $form->dropDownList($session,'firm_id',Firm::model()->getListWithSpecialties(),array('empty'=>'- Emergency -'))?>
-		<?php echo $form->dropDownList($session,'theatre_id',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- None -'))?>
-		<?php if ($session->id) {?>
-			<div id="div_OphTrOperationbooking_Operation_Session_date" class="row field-row">
-				<div class="large-2 column">
-					<label>Date:</label>
-				</div>
-				<div class="large-5 column end">
-					<span class="label" style="margin-bottom: 0;"><?php echo $session->NHSDate('date')?></span>
-				</div>
+	<?php
+	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
+		'id'=>'adminform',
+		'enableAjaxValidation'=>false,
+		'focus'=>'#username',
+		'layoutColumns' => array(
+			'label' => 2,
+			'field' => 5
+		)
+	))?>
+	<?php echo $form->errorSummary($session); ?>
+	<?php if (!$session->id) {?>
+		<?php echo $form->textField($session,'sequence_id',array(),array(),array('field'=>2))?>
+	<?php }?>
+	<?php echo $form->dropDownList($session,'firm_id',Firm::model()->getListWithSpecialties(),array('empty'=>'- Emergency -'))?>
+	<?php echo $form->dropDownList($session,'theatre_id',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- None -'))?>
+	<?php if ($session->id) {?>
+		<div id="div_OphTrOperationbooking_Operation_Session_date" class="row field-row">
+			<div class="large-2 column">
+				<div class="field-label">Date:</div>
 			</div>
-		<?php } else {?>
-			<?php echo $form->datePicker($session,'date',array('size'=>10))?>
-		<?php }?>
-		<?php echo $form->textField($session,'start_time',array('size'=>10))?>
-		<?php echo $form->textField($session,'end_time',array('size'=>10))?>
-		<?php echo $form->radioBoolean($session,'consultant')?>
-		<?php echo $form->radioBoolean($session,'paediatric')?>
-		<?php echo $form->radioBoolean($session,'anaesthetist')?>
-		<?php echo $form->radioBoolean($session,'general_anaesthetic')?>
-		<?php echo $form->radioBoolean($session,'available')?>
-		<?php $this->endWidget()?>
-	</div>
+			<div class="large-5 column end">
+				<div class="field-value"><?php echo $session->NHSDate('date')?></div>
+			</div>
+		</div>
+	<?php } else {?>
+		<?php echo $form->datePicker($session,'date',array(),array(),array('field'=>2))?>
+	<?php }?>
+	<?php echo $form->textField($session,'start_time',array(),array(),array('field'=>2))?>
+	<?php echo $form->textField($session,'end_time',array(),array(),array('field'=>2))?>
+	<?php echo $form->radioBoolean($session,'consultant')?>
+	<?php echo $form->radioBoolean($session,'paediatric')?>
+	<?php echo $form->radioBoolean($session,'anaesthetist')?>
+	<?php echo $form->radioBoolean($session,'general_anaesthetic')?>
+	<?php echo $form->radioBoolean($session,'available')?>
+	<?php echo $form->errorSummary($session); ?>
+	<?php echo $form->formActions(array(
+		'delete' => $session->id ? 'Delete' : false
+	));?>
+	<?php $this->endWidget()?>
 </div>
 
-<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
-<div>
-	<?php echo EventAction::button('Save', 'save', null , array('class' => 'small'))->toHtml()?>
-	<?php echo EventAction::button('Cancel', 'cancel', array('level' => 'warning'), array('class' => 'small'))->toHtml()?>
-	<?php if ($session->id) {?>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<?php echo EventAction::button('Delete session','delete_session',array('level' => 'warning'), array('class' => 'small'))->toHtml()?>
-	<?php }?>
-	<img class="loader" src="<?php echo Yii::app()->createUrl('/img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
-</div>
 <div id="confirm_delete_session" title="Confirm delete session" style="display: none;">
-	<div>
-		<div id="delete_session">
-			<div class="alert-box alert with-icon">
-				<strong>WARNING: This will remove the session from the system.<br/>This action cannot be undone.</strong>
-			</div>
-			<p>
-				<strong>Are you sure you want to proceed?</strong>
-			</p>
-			<div class="buttonwrapper" style="margin-top: 15px; margin-bottom: 5px;">
-				<input type="hidden" id="medication_id" value="" />
-				<button type="submit" class="classy red venti btn_remove_session"><span class="button-span button-span-red">Remove session</span></button>
-				<button type="submit" class="classy green venti btn_cancel_remove_session"><span class="button-span button-span-green">Cancel</span></button>
-				<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
-			</div>
+	<div id="delete_session">
+		<div class="alert-box alert with-icon">
+			<strong>WARNING: This will remove the session from the system.<br/>This action cannot be undone.</strong>
+		</div>
+		<p>
+			<strong>Are you sure you want to proceed?</strong>
+		</p>
+		<div class="buttons">
+			<input type="hidden" id="medication_id" value="" />
+			<button type="submit" class="warning btn_remove_session">Remove session</button>
+			<button type="submit" class="secondary btn_cancel_remove_session">Cancel</button>
+			<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 		</div>
 	</div>
 </div>
@@ -94,7 +88,8 @@
 		$('#adminform').submit();
 	});
 
-	handleButton($('#et_delete_session'),function(e) {
+	handleButton($('#et_delete'),function(e) {
+		e.preventDefault();
 		$.ajax({
 			'type': 'POST',
 			'url': baseUrl+'/OphTrOperationbooking/admin/verifyDeleteSessions',
@@ -118,7 +113,7 @@
 		});
 	});
 
-	handleButton($('button.btn_remove_session'),function(e) {
+	handleButton($('.btn_remove_session'),function(e) {
 		e.preventDefault();
 
 		$.ajax({
@@ -158,7 +153,7 @@
 		});
 	});
 
-	$('button.btn_cancel_remove_session').click(function(e) {
+	$('.btn_cancel_remove_session').click(function(e) {
 		e.preventDefault();
 		$('#confirm_delete_session').dialog('close');
 	});

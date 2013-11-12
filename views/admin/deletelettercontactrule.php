@@ -20,15 +20,15 @@
 ?>
 <div class="box admin">
 	<h2>Delete letter contact rule</h2>
-	<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
 	<?php
 	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 			'id'=>'lcr_deleteform',
 			'enableAjaxValidation'=>false,
 			'focus'=>'#contactname'
 		))?>
+	<?php echo $form->errorSummary($rule); ?>
 	<input type="hidden" name="delete" value="1" />
-	<div class="element-data">
+	<div class="panel">
 		<div class="row data-row">
 			<div class="large-2 column">
 				<div class="data-label"><?php echo $rule->getAttributeLabel('parent_rule_id')?>:</div>
@@ -96,27 +96,27 @@
 	</div>
 	<?php $this->endWidget()?>
 
-
 	<?php if ($rule->children) {?>
-		<div>
-			<p style="font-size: 15px; margin: 0; padding: 0; margin-top: 10px; margin-bottom: 10px;"><strong><span style="color: #f00;">WARNING:</span> this rule has one or more descendants, if you proceed these will all be deleted.</strong></p>
+		<p><strong><span style="color: #f00;">WARNING:</span> this rule has one or more descendants, if you proceed these will all be deleted.</strong></p>
+		<div class="panel">
 			<?php
 			$this->widget('CTreeView',array(
 					'data' => OphTrOperationbooking_Letter_Contact_Rule::model()->findAllAsTree($rule,true,'textPlain'),
 				))?>
 		</div>
 	<?php }?>
-</div>
-<div>
-	<p style="font-size: 15px; margin: 0; padding: 0; margin-top: 10px; margin-bottom: 10px;"><strong>Are you sure you want to delete this rule<?php if ($rule->children) {?> and its descendants<?php }?>?</strong></p>
+
+	<p><strong><big>Are you sure you want to delete this rule<?php if ($rule->children) {?> and its descendants<?php }?>?</big></strong></p>
+
+	<?php echo $form->errorSummary($rule); ?>
+	<div class="field-row">
+		<?php echo EventAction::button('Delete', 'delete', array('level' => 'warning'), array('class' => 'button small'))->toHtml()?>
+		<?php echo EventAction::button('Cancel', 'cancel', null, array('class' => 'button small'))->toHtml()?>
+		<img class="loader" src="<?php echo Yii::app()->createUrl('/img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
+	</div>
 </div>
 
-<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
-<div>
-	<?php echo EventAction::button('Delete', 'delete', array('level' => 'warning'), array('class' => 'button small'))->toHtml()?>
-	<?php echo EventAction::button('Cancel', 'cancel', null, array('class' => 'button small'))->toHtml()?>
-	<img class="loader" src="<?php echo Yii::app()->createUrl('/img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
-</div>
+
 <script type="text/javascript">
 	handleButton($('#et_cancel'),function() {
 		window.location.href = baseUrl+'/OphTrOperationbooking/admin/edit'+OE_rule_model+'/<?php echo $rule->id?>';
