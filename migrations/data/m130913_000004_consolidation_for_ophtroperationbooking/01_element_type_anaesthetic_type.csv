@@ -1,6 +1,2 @@
 element_type_id => ElementType.class_name,anaesthetic_type_id,display_order
 Element_OphTrOperationbooking_Operation,1,1
-Element_OphTrOperationbooking_Operation,2,2
-Element_OphTrOperationbooking_Operation,3,3
-Element_OphTrOperationbooking_Operation,4,4
-Element_OphTrOperationbooking_Operation,5,5

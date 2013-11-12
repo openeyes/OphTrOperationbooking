@@ -31,6 +31,48 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 
 	public function up()
 	{
+		if (!$this->consolidate(
+			array(
+				"m121114_105958_event_type_OphTrOperationbooking",
+				"m121128_122049_ophtroperationbooking_operation_name_rule",
+				"m121128_150949_admission_letter_warning_rules",
+				"m121129_091456_waiting_list_contacts",
+				"m130225_112407_add_completed_status",
+				"m130307_163805_fix_letter_warning_rules",
+				"m130423_163100_fix_theatre_sort",
+				"m130513_124510_rename_colliding_fields",
+				"m130515_100455_point_operation_at_latest_booking",
+				"m130524_143046_add_firm_id_to_letter_warning_rules_table",
+				"m130531_140931_letter_contact_rules_is_child",
+				"m130604_102839_patient_shortcodes",
+				"m130611_100204_theatre_ward_assignments",
+				"m130621_105848_soft_deletion_of_sequences_and_sessions",
+				"m130621_153035_soft_deletion_of_theatres",
+			)
+		)
+		) {
+			$this->createTables();
+		}
+	}
+
+	public function down()
+	{
+		echo "You cannot migrate down past a consolidation migration\n";
+		return false;
+	}
+
+	public function safeUp()
+	{
+		$this->up();
+	}
+
+	public function safeDown()
+	{
+		$this->down();
+	}
+
+	protected function createTables()
+	{
 		$this->setData();
 		//disable foreign keys check
 		Yii::app()->cache->flush();
@@ -620,8 +662,4 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 
 	}
 
-	public function down()
-	{
-		echo "Down method not supported on consolidation";
-	}
 }
