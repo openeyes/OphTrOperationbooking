@@ -1,26 +1,24 @@
 .event {
-	&.ophtroperationbooking {
-		border-color: #fd6892;
+	border-color: #fd6892;
+	.event-title {
+		background: image-url("medium.png") no-repeat left center;
+	}
+	.event-content {
+		background-image: image-url("watermark.png");
+	}
+	&.schedule {
 		.event-title {
-			background: image-url("medium.png") no-repeat left center;
+			background: none;
+			padding-left: 0;
 		}
-		.event-content {
-			background-image: image-url("watermark.png");
-		}
-		&.schedule {
-			.event-title {
-				background: none;
-				padding-left: 0;
-			}
-		}
-		.cancelled-bookings {
-			list-style-type: none;
-			margin: 0;
-			li {
-				padding-bottom: .5em;
-				&:last-child {
-					padding: 0;
-				}
+	}
+	.cancelled-bookings {
+		list-style-type: none;
+		margin: 0;
+		li {
+			padding-bottom: .5em;
+			&:last-child {
+				padding: 0;
 			}
 		}
 	}
