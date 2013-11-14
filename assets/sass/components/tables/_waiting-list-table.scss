@@ -1,10 +1,18 @@
-// Waiting list table vars
-$oe-table-waiting-list-send-another-reminder-bg-color: #b8eaa6 !default;
-$oe-table-waiting-list-send-invitation-letter-bg-color: #77b8d3 !default;
-$oe-table-waiting-list-send-gp-removal-letter-bg-color: #f7bf8d !default;
-$oe-table-waiting-list-patient-due-removed: #f08a6f !default;
-$oe-table-waiting-list-footer-heading-font-size: 1em !default;
-$oe-table-waiting-list-letters-sent-line-height: emCalc(17px) !default;
+// * OpenEyes
+// *
+// * (C) Moorfields Eye Hospital NHS Foundation Trust, 2008-2011
+// * (C) OpenEyes Foundation, 2011-2013
+// * This file is part of OpenEyes.
+// * OpenEyes is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// * OpenEyes is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// * You should have received a copy of the GNU General Public License along with OpenEyes in a file titled COPYING. If not, see <http://www.gnu.org/licenses/>.
+// *
+// * @package OpenEyes
+// * @link http://www.openeyes.org.uk
+// * @author OpenEyes <info@openeyes.org.uk>
+// * @copyright Copyright (c) 2008-2011, Moorfields Eye Hospital NHS Foundation Trust
+// * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
+// * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
 
 .waiting-list {
 	.letter-status {
@@ -14,16 +22,16 @@ $oe-table-waiting-list-letters-sent-line-height: emCalc(17px) !default;
 		}
 	}
 	.send-another-reminder {
-		background: $oe-table-waiting-list-send-another-reminder-bg-color;
+		background: #b8eaa6;
 	}
 	.send-invitation-letter {
-		background: $oe-table-waiting-list-send-invitation-letter-bg-color;
+		background: #77b8d3;
 	}
 	.send-gp-removal-letter {
-		background: $oe-table-waiting-list-send-gp-removal-letter-bg-color;
+		background: #f7bf8d;
 	}
 	.patient-due-removed {
-		background: $oe-table-waiting-list-patient-due-removed;
+		background: #f08a6f;
 	}
 	.error {
 		font-size: emCalc(13px);
@@ -37,8 +45,8 @@ $oe-table-waiting-list-letters-sent-line-height: emCalc(17px) !default;
 		}
 		h3 {
 			float: left;
+			font-size: 1em;
 			margin: 0;
-			font-size: $oe-table-waiting-list-footer-heading-font-size;
 		}
 		.inline-list {
 			float: left;
@@ -57,19 +65,13 @@ $oe-table-waiting-list-letters-sent-line-height: emCalc(17px) !default;
 	}
 }
 
-// Waiting list key vars
-$oe-waiting-list-key-padding-top: emCalc(20px) !default;
-$oe-waiting-list-key-width: 10px !default;
-$oe-waiting-list-key-height: 10px !default;
-$oe-waiting-list-border-color: #999999 !default;
-
 .waiting-list-key {
-	padding-top: $oe-waiting-list-key-padding-top;
+	padding-top: emCalc(20px);
 	.key-box {
-		width: $oe-waiting-list-key-width;
-		height: $oe-waiting-list-key-height;
-		border: 1px solid $oe-waiting-list-border-color;
+		border: 1px solid #999999;
 		display: inline-block;
+		height: 10px;
+		width: 10px;
 	}
 	.inline-list {
 		li {
