@@ -113,6 +113,7 @@ $(document).ready(function() {
 	$(this).undelegate('#firmSelect #firm_id','change').delegate('#firmSelect #firm_id','change',function() {
 		var firm_id = $(this).val();
 		var operation = $('input[id=operation]').val();
+		window.onbeforeunload = null;
 		window.location.href = URI(window.location.href).setSearch('firm_id',firm_id).removeSearch(['session_id', 'day']);
 	});
 
