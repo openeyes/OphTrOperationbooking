@@ -21,7 +21,7 @@ $(document).ready(function() {
 		$('#schedule_now').val(0);
 	});
 
-	handleButton($('#et_schedulenow'),function() {
+	handleButton($('#et_save_and_schedule'),function() {
 		$('#schedule_now').val(1);
 	});
 
