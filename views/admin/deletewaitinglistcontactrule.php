@@ -75,7 +75,7 @@
 <?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
 <div>
 	<?php echo EventAction::button('Delete', 'delete', array('colour' => 'green'))->toHtml()?>
-	<?php echo EventAction::button('Cancel', 'cancel', array('colour' => 'red'))->toHtml()?>
+	<?php echo EventAction::button('Cancel', 'cancel', array('level' => 'cancel'))->toHtml()?>
 	<img class="loader" src="<?php echo Yii::app()->createUrl('/img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 </div>
 <script type="text/javascript">

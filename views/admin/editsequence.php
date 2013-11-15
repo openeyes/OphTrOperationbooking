@@ -74,8 +74,8 @@
 	<?php echo $form->errorSummary($sequence); ?>
 	<div class="field-row row">
 		<div class="large-10 large-offset-2 column">
-			<?php echo EventAction::button('Save', 'save', null,array('class'=>'button small'))->toHtml()?>
-			<?php echo EventAction::button('Cancel', 'cancel', array('level' => 'warning'),array('class'=>'button small'))->toHtml()?>
+			<?php echo EventAction::button('Save', 'save', array('level'=>'save'))->toHtml()?>
+			<?php echo EventAction::button('Cancel', 'cancel', array('level' => 'cancel'))->toHtml()?>
 			<?php if ($sequence->id) {?>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<?php echo EventAction::button('View sessions','view_sessions',array(),array('class'=>'button small'))->toHtml()?>

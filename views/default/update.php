@@ -34,11 +34,10 @@
 		$this->event_actions[] = EventAction::button('Save', 'save',
 			array(
 				'id' => 'et_save',
-				'level'=>'secondary'
+				'level'=>'save'
 			),
 			array(
-				'form'=>'clinical-create',
-				'class'=>'button small'
+				'form'=>'clinical-create'
 			)
 		);
 		?>
