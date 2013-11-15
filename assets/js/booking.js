@@ -81,13 +81,15 @@ $(document).ready(function() {
 				});
 
 				if (n == 0) {
+					window.onbeforeunload ='';
 					window.location.href = window.location.href.replace(/\/cancel\//,'/view/');
 				} else {
 					$('#cancelForm .alert-box').show();
 					$('#cancelForm .alert-box').html(html);
+					enableButtons();
 				}
 
-				enableButtons();
+
 			}
 		});
 	});
