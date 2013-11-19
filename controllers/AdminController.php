@@ -583,8 +583,8 @@ class AdminController extends ModuleAdminController
 		}
 
 		if (@$_POST['generateSessions']) {
-			//$api = Yii::app()->moduleAPI->get('OphTrOperationbooking');
-			//$api->generateSessions();
+			$api = Yii::app()->moduleAPI->get('OphTrOperationbooking');
+			$api->generateSessions();
 			Yii::app()->user->setFlash('success', "Sessions have been generated.");
 			echo "1";
 			return;
