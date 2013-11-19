@@ -30,39 +30,114 @@ class DefaultController extends BaseEventTypeController
 		return parent::beforeAction($action);
 	}
 
-	public function actionCreate()
+	/**
+	 * Various default options for operation should be driven by the episode
+	 *
+	 * @param BaseEventTypeElement $element
+	 * @param string $action
+	 */
+	protected function setElementDefaultOptions($element, $action)
 	{
+		parent::setElementDefaultOptions($element, $action);
+		if ($action == 'create') {
+			$kls = get_class($element);
+			if ($kls == 'Element_OphTrOperationbooking_Diagnosis') {
+				// set default eye and disorder
+				if ($this->episode && $this->episode->diagnosis) {
+					$element->eye_id = $this->episode->eye_id;
+					$element->disorder_id = $this->episode->disorder_id;
+				}
+			}
+			elseif ($kls == 'Element_OphTrOperationbooking_Operation') {
+				// set the default eye
+				if ($this->episode && $this->episode->diagnosis) {
+					$element->eye_id = $this->episode->eye_id;
+				}
+
+				// set default anaesthetic based on whether patient is a child or not.
+				$key = $this->patient->isChild() ? 'ophtroperationbooking_default_anaesthetic_child' : 'ophtroperationbooking_default_anaesthetic';
+
+				if (isset(Yii::app()->params[$key])) {
+					if ($at = AnaestheticType::model()->find('code=?',array(Yii::app()->params[$key]))) {
+						$element->anaesthetic_type_id = $at->id;
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Checks whether schedule now has been requested
+	 *
+	 * @see BaseEventTypeController::initActionCreate()
+	 */
+	protected function initActionCreate()
+	{
+		parent::initActionCreate();
 		if (@$_POST['schedule_now']) {
 			$this->successUri = 'booking/schedule/';
 		}
-
-		parent::actionCreate();
 	}
 
-	public function actionUpdate($id)
+	/**
+	 * Make the operation element directly available for templates
+	 *
+	 * @see BaseEventTypeController::initActionView()
+	 */
+	public function initActionView()
 	{
-		parent::actionUpdate($id);
-	}
-
-	public function actionView($id)
-	{
+		parent::initActionView();
 		$this->extraViewProperties = array(
-			'operation' => Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($id)),
+			'operation' => Element_OphTrOperationbooking_Operation::model()->find('event_id=?',$this->event->id),
 		);
-
-		parent::actionView($id);
 	}
 
-	public function actionPrint($id)
+	/**
+	 * @see BaseEventTypeController::setElementComplexAttributesFromData($element, $data, $index)
+	 */
+	protected function setElementComplexAttributesFromData($element, $data, $index = null)
 	{
-		parent::actionPrint($id);
+		// Using the ProcedureSelection widget, so the field doesn't map directly to the element attribute
+		if (get_class($element) == 'Element_OphTrOperationbooking_Operation') {
+			if (isset($data['Element_OphTrOperationbooking_Operation']['total_duration_procs'])) {
+				$element->total_duration = $data['Element_OphTrOperationbooking_Operation']['total_duration_procs'];
+			}
+			$procs = array();
+			if (isset($data['Procedures_procs'])) {
+				foreach ($data['Procedures_procs'] as $proc_id) {
+					$procs[] = Procedure::model()->findByPk($proc_id);
+				}
+			}
+			$element->procedures = $procs;
+		}
 	}
 
+	protected function saveEventComplexAttributesFromData($data)
+	{
+		foreach ($this->open_elements as $element) {
+			if (get_class($element) == 'Element_OphTrOperationbooking_Operation') {
+				// using the ProcedureSelection widget, so not a direct field on the operation element
+				$element->updateProcedures(isset($data['Procedures_procs']) ? $data['Procedures_procs'] : array());
+			}
+		}
+	}
+
+	/**
+	 * @return array
+	 * @see BaseEventTypeController::printActions()
+	 */
 	public function printActions()
 	{
 		return array('print','admissionLetter');
 	}
 
+	/**
+	 * Ajax cancel operation action
+	 *
+	 * @param $id
+	 * @throws CHttpException
+	 * @throws Exception
+	 */
 	public function actionCancel($id)
 	{
 		if (!$event = Event::model()->findByPk($id)) {
