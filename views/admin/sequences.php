@@ -154,6 +154,8 @@ $sequences = $sequences['data'];
 					<td colspan="8">
 						<?php echo EventAction::button('Add', 'add_sequence', null, array('class' => 'small'))->toHtml()?>
 						<?php echo EventAction::button('Delete', 'delete_sequence', null, array('class' => 'small'))->toHtml()?>
+						&nbsp;&nbsp;&nbsp;
+						<?php echo EventAction::button('Generate sessions', 'generate_sessions', null, array('class' => 'small'))->toHtml()?>
 						<?php echo $this->renderPartial('//admin/_pagination',array(
 							'pagination' => $pagination,
 						))?>
@@ -162,6 +164,8 @@ $sequences = $sequences['data'];
 			</tfoot>
 		</table>
 	</form>
+
+	<?php echo $this->renderPartial('//base/_messages')?>
 
 	<div class="alert-box hide" id="update_inline">
 		<a href="#">Update selected sequences</a>
@@ -565,6 +569,23 @@ $sequences = $sequences['data'];
 							$('#confirm_delete_sequences').dialog('close');
 						}
 					}).open();
+				}
+			}
+		});
+	});
+
+	handleButton($('#et_generate_sessions'),function(e) {
+		e.preventDefault();
+
+		$.ajax({
+			'type': 'POST',
+			'url': baseUrl+'/OphTrOperationbooking/admin/viewSequences',
+			'data': "generateSessions=1&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
+			'success': function(resp) {
+				if (resp == "1") {
+					window.location.reload();
+				} else {
+					alert("Something went wrong generating the sessions, please try again or contact support for assistance.");
 				}
 			}
 		});

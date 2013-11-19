@@ -582,6 +582,14 @@ class AdminController extends ModuleAdminController
 			Yii::app()->session['admin_sequences'] = $_GET;
 		}
 
+		if (@$_POST['generateSessions']) {
+			//$api = Yii::app()->moduleAPI->get('OphTrOperationbooking');
+			//$api->generateSessions();
+			Yii::app()->user->setFlash('success', "Sessions have been generated.");
+			echo "1";
+			return;
+		}
+
 		Audit::add('admin','list',null,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Sequence'));
 
 		$this->render('/admin/sequences',array(
