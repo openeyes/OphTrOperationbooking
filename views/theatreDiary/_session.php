@@ -88,27 +88,6 @@
 		<div class="panel theatre-sessions">
 			<div class="row">
 				<div class="large-9 column">
-					<?php if (Yii::app()->user->checkAccess('purplerinse')) {?>
-						<div class="purpleUser diaryEditMode" data-id="<?php echo $session->id?>" style="display:none; width:207px;">
-							<input type="hidden" name="consultant_<?php echo $session->id?>" value="0" />
-							<input type="hidden" name="paediatric_<?php echo $session->id?>" value="0" />
-							<input type="hidden" name="anaesthetist_<?php echo $session->id?>" value="0" />
-							<input type="hidden" name="general_anaesthetic_<?php echo $session->id?>" value="0" />
-							<input type="hidden" name="available_<?php echo $session->id?>" value="0" />
-							<input type="checkbox" id="consultant_<?php echo $session->id?>" name="consultant_<?php echo $session->id?>" value="1"<?php if ($session->consultant) {?> checked="checked"<?php }?> /> Consultant present<br/>
-							<input type="checkbox" id="paediatric_<?php echo $session->id?>" name="paediatric_<?php echo $session->id?>" value="1"<?php if ($session->paediatric) {?> checked="checked"<?php }?> /> Paediatric<br/>
-							<input type="checkbox" id="anaesthetist_<?php echo $session->id?>" name="anaesthetist_<?php echo $session->id?>" value="1"<?php if ($session->anaesthetist) {?> checked="checked"<?php }?> /> Anaesthetist present<br/>
-							<input type="checkbox" id="general_anaesthetic_<?php echo $session->id?>" name="general_anaesthetic_<?php echo $session->id?>" value="1"<?php if ($session->general_anaesthetic) {?> checked="checked"<?php }?> /> General anaesthetic available<br/>
-							<input type="checkbox" id="available_<?php echo $session->id?>" name="available_<?php echo $session->id?>" value="1"<?php if ($session->available) {?> checked="checked"<?php }?> /> Session available<br/>
-						</div>
-					<?php } else {?>
-						<input type="hidden" id="consultant_<?php echo $session->id?>" name="consultant_<?php echo $session->id?>" value="<?php echo $session->consultant?>" />
-						<input type="hidden" id="paediatric_<?php echo $session->id?>" name="paediatric_<?php echo $session->id?>" value="<?php echo $session->paediatric?>" />
-						<input type="hidden" id="anaesthetist_<?php echo $session->id?>" name="anaesthetist_<?php echo $session->id?>" value="<?php echo $session->anaesthetist?>" />
-						<input type="hidden" id="general_anaesthetic_<?php echo $session->id?>" name="general_anaesthetic_<?php echo $session->id?>" value="<?php echo $session->general_anaesthetic?>" />
-						<input type="hidden" id="available_<?php echo $session->id?>" name="available_<?php echo $session->id?>" value="<?php echo $session->available?>" />
-					<?php }?>
-
 
 					<table class="grid theatre-bookings">
 						<thead id="thead_<?php echo $session->id?>">
@@ -199,17 +178,56 @@
 					</table>
 				</div>
 				<div class="sessionComments large-3 column">
+					<?php if (Yii::app()->user->checkAccess('purplerinse')) {?>
+						<div class="panel session-options hidden diaryEditMode" data-id="<?php echo $session->id?>">
+							<input type="hidden" name="consultant_<?php echo $session->id?>" value="0" />
+							<input type="hidden" name="paediatric_<?php echo $session->id?>" value="0" />
+							<input type="hidden" name="anaesthetist_<?php echo $session->id?>" value="0" />
+							<input type="hidden" name="general_anaesthetic_<?php echo $session->id?>" value="0" />
+							<input type="hidden" name="available_<?php echo $session->id?>" value="0" />
+							<label>
+								<input type="checkbox" id="consultant_<?php echo $session->id?>" name="consultant_<?php echo $session->id?>" value="1"<?php if ($session->consultant) {?> checked="checked"<?php }?> />
+								Consultant present
+							</label>
+							<label>
+								<input type="checkbox" id="paediatric_<?php echo $session->id?>" name="paediatric_<?php echo $session->id?>" value="1"<?php if ($session->paediatric) {?> checked="checked"<?php }?> />
+								Paediatric
+							</label>
+							<label>
+								<input type="checkbox" id="anaesthetist_<?php echo $session->id?>" name="anaesthetist_<?php echo $session->id?>" value="1"<?php if ($session->anaesthetist) {?> checked="checked"<?php }?> />
+								Anaesthetist present
+							</label>
+							<label>
+								<input type="checkbox" id="general_anaesthetic_<?php echo $session->id?>" name="general_anaesthetic_<?php echo $session->id?>" value="1"<?php if ($session->general_anaesthetic) {?> checked="checked"<?php }?> />
+								General anaesthetic available
+							</label>
+							<label>
+								<input type="checkbox" id="available_<?php echo $session->id?>" name="available_<?php echo $session->id?>" value="1"<?php if ($session->available) {?> checked="checked"<?php }?> />
+								Session available
+							</label>
+						</div>
+					<?php } else {?>
+						<input type="hidden" id="consultant_<?php echo $session->id?>" name="consultant_<?php echo $session->id?>" value="<?php echo $session->consultant?>" />
+						<input type="hidden" id="paediatric_<?php echo $session->id?>" name="paediatric_<?php echo $session->id?>" value="<?php echo $session->paediatric?>" />
+						<input type="hidden" id="anaesthetist_<?php echo $session->id?>" name="anaesthetist_<?php echo $session->id?>" value="<?php echo $session->anaesthetist?>" />
+						<input type="hidden" id="general_anaesthetic_<?php echo $session->id?>" name="general_anaesthetic_<?php echo $session->id?>" value="<?php echo $session->general_anaesthetic?>" />
+						<input type="hidden" id="available_<?php echo $session->id?>" name="available_<?php echo $session->id?>" value="<?php echo $session->available?>" />
+					<?php }?>
 					<div class="panel comments">
 						<form>
 							<h4>Session Comments</h4>
-							<textarea style="display: none;" rows="2" name="comments_<?php echo $session->id?>" class="comments diaryEditMode" data-id="<?php echo $session->id?>"><?php echo $session['comments']?></textarea>
-							<div class="comments_ro diaryViewMode" data-id="<?php echo $session->id?>" title="Modified on <?php echo Helper::convertMySQL2NHS($session->last_modified_date)?> at <?php echo substr($session->last_modified_date,13,5)?> by <?php echo $session->session_usermodified->fullName?>"><?php echo strip_tags($session->comments)?></div>
+							<textarea rows="2" name="comments_<?php echo $session->id?>" class="comments hidden diaryEditMode" data-id="<?php echo $session->id?>"><?php echo $session['comments']?></textarea>
+							<?php $title = "Modified on ".Helper::convertMySQL2NHS($session->last_modified_date)." at ".substr($session->last_modified_date,13,5)." by ".$session->session_usermodified->fullName;?>
+							<p
+								class="comments diaryViewMode"
+								data-id="<?php echo $session->id?>"
+								title="<?php echo $title;?>">
+								<?php echo strip_tags($session->comments)?>
+							</p>
 						</form>
 					</div>
 				</div>
 			</div>
-
-
 
 			<div class="row">
 				<div style="display: none;" data-id="<?php echo $session->id?>" class="large-12 column text-right theatre-booking-edit-actions diaryEditMode">

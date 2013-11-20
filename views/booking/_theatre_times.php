@@ -58,7 +58,7 @@
 	</div>
 
 	<?php if (!$session->operationBookable($operation)) {?>
-		<div class="alertBox" style="margin-top: 10px;">
+		<div class="alert-box alert with-icon" style="margin-top: 10px;">
 			<?php echo $session->unbookableReason($operation)?>
 		</div>
 	<?php }?>
