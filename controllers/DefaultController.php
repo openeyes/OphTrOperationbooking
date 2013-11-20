@@ -27,7 +27,6 @@ class DefaultController extends BaseEventTypeController
 		Yii::app()->clientScript->registerScriptFile($this->assetPath.'/js/booking.js');
 		Yii::app()->clientScript->registerScriptFile('/js/jquery.validate.min.js');
 		Yii::app()->clientScript->registerScriptFile('/js/additional-validators.js');
-
 		return parent::beforeAction($action);
 	}
 

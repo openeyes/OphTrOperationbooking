@@ -207,7 +207,7 @@ $(document).ready(function() {
 
 		theatre_edit_session_data["row_order"] = [];
 		theatre_edit_session_data["confirm"] = {};
-		theatre_edit_session_data["comments"] = $('div.comments_ro[data-id="'+theatre_edit_session_id+'"]').text();
+		theatre_edit_session_data["comments"] = $('.panel.comments p.comments[data-id="'+theatre_edit_session_id+'"]').text();
 
 		$('#tbody_'+theatre_edit_session_id).children('tr').map(function(){
 			theatre_edit_session_data["row_order"].push($(this).attr('id'));
@@ -217,7 +217,7 @@ $(document).ready(function() {
 
 		$('#tbody_'+theatre_edit_session_id+' .diaryViewMode').hide();
 		$('div.session_options.diaryViewMode').hide();
-		$('div.comments_ro.diaryViewMode').hide();
+		$('.panel.comments .comments.diaryViewMode').hide();
 		$('button.diaryViewMode').hide();
 		$('.diaryEditMode[data-id="'+theatre_edit_session_id+'"]').show();
 		$('.action_options[data-id="'+theatre_edit_session_id+'"]').show();
@@ -322,7 +322,7 @@ $(document).ready(function() {
 						$(this).text($('input[name="admitTime_'+$(this).attr('data-operation-id')+'"]').val());
 					});
 
-					$('div.comments_ro[data-id="'+session_id+'"]').text($('textarea[name="comments_'+session_id+'"]').val());
+					$('.panel.comments .comments[data-id="'+session_id+'"]').text($('textarea[name="comments_'+session_id+'"]').val());
 
 					function checkedOrOne(field) {
 						if($(field).prop('type') == 'checkbox') {

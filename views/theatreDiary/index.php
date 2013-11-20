@@ -128,7 +128,7 @@
 											'value' => @$_POST['date-start'],
 											'htmlOptions'=>array('class'=>'small fixed-width')
 										))?>
-									to
+									<span class="to">to</span>
 									<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
 											'name'=>'date-end',
 											'id'=>'date-end',
