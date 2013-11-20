@@ -25,20 +25,18 @@ class TheatreDiaryController extends BaseModuleController
 	public function accessRules()
 	{
 		return array(
-			// Level 2 or below can't change anything
-			array('deny',
-				'actions' => array('savesessions'),
-				'expression' => '!BaseController::checkUserLevel(4)',
-			),
-			array('deny',
-				'actions' => array('printdiary', 'printlist'),
-				'expression' => '!BaseController::checkUserLevel(3)',
-			),
-			// Level 2 or above can do anything else
 			array('allow',
-				'expression' => 'BaseController::checkUserLevel(2)',
+				'actions' => array('index', 'search', 'filterFirms', 'filterTheatres', 'filterWards', 'setDiaryFilter', 'getSessionTimestamps', 'checkRequired'),
+				'roles' => array('OprnViewClinical'),
 			),
-			array('deny'),
+			array('allow',
+				'actions' => $this->printActions(),
+				'roles' => array('OprnPrint'),
+			),
+			array('allow',
+				'actions' => array('saveSession'),
+				'roles' => array('OprnEditTheatreSession'),
+			),
 		);
 	}
 
@@ -496,7 +494,7 @@ class TheatreDiaryController extends BaseModuleController
 			return;
 		}
 
-		if (Yii::app()->user->checkAccess('purplerinse')) {
+		if ($this->checkAccess('OprnEditTheatreSessionDetails')) {
 			$session->consultant = $_POST['consultant_'.$session->id];
 			$session->paediatric = $_POST['paediatric_'.$session->id];
 			$session->anaesthetist = $_POST['anaesthetist_'.$session->id];
