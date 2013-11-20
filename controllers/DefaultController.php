@@ -19,6 +19,11 @@
 
 class DefaultController extends BaseEventTypeController
 {
+	static protected $action_types = array(
+		'cancel' => self::ACTION_TYPE_EDIT,
+		'admissionLetter' => self::ACTION_TYPE_PRINT,
+	);
+
 	public $eventIssueCreate = 'Operation requires scheduling';
 	protected $operation_required = false;
 	/** @var Element_OphTrOperation_Operation $operation */
@@ -172,15 +177,6 @@ class DefaultController extends BaseEventTypeController
 		}
 
 		return $errors;
-	}
-
-	/**
-	 * @return array
-	 * @see BaseEventTypeController::printActions()
-	 */
-	public function printActions()
-	{
-		return array('print','admissionLetter');
 	}
 
 	/**
