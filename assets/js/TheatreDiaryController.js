@@ -365,9 +365,12 @@ function getDiary() {
 	var button = $('#theatre-filter button[type="submit"]');
 	var loadingMessage = $('#theatre-search-loading');
 	var noResultsMessage = $('#theatre-search-no-results');
+	var theatreList = $('#theatreList');
 
 	if (!button.hasClass('inactive')) {
 		disableButtons();
+
+		theatreList.empty();
 		loadingMessage.show();
 		noResultsMessage.hide();
 
@@ -380,9 +383,9 @@ function getDiary() {
 			'data': searchData,
 			'success': function(data) {
 				if (data['status'] == 'success') {
-					$('#theatreList').html(data['data']);
+					theatreList.html(data['data']);
 				} else {
-					$('#theatreList').html('<h3 class="theatre firstTheatre">'+data['message']+'</h3>');
+					theatreList.html('<h3>'+data['message']+'</h3>');
 				}
 				enableButtons();
 				return false;
