@@ -20,10 +20,12 @@
 class DefaultController extends BaseEventTypeController
 {
 	public $eventIssueCreate = 'Operation requires scheduling';
+	protected $operation_required = false;
+	/** @var Element_OphTrOperation_Operation $operation */
+	protected $operation = null;
 
 	protected function beforeAction($action)
 	{
-		$this->assetPath = Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.'.$this->getModule()->name.'.assets'), false, -1, YII_DEBUG);
 		Yii::app()->clientScript->registerScriptFile($this->assetPath.'/js/booking.js');
 		Yii::app()->clientScript->registerScriptFile('/js/jquery.validate.min.js');
 		Yii::app()->clientScript->registerScriptFile('/js/additional-validators.js');
@@ -67,8 +69,27 @@ class DefaultController extends BaseEventTypeController
 	}
 
 	/**
+	 * Sets up operation based on the event
+	 *
+	 * @param $id
+	 * @throws CHttpException
+	 * (non-phpdoc)
+	 * @see BaseEventTypeController::initWithEventId($id)
+	 */
+	protected function initWithEventId($id)
+	{
+		parent::initWithEventId($id);
+
+		$this->operation = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($this->event->id));
+		if ($this->operation_required && !$this->operation) {
+			throw new CHttpException(500,'Operation not found');
+		}
+	}
+
+	/**
 	 * Checks whether schedule now has been requested
 	 *
+	 * (non-phpdoc)
 	 * @see BaseEventTypeController::initActionCreate()
 	 */
 	protected function initActionCreate()
@@ -86,9 +107,11 @@ class DefaultController extends BaseEventTypeController
 	 */
 	public function initActionView()
 	{
+		$this->operation_required = true;
 		parent::initActionView();
+
 		$this->extraViewProperties = array(
-			'operation' => Element_OphTrOperationbooking_Operation::model()->find('event_id=?',$this->event->id),
+			'operation' => $this->operation,
 		);
 	}
 
@@ -112,6 +135,11 @@ class DefaultController extends BaseEventTypeController
 		}
 	}
 
+	/**
+	 * Set procedures for Element_OphTrOperationbooking_Operation
+	 *
+	 * @param $data
+	 */
 	protected function saveEventComplexAttributesFromData($data)
 	{
 		foreach ($this->open_elements as $element) {
@@ -132,7 +160,16 @@ class DefaultController extends BaseEventTypeController
 	}
 
 	/**
-	 * Ajax cancel operation action
+	 * Setup event properties
+	 */
+	protected function initActionCancel()
+	{
+		$this->operation_required = true;
+		$this->initWithEventId(@$_GET['id']);
+	}
+
+	/**
+	 * Cancel operation action
 	 *
 	 * @param $id
 	 * @throws CHttpException
@@ -140,13 +177,8 @@ class DefaultController extends BaseEventTypeController
 	 */
 	public function actionCancel($id)
 	{
-		if (!$event = Event::model()->findByPk($id)) {
-			throw new Exception('Unable to find event: '.$id);
-		}
 
-		if (!$operation = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($event->id))) {
-			throw new CHttpException(500,'Operation not found');
-		}
+		$operation = $this->operation;
 
 		if ($operation->status->name == 'Cancelled') {
 			return $this->redirect(array('default/view/'.$event->id));
@@ -192,23 +224,33 @@ class DefaultController extends BaseEventTypeController
 		));
 	}
 
-	public function actionAdmissionLetter($id)
+	/**
+	 * Setup event properties
+	 */
+	protected function initActionAdmissionLetter()
 	{
-		if (!$event = Event::model()->findByPk($id)) {
-			throw new Exception('Event not found: '.$id);
-		}
+		$this->operation_required = true;
+		$this->initWithEventId(@$_GET['id']);
+	}
 
+	/**
+	 * Generate admission letter for operation booking
+	 *
+	 * @return bool
+	 * @throws Exception
+	 */
+	public function actionAdmissionLetter()
+	{
 		$this->layout = '//layouts/pdf';
 
-		if ($event->episode->patient->date_of_death) {
+		if ($this->patient->date_of_death) {
+			// no admission for dead patients
 			return false;
 		}
 
-		if (!$operation = Element_OphTrOperationbooking_Operation::model()->find('event_id = ?',array($id))) {
-			throw new Exception('Operation not found for event: '.$id);
-		}
+		$operation = $this->operation;
 
-		$event->audit('admission letter','print',false);
+		$this->event->audit('admission letter','print',false);
 
 		$this->logActivity('printed admission letter');
 
@@ -223,14 +265,14 @@ class DefaultController extends BaseEventTypeController
 
 		$body = $this->render('../letters/admission_letter', array(
 			'site' => $site,
-			'patient' => $event->episode->patient,
+			'patient' => $this->event->episode->patient,
 			'firm' => $firm,
 			'emergencyList' => $emergency_list,
 			'operation' => $operation,
 		), true);
 
 		$oeletter = new OELetter(
-			$event->episode->patient->getLetterAddress(array(
+			$this->event->episode->patient->getLetterAddress(array(
 				'include_name' => true,
 				'delimiter' => "\n",
 			)),
@@ -250,7 +292,7 @@ class DefaultController extends BaseEventTypeController
 		$body = $this->render('../letters/admission_form', array(
 				'operation' => $operation,
 				'site' => $site,
-				'patient' => $event->episode->patient,
+				'patient' => $this->event->episode->patient,
 				'firm' => $firm,
 				'emergencyList' => $emergency_list,
 		), true);

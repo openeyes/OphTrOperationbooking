@@ -20,10 +20,12 @@
 class BookingController extends BaseEventTypeController
 {
 	public $reschedule = false;
+	protected $operation_required = false;
+	/** @var Element_OphTrOperation_Operation $operation */
+	protected $operation = null;
 
 	protected function beforeAction($action)
 	{
-		$this->assetPath = Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.'.$this->getModule()->name.'.assets'), false, -1, YII_DEBUG);
 		Yii::app()->clientScript->registerScriptFile($this->assetPath.'/js/booking.js');
 		Yii::app()->clientScript->registerScriptFile('/js/jquery.validate.min.js');
 		Yii::app()->clientScript->registerScriptFile('/js/additional-validators.js');
@@ -42,25 +44,44 @@ class BookingController extends BaseEventTypeController
 		);
 	}
 
-	public function actionSchedule($id)
+	/**
+	 * (non-phpdoc)
+	 * @see BaseEventTypeController::initAction($action)
+	 */
+	protected function initAction($action)
 	{
-		if (!$event = Event::model()->findByPk($id)) {
-			throw new Exception('Unable to find event: '.$id);
+		parent::initAction($action);
+
+		if (!$this->event && in_array(strtolower($action), array('schedule', 'reschedule', 'reschedulelater'))) {
+			$this->initWithEventId(@$_GET['id']);
+			$this->operation_required = true;
 		}
 
+		// setup the Operation that we are concerned with
+		if ($this->operation_required) {
+			if (!$this->operation = Element_OphTrOperationbooking_Operation::model()->find('event_id = ?', array($this->event->id))) {
+				throw new Exception('Operation not found');
+			};
+		}
+
+	}
+
+	/**
+	 * Action to schedule an event operation
+	 *
+	 * @throws Exception
+	 */
+	public function actionSchedule()
+	{
 		if (!$this->title) {
 			$this->title = "Schedule operation";
 		}
 
-		if (!$operation = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($id))) {
-			throw new Exception('Operation not found');
-		}
+		$operation = $this->operation;
 
 		if ($operation->status->name == 'Cancelled') {
-			return $this->redirect(array('default/view/'.$event->id));
+			return $this->redirect(array('default/view/'.$this->event->id));
 		}
-
-		$this->patient = $event->episode->patient;
 
 		if (@$_GET['firm_id']) {
 			if ($_GET['firm_id'] == 'EMG') {
@@ -72,7 +93,7 @@ class BookingController extends BaseEventTypeController
 				}
 			}
 		} else {
-			$firm = Firm::model()->findByPk(Yii::app()->session['selected_firm_id']);
+			$firm = $this->firm;
 		}
 
 		if (preg_match('/^([0-9]{4})([0-9]{2})$/',@$_GET['date'],$m)) {
@@ -91,6 +112,7 @@ class BookingController extends BaseEventTypeController
 				$criteria->addCondition('`t`.booking_cancellation_date is null');
 				$criteria->addCondition('event.deleted = 0');
 				$criteria->order = 'display_order ASC';
+				//FIXME: this should be retrieved by a method on the operation
 				$bookings = OphTrOperationbooking_Operation_Booking::model()->with(array('operation'=>array('with'=>'event')))->findAll($criteria);
 
 				foreach ($theatres as $theatre) {
@@ -142,6 +164,11 @@ class BookingController extends BaseEventTypeController
 		));
 	}
 
+	/**
+	 * Reschedule an operation for the given event
+	 *
+	 * @param $id
+	 */
 	public function actionReschedule($id)
 	{
 		$this->title = "Reschedule operation";
@@ -149,16 +176,14 @@ class BookingController extends BaseEventTypeController
 		return $this->actionSchedule($id);
 	}
 
-	public function actionRescheduleLater($id)
+	/**
+	 * Cancels and reschedules an operation
+	 * 
+	 * @throws Exception
+	 */
+	public function actionRescheduleLater()
 	{
-		if (!$event = Event::model()->findByPk($id)) {
-			throw new Exception('Unable to find event: '.$id);
-		}
-
-		if (!$operation = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($id))) {
-			throw new Exception('Operation not found');
-		}
-
+		$operation = $this->operation;
 		if (in_array($operation->status->name,array('Requires scheduling','Requires rescheduling','Cancelled'))) {
 			return $this->redirect(array('default/view/'.$event->id));
 		}
