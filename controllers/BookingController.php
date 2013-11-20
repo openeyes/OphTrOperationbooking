@@ -19,6 +19,12 @@
 
 class BookingController extends BaseEventTypeController
 {
+	static protected $action_types = array(
+		'schedule' => self::ACTION_TYPE_EDIT,
+		'reschedule' => self::ACTION_TYPE_EDIT,
+		'rescheduleLater' => self::ACTION_TYPE_EDIT,
+	);
+
 	public $reschedule = false;
 	protected $operation_required = false;
 	/** @var Element_OphTrOperation_Operation $operation */
@@ -31,17 +37,6 @@ class BookingController extends BaseEventTypeController
 		Yii::app()->clientScript->registerScriptFile('/js/additional-validators.js');
 
 		return parent::beforeAction($action);
-	}
-
-	public function accessRules()
-	{
-		return array(
-			// Level 3 or above can do anything
-			array('allow',
-				'expression' => 'BaseController::checkUserLevel(4)',
-			),
-			array('deny'),
-		);
 	}
 
 	/**
