@@ -37,6 +37,11 @@ class WaitingListController extends BaseModuleController
 		);
 	}
 
+	/**
+	 * @return array
+	 * (non-phpdoc)
+	 * @see parent::printActions()
+	 */
 	public function printActions()
 	{
 		return array(
@@ -56,8 +61,8 @@ class WaitingListController extends BaseModuleController
 	}
 
 	/**
-		* Lists all models.
-		*/
+	* Lists all models.
+	*/
 	public function actionIndex()
 	{
 		if (empty($_POST)) {
@@ -78,6 +83,9 @@ class WaitingListController extends BaseModuleController
 		$this->render('index');
 	}
 
+	/**
+	 * Carry out a search on the waiting list
+	 */
 	public function actionSearch()
 	{
 		Audit::add('waiting list','search',serialize($_POST));
@@ -102,9 +110,19 @@ class WaitingListController extends BaseModuleController
 			$operations = $this->getWaitingList($firm_id, $subspecialty_id, $status, $hos_num, $site_id);
 		}
 
-		$this->renderPartial('_list', array('operations' => $operations, 'assetPath' => Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.'.$this->getModule()->name.'.assets'), false, -1, YII_DEBUG)), false, true);
+		$this->renderPartial('_list', array('operations' => $operations, 'assetPath' => $this->assetPath), false, true);
 	}
 
+	/**
+	 * Get the operations for the waiting list criteria provided
+	 *
+	 * @param $firm_id
+	 * @param $subspecialty_id
+	 * @param $status
+	 * @param bool $hos_num
+	 * @param bool $site_id
+	 * @return Element_OphTrOperationbooking_Operation[]
+	 */
 	public function getWaitingList($firm_id, $subspecialty_id, $status, $hos_num=false, $site_id=false)
 	{
 		$whereSql = '';
@@ -161,9 +179,9 @@ class WaitingListController extends BaseModuleController
 	}
 
 	/**
-		* Generates a firm list based on a subspecialty id provided via POST
-		* echoes form option tags for display
-		*/
+	* Generates a firm list based on a subspecialty id provided via POST
+	* echoes form option tags for display
+	*/
 	public function actionFilterFirms()
 	{
 		YiiSession::set('waitinglist_searchoptions','subspecialty-id',$_POST['subspecialty_id']);
@@ -179,36 +197,54 @@ class WaitingListController extends BaseModuleController
 		}
 	}
 
+	/**
+	 * Store the filter item in the user session
+	 *
+	 * @param $field
+	 * @param $value
+	 */
 	public function setFilter($field, $value)
 	{
 		YiiSession::set('waitinglist_searchoptions',$field,$value);
 	}
 
+	/**
+	 * Ajax action to set the firm filter
+	 */
 	public function actionFilterSetFirm()
 	{
 		$this->setFilter('firm-id', $_POST['firm_id']);
 	}
 
+	/**
+	 * Ajax action to set the status filter
+	 */
 	public function actionFilterSetStatus()
 	{
 		$this->setFilter('status', $_POST['status']);
 	}
 
+	/**
+	 * Ajax action to the site id filter
+	 */
 	public function actionFilterSetSiteId()
 	{
 		$this->setFilter('site_id', $_POST['site_id']);
 	}
 
+	/**
+	 * Ajax action to set the hosnum filter
+	 */
 	public function actionFilterSetHosNum()
 	{
 		$this->setFilter('hos_num', $_POST['hos_num']);
 	}
 	/**
-		* Helper method to fetch firms by subspecialty ID
-		*
-		* @param integer $subspecialtyId
-		* @return array
-		*/
+	* Helper method to fetch firms by subspecialty ID
+	*
+	* @param integer $subspecialtyId
+	* @return array
+	*/
 	protected function getFilteredFirms($subspecialtyId)
 	{
 		$criteria = new CDbCriteria;
@@ -253,11 +289,12 @@ class WaitingListController extends BaseModuleController
 	}
 
 	/**
-	* Print the next letter for an operation
-	* @param OEPDFPrint $pdf_print
-	* @param Element_OphTrOperationbooking_Operation $operation
-	* @param Boolean $auto_confirm
-	*/
+	 * Print the next letter for an operation
+	 * @param OEPDFPrint $pdf_print
+	 * @param Element_OphTrOperationbooking_Operation $operation
+	 * @param Boolean $auto_confirm
+	 * @throws CException
+	 */
 	protected function printLetter($pdf_print, $operation, $auto_confirm = false)
 	{
 		$patient = $operation->event->episode->patient;
@@ -444,6 +481,9 @@ class WaitingListController extends BaseModuleController
 
 	}
 
+	/**
+	 * Set operations printed letter state
+	 */
 	public function actionConfirmPrinted()
 	{
 		Audit::add('waiting list','confirm',serialize($_POST));
