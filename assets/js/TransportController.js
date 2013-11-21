@@ -55,7 +55,7 @@ $(document).ready(function() {
 	});
 
 	handleButton($('button.btn_transport_print'),function(e) {
-		var url = window.location.href.replace(/(\/)?index/,'');
+		var url = window.location.href.replace(/(\/index)?(\/)?$/,'');
 		url += '/printList';
 		printIFrameUrl(url,null);
 		setTimeout('enableButtons();',3000);
