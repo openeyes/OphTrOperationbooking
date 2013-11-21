@@ -31,7 +31,7 @@
 				'focus'=>'#username'
 			))?>
 			<?php echo $form->dropDownList($sequence,'firm_id',Firm::model()->getListWithSpecialties(),array('empty'=>'- Emergency -'))?>
-			<?php echo $form->dropDownList($sequence,'theatre_id',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- None -'))?>
+			<?php echo $form->dropDownList($sequence,'theatre_id',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll(array('order'=>'name')),'id','nameWithSite'),array('empty'=>'- None -'))?>
 			<?php echo $form->datePicker($sequence,'start_date',array(),array('null'=>true))?>
 			<?php echo $form->datePicker($sequence,'end_date',array(),array('null'=>true))?>
 			<?php echo $form->dropDownList($sequence,'weekday',array(1=>'Monday',2=>'Tuesday',3=>'Wednesday',4=>'Thursday',5=>'Friday',6=>'Saturday',7=>'Sunday'),array('empty'=>'- Weekday -'))?>
