@@ -125,6 +125,10 @@
   padding: 0.375em 0.5em 0.375em 1.0625em;
   text-align: right;
 }
+/* line 47, ../sass/components/tables/_theatre-bookings-table.scss */
+.theatre-bookings .alerts img {
+  margin-bottom: 4px;
+}
 
 /* line 20, ../sass/components/tables/_transport-table.scss */
 table.transport .status.Red {
@@ -218,7 +222,7 @@ table.transport .status.Green {
 }
 /* line 22, ../sass/components/_event.scss */
 .event .event-content {
-  background-image: url('../img/watermark.png?1384433913');
+  background-image: url('../img/watermark.png?1385027298');
 }
 /* line 26, ../sass/components/_event.scss */
 .event.schedule .event-title {
