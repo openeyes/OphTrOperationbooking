@@ -222,11 +222,11 @@ class WaitingListController extends BaseModuleController
 	}
 
 	/**
-		* Prints next pending letter type for requested operations
-		* Operation IDs are passed as an array (operations[]) via GET or POST
-		* Invalid operation IDs are ignored
-		* @throws CHttpException
-		*/
+	* Prints next pending letter type for requested operations
+	* Operation IDs are passed as an array (operations[]) via GET or POST
+	* Invalid operation IDs are ignored
+	* @throws CHttpException
+	*/
 	public function actionPrintLetters()
 	{
 		Audit::add('waiting list',(@$_REQUEST['all']=='true' ? 'print all' : 'print selected'),serialize($_POST));
@@ -253,11 +253,11 @@ class WaitingListController extends BaseModuleController
 	}
 
 	/**
-		* Print the next letter for an operation
-		* @param OEPDFPrint $pdf_print
-		* @param Element_OphTrOperationbooking_Operation $operation
-		* @param Boolean $auto_confirm
-		*/
+	* Print the next letter for an operation
+	* @param OEPDFPrint $pdf_print
+	* @param Element_OphTrOperationbooking_Operation $operation
+	* @param Boolean $auto_confirm
+	*/
 	protected function printLetter($pdf_print, $operation, $auto_confirm = false)
 	{
 		$patient = $operation->event->episode->patient;
