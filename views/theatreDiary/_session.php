@@ -158,16 +158,16 @@
 						<tfoot>
 						<tr>
 							<?php $status = ($session->availableMinutes > 0); ?>
-							<td colspan="10">
+							<td colspan="10" class="<?php echo ($status) ? 'available' : ''; ?>">
 								<div class="session_timeleft time-left <?php echo ($status) ? 'available' : 'full'; ?>">
 									<?php if ($status) {?>
 										<?php echo $session->availableMinutes ?> minutes unallocated
 									<?php } else {?>
 										<?php echo abs($session->availableMinutes) ?> minutes overbooked
 									<?php }?>
-									<span<?php if ($session->available) {?> style="display: none;"<?php }?> class="session_unavailable" id="session_unavailable_<?php echo $session->id?>"> - session unavailable</span>
+									<span<?php if ($session->available) {?> style="display: none;"<?php }?> class="session-unavailable" id="session_unavailable_<?php echo $session->id?>"> - session unavailable</span>
 								</div>
-								<div class="specialists">
+								<div class="specialists<?php if (!$session->consultant && !$session->anaesthetist && !$session->paediatric){ echo " hidden";}?>">
 									<div<?php if (!$session->consultant) {?> style="display: none;"<?php }?> id="consultant_icon_<?php echo $session->id?>" class="consultant" title="Consultant Present">Consultant</div>
 									<div<?php if (!$session->anaesthetist) {?> style="display: none;"<?php }?> id="anaesthetist_icon_<?php echo $session->id?>" class="anaesthetist" title="Anaesthetist Present">Anaesthetist<?php if ($session->general_anaesthetic) {?> (GA)<?php }?></div>
 									<div<?php if (!$session->paediatric) {?> style="display: none;"<?php }?> id="paediatric_icon_<?php echo $session->id?>" class="paediatric" title="Paediatric Session">Paediatric</div>

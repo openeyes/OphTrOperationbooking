@@ -22,10 +22,16 @@
 	}
 	tfoot {
 		td {
-			background: #bde0b3;
+			background: #ffedb2;
 			font-size: 1em;
 			line-height: 1;
+			&.available {
+				background: #bde0b3;
+			}
 		}
+	}
+	.session-unavailable {
+		color: #f00;
 	}
 	.time-left {
 		float: left;
