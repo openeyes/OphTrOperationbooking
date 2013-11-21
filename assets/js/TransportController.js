@@ -55,7 +55,9 @@ $(document).ready(function() {
 	});
 
 	handleButton($('button.btn_transport_print'),function(e) {
-		printIFrameUrl(window.location.href.replace(/\/index/,'/printList'),null);
+		var url = window.location.href.replace(/(\/index)?(\/)?$/,'');
+		url += '/printList';
+		printIFrameUrl(url,null);
 		setTimeout('enableButtons();',3000);
 		e.preventDefault();
 	});

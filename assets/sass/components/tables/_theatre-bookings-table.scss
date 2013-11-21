@@ -22,10 +22,16 @@
 	}
 	tfoot {
 		td {
-			background: #bde0b3;
+			background: #ffedb2;
 			font-size: 1em;
 			line-height: 1;
+			&.available {
+				background: #bde0b3;
+			}
 		}
+	}
+	.session-unavailable {
+		color: #f00;
 	}
 	.time-left {
 		float: left;
@@ -42,5 +48,14 @@
 		line-height: 1.2;
 		padding: emCalc(6px) emCalc(8px) emCalc(6px) emCalc(17px);
 		text-align: right;
+	}
+	.alerts {
+		min-width: 90px;
+		img {
+			float: left;
+			margin-bottom: 3px;
+			margin-right: 6px;
+			margin-top: 3px;
+		}
 	}
 }

@@ -98,17 +98,25 @@
 }
 /* line 24, ../sass/components/tables/_theatre-bookings-table.scss */
 .theatre-bookings tfoot td {
-  background: #bde0b3;
+  background: #ffedb2;
   font-size: 1em;
   line-height: 1;
 }
-/* line 30, ../sass/components/tables/_theatre-bookings-table.scss */
+/* line 28, ../sass/components/tables/_theatre-bookings-table.scss */
+.theatre-bookings tfoot td.available {
+  background: #bde0b3;
+}
+/* line 33, ../sass/components/tables/_theatre-bookings-table.scss */
+.theatre-bookings .session-unavailable {
+  color: #f00;
+}
+/* line 36, ../sass/components/tables/_theatre-bookings-table.scss */
 .theatre-bookings .time-left {
   float: left;
   font-size: 0.8125em;
   font-weight: bold;
 }
-/* line 35, ../sass/components/tables/_theatre-bookings-table.scss */
+/* line 41, ../sass/components/tables/_theatre-bookings-table.scss */
 .theatre-bookings .specialists {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
   opacity: 0.8;
@@ -124,6 +132,17 @@
   line-height: 1.2;
   padding: 0.375em 0.5em 0.375em 1.0625em;
   text-align: right;
+}
+/* line 52, ../sass/components/tables/_theatre-bookings-table.scss */
+.theatre-bookings .alerts {
+  min-width: 90px;
+}
+/* line 54, ../sass/components/tables/_theatre-bookings-table.scss */
+.theatre-bookings .alerts img {
+  float: left;
+  margin-bottom: 3px;
+  margin-right: 6px;
+  margin-top: 3px;
 }
 
 /* line 20, ../sass/components/tables/_transport-table.scss */
@@ -218,7 +237,7 @@ table.transport .status.Green {
 }
 /* line 22, ../sass/components/_event.scss */
 .event .event-content {
-  background-image: url('../img/watermark.png?1384433913');
+  background-image: url('../img/watermark.png?1385051424');
 }
 /* line 26, ../sass/components/_event.scss */
 .event.schedule .event-title {
@@ -541,4 +560,66 @@ table.transport .status.Green {
 /* line 287, ../sass/components/_schedule-booking.scss */
 #siteSelected > .highlighted, #dateSelected > .highlighted {
   font-weight: bold;
+}
+
+/* ====== DIARY (hidden in page) ====== */
+@media print {
+  /* line 3, ../sass/components/_print.scss */
+  #diaryTemplate {
+    display: block;
+    background: #fff;
+  }
+  /* line 6, ../sass/components/_print.scss */
+  #diaryTemplate #d_title {
+    text-align: center;
+    font-size: 14pt;
+    font-weight: bold;
+    border-bottom: 2px solid grey;
+    padding-bottom: 0.3em;
+  }
+  /* line 13, ../sass/components/_print.scss */
+  #diaryTemplate .d_group {
+    padding-bottom: 2em;
+    margin-bottom: 2em;
+    border-bottom: 3px solid grey;
+  }
+  /* line 18, ../sass/components/_print.scss */
+  #diaryTemplate table.d_overview {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0.2em;
+  }
+  /* line 22, ../sass/components/_print.scss */
+  #diaryTemplate table.d_overview td {
+    border-bottom: 1px dotted grey;
+    padding: 0em 1em;
+    font-size: 12pt;
+  }
+  /* line 28, ../sass/components/_print.scss */
+  #diaryTemplate .d_info {
+    display: inline-block;
+    margin-right: 3em;
+  }
+  /* line 31, ../sass/components/_print.scss */
+  #diaryTemplate .d_info > strong {
+    margin-left: 0.5em;
+    font-size: 14pt;
+  }
+  /* line 36, ../sass/components/_print.scss */
+  #diaryTemplate table.d_data {
+    width: 97%;
+    margin-left: 1em;
+    text-align: left;
+  }
+  /* line 40, ../sass/components/_print.scss */
+  #diaryTemplate table.d_data th {
+    padding: 0.5em 0.75em;
+    font-size: 12pt;
+  }
+  /* line 44, ../sass/components/_print.scss */
+  #diaryTemplate table.d_data td {
+    padding: 0.15em 0.15em 0.15em 0.3em;
+    border: 1px solid #CCC;
+    font-size: 12pt;
+  }
 }
