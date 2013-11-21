@@ -549,15 +549,15 @@ class TheatreDiaryController extends BaseModuleController
 	/**
 	* Helper method to fetch firms by subspecialty ID
 	*
-	* @param integer $subspecialtyId
+	* @param integer $subspecialty_id
 	*
 	* @return array
 	*/
-	protected function getFilteredFirms($subspecialtyId)
+	protected function getFilteredFirms($subspecialty_id)
 	{
 		$criteria = new CDbCriteria;
-		$criteria->addCondition('subspecialty_id = :subspecialtyId');
-		$criteria->params[':subspecialtyId'] = $subspecialtyId;
+		$criteria->addCondition('subspecialty_id = :subspecialty_id');
+		$criteria->params[':subspecialty_id'] = $subspecialty_id;
 		$criteria->order = 'name';
 
 		$firms = CHtml::listData(Firm::model()->with('serviceSubspecialtyAssignment')->findAll($criteria),'id','name');
@@ -568,15 +568,15 @@ class TheatreDiaryController extends BaseModuleController
 	/**
 	* Helper method to fetch theatres by site ID
 	*
-	* @param integer $siteId
+	* @param integer $site_id
 	*
 	* @return array
 	*/
-	protected function getFilteredTheatres($siteId)
+	protected function getFilteredTheatres($site_id)
 	{
 		$criteria = new CDbCriteria;
-		$criteria->addCondition('site_id = :siteId');
-		$criteria->params[':siteId'] = $siteId;
+		$criteria->addCondition('site_id = :site_id');
+		$criteria->params[':site_id'] = $site_id;
 		$criteria->order = 'display_order';
 
 		return CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll($criteria),'id','name');
@@ -585,15 +585,15 @@ class TheatreDiaryController extends BaseModuleController
 	/**
 	* Helper method to fetch theatres by site ID
 	*
-	* @param integer $siteId
+	* @param integer $site_id
 	*
 	* @return array
 	*/
-	protected function getFilteredWards($siteId)
+	protected function getFilteredWards($site_id)
 	{
 		$criteria = new CDbCriteria;
-		$criteria->addCondition('site_id = :siteId');
-		$criteria->params[':siteId'] = $siteId;
+		$criteria->addCondition('site_id = :site_id');
+		$criteria->params[':site_id'] = $site_id;
 		$criteria->order = 'name';
 
 		return CHtml::listData(OphTrOperationbooking_Operation_Ward::model()->findAll($criteria),'id','name');
