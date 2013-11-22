@@ -354,9 +354,16 @@ $(document).ready(function() {
 		return false;
 	});
 
-	$('#whiteBox').waypoint('sticky', {
-		offset: 44,
-		wrapper: '<div class="theatreDiary_sticky_wrapper" />'
+	new OpenEyes.UI.StickyElement('.panel.actions', {
+		offset: -44,
+		enableHandler: function() {
+			this.element.width(this.element.width());
+			this.enable();
+		},
+		disableHandler: function() {
+			this.element.width('auto');
+			this.disable();
+		}
 	});
 });
 
