@@ -158,9 +158,16 @@ $(document).ready(function() {
 		});
 	});
 
-	$('#whiteBox').waypoint('sticky', {
-		offset: 44,
-		wrapper: '<div class="waitingList_sticky_wrapper" />'
+	new OpenEyes.UI.StickyElement('.panel.actions', {
+		offset: -44,
+		enableHandler: function() {
+			this.element.width(this.element.width());
+			this.enable();
+		},
+		disableHandler: function() {
+			this.element.width('auto');
+			this.disable();
+		}
 	});
 });
 
