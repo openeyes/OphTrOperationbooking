@@ -44,7 +44,7 @@ $uri_append = $this->getUriAppend();
 	<li class="next<?php echo (!$this->pages || $this->page == $this->pages ? ' unavailable' : '');?>">
 		<?php echo CHtml::link(
 			'Next &gt;',
-			Yii::app()->createUrl('/OphTrOperationbooking/transport/index?page='.($this->page-1).$uri_append),
+			Yii::app()->createUrl('/OphTrOperationbooking/transport/index?page='.($this->page+1).$uri_append),
 			array('rel'=>'back')
 		)?>
 	</li>

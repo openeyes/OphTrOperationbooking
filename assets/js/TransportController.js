@@ -71,24 +71,6 @@ $(document).ready(function() {
 		$('input[name^="operations"]').attr('checked',$('#transport_checkall').is(':checked') ? 'checked' : false);
 	});
 
-	$('a.pagination-link').die('click').live('click',function() {
-		if (!$('button.btn_transport_filter').hasClass('inactive')) {
-			disableButtons();
-		}
-
-		if ($(this).html().match(/next/)) {
-			var page = parseInt($('span.transport_pagination_selected').html().match(/[0-9]+/)) + 1;
-		} else if ($(this).html().match(/back/)) {
-			var page = parseInt($('span.transport_pagination_selected').html().match(/[0-9]+/)) - 1;
-		} else {
-			var page = $(this).html().match(/[0-9]+/);
-		}
-
-		transport_load_tcis(page);
-
-		return false;
-	});
-
 	$('#transport_date_from').bind('change',function() {
 		$('#transport_date_to').datepicker('option','minDate',$('#transport_date_from').datepicker('getDate'));
 	});
@@ -98,72 +80,43 @@ $(document).ready(function() {
 	});
 });
 
-var loadPage = null;
+function initAjaxPagination() {
+	$('.pagination').on('click', 'a', function(e) {
+		e.preventDefault();
+		var url = this.href.replace('/index', '/tcis');
+		transport_load_tcis(url);
+	});
+}
 
-function transport_load_tcis(page) {
-	if (page == null) page = 1;
-
-	loadPage = page;
-
-	if ($('span.transport_pagination_selected').length >0) {
-		var currentPage = parseInt($('span.transport_pagination_selected').html().match(/[0-9]+/));
-
-		if (parseInt(page) != currentPage) {
-			$('span.transport_pagination_selected').replaceWith('<a class="pagination-link" rel='+currentPage+' href="'+baseUrl+'/OphTrOperationbooking/transport/index?page='+currentPage+'">'+currentPage+'</a>');
-			$('a.pagination-link[rel="'+page+'"]').replaceWith('<span class="transport_pagination_selected">&nbsp;'+page+' </span>');
-
-			if (parseInt(page) == 1) {
-				$('span.transport_pagination_back').html('&laquo; back');
-			} else if (currentPage == 1) {
-				$('span.transport_pagination_back').html('<a class="pagination-link" rel="back" href="'+baseUrl+'/OphTrOperationbooking/transport/index?page='+currentPage+'">&laquo; back</a>');
-			}
-
-			if (parseInt(page) == transport_last_page()) {
-				$('span.transport_pagination_next').html('next &raquo;');
-			} else if (currentPage == transport_last_page()) {
-				$('span.transport_pagination_next').html('<a class="pagination-link" rel="next" href="'+baseUrl+'/OphTrOperationbooking/transport/index?page='+currentPage+'">next &raquo;</a>');
-			}
-		}
-	}
+function transport_load_tcis(url) {
 
 	$('#transportList tbody').html('<tr><td colspan="12"><img src="'+baseUrl+'/img/ajax-loader.gif" class="loader" /> loading data ...</td></tr>');
+	$('#transportList tfoot').hide();
 
-	var get = "page="+page;
+	var get = '';
+
+	if (!url) {
+		url = baseUrl+"/OphTrOperationbooking/transport/tcis?";
+		get = "page="+($(document).getUrlParam('page') || 1);
+		if ($('#transport_date_from').val().length >0 && $('#transport_date_to').val().length >0) {
+			get += "&date_from="+$('#transport_date_from').val()+"&date_to="+$('#transport_date_to').val();
+		}
+	}
 
 	if (!$('#include_bookings').is(':checked')) get += "&include_bookings=0";
 	if (!$('#include_reschedules').is(':checked')) get += "&include_reschedules=0";
 	if (!$('#include_cancellations').is(':checked')) get += "&include_cancellations=0";
 
-	if ($('#transport_date_from').val().length >0 && $('#transport_date_to').val().length >0) {
-		get += "&date_from="+$('#transport_date_from').val()+"&date_to="+$('#transport_date_to').val();
-	}
+	url += get;
 
 	$.ajax({
 		type: "GET",
-		url: baseUrl+"/OphTrOperationbooking/transport/tcis?"+get,
+		url: url,
 		success: function(html) {
-			if (page == loadPage) {
-				$('#transport_data').html(html);
-				enableButtons();
-			}
+			$('#transport_data').html(html);
+			enableButtons();
+			initAjaxPagination();
 		}
 	});
 }
 
-function transport_last_page() {
-	var lastPage = 1;
-
-	$('a.pagination-link').map(function() {
-		if (parseInt($(this).attr('rel')) > lastPage) {
-			lastPage = parseInt($(this).attr('rel'));
-		}
-	});
-
-	var selectedPage = parseInt($('span.transport_pagination_selected').html().match(/[0-9]+/));
-
-	if (selectedPage > lastPage) {
-		return selectedPage;
-	}
-
-	return lastPage;
-}
