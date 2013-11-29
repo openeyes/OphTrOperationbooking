@@ -445,7 +445,7 @@ $sequences = $sequences['data'];
 					count += 1;
 				}
 				if (count >0) {
-					new OpenEyes.Dialog.Alert({
+					new OpenEyes.UI.Dialog.Alert({
 						content: "There were problems with the entries you made, please correct the errors and try again."
 					}).open();
 					enableButtons();
@@ -476,7 +476,7 @@ $sequences = $sequences['data'];
 		e.preventDefault();
 
 		if ($('#select_all').val() == 0 && $('input[type="checkbox"][name="sequence[]"]:checked').length <1) {
-			new OpenEyes.Dialog.Alert({
+			new OpenEyes.UI.Dialog.Alert({
 				content: "Please select the sequence(s) you wish to delete."
 			}).open();
 			enableButtons();
@@ -513,7 +513,7 @@ $sequences = $sequences['data'];
 						width: 560
 					});
 				} else {
-					new OpenEyes.Dialog.Alert({
+					new OpenEyes.UI.Dialog.Alert({
 						content: "One or more of the selected sequences have sessions with active bookings and so cannot be deleted."
 					}).open();
 					enableButtons();
@@ -551,7 +551,7 @@ $sequences = $sequences['data'];
 							if (resp == "1") {
 								window.location.reload();
 							} else {
-								new OpenEyes.Dialog.Alert({
+								new OpenEyes.UI.Dialog.Alert({
 									content: "There was an unexpected error deleting the sequences, please try again or contact support for assistance",
 									onClose: function() {
 										enableButtons();
@@ -562,7 +562,7 @@ $sequences = $sequences['data'];
 						}
 					});
 				} else {
-					new OpenEyes.Dialog.Alert({
+					new OpenEyes.UI.Dialog.Alert({
 						content: "One or more of the selected sequences now have sessions with active bookings and so cannot be deleted.",
 						onClose: function() {
 							enableButtons();

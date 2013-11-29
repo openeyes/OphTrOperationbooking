@@ -44,7 +44,7 @@ $(document).ready(function() {
 						$(this).attr('checked',false);
 					});
 				} else {
-					new OpenEyes.Dialog.Alert({
+					new OpenEyes.UI.Dialog.Alert({
 						content: "Something went wrong trying to confirm the transport item.\n\nPlease try again or contact OpenEyes support."
 					}).open();
 				}

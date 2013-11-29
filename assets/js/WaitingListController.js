@@ -72,7 +72,7 @@ $(document).ready(function() {
 		});
 
 		if (operations == 0) {
-			new OpenEyes.Dialog.Alert({
+			new OpenEyes.UI.Dialog.Alert({
 				content: 'No items selected.',
 				onClose: function() {
 					enableButtons();
@@ -188,7 +188,7 @@ function print_items_from_selector(sel,all) {
 
 	if (operations.length == 0) {
 		if (nogp == 0) {
-			new OpenEyes.Dialog.Alert({
+			new OpenEyes.UI.Dialog.Alert({
 				content: "No items selected for printing."
 			}).open();
 		} else {
@@ -208,7 +208,7 @@ function show_letter_warnings(nogp) {
 	}
 
 	if (msg.length >0) {
-		new OpenEyes.Dialog.Alert({
+		new OpenEyes.UI.Dialog.Alert({
 			content: msg
 		}).open();
 	}

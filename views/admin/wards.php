@@ -35,7 +35,7 @@
 				$criteria = new CDbCriteria;
 				$criteria->order = "display_order asc";
 				foreach (OphTrOperationbooking_Operation_Ward::model()->findAll() as $i => $ward) {?>
-					<tr class="clickable sortable "<?php if ($i%2 == 0) {?>even<?php } else {?>odd<?php }?>" data-id="<?php echo $ward->id?>" data-uri="OphTrOperationbooking/admin/editWard/<?php echo $ward->id?>">
+					<tr class="clickable sortable <?php if ($i%2 == 0) {?>even<?php } else {?>odd<?php }?>" data-id="<?php echo $ward->id?>" data-uri="OphTrOperationbooking/admin/editWard/<?php echo $ward->id?>">
 						<td><input type="checkbox" name="ward[]" value="<?php echo $ward->id?>" class="wards" /></td>
 						<td><?php echo $ward->site->name?></td>
 						<td><?php echo $ward->name?></td>
@@ -78,7 +78,7 @@
 		e.preventDefault();
 
 		if ($('input[type="checkbox"][name="ward[]"]:checked').length <1) {
-			new OpenEyes.Dialog.Alert({
+			new OpenEyes.UI.Dialog.Alert({
 				content: "Please select the ward(s) you wish to delete."
 			}).open();
 			enableButtons();
@@ -109,7 +109,7 @@
 						width: 560
 					});
 				} else {
-					new OpenEyes.Dialog.Alert({
+					new OpenEyes.UI.Dialog.Alert({
 						content: "One or more of the selected wards have active future bookings and so cannot be deleted."
 					}).open();
 					enableButtons();
@@ -141,7 +141,7 @@
 							if (resp == "1") {
 								window.location.reload();
 							} else {
-								new OpenEyes.Dialog.Alert({
+								new OpenEyes.UI.Dialog.Alert({
 									content: "There was an unexpected error deleting the wards, please try again or contact support for assistance",
 									onClose: function() {
 										enableButtons();
@@ -153,7 +153,7 @@
 						}
 					});
 				} else {
-					new OpenEyes.Dialog.Alert({
+					new OpenEyes.UI.Dialog.Alert({
 						content: "One or more of the selected wards now have active future bookings and so cannot be deleted.",
 						onClose: function() {
 							enableButtons();

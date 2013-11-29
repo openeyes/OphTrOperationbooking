@@ -7,7 +7,7 @@ $(document).ready(function() {
 
 	$('#et_delete_erod_rule').click(function() {
 		if ($('input.erod_rules[type="checkbox"]:checked').length == 0) {
-			new OpenEyes.Dialog.Alert({
+			new OpenEyes.UI.Dialog.Alert({
 				content: "You haven't selected any rules to delete."
 			}).open();
 		} else {
@@ -19,7 +19,7 @@ $(document).ready(function() {
 					if (resp == "1") {
 						window.location.reload();
 					} else {
-						new OpenEyes.Dialog.Alert({
+						new OpenEyes.UI.Dialog.Alert({
 							content: "Something went wrong trying to delete the rules. Please try again or contact support for assistance."
 						}).open();
 					}
@@ -111,7 +111,7 @@ $(document).ready(function() {
 
 	$('#et_delete_operation_name_rule').click(function() {
 		if ($('input.operation_name_rules[type="checkbox"]:checked').length == 0) {
-			new OpenEyes.Dialog.Alert({
+			new OpenEyes.UI.Dialog.Alert({
 				content: "You haven't selected any rules to delete."
 			}).open();
 		} else {
@@ -123,7 +123,7 @@ $(document).ready(function() {
 					if (resp == "1") {
 						window.location.reload();
 					} else {
-						new OpenEyes.Dialog.Alert({
+						new OpenEyes.UI.Dialog.Alert({
 							content: "Something went wrong trying to delete the rules. Please try again or contact support for assistance."
 						}).open();
 					}

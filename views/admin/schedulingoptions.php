@@ -71,7 +71,7 @@
 		e.preventDefault();
 
 		if ($('input[type="checkbox"][name="scheduleoption[]"]:checked').length <1) {
-			new OpenEyes.Dialog.Alert({
+			new OpenEyes.UI.Dialog.Alert({
 				content: "Please select the scheduling option(s) you wish to delete."
 			}).open();
 			enableButtons();
@@ -102,7 +102,7 @@
 						width: 560
 					});
 				} else {
-					new OpenEyes.Dialog.Alert({
+					new OpenEyes.UI.Dialog.Alert({
 						content: "One or more of the selected scheduling options are in use by operations and so cannot be deleted."
 					}).open();
 					enableButtons();
@@ -134,7 +134,7 @@
 							if (resp == "1") {
 								window.location.reload();
 							} else {
-								new OpenEyes.Dialog.Alert({
+								new OpenEyes.UI.Dialog.Alert({
 									content: "There was an unexpected error deleting the scheduleoptions, please try again or contact support for assistance",
 									onClose: function() {
 										enableButtons();
@@ -145,7 +145,7 @@
 						}
 					});
 				} else {
-					new OpenEyes.Dialog.Alert({
+					new OpenEyes.UI.Dialog.Alert({
 						content: "One or more of the selected scheduling options are now in use by operations and so cannot be deleted.",
 						onClose: function() {
 							enableButtons();

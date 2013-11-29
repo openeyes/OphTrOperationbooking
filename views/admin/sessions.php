@@ -405,7 +405,7 @@ handleButton($('#et_update_inline'),function(e) {
 				count += 1;
 			}
 			if (count >0) {
-				new OpenEyes.Dialog.Alert({
+				new OpenEyes.UI.Dialog.Alert({
 					content: "There were problems with the entries you made, please correct the errors and try again."
 				}).open();
 				enableButtons();
@@ -436,7 +436,7 @@ handleButton($('#et_delete_session'),function(e) {
 	e.preventDefault();
 
 	if ($('#select_all').val() == 0 && $('input[type="checkbox"][name="session[]"]:checked').length <1) {
-		new OpenEyes.Dialog.Alert({
+		new OpenEyes.UI.Dialog.Alert({
 			content: "Please select the session(s) you wish to delete."
 		}).open();
 		enableButtons();
@@ -473,7 +473,7 @@ handleButton($('#et_delete_session'),function(e) {
 					width: 560
 				});
 			} else {
-				new OpenEyes.Dialog.Alert({
+				new OpenEyes.UI.Dialog.Alert({
 					content: "One or more of the selected sessions have active bookings and so cannot be deleted."
 				}).open();
 				enableButtons();
@@ -511,7 +511,7 @@ handleButton($('.btn_remove_sessions'),function(e) {
 						if (resp == "1") {
 							window.location.reload();
 						} else {
-							new OpenEyes.Dialog.Alert({
+							new OpenEyes.UI.Dialog.Alert({
 								content: "There was an unexpected error deleting the sessions, please try again or contact support for assistance",
 								onClose: function() {
 									enableButtons();
@@ -522,7 +522,7 @@ handleButton($('.btn_remove_sessions'),function(e) {
 					}
 				});
 			} else {
-				new OpenEyes.Dialog.Alert({
+				new OpenEyes.UI.Dialog.Alert({
 					content: "One or more of the selected sessions now have active bookings and so cannot be deleted.",
 					onClose: function() {
 						enableButtons();

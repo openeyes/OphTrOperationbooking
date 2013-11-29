@@ -149,7 +149,7 @@
 						width: 560
 					});
 				} else {
-					new OpenEyes.Dialog.Alert({
+					new OpenEyes.UI.Dialog.Alert({
 						content: "This sequence has one or more sessions with active bookings and so cannot be deleted."
 					}).open();
 					enableButtons();
@@ -175,7 +175,7 @@
 							if (resp == "1") {
 								window.location.href = baseUrl+'/OphTrOperationbooking/admin/viewSequences';
 							} else {
-								new OpenEyes.Dialog.Alert({
+								new OpenEyes.UI.Dialog.Alert({
 									content: "There was an unexpected error deleting the sequence, please try again or contact support for assistance",
 									onClose: function() {
 										enableButtons();
@@ -186,7 +186,7 @@
 						}
 					});
 				} else {
-					new OpenEyes.Dialog.Alert({
+					new OpenEyes.UI.Dialog.Alert({
 						content: "This sequence now has one or more sessions with active bookings and so cannot be deleted.",
 						onClose: function() {
 							enableButtons();

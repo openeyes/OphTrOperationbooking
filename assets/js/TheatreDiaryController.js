@@ -169,7 +169,7 @@ $(document).ready(function() {
 
 	$('#btn_print_diary_list').click(function() {
 		if ($('#site-id').val() == '' || $('#subspecialty-id').val() == '' || $('#date-start').val() == '' || $('#date-end').val() == '') {
-			new OpenEyes.Dialog.Alert({
+			new OpenEyes.UI.Dialog.Alert({
 				content: 'To print the booking list you must select a site, a subspecialty and a date range.',
 				onClose: function() {
 					scrollTo(0,0);
@@ -309,7 +309,7 @@ $(document).ready(function() {
 					}
 
 					if (first) {
-						new OpenEyes.Dialog.Alert({
+						new OpenEyes.UI.Dialog.Alert({
 							content: "One or more admission times were entered incorrectly, please correct the entries highlighted in red."
 						}).open();
 						enableButtons();
@@ -584,22 +584,22 @@ function checkRequired(type, session_id) {
 				$('#'+type+'_'+session_id).attr('checked',true);
 				switch (type) {
 					case 'consultant':
-						new OpenEyes.Dialog.Alert({
+						new OpenEyes.UI.Dialog.Alert({
 							content: "Sorry, you cannot remove the 'Consultant required' flag from this session because there are one or more patients booked into it who require a consultant."
 						}).open();
 						break;
 					case 'paediatric':
-						new OpenEyes.Dialog.Alert({
+						new OpenEyes.UI.Dialog.Alert({
 							content: "Sorry, you cannot remove the 'Paediatric' flag from this session because there are one or more patients booked into it who are paediatric."
 						}).open();
 						break;
 					case 'anaesthetist':
-						new OpenEyes.Dialog.Alert({
+						new OpenEyes.UI.Dialog.Alert({
 							content: "Sorry, you cannot remove the 'Anaesthetist required' flag from this session because there are one or more patients booked into it who require an anaesthetist."
 						}).open();
 						break;
 					case 'general_anaesthetic':
-						new OpenEyes.Dialog.Alert({
+						new OpenEyes.UI.Dialog.Alert({
 							content: "Sorry, you cannot remove the 'General anaesthetic available' flag from this session because there are one or more patients booked into it who require a general anaesthetic."
 						}).open();
 						break;

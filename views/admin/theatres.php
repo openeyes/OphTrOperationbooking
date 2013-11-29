@@ -77,7 +77,7 @@
 		e.preventDefault();
 
 		if ($('input[type="checkbox"][name="theatre[]"]:checked').length <1) {
-			new OpenEyes.Dialog.Alert({
+			new OpenEyes.UI.Dialog.Alert({
 				content: "Please select the theatre(s) you wish to delete."
 			}).open();
 			enableButtons();
@@ -108,7 +108,7 @@
 						width: 560
 					});
 				} else {
-					new OpenEyes.Dialog.Alert({
+					new OpenEyes.UI.Dialog.Alert({
 						content: "One or more of the selected theatres have active future bookings and so cannot be deleted."
 					}).open();
 					enableButtons();
@@ -140,7 +140,7 @@
 							if (resp == "1") {
 								window.location.reload();
 							} else {
-								new OpenEyes.Dialog.Alert({
+								new OpenEyes.UI.Dialog.Alert({
 									content: "There was an unexpected error deleting the theatres, please try again or contact support for assistance",
 									onClose: function() {
 										enableButtons();
@@ -151,7 +151,7 @@
 						}
 					});
 				} else {
-					new OpenEyes.Dialog.Alert({
+					new OpenEyes.UI.Dialog.Alert({
 						content: "One or more of the selected theatres now have active future bookings and so cannot be deleted.",
 						onClose: function() {
 							enableButtons();
