@@ -32,7 +32,7 @@
  * @property User $usermodified
  */
 
-class OphTrOperationbooking_Operation_Priority extends BaseActiveRecord
+class OphTrOperationbooking_Operation_Priority extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.

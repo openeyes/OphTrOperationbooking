@@ -206,15 +206,6 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		}
 	}
 
-	public function getproc_defaults()
-	{
-		$ids = array();
-		foreach (OphTrOperationbooking_Operation_Defaults::model()->findAll() as $item) {
-			$ids[] = $item->value_id;
-		}
-		return $ids;
-	}
-
 	protected function beforeSave()
 	{
 		$anaesthetistRequired = array(

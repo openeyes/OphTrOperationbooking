@@ -35,7 +35,7 @@
  *
  */
 
-class OphTrOperationbooking_Operation_Ward extends BaseActiveRecord
+class OphTrOperationbooking_Operation_Ward extends BaseActiveRecordVersioned
 {
 	const RESTRICTION_MALE = 1;
 	const RESTRICTION_FEMALE = 2;

@@ -35,7 +35,7 @@
  *
  */
 
-class OphTrOperationbooking_Operation_Date_Letter_Sent extends BaseActiveRecord
+class OphTrOperationbooking_Operation_Date_Letter_Sent extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.

@@ -25,7 +25,7 @@
  *
  */
 
-class OphTrOperationbooking_Operation_Sequence_Interval extends BaseActiveRecord
+class OphTrOperationbooking_Operation_Sequence_Interval extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.

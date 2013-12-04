@@ -35,7 +35,7 @@
  *
  */
 
-class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
+class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecordVersioned
 {
 	const SELECT_1STWEEK = 1;
 	const SELECT_2NDWEEK = 2;

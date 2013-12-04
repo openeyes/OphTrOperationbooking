@@ -27,7 +27,7 @@
  *
  */
 
-class OphTrOperationbooking_Operation_Cancellation_Reason extends BaseActiveRecord
+class OphTrOperationbooking_Operation_Cancellation_Reason extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.
