@@ -70,6 +70,19 @@
 	</div>
 </section>
 
+<section class="element element-data">
+	<div class="row">
+		<div class="large-6 column">
+		</div>
+		<div class="large-6 column">
+			<?php if (!empty($element->comments_rtt)) { ?>
+				<h3 class="data-title">Operation RTT Comments</h3>
+				<div class="data-value panel comments"><?php echo CHtml::encode($element->comments_rtt)?></div>
+			<?php } ?>
+		</div>
+	</div>
+</section>
+
 <?php if ($element->booking) {?>
 	<section class="element">
 		<h3 class="element-title highlight">Booking Details</h3>

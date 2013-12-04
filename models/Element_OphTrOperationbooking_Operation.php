@@ -31,6 +31,7 @@
  * @property integer $priority_id
  * @property string $decision_date
  * @property string $comments
+ * @property string $comments_rtt
  *
  * The followings are the available model relations:
  *
@@ -92,13 +93,13 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments, anaesthetist_required, total_duration, status_id, operation_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id, latest_booking_id', 'safe'),
+			array('event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments,comments_rtt, anaesthetist_required, total_duration, status_id, operation_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id, latest_booking_id', 'safe'),
 			array('eye_id', 'matchDiagnosisEye'),
 			array('cancellation_comment', 'length', 'max' => 200),
 			array('eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments, ', 'safe', 'on' => 'search'),
+			array('id, event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments, comments_rtt', 'safe', 'on' => 'search'),
 		);
 	}
 
@@ -150,6 +151,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			'priority_id' => 'Priority',
 			'decision_date' => 'Decision date',
 			'comments' => 'Add comments',
+			'comments_rtt' => 'Add RTT comments',
 		);
 	}
 
@@ -176,6 +178,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		$criteria->compare('priority_id', $this->priority_id);
 		$criteria->compare('decision_date', $this->decision_date);
 		$criteria->compare('comments', $this->comments);
+		$criteria->compare('comments_rtt', $this->comments_rtt);
 
 		return new CActiveDataProvider(get_class($this), array(
 				'criteria' => $criteria,
