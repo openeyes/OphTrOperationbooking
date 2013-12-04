@@ -94,29 +94,30 @@
 /* line 19, ../sass/components/tables/_theatre-bookings-table.scss */
 .theatre-bookings input[type="text"] {
   max-width: 4.375em;
+  min-width: 3.4375em;
   text-align: center;
 }
-/* line 24, ../sass/components/tables/_theatre-bookings-table.scss */
+/* line 25, ../sass/components/tables/_theatre-bookings-table.scss */
 .theatre-bookings tfoot td {
   background: #ffedb2;
   font-size: 1em;
   line-height: 1;
 }
-/* line 28, ../sass/components/tables/_theatre-bookings-table.scss */
+/* line 29, ../sass/components/tables/_theatre-bookings-table.scss */
 .theatre-bookings tfoot td.available {
   background: #bde0b3;
 }
-/* line 33, ../sass/components/tables/_theatre-bookings-table.scss */
+/* line 34, ../sass/components/tables/_theatre-bookings-table.scss */
 .theatre-bookings .session-unavailable {
   color: #f00;
 }
-/* line 36, ../sass/components/tables/_theatre-bookings-table.scss */
+/* line 37, ../sass/components/tables/_theatre-bookings-table.scss */
 .theatre-bookings .time-left {
   float: left;
   font-size: 0.8125em;
   font-weight: bold;
 }
-/* line 41, ../sass/components/tables/_theatre-bookings-table.scss */
+/* line 42, ../sass/components/tables/_theatre-bookings-table.scss */
 .theatre-bookings .specialists {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
   opacity: 0.8;
@@ -133,11 +134,11 @@
   padding: 0.375em 0.5em 0.375em 1.0625em;
   text-align: right;
 }
-/* line 52, ../sass/components/tables/_theatre-bookings-table.scss */
+/* line 53, ../sass/components/tables/_theatre-bookings-table.scss */
 .theatre-bookings .alerts {
   min-width: 90px;
 }
-/* line 54, ../sass/components/tables/_theatre-bookings-table.scss */
+/* line 55, ../sass/components/tables/_theatre-bookings-table.scss */
 .theatre-bookings .alerts img {
   float: left;
   margin-bottom: 3px;
