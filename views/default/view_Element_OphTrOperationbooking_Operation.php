@@ -118,12 +118,12 @@
 		<div class="large-12 column">
 			<div class="metadata">
 				<span class="info">
-					Booking created by
+					Operation scheduling created by
 					<span class="user"><?php echo $element->booking->user->fullname ?></span>
 					on <?php echo $element->booking->NHSDate('created_date') ?> at <?php echo date('H:i', strtotime($element->booking->created_date)) ?>
 				</span>
 				<span class="info">
-					Booking last modified by <span class="user"><?php echo $element->booking->usermodified->fullname ?></span>
+					Operation scheduling last modified by <span class="user"><?php echo $element->booking->usermodified->fullname ?></span>
 					on <?php echo $element->booking->NHSDate('last_modified_date') ?> at <?php echo date('H:i', strtotime($element->booking->last_modified_date)) ?>
 				</span>
 			</div>
