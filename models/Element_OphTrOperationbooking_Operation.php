@@ -682,7 +682,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 
 			$genderRestrict = $ageRestrict = 0;
 			$genderRestrict = ('M' == $patient->gender) ? OphTrOperationbooking_Operation_Ward::RESTRICTION_MALE : OphTrOperationbooking_Operation_Ward::RESTRICTION_FEMALE;
-			$ageRestrict = ($patient->isChild()) ? OphTrOperationbooking_Operation_Ward::RESTRICTION_CHILD : OphTrOperationbooking_Operation_Ward::RESTRICTION_ADULT;
+			$ageRestrict = ($patient->isChild($session->date)) ? OphTrOperationbooking_Operation_Ward::RESTRICTION_CHILD : OphTrOperationbooking_Operation_Ward::RESTRICTION_ADULT;
 
 			$criteria = new CDbCriteria;
 			$criteria->addCondition('`t`.site_id = :siteId');
@@ -699,7 +699,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		return $results;
 	}
 
-	public function calculateEROD($booking_session_id)
+	protected function calculateEROD(OphTrOperationbooking_Operation_Session $booking_session)
 	{
 		$where = '';
 
@@ -718,16 +718,14 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			$criteria->addCondition('`t`.consultant = :one');
 		}
 
-		if ($this->event->episode->patient->isChild()) {
+		if ($this->event->episode->patient->isChild($booking_session->date)) {
 			$criteria->addCondition('`t`.paediatric = :one');
 
-			$session = OphTrOperationbooking_Operation_Session::model()->findByPk($booking_session_id);
-
-			if ($session->firm) {
-				if (!$session->firm->serviceSubspecialtyAssignment) {
+			if ($booking_session->firm) {
+				if (!$booking_session->firm->serviceSubspecialtyAssignment) {
 					throw new Exception("Booking session firm must have a subspecialty assignment");
 				}
-				$service_subspecialty_assignment_id = $session->firm->serviceSubspecialtyAssignment->id;
+				$service_subspecialty_assignment_id = $booking_session->firm->serviceSubspecialtyAssignment->id;
 			} else {
 				if (!$subspecialty = Subspecialty::model()->find('ref_spec=?',array('AE'))) {
 					throw new Exception("A&E subspecialty not found");
@@ -777,7 +775,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 
 			$available_time = $session->availableMinutes;
 
-			if ($session->id == $booking_session_id) {
+			if ($session->id == $booking_session->id) {
 				// this is so that the available_time value saved below is accurate
 				$available_time -= $this->total_duration;
 			}
@@ -963,7 +961,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		$booking->audit('booking',$reschedule ? 'reschedule' : 'create');
 
 		if (!$this->erod) {
-			$this->calculateEROD($session->id);
+			$this->calculateEROD($session);
 		}
 
 		$this->event->episode->episode_status_id = 3;
@@ -1060,7 +1058,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		$subspecialty_id = $this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty_id;
 		$theatre_id = $this->booking->session->theatre_id;
 		$firm_id = $this->booking->session->firm_id;
-		$is_child = $this->event->episode->patient->isChild();
+		$is_child = $this->event->episode->patient->isChild($this->booking->session->date);
 
 		$criteria = new CDbCriteria;
 		$criteria->addCondition('parent_rule_id is null');

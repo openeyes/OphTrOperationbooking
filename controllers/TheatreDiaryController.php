@@ -602,37 +602,13 @@ class TheatreDiaryController extends BaseEventTypeController
 				}
 				return;
 			case 'paediatric':
-				$child_age = isset(Yii::app()->params['child_age_limit']) ? Yii::app()->params['child_age_limit'] : Patient::CHILD_AGE_LIMIT;
-
-				$criteria = new CDbCriteria;
-				$criteria->addCondition('session.id = :sessionId and booking.booking_cancellation_date is null and patient.dob >= :ageLimitDate');
-				$criteria->params[':ageLimitDate'] = date('Y')-$child_age.date('-m-d',time()+86400);
-				$criteria->params[':sessionId'] = $session->id;
-				$criteria->addInCondition('`t`.status_id',array(2,4));
-
-				if (Element_OphTrOperationbooking_Operation::model()->with(array(
-						'booking' => array(
-							'with' => array(
-								'session',
-								'operation' => array(
-									'with' => array(
-										'event' => array(
-											'with' => array(
-												'episode' => array(
-													'with' => 'patient',
-												),
-											),
-										),
-									),
-								),
-							),
-						),
-					))
-					->find($criteria)) {
-					echo "1";
-				} else {
-					echo "0";
+				foreach ($session->activeBookings as $booking) {
+					if ($booking->operation->event->episode->patient->isChild($session->date)) {
+						echo "1";
+						return;
+					}
 				}
+				echo "0";
 				return;
 			case 'anaesthetist':
 				$criteria = new CDbCriteria;
