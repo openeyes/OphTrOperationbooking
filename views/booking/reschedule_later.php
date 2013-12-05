@@ -53,7 +53,7 @@
 					} else {
 						$listIndex = 2;
 					}
-					echo CHtml::dropDownList('cancellation_reason', '',
+					echo CHtml::dropDownList('cancellation_reason', @$_POST['cancellation_reason'],
 						OphTrOperationbooking_Operation_Cancellation_Reason::getReasonsByListNumber($listIndex),
 						array('empty'=>'Select a reason')
 					)?>

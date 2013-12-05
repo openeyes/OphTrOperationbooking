@@ -18,6 +18,7 @@
 	margin: 0;
 	input[type="text"] {
 		max-width: emCalc(70px);
+		min-width: emCalc(55px);
 		text-align: center;
 	}
 	tfoot {

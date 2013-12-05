@@ -74,21 +74,17 @@
 
 		<div class="edit" id="firmSelect">
 			<div class="element-fields">
-				<div class="row field-row">
-					<div class="large-2 column">
-						<div class="field-label">
-							Viewing the schedule for <strong><?php echo $firm->name?></strong>
-						</div>
-					</div>
-					<div class="large-5 column end">
-						<select id="firm_id">
-							<option value="">Select a different firm</option>
-							<option value="EMG">Emergency List</option>
-							<?php foreach ($firmList as $id => $name) {?>
-								<option value="<?php echo $id ?>"><?php echo $name ?></option>
-							<?php }?>
-						</select>
-					</div>
+				<div class="field-row">
+					<span class="field-label">
+						Viewing the schedule for <strong><?php echo $firm->name?></strong>
+					</span>
+					<select id="firm_id" class="inline firm-switcher">
+						<option value="">Select a different firm</option>
+						<option value="EMG">Emergency List</option>
+						<?php foreach ($firmList as $id => $name) {?>
+							<option value="<?php echo $id ?>"><?php echo $name ?></option>
+						<?php }?>
+					</select>
 				</div>
 			</div>
 		</div>
