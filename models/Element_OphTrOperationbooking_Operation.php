@@ -899,6 +899,16 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		$booking = new OphTrOperationbooking_Operation_Booking;
 		$booking->attributes = $booking_attributes;
 
+		$session = $booking->session;
+
+		$helper = new OphTrOperationbooking_BookingHelper;
+		if (($errors = $helper->checkSessionCompatibleWithOperation($session, $this))) {
+			throw new Exception(
+				"Attempted to book operation into incompatible session: " .
+				"operation ID: {$this->id}, session ID: {$session->id}, errors: " . implode(", ", $errors)
+			);
+		}
+
 		$reschedule = in_array($this->status_id,array(2,3,4));
 
 		if (preg_match('/(^[0-9]{1,2}).*?([0-9]{2})$/',$booking_attributes['admission_time'],$m)) {
@@ -906,8 +916,6 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		} else {
 			$booking->admission_time = $booking_attributes['admission_time'];
 		}
-
-		$session = $booking->session;
 
 		if ($this->booking && !$reschedule) {
 			// race condition, two users attempted to book the same operation at the same time
