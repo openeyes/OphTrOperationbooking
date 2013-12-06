@@ -39,6 +39,7 @@ class OphTrOperationbookingModule extends BaseEventTypeModule
 		$this->setImport(array(
 			'OphTrOperationbooking.models.*',
 			'OphTrOperationbooking.components.*',
+			'OphTrOperationbooking.helpers.*',
 		));
 
 		$this->moduleShortSuffix = "operation";

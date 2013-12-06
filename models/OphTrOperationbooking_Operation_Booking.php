@@ -205,7 +205,7 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecord
 		if ($rule = OphTrOperationbooking_Admission_Letter_Warning_Rule::getRule(
 				$type,
 				$this->session->theatre->site_id,
-				$this->operation->event->episode->patient->isChild(),
+				$this->operation->event->episode->patient->isChild($this->session->date),
 				$this->session->theatre_id,
 				$subspecialty_id,
 				$this->session->firm_id)
@@ -225,7 +225,7 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecord
 		if ($rule = OphTrOperationbooking_Admission_Letter_Warning_Rule::getRule(
 				$type,
 				$this->session->theatre->site_id,
-				$this->operation->event->episode->patient->isChild(),
+				$this->operation->event->episode->patient->isChild($this->session->date),
 				$this->session->theatre_id,
 				$subspecialty_id,
 				$this->session->firm_id
