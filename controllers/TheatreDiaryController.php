@@ -86,7 +86,7 @@ class TheatreDiaryController extends BaseEventTypeController
 
 			Audit::add('diary','view');
 		} else {
-			Audit::add('diary','search',serialize($_POST));
+			Audit::add('diary','search');
 		}
 
 		$this->jsVars['NHSDateFormat'] = Helper::NHS_DATE_FORMAT;
@@ -96,7 +96,7 @@ class TheatreDiaryController extends BaseEventTypeController
 
 	public function actionPrintDiary()
 	{
-		Audit::add('diary','print',serialize($_POST));
+		Audit::add('diary','print');
 
 		Yii::app()->getClientScript()->registerCssFile(Yii::app()->createUrl(
 			Yii::app()->getAssetManager()->publish(
@@ -109,7 +109,7 @@ class TheatreDiaryController extends BaseEventTypeController
 
 	public function actionPrintList()
 	{
-		Audit::add('diary','print list',serialize($_POST));
+		Audit::add('diary','print list');
 
 		Yii::app()->getClientScript()->registerCssFile(Yii::app()->createUrl(
 			Yii::app()->getAssetManager()->publish(
@@ -122,7 +122,7 @@ class TheatreDiaryController extends BaseEventTypeController
 
 	public function actionSearch()
 	{
-		Audit::add('diary','search',serialize($_POST));
+		Audit::add('diary','search');
 
 		$list = $this->renderPartial('_list', array('diary' => $this->getDiary(), 'assetPath'=>Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.OphTrOperationbooking.assets'), false, -1, YII_DEBUG)), true, true);
 

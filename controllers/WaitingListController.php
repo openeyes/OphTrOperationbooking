@@ -61,7 +61,7 @@ class WaitingListController extends BaseEventTypeController
 
 			Audit::add('waiting list','view');
 		} else {
-			Audit::add('waiting list','search',serialize($_POST));
+			Audit::add('waiting list','search');
 		}
 
 		$this->render('index');
@@ -69,7 +69,7 @@ class WaitingListController extends BaseEventTypeController
 
 	public function actionSearch()
 	{
-		Audit::add('waiting list','search',serialize($_POST));
+		Audit::add('waiting list','search');
 
 		if (empty($_POST)) {
 			$operations = array();
@@ -218,7 +218,7 @@ class WaitingListController extends BaseEventTypeController
 		*/
 	public function actionPrintLetters()
 	{
-		Audit::add('waiting list',(@$_REQUEST['all']=='true' ? 'print all' : 'print selected'),serialize($_POST));
+		Audit::add('waiting list',(@$_REQUEST['all']=='true' ? 'print all' : 'print selected'));
 
 		if (isset($_REQUEST['event_id'])) {
 			$operations = Element_OphTrOperationbooking_Operation::model()->findAll('event_id=?',array($_REQUEST['event_id']));
@@ -436,7 +436,7 @@ class WaitingListController extends BaseEventTypeController
 
 	public function actionConfirmPrinted()
 	{
-		Audit::add('waiting list','confirm',serialize($_POST));
+		Audit::add('waiting list','confirm');
 
 		foreach ($_POST['operations'] as $operation_id) {
 			if ($operation = Element_OphTrOperationbooking_Operation::Model()->findByPk($operation_id)) {

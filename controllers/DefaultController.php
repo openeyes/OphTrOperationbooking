@@ -86,7 +86,7 @@ class DefaultController extends BaseEventTypeController
 			if ($result['result']) {
 				$operation->event->deleteIssues();
 
-				$event->audit('event','cancel',false);
+				$event->audit('event','cancel');
 
 				die(json_encode(array()));
 			}
@@ -133,7 +133,7 @@ class DefaultController extends BaseEventTypeController
 			throw new Exception('Operation not found for event: '.$id);
 		}
 
-		$event->audit('admission letter','print',false);
+		$event->audit('admission letter','print');
 
 		$this->logActivity('printed admission letter');
 
