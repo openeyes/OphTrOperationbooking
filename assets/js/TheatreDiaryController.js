@@ -191,6 +191,9 @@ $(document).ready(function() {
 	$(this).undelegate('a.edit-session','click').delegate('a.edit-session','click',function() {
 		cancel_edit();
 
+		disableButtons($('button,.button').not('.theatre'));
+		$('.loader').hide();
+
 		theatre_edit_session_id = $(this).attr('rel');
 
 		theatre_edit_session_data = {};
@@ -530,6 +533,7 @@ function printElem(method,options, callback){
 }
 
 function cancel_edit(dont_reset_checkboxes) {
+	enableButtons();
 	if (!dont_reset_checkboxes && theatre_edit_session_id != null) {
 		for (var i in theatre_edit_session_data.purple_rinse) {
 			$('#'+i+'_'+theatre_edit_session_id).attr('checked',(theatre_edit_session_data.purple_rinse[i] ? 'checked' : false));
