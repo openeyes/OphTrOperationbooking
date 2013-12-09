@@ -1228,8 +1228,7 @@ class AdminController extends ModuleAdminController
 		}
 
 		foreach ($sessions as $session) {
-			$session->deleted = 1;
-			if (!$session->save()) {
+			if (!$session->delete()) {
 				throw new Exception("Unable to mark session deleted: ".print_r($session->getErrors(),true));
 			}
 			Audit::add('admin','delete',$session->id,null,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Session'));
@@ -1282,14 +1281,12 @@ class AdminController extends ModuleAdminController
 		}
 
 		foreach ($sequences as $sequence) {
-			$sequence->deleted = 1;
-			if (!$sequence->save()) {
+			if (!$sequence->delete()) {
 				throw new Exception("Unable to mark sequence deleted: ".print_r($sequence->getErrors(),true));
 			}
 
 			foreach ($sequence->sessions as $session) {
-				$session->deleted = 1;
-				if (!$session->save()) {
+				if (!$session->delete()) {
 					throw new Exception("Unable to mark session deleted: ".print_r($session->getErrors(),true));
 				}
 			}
@@ -1389,8 +1386,7 @@ class AdminController extends ModuleAdminController
 		$theatres = OphTrOperationbooking_Operation_Theatre::model()->findAll($criteria);
 
 		foreach ($theatres as $theatre) {
-			$theatre->deleted = 1;
-			if (!$theatre->save()) {
+			if (!$theatre->delete()) {
 				throw new Exception("Unable to mark theatre deleted: ".print_r($theatre->getErrors(),true));
 			}
 			Audit::add('admin','delete',$_POST['theatre'],null,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Theatre'));
