@@ -227,7 +227,7 @@ $(document).ready(function() {
 				 var $originals = tr.children();
 				 var $helper = tr.clone();
 				 $helper.children().each(function(index) {
-					 $(this).width($originals.eq(index).width())
+					 $(this).width($originals.eq(index).outerWidth())
 				 });
 				 return $helper;
 			 },
