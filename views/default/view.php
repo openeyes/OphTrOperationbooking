@@ -22,14 +22,7 @@
 
 	<?php
 	$this->moduleNameCssClass .= ' highlight-fields';
-	?>
-
-	<h2 class="event-title">
-		<?php echo $this->event_type->name ?>
-		(<?php echo Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($this->event->id))->status->name?>)
-	</h2>
-
-	<?php $this->renderPartial('//base/_messages'); ?>
+	$this->title .= ' ('.Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($this->event->id))->status->name.')'?>
 
 	<?php if (!$operation->has_gp) {?>
 		<div class="alert-box alert with-icon">
