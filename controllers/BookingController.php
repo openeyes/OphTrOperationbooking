@@ -148,7 +148,7 @@ class BookingController extends BaseEventTypeController
 		$this->processJsVars();
 
 		$this->render('schedule', array(
-			'event' => $event,
+			'event' => $this->event,
 			'operation' => $operation,
 			'firm' => $firm,
 			'firmList' => Firm::model()->listWithSpecialties,
@@ -178,7 +178,7 @@ class BookingController extends BaseEventTypeController
 
 	/**
 	 * Cancels and reschedules an operation
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public function actionRescheduleLater()
