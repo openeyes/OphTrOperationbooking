@@ -64,7 +64,7 @@
 		<div class="large-6 column">
 			<?php if (!empty($element->comments)) { ?>
 				<h3 class="data-title">Operation Comments</h3>
-				<div class="data-value panel comments"><?php echo CHtml::encode($element->comments)?></div>
+				<div class="data-value panel comments"><?php echo $element->textWithLineBreaks('comments')?></div>
 			<?php } ?>
 		</div>
 	</div>
@@ -77,7 +77,7 @@
 		<div class="large-6 column">
 			<?php if (!empty($element->comments_rtt)) { ?>
 				<h3 class="data-title">Operation RTT Comments</h3>
-				<div class="data-value panel comments"><?php echo CHtml::encode($element->comments_rtt)?></div>
+				<div class="data-value panel comments"><?php echo $element->textWithLineBreaks('comments_rtt')?></div>
 			<?php } ?>
 		</div>
 	</div>
