@@ -49,6 +49,7 @@ class OphTrOperationbooking_API extends BaseAPI
 		$criteria = new CDbCriteria;
 		$criteria->order = 't.created_date asc';
 		$criteria->addCondition('episode_id',$episode_id);
+		$criteria->addCondition('booking_cancellation_date is null');
 
 		return OphTrOperationbooking_Operation_Booking::model()
 			->with('session')
