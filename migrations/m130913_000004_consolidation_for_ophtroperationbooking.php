@@ -112,14 +112,14 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  `site_id` int(10) unsigned NOT NULL DEFAULT '1',
 			  `priority_id` int(10) unsigned NOT NULL DEFAULT '1',
 			  `decision_date` date DEFAULT NULL,
-			  `comments` text COLLATE utf8_bin,
+			  `comments` text,
 			  `total_duration` smallint(5) unsigned NOT NULL,
 			  `status_id` int(10) unsigned NOT NULL,
 			  `anaesthetist_required` tinyint(1) unsigned DEFAULT '0',
 			  `operation_cancellation_date` datetime DEFAULT NULL,
 			  `cancellation_user_id` int(10) unsigned DEFAULT NULL,
 			  `cancellation_reason_id` int(10) unsigned DEFAULT NULL,
-			  `cancellation_comment` varchar(200) COLLATE utf8_bin NOT NULL,
+			  `cancellation_comment` varchar(200) NOT NULL,
 			  `last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 			  `last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 			  `created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -181,7 +181,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  `subspecialty_id` int(10) unsigned DEFAULT NULL,
 			  `is_child` tinyint(1) unsigned DEFAULT NULL,
 			  `show_warning` tinyint(1) unsigned NOT NULL DEFAULT '1',
-			  `warning_text` text COLLATE utf8_bin NOT NULL,
+			  `warning_text` text NOT NULL,
 			  `emphasis` tinyint(1) unsigned NOT NULL DEFAULT '0',
 			  `strong` tinyint(1) unsigned NOT NULL DEFAULT '0',
 			  `last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -211,7 +211,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_admission_letter_warning_rule_type` (
 			  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-			  `name` varchar(64) COLLATE utf8_bin NOT NULL,
+			  `name` varchar(64) NOT NULL,
 			  `last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 			  `last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 			  `created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -232,9 +232,9 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  `subspecialty_id` int(10) unsigned DEFAULT NULL,
 			  `theatre_id` int(10) unsigned DEFAULT NULL,
 			  `firm_id` int(10) unsigned DEFAULT NULL,
-			  `refuse_telephone` varchar(64) COLLATE utf8_bin NOT NULL,
-			  `health_telephone` varchar(64) COLLATE utf8_bin NOT NULL,
-			  `refuse_title` varchar(64) COLLATE utf8_bin NOT NULL,
+			  `refuse_telephone` varchar(64) NOT NULL,
+			  `health_telephone` varchar(64) NOT NULL,
+			  `refuse_title` varchar(64) NOT NULL,
 			  `last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 			  `last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 			  `created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -274,7 +274,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  `transport_arranged_date` date DEFAULT NULL,
 			  `booking_cancellation_date` datetime DEFAULT NULL,
 			  `cancellation_reason_id` int(10) unsigned DEFAULT NULL,
-			  `cancellation_comment` varchar(200) COLLATE utf8_bin NOT NULL,
+			  `cancellation_comment` varchar(200) NOT NULL,
 			  `cancellation_user_id` int(10) unsigned DEFAULT NULL,
 			  `last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 			  `last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
@@ -302,7 +302,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_operation_cancellation_reason` (
 			  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-			  `text` varchar(255) COLLATE utf8_bin NOT NULL DEFAULT '',
+			  `text` varchar(255) NOT NULL DEFAULT '',
 			  `parent_id` int(10) unsigned DEFAULT NULL,
 			  `list_no` tinyint(2) unsigned NOT NULL,
 			  `last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -392,7 +392,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 		$this->execute("CREATE TABLE `ophtroperationbooking_operation_erod_rule_item` (
 			  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 			  `erod_rule_id` int(10) unsigned NOT NULL,
-			  `item_type` varchar(64) COLLATE utf8_bin NOT NULL,
+			  `item_type` varchar(64) NOT NULL,
 			  `item_id` int(10) unsigned NOT NULL,
 			  `last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 			  `last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
@@ -411,7 +411,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 		$this->execute("CREATE TABLE `ophtroperationbooking_operation_name_rule` (
 			  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 			  `theatre_id` int(10) unsigned DEFAULT NULL,
-			  `name` varchar(64) COLLATE utf8_bin NOT NULL,
+			  `name` varchar(64) NOT NULL,
 			  `last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 			  `last_modified_date` datetime NOT NULL DEFAULT '1900-01-01 00:00:00',
 			  `created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -428,7 +428,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_operation_priority` (
 			  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-			  `name` varchar(128) COLLATE utf8_bin NOT NULL,
+			  `name` varchar(128) NOT NULL,
 			  `display_order` int(10) unsigned NOT NULL DEFAULT '1',
 			  `last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 			  `last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
@@ -500,7 +500,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_operation_sequence_interval` (
 			  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-			  `name` varchar(32) COLLATE utf8_bin NOT NULL,
+			  `name` varchar(32) NOT NULL,
 			  `display_order` int(10) unsigned NOT NULL DEFAULT '0',
 			  `last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 			  `last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
@@ -521,7 +521,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  `date` date NOT NULL,
 			  `start_time` time NOT NULL,
 			  `end_time` time NOT NULL,
-			  `comments` text COLLATE utf8_bin,
+			  `comments` text,
 			  `available` tinyint(1) unsigned NOT NULL DEFAULT '1',
 			  `consultant` tinyint(1) unsigned NOT NULL DEFAULT '1',
 			  `paediatric` tinyint(1) unsigned NOT NULL DEFAULT '0',
@@ -549,7 +549,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_operation_status` (
 			  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-			  `name` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+			  `name` varchar(64) DEFAULT NULL,
 			  `last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 			  `last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 			  `created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -564,9 +564,9 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_operation_theatre` (
 			  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-			  `name` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+			  `name` varchar(255) DEFAULT NULL,
 			  `site_id` int(10) unsigned NOT NULL,
-			  `code` varchar(4) COLLATE utf8_bin NOT NULL,
+			  `code` varchar(4) NOT NULL,
 			  `last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 			  `last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 			  `created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -589,11 +589,11 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 		$this->execute("CREATE TABLE `ophtroperationbooking_operation_ward` (
 			  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 			  `site_id` int(10) unsigned NOT NULL,
-			  `name` varchar(255) COLLATE utf8_bin NOT NULL,
-			  `long_name` varchar(255) COLLATE utf8_bin NOT NULL,
-			  `directions` varchar(255) COLLATE utf8_bin NOT NULL,
+			  `name` varchar(255) NOT NULL,
+			  `long_name` varchar(255) NOT NULL,
+			  `directions` varchar(255) NOT NULL,
 			  `restriction` tinyint(1) unsigned NOT NULL DEFAULT '0',
-			  `code` varchar(10) COLLATE utf8_bin NOT NULL,
+			  `code` varchar(10) NOT NULL,
 			  `last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 			  `last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 			  `created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -610,7 +610,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_scheduleope_schedule_options` (
 			  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-			  `name` varchar(128) COLLATE utf8_bin NOT NULL,
+			  `name` varchar(128) NOT NULL,
 			  `display_order` int(10) unsigned NOT NULL DEFAULT '1',
 			  `last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 			  `last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
@@ -632,8 +632,8 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  `service_id` int(10) unsigned DEFAULT NULL,
 			  `firm_id` int(10) unsigned DEFAULT NULL,
 			  `is_child` tinyint(1) unsigned DEFAULT NULL,
-			  `name` varchar(64) COLLATE utf8_bin NOT NULL,
-			  `telephone` varchar(64) COLLATE utf8_bin NOT NULL,
+			  `name` varchar(64) NOT NULL,
+			  `telephone` varchar(64) NOT NULL,
 			  `last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 			  `last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 			  `created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
