@@ -150,6 +150,24 @@ class DefaultController extends BaseEventTypeController
 		}
 	}
 
+	protected function setAndValidateElementsFromData($data)
+	{
+		$errors = parent::setAndValidateElementsFromData($data);
+		// need to do some validation at the event level
+
+		$event_errors = OphTrOperationbooking_BookingHelper::validateElementsForEvent($this->open_elements);
+		if ($event_errors) {
+			if ($errors['Event']) {
+				$errors['Event'] = array_merge($errors['Event'], $event_errors);
+			}
+			else {
+				$errors['Event'] = $event_errors;
+			}
+		}
+
+		return $errors;
+	}
+
 	/**
 	 * @return array
 	 * @see BaseEventTypeController::printActions()
