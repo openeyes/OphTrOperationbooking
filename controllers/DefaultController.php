@@ -150,6 +150,12 @@ class DefaultController extends BaseEventTypeController
 		}
 	}
 
+	/**
+	 * Extend standard behaviour to perform validation of elements across the event
+	 * 
+	 * @param array $data
+	 * @return array
+	 */
 	protected function setAndValidateElementsFromData($data)
 	{
 		$errors = parent::setAndValidateElementsFromData($data);
