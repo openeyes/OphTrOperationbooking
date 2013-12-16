@@ -47,4 +47,31 @@ class OphTrOperationbooking_BookingHelper
 
 		return $errors;
 	}
+
+	/**
+	 * Perform event level validation based on the elements passed in
+	 *
+	 * @param $elements
+	 * @return array
+	 */
+	public function validateElementsForEvent($elements)
+	{
+		$errors = array();
+		foreach ($elements as $element) {
+			$cls = get_class($element);
+			if ($cls == 'Element_OphTrOperationbooking_Operation') {
+				$op_el = $element;
+			}
+			elseif ($cls == 'Element_OphTrOperationbooking_Diagnosis') {
+				$diag_el = $element;
+			}
+		}
+
+		if ($diag_el->eye_id != Eye::BOTH && $op_el->eye_id != $diag_el->eye_id) {
+			$errors[] = 'Operation eye must match diagnosis eye!';
+		}
+
+		return $errors;
+	}
+
 }

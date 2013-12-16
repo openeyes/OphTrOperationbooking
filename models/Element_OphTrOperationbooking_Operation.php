@@ -94,7 +94,6 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		// will receive user inputs.
 		return array(
 			array('event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments,comments_rtt, anaesthetist_required, total_duration, status_id, operation_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id, latest_booking_id', 'safe'),
-			array('eye_id', 'matchDiagnosisEye'),
 			array('cancellation_comment', 'length', 'max' => 200),
 			array('procedures', 'required', 'message' => 'At least one procedure must be entered'),
 			array('eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, total_duration', 'required'),
@@ -248,13 +247,10 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 	protected function afterValidate()
 	{
 		if ($this->booking) {
-			if (isset($_POST['Element_OphTrOperationbooking_Operation']['consultant_required'])) {
-				if ($_POST['Element_OphTrOperationbooking_Operation']['consultant_required'] && !$this->booking->session->consultant) {
-					$this->addError('consultant', 'The booked session does not have a consultant present, you must change the session or cancel the booking before making this change');
-				}
+			if ($this->consultant_required && !$this->booking->session->consultant) {
+				$this->addError('consultant', 'The booked session does not have a consultant present, you must change the session or cancel the booking before making this change');
 			}
-			if (isset($_POST['Element_OphTrOperationbooking_Operation']['anaesthetic_type_id'])) {
-				$anaesthetic = AnaestheticType::model()->findByPk($_POST['Element_OphTrOperationbooking_Operation']['anaesthetic_type_id'])->name;
+			if ($anaesthetic = AnaestheticType::model()->findByPk($this->anaesthetic_type_id)->name) {
 				if (in_array($anaesthetic,array('LAC','LAS','GA')) && !$this->booking->session->anaesthetist) {
 					$this->addError('anaesthetist', 'The booked session does not have an anaesthetist present, you must change the session or cancel the booking before making this change');
 				}
@@ -1200,21 +1196,6 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		return in_array($last_letter,array(
 			Element_OphTrOperationbooking_Operation::LETTER_GP
 		));
-	}
-
-	public function matchDiagnosisEye()
-	{
-		if (isset($_POST['Element_OphTrOperationbooking_Diagnosis']['eye_id']) &&
-			isset($_POST['Element_OphTrOperationbooking_Operation']['eye_id'])
-		) {
-			$diagnosis = $_POST['Element_OphTrOperationbooking_Diagnosis']['eye_id'];
-			$operation = $_POST['Element_OphTrOperationbooking_Operation']['eye_id'];
-			if ($diagnosis != 3 &&
-				$diagnosis != $operation
-			) {
-				$this->addError('eye_id', 'Operation eye must match diagnosis eye!');
-			}
-		}
 	}
 
 	public function delete()
