@@ -23,9 +23,9 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 
 	public function setData(){
 		$this->element_types = array(
-			'Element_OphTrOperationbooking_Diagnosis' => array('name' => 'Diagnosis'),
-			'Element_OphTrOperationbooking_Operation' => array('name' => 'Operation'),
-			'Element_OphTrOperationbooking_ScheduleOperation' => array('name' => 'Schedule operation')
+			'Element_OphTrOperationbooking_Diagnosis' => array('name' => 'Diagnosis', 'display_order' => 10),
+			'Element_OphTrOperationbooking_Operation' => array('name' => 'Operation', 'display_order' => 20),
+			'Element_OphTrOperationbooking_ScheduleOperation' => array('name' => 'Schedule operation', 'display_order' => 30)
 		);
 	}
 
