@@ -199,19 +199,8 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 			return false;
 		}
 
-		if ($operation->anaesthetist_required && !$this->anaesthetist) {
-			return false;
-		}
-
-		if ($operation->consultant_required && !$this->consultant) {
-			return false;
-		}
-
-		if ($operation->event->episode->patient->isChild() && !$this->paediatric) {
-			return false;
-		}
-
-		if ($operation->anaesthetic_type->name == 'GA' && !$this->general_anaesthetic) {
+		$helper = new OphTrOperationbooking_BookingHelper;
+		if ($helper->checkSessionCompatibleWithOperation($this, $operation)) {
 			return false;
 		}
 
@@ -228,20 +217,18 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 			return "This session is unavailable at this time";
 		}
 
-		if ($operation->anaesthetist_required && !$this->anaesthetist) {
-			return "The operation requires an anaesthetist, this session doesn't have one and so cannot be booked into.";
-		}
-
-		if ($operation->consultant_required && !$this->consultant) {
-			return "The operation requires a consultant, this session doesn't have one and so cannot be booked into.";
-		}
-
-		if ($operation->event->episode->patient->isChild() && !$this->paediatric) {
-			return "The operation is for a paediatric patient, this session isn't paediatric and so cannot be booked into.";
-		}
-
-		if ($operation->anaesthetic_type->name == 'GA' && !$this->general_anaesthetic) {
-			return "The operation requires general anaesthetic, this session doesn't have this and so cannot be booked into.";
+		$helper = new OphTrOperationbooking_BookingHelper;
+		if (($errors = $helper->checkSessionCompatibleWithOperation($this, $operation))) {
+			switch ($errors[0]) {
+				case $helper::ANAESTHETIST_REQUIRED:
+					return "The operation requires an anaesthetist, this session doesn't have one and so cannot be booked into.";
+				case $helper::CONSULTANT_REQUIRED:
+					return "The operation requires a consultant, this session doesn't have one and so cannot be booked into.";
+				case $helper::PAEDIATRIC_SESSION_REQUIRED:
+					return "The operation is for a paediatric patient, this session isn't paediatric and so cannot be booked into.";
+				case $helper::GENERAL_ANAESTHETIC_REQUIRED:
+					return "The operation requires general anaesthetic, this session doesn't have this and so cannot be booked into.";
+			}
 		}
 
 		if ($this->date < date('Y-m-d')) {
@@ -261,18 +248,22 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 		}
 
 		// Ensure we are still compatible with any active bookings
+		$helper = new OphTrOperationbooking_BookingHelper;
 		foreach ($this->activeBookings as $booking) {
-			if ($booking->operation->anaesthetist_required && !$this->anaesthetist) {
-				$this->addError('anaesthetist','One or more active bookings require an anaesthetist');
-			}
-			if ($booking->operation->consultant_required && !$this->consultant) {
-				$this->addError('consultant','One or more active bookings require a consultant');
-			}
-			if ($booking->operation->event && $booking->operation->event->episode->patient->isChild() && !$this->paediatric) {
-				$this->addError('paediatric','One or more active bookings are for a child');
-			}
-			if ($booking->operation->anaesthetic_type->name == 'GA' && !$this->general_anaesthetic) {
-				$this->addError('general_anaesthetic','One or more active bookings require general anaesthetic');
+			foreach ($helper->checkSessionCompatibleWithOperation($this, $booking->operation) as $error) {
+				switch ($error) {
+					case $helper::ANAESTHETIST_REQUIRED:
+						$this->addError('anaesthetist','One or more active bookings require an anaesthetist');
+						break;
+					case $helper::CONSULTANT_REQUIRED:
+						$this->addError('consultant','One or more active bookings require a consultant');
+						break;
+					case $helper::PAEDIATRIC_SESSION_REQUIRED:
+						$this->addError('paediatric','One or more active bookings are for a child');
+						break;
+					case $helper::GENERAL_ANAESTHETIC_REQUIRED:
+						$this->addError('general_anaesthetic','One or more active bookings require general anaesthetic');
+				}
 			}
 		}
 

@@ -19,9 +19,7 @@
 
 $this->beginContent('//patient/event_container'); ?>
 
-	<h2 class="event-title">
-		Cancel operation
-	</h2>
+	<?php $this->title = 'Cancel operation' ?>
 
 	<?php
 	echo CHtml::form(Yii::app()->createUrl('/'.$operation->event->eventType->class_name.'/default/cancel'), 'post', array('id' => 'cancelForm', 'class' => 'edit cancel'));

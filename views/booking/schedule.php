@@ -21,7 +21,7 @@
 
 	<div class="schedule">
 
-		<h2 class="event-title"><?php echo $operation->booking? 'Re-schedule' : 'Schedule'?> Operation</h2>
+		<?php $this->title .= ($operation->booking? 'Re-schedule' : 'Schedule').' Operation';?>
 
 		<div class="alert-box alert with-icon<?php if (!is_array($errors)) {?> hide<?php }?>">
 			<p>Please fix the following input errors:</p>

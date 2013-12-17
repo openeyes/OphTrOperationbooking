@@ -33,6 +33,7 @@ class GenerateSessionsCommand extends CConsoleCommand
 	public function run($args)
 	{
 		Yii::import('application.modules.OphTrOperationbooking.components.*');
+		Yii::import('application.modules.OphTrOperationbooking.helpers.*');
 
 		$api = new OphTrOperationbooking_API;
 		return $api->generateSessions($args);
