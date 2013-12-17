@@ -852,7 +852,9 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		return $this->status->name != 'Cancelled' && $this->status->name != 'Completed';
 	}
 
-	public function schedule($booking_attributes, $operation_comments, $session_comments, $operation_comments_rtt, $reschedule=false)
+
+
+	public function schedule($booking_attributes, $operation_comments, $session_comments, $operation_comments_rtt, $reschedule=false, $cancellation_data = null)
 	{
 		$booking = new OphTrOperationbooking_Operation_Booking;
 		$booking->attributes = $booking_attributes;
@@ -875,24 +877,31 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			$booking->admission_time = $booking_attributes['admission_time'];
 		}
 
-		if ($this->booking && !$reschedule) {
-			// race condition, two users attempted to book the same operation at the same time
-			Yii::app()->user->setFlash('notice',"This operation has already been scheduled by ".($this->booking->user->fullName));
-			return Yii::app()->getController()->redirect(array('/OphTrOperationbooking/default/view/'.$this->event_id));
+		// parse the cancellation data
+		$cancellation_submitted = false;
+		$cancellation_reason_id = null;
+		$cancellation_comment = null;
+		if ($cancellation_data) {
+			$cancellation_submitted = $cancellation_data['submitted'];
+			$cancellation_reason_id = $cancellation_data['reason_id'];
+			$cancellation_comment = $cancellation_data['comment'];
 		}
 
-		if ($reschedule && !isset($_POST['cancellation_reason']) && $this->booking) {
+		if ($this->booking && !$reschedule) {
 			// race condition, two users attempted to book the same operation at the same time
-			Yii::app()->user->setFlash('notice',"This operation has already been scheduled by ".($this->booking->user->fullName));
-			return Yii::app()->getController()->redirect(array('/OphTrOperationbooking/default/view/'.$this->event_id));
+			throw new RaceConditionException('This operation has already been scheduled by ' . ($this->booking->user->fullName));
+		}
+
+		if ($reschedule && !$cancellation_submitted && $this->booking) {
+			// race condition, two users attempted to book the same operation at the same time
+			throw new RaceConditionException('This operation has already been scheduled by ' . ($this->booking->user->fullName));
 		}
 
 		if ($reschedule && $this->booking) {
-			if (!$reason = OphTrOperationbooking_Operation_Cancellation_Reason::model()->findByPk($_POST['cancellation_reason'])) {
+			if (!$reason = OphTrOperationbooking_Operation_Cancellation_Reason::model()->findByPk($cancellation_reason_id)) {
 				return array(array('Please select a rescheduling reason'));
 			}
-
-			$this->booking->cancel($reason,$_POST['cancellation_comment'],$reschedule);
+			$this->booking->cancel($reason,$cancellation_comment,$reschedule);
 		}
 
 		foreach (array('date','start_time','end_time','theatre_id') as $field) {
@@ -937,12 +946,19 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 				} else {
 					$targets = Yii::app()->params['urgent_booking_notify_email'];
 				}
+
+				if ($reschedule) {
+					$subject = "[OpenEyes] Urgent reschedule made";
+					$body = "A patient booking was rescheduled with a TCI date within the next 24 hours.\n\nDisorder: ".$this->getDisorderText()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.";
+
+				} else {
+					$subject = "[OpenEyes] Urgent booking made";
+					$body = "A patient booking was made with a TCI date within the next 24 hours.\n\nDisorder: ".$this->getDisorderText()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.";
+				}
+				$headers = "From: ".Yii::app()->params['urgent_booking_notify_email_from']."\r\n";
+
 				foreach ($targets as $email) {
-					if ($reschedule) {
-						mail($email, "[OpenEyes] Urgent reschedule made","A patient booking was rescheduled with a TCI date within the next 24 hours.\n\nDisorder: ".$this->getDisorderText()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.","From: ".Yii::app()->params['urgent_booking_notify_email_from']."\r\n");
-					} else {
-						mail($email, "[OpenEyes] Urgent booking made","A patient booking was made with a TCI date within the next 24 hours.\n\nDisorder: ".$this->getDisorderText()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.","From: ".Yii::app()->params['urgent_booking_notify_email_from']."\r\n");
-					}
+					mail($email, $subject, $body, $headers);
 				}
 			}
 		}
@@ -966,7 +982,6 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		if (!$session->save()) {
 			throw new Exception('Unable to save session comments: '.print_r($session->getErrors(),true));
 		}
-
 		return true;
 	}
 

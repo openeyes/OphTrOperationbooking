@@ -128,10 +128,36 @@ class BookingController extends BaseEventTypeController
 						throw new Exception('Operation not found: '.$_POST['Booking']['element_id']);
 					}
 
-					if (($result = $operation->schedule($_POST['Booking'], $_POST['Operation']['comments'], $_POST['Session']['comments'], $_POST['Operation']['comments_rtt'], $this->reschedule)) !== true) {
-						$errors = $result;
-					} else {
+					$transaction = Yii::app()->db->beginTransaction();
+
+					try {
+						$cancellation_data = array(
+							'submitted' => isset($_POST['cancellation_reason']),
+							'reason_id' => @$_POST['cancellation_reason'],
+							'comment' => @$_POST['cancellation_comment']
+						);
+						if ($result = $operation->schedule(
+								$_POST['Booking'],
+								$_POST['Operation']['comments'],
+								$_POST['Session']['comments'],
+								$_POST['Operation']['comments_rtt']
+								($this->reschedule !== true),
+								$cancellation_data) !== true) {
+							$errors = $result;
+						} else {
+							$transaction->commit();
+							$this->redirect(array('default/view/'.$operation->event_id));
+						}
+					}
+					catch (RaceConditionException $e) {
+						$transaction->rollback();
+						Yii::app()->user->setFlash('notice',$e->getMessage());
 						$this->redirect(array('default/view/'.$operation->event_id));
+					}
+					catch (Exception $e) {
+						// no handling of this at the moment
+						$transaction->rollback();
+						throw $e;
 					}
 				} else {
 					$_POST['Booking']['admission_time'] = ($session['start_time'] == '13:30:00') ? '12:00' : date('H:i', strtotime('-1 hour', strtotime($session['start_time'])));
@@ -185,7 +211,7 @@ class BookingController extends BaseEventTypeController
 	{
 		$operation = $this->operation;
 		if (in_array($operation->status->name,array('Requires scheduling','Requires rescheduling','Cancelled'))) {
-			return $this->redirect(array('default/view/'.$event->id));
+			return $this->redirect(array('default/view/'.$this->event->id));
 		}
 
 		$this->patient = $operation->event->episode->patient;
@@ -207,7 +233,7 @@ class BookingController extends BaseEventTypeController
 				$booking->cancel($reason,$_POST['cancellation_comment'],false);
 				$operation->setStatus('Requires rescheduling');
 
-				$this->redirect(array('default/view/'.$event->id));
+				$this->redirect(array('default/view/'.$this->event->id));
 			}
 		}
 
