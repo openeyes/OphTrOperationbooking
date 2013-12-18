@@ -106,7 +106,7 @@ class BookingController extends BaseEventTypeController
 						throw new Exception('Operation not found: '.$_POST['Booking']['element_id']);
 					}
 
-					if (($result = $operation->schedule($_POST['Booking'], $_POST['Operation']['comments'], $_POST['Session']['comments'], $this->reschedule)) !== true) {
+					if (($result = $operation->schedule($_POST['Booking'], $_POST['Operation']['comments'], $_POST['Session']['comments'], $_POST['Operation']['comments_rtt'], $this->reschedule)) !== true) {
 						$errors = $result;
 					} else {
 						$this->redirect(array('default/view/'.$operation->event_id));
@@ -115,6 +115,7 @@ class BookingController extends BaseEventTypeController
 					$_POST['Booking']['admission_time'] = ($session['start_time'] == '13:30:00') ? '12:00' : date('H:i', strtotime('-1 hour', strtotime($session['start_time'])));
 					$_POST['Session']['comments'] = $session['comments'];
 					$_POST['Operation']['comments'] = $operation->comments;
+					$_POST['Operation']['comments_rtt'] = $operation->comments_rtt;
 				}
 			}
 		} elseif ($operation->booking) {

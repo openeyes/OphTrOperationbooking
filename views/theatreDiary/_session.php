@@ -143,6 +143,10 @@
 										<?php if ($booking->operation->comments && preg_match('/\w/', $booking->operation->comments)) {?>
 											<img src="<?php echo $assetPath?>/img/diaryIcons/comment.png" alt="<?php echo htmlentities($booking->operation->comments, ENT_COMPAT, 'UTF-8') ?>" title="<?php echo htmlentities($booking->operation->comments, ENT_COMPAT, 'UTF-8') ?>" width="17" height="17" />
 										<?php }?>
+										<?php
+										if ($booking->operation->comments_rtt && preg_match('/\w/', $booking->operation->comments_rtt)) {?>
+											<img src="<?php echo $assetPath?>/img/diaryIcons/comment_rtt.png" alt="<?php echo htmlentities($booking->operation->comments_rtt, ENT_COMPAT, 'UTF-8') ?>" title="<?php echo htmlentities($booking->operation->comments_rtt, ENT_COMPAT, 'UTF-8') ?>" width="17" height="17" />
+										<?php }?>
 										<?php if ($booking->operation->overnight_stay) {?>
 											<img src="<?php echo $assetPath?>/img/diaryIcons/overnight.png" alt="Overnight stay required" title="Overnight stay required" width="17" height="17" />
 										<?php }?>

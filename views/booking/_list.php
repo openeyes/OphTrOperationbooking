@@ -152,6 +152,17 @@ if (!$reschedule) {
 		</div>
 	</div>
 
+	<div class="eventDetail">
+		<div class="row field-row">
+			<div class="large-2 column">
+				<?php echo CHtml::label('<strong>RTT Comments:</strong>', 'rtt_comments'); ?>
+			</div>
+			<div class="large-5 column end">
+				<textarea id="operation_comments" name="Operation[comments_rtt]" rows=3 cols=50><?php echo htmlspecialchars($_POST['Operation']['comments_rtt'])?></textarea>
+			</div>
+		</div>
+	</div>
+
 	<div class="field-row" style="margin-top: 1em">
 		<span id="dateSelected">Date/Time currently selected: <span class="highlighted"><?php echo Helper::convertDate2NHS($session['date']); ?>, <?php echo substr($session['start_time'], 0, 5) . ' - ' . substr($session['end_time'], 0, 5); ?></span></span>
 	</div>
