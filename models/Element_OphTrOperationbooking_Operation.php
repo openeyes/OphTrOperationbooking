@@ -892,7 +892,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		return $this->status->name != 'Cancelled' && $this->status->name != 'Completed';
 	}
 
-	public function schedule($booking_attributes, $operation_comments, $session_comments, $reschedule=false)
+	public function schedule($booking_attributes, $operation_comments, $session_comments, $operation_comments_rtt, $reschedule=false)
 	{
 		$booking = new OphTrOperationbooking_Operation_Booking;
 		$booking->attributes = $booking_attributes;
@@ -996,6 +996,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		}
 
 		$this->comments = $operation_comments;
+		$this->comments_rtt = $operation_comments_rtt;
 		$this->site_id = $booking->ward->site_id;
 
 		if (!$this->save()) {
