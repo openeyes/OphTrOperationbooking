@@ -17,7 +17,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class TransportController extends BaseEventTypeController
+class TransportController extends BaseController
 {
 	public $layout='//layouts/main';
 	public $items_per_page = 100;
@@ -40,6 +40,17 @@ class TransportController extends BaseEventTypeController
 			),
 			array('deny'),
 		);
+	}
+
+	protected function beforeAction($action)
+	{
+		if ($action->id == 'index') {
+			$assetPath = Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.'.$this->getModule()->name.'.assets'), false, -1, YII_DEBUG);
+			$this->registerCssFile('module.css',$assetPath.'/css/module.css',10);
+			Yii::app()->clientScript->registerScriptFile($assetPath.'/js/TransportController.js');
+		}
+
+		return parent::beforeAction($action);
 	}
 
 	public function actionIndex()

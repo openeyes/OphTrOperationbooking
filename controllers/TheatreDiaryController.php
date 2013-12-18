@@ -17,7 +17,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class TheatreDiaryController extends BaseEventTypeController
+class TheatreDiaryController extends BaseController
 {
 	public $layout='//layouts/main';
 	public $renderPatientPanel = false;
@@ -40,6 +40,21 @@ class TheatreDiaryController extends BaseEventTypeController
 			),
 			array('deny'),
 		);
+	}
+
+	protected function beforeAction($action)
+	{
+		$assetPath = Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.'.$this->getModule()->name.'.assets'), false, -1, YII_DEBUG);
+
+		if (in_array($action->id,array('index','printDiary','printList'))) {
+			$this->registerCssFile('module.css',$assetPath.'/css/module.css',10);
+		}
+
+		if ($action->id == 'index') {
+			Yii::app()->clientScript->registerScriptFile($assetPath.'/js/TheatreDiaryController.js');
+		}
+
+		return parent::beforeAction($action);
 	}
 
 	public function actionIndex()
@@ -98,24 +113,12 @@ class TheatreDiaryController extends BaseEventTypeController
 	{
 		Audit::add('diary','print',serialize($_POST));
 
-		Yii::app()->getClientScript()->registerCssFile(Yii::app()->createUrl(
-			Yii::app()->getAssetManager()->publish(
-				Yii::getPathOfAlias('application.modules.'.$this->getModule()->name.'.assets')
-			).'/css/module.css'
-		));
-
 		$this->renderPartial('_print_diary', array('diary'=>$this->getDiary()), false, true);
 	}
 
 	public function actionPrintList()
 	{
 		Audit::add('diary','print list',serialize($_POST));
-
-		Yii::app()->getClientScript()->registerCssFile(Yii::app()->createUrl(
-			Yii::app()->getAssetManager()->publish(
-				Yii::getPathOfAlias('application.modules.'.$this->getModule()->name.'.assets')
-			).'/css/module.css'
-		));
 
 		$this->renderPartial('_print_list', array('bookings'=>$this->getBookingList()), false, true);
 	}
