@@ -55,8 +55,20 @@ $(document).ready(function() {
 	});
 
 	handleButton($('button.btn_transport_print'),function(e) {
-		var url = window.location.href.replace(/(\/index)?(\/)?$/,'');
-		url += '/printList';
+		var get = '';
+
+		url = baseUrl+"/OphTrOperationbooking/transport/printList?";
+		get = "page="+($(document).getUrlParam('page') || 1);
+		if ($('#transport_date_from').val().length >0 && $('#transport_date_to').val().length >0) {
+			get += "&date_from="+$('#transport_date_from').val()+"&date_to="+$('#transport_date_to').val();
+		}
+
+		if (!$('#include_bookings').is(':checked')) get += "&include_bookings=0";
+		if (!$('#include_reschedules').is(':checked')) get += "&include_reschedules=0";
+		if (!$('#include_cancellations').is(':checked')) get += "&include_cancellations=0";
+
+		url += get;
+
 		printIFrameUrl(url,null);
 		setTimeout('enableButtons();',3000);
 		e.preventDefault();
