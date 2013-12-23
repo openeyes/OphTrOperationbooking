@@ -74,9 +74,15 @@ $(document).ready(function() {
 		e.preventDefault();
 	});
 
-	handleButton($('button.btn_transport_download'),function() {
+	$('button.btn_transport_download').click(function(e) {
+		e.preventDefault();
+
+		$('#csvform input[name="date_from"]').val($('#transport_date_from').val());
+		$('#csvform input[name="date_to"]').val($('#transport_date_to').val());
+		$('#csvform input[name="include_bookings"]').val($('#include_bookings').val());
+		$('#csvform input[name="include_reschedules"]').val($('#include_reschedules').val());
+		$('#csvform input[name="include_cancellations"]').val($('#include_cancellations').val());
 		$('#csvform').submit();
-		enableButtons();
 	});
 
 	$('#transport_checkall').die('click').live('click',function() {
