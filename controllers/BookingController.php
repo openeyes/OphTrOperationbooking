@@ -135,7 +135,7 @@ class BookingController extends BaseEventTypeController
 								$_POST['Booking'],
 								$_POST['Operation']['comments'],
 								$_POST['Session']['comments'],
-								$_POST['Operation']['comments_rtt']
+								$_POST['Operation']['comments_rtt'],
 								($this->reschedule !== true),
 								$cancellation_data) !== true) {
 							$errors = $result;
