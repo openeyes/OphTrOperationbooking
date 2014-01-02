@@ -70,19 +70,19 @@ class TransportController extends BaseController
 
 	public function getTransportList($all=false)
 	{
-		if (!empty($_GET)) {
-			if (preg_match('/^[0-9]+ [a-zA-Z]{3} [0-9]{4}$/',@$_GET['date_from']) && preg_match('/^[0-9]+ [a-zA-Z]{3} [0-9]{4}$/',@$_GET['date_to'])) {
-				$date_from = Helper::convertNHS2MySQL($_GET['date_from'])." 00:00:00";
-				$date_to = Helper::convertNHS2MySQL($_GET['date_to'])." 23:59:59";
+		if (!empty($_REQUEST)) {
+			if (preg_match('/^[0-9]+ [a-zA-Z]{3} [0-9]{4}$/',@$_REQUEST['date_from']) && preg_match('/^[0-9]+ [a-zA-Z]{3} [0-9]{4}$/',@$_REQUEST['date_to'])) {
+				$date_from = Helper::convertNHS2MySQL($_REQUEST['date_from'])." 00:00:00";
+				$date_to = Helper::convertNHS2MySQL($_REQUEST['date_to'])." 23:59:59";
 			}
 		}
 
-		!isset($_GET['include_bookings']) and $_GET['include_bookings'] = 1;
-		!isset($_GET['include_reschedules']) and $_GET['include_reschedules'] = 1;
-		!isset($_GET['include_cancellations']) and $_GET['include_cancellations'] = 1;
+		!isset($_REQUEST['include_bookings']) and $_REQUEST['include_bookings'] = 1;
+		!isset($_REQUEST['include_reschedules']) and $_REQUEST['include_reschedules'] = 1;
+		!isset($_REQUEST['include_cancellations']) and $_REQUEST['include_cancellations'] = 1;
 
-		if (!@$_GET['include_bookings'] && !@$_GET['include_reschedules'] && !@$_GET['include_cancellations']) {
-			$_GET['include_bookings'] = 1;
+		if (!@$_REQUEST['include_bookings'] && !@$_REQUEST['include_reschedules'] && !@$_REQUEST['include_cancellations']) {
+			$_REQUEST['include_bookings'] = 1;
 		}
 
 		$criteria = new CDbCriteria;
@@ -97,17 +97,17 @@ class TransportController extends BaseController
 			$criteria->params[':toDate'] = $date_to;
 		}
 
-		if (!$_GET['include_bookings']) {
+		if (!$_REQUEST['include_bookings']) {
 			$criteria->addCondition('latestBooking.booking_cancellation_date is not null or status_id != :two');
 			$criteria->params[':two'] = 2;
 		}
 
-		if (!$_GET['include_reschedules']) {
+		if (!$_REQUEST['include_reschedules']) {
 			$criteria->addCondition('latestBooking.booking_cancellation_date is not null or status_id = :two');
 			$criteria->params[':two'] = 2;
 		}
 
-		if (!$_GET['include_cancellations']) {
+		if (!$_REQUEST['include_cancellations']) {
 			$criteria->addCondition('latestBooking.booking_cancellation_date is null');
 		}
 
