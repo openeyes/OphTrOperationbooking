@@ -142,7 +142,7 @@
 			<th>Theatre:</th>
 			<td><?php echo $operation->booking->session->TheatreName?></td>
 			<th>Ward:</th>
-			<td><?php echo $operation->booking->ward->name?></td>
+			<td><?php echo $operation->booking->ward ? $operation->booking->ward->name : 'None'?></td>
 		<?php }?>
 	</tr>
 

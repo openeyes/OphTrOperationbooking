@@ -41,7 +41,7 @@
 					<td><?php echo $booking->operation->event->episode->patient->age?></td>
 					<td><?php echo $booking->operation->event->episode->patient->gender?></td>
 					<td><?php echo $booking->NHSDate('session_date')?></td>
-					<td><?php echo $booking->ward->name?></td>
+					<td><?php echo $booking->ward ? $booking->ward->name : 'None'?></td>
 					<td><?php echo $booking->session->firm->pas_code?></td>
 					<td><?php echo $booking->session->firm->serviceSubspecialtyAssignment->subspecialty->name?></td>
 				</tr>

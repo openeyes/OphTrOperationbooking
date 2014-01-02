@@ -939,8 +939,6 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			$booking->{'session_'.$field} = $booking->session->$field;
 		}
 
-		$booking->ward_id = key($this->getWardOptions($session));
-
 		$criteria = new CDbCriteria;
 		$criteria->compare('session_id',$session->id);
 		$criteria->order = 'display_order desc';
@@ -997,7 +995,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 
 		$this->comments = $operation_comments;
 		$this->comments_rtt = $operation_comments_rtt;
-		$this->site_id = $booking->ward->site_id;
+		$this->site_id = $booking->session->theatre->site_id;
 
 		if (!$this->save()) {
 			throw new Exception('Unable to update operation data: '.print_r($this->getErrors(),true));
@@ -1055,7 +1053,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 
 	public function getLetterContact()
 	{
-		$site_id = $this->booking->ward->site_id;
+		$site_id = $this->booking->theatre->site_id;
 		$subspecialty_id = $this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty_id;
 		$theatre_id = $this->booking->session->theatre_id;
 		$firm_id = $this->booking->session->firm_id;

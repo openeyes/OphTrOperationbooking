@@ -124,7 +124,7 @@
 									<td class="operation leftAlign"><?php echo $booking->operation->procedures ? '['.$booking->operation->eye->adjective.'] '.$booking->operation->getProceduresCommaSeparated() : 'No procedures'?></td>
 									<td class=""><?php echo $booking->operation->priority->name?></td>
 									<td class="anesthetic"><?php echo $booking->operation->anaesthetic_type->name?></td>
-									<td class="ward"><?php echo $booking->ward->name?></td>
+									<td class="ward"><?php echo $booking->ward ? $booking->ward->name : 'None'?></td>
 									<td class="alerts">
 										<?php if ($booking->operation->event->episode->patient->gender == 'M') {?>
 											<img src="<?php echo $assetPath?>/img/diaryIcons/male.png" alt="male" title="male" width="17" height="17" />
