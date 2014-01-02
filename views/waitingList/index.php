@@ -32,7 +32,7 @@
 					<button id="btn_print" class="small">Print selected</button>
 				<?php }?>
 				<?php if (Yii::app()->user->checkAccess('admin')) {?>
-					<div class="panel orange">
+					<div class="panel admin">
 						<label for="adminconfirmdate">Set latest letter sent to be:</label>
 						<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
 								'name'=>'adminconfirmdate',
@@ -49,7 +49,7 @@
 								)
 							))?>
 					</div>
-					<div class="panel orange">
+					<div class="panel admin">
 						<select name="adminconfirmto" id="adminconfirmto">
 							<option value="OFF">Off</option>
 							<option value="noletters">No letters sent</option>
