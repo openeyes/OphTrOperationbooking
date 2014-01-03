@@ -102,15 +102,11 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 			'firm' => array(self::BELONGS_TO, 'Firm', 'firm_id'),
 			'sequence' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Sequence', 'sequence_id'),
 			'activeBookings' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Booking', 'session_id',
-				'condition' => 'activeBookings.booking_cancellation_date is null and event.deleted = 0 and episode.deleted = 0',
+				'on' => 'activeBookings.booking_cancellation_date is null',
 				'with' => array(
-					'operation' => array(
-						'with' => array(
-							'event' => array(
-								'with' => 'episode',
-							),
-						),
-					),
+					'operation',
+					'operation.event' => array('joinType' => 'join'),
+					'operation.event.episode' => array('joinType' => 'join')
 				),
 			),
 		);

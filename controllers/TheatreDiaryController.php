@@ -201,9 +201,9 @@ class TheatreDiaryController extends BaseEventTypeController
 			}
 		}
 
-		$criteria->addCondition("(event.deleted = :deleted or event.deleted is null) and (episode.deleted = :deleted or episode.deleted is null)");
-		$criteria->params[':deleted'] = 0;
-		$criteria->order = 'site.short_name, `t`.display_order, `t`.code, sessions.date, sessions.start_time, sessions.end_time, activeBookings.display_order';
+		//$criteria->addCondition("(event.deleted = :deleted or event.deleted is null) and (episode.deleted = :deleted or episode.deleted is null)");
+		//$criteria->params[':deleted'] = 0;
+		$criteria->order = 'site.short_name, `t`.display_order, `t`.code, sessions.date, sessions.start_time, sessions.end_time';
 
 		Yii::app()->event->dispatch('start_batch_mode');
 
@@ -213,29 +213,19 @@ class TheatreDiaryController extends BaseEventTypeController
 				'sessions' => array(
 					'with' => array(
 						'activeBookings' => array(
+							'order' => 'activeBookings.display_order',
 							'with' => array(
-								'operation' => array(
-									'with' => array(
-										'anaesthetic_type',
-										'priority',
-										'event' => array(
-											'with' => array(
-												'episode' => array(
-													'with' => array(
-														'patient' => array(
-															'with' => 'contact',
-														),
-													),
-												),
-											),
-										),
-										'procedures',
-										'op_usermodified',
-										'op_user',
-										'eye',
-									),
-								),
+								'operation.anaesthetic_type',
+								'operation.priority',
+								'operation.event.episode.patient',
+								'operation.event.episode.patient.episodes',
+								'operation.event.episode.patient.contact',
+								'operation.event.episode.patient.allergies',
+								'operation.procedures',
+								'operation.eye',
 								'ward',
+								'user',
+								'usermodified'
 							),
 						),
 						'firm' => array(
