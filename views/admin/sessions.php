@@ -169,7 +169,7 @@ $sessions = $sessions['data'];
 					))?>
 					<?php echo EventAction::button('Add', 'add_session', null, array('class' => 'small'))->toHtml()?>
 					<?php echo EventAction::button('Delete', 'delete_session', null, array('class' => 'small'))->toHtml()?>
-					<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
+					<img class="loader" src="<?php echo Yii::app()->assetManager->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 				</td>
 			</tr>
 		</tfoot>
@@ -288,7 +288,7 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 <div class="row field-row">
 	<div class="large-10 large-offset-2 column">
 		<?php echo EventAction::button('Update','update_inline',null,array('class'=>'small'))->toHtml()?>
-		<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
+		<img class="loader" src="<?php echo Yii::app()->assetManager->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 		<span class="timeWarning" style="display: none;">Please be patient, it may take some time to process all the sessions ...</span>
 	</div>
 </div>
@@ -307,7 +307,7 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 			<input type="hidden" id="medication_id" value="" />
 			<button type="submit" class="warning btn_remove_sessions">Remove session(s)</button>
 			<button type="submit" class="secondary btn_cancel_remove_sessions">Cancel</button>
-			<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
+			<img class="loader" src="<?php echo Yii::app()->assetManager->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 		</div>
 	</div>
 </div>

@@ -112,7 +112,7 @@
 	<div class="field-row">
 		<?php echo EventAction::button('Delete', 'delete', array('level' => 'warning'), array('class' => 'button small'))->toHtml()?>
 		<?php echo EventAction::button('Cancel', 'cancel', array('level' => 'cancel'))->toHtml()?>
-		<img class="loader" src="<?php echo Yii::app()->createUrl('/img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
+		<img class="loader" src="<?php echo Yii::app()->assetManager->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 	</div>
 </div>
 

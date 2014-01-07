@@ -67,7 +67,7 @@
 			<div style="height: 0.4em;"></div>
 			<div class="clear"></div>
 			<button type="submit" class="warning">Confirm reschedule later</button>
-			<img src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" class="loader" />
+			<img src="<?php echo Yii::app()->assetManager->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" class="loader" />
 			<?php
 			echo CHtml::endForm(); ?>
 		</div>

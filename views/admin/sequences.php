@@ -331,7 +331,7 @@ $sequences = $sequences['data'];
 		<div class="row field-row">
 			<div class="large-10 large-offset-2 column">
 				<?php echo EventAction::button('Update','update_inline',array('colour'=>'green'))->toHtml()?>
-				<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
+				<img class="loader" src="<?php echo Yii::app()->assetManager->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 			</div>
 		</div>
 	<?php $this->endWidget()?>
@@ -349,7 +349,7 @@ $sequences = $sequences['data'];
 			<input type="hidden" id="medication_id" value="" />
 			<button type="submit" class="warning btn_remove_sequences">Remove sequence(s)</button>
 			<button type="submit" class="secondary btn_cancel_remove_sequences">Cancel</button>
-			<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
+			<img class="loader" src="<?php echo Yii::app()->assetManager->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 		</div>
 	</div>
 </div>

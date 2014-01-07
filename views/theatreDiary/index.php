@@ -148,7 +148,7 @@
 						<div class="large-2 column text-right">
 
 							<span style="width: 30px;">
-								<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
+								<img class="loader" src="<?php echo Yii::app()->assetManager->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 							</span>
 
 							<button id="search_button" class="secondary" type="submit">
