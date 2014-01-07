@@ -28,7 +28,7 @@
 			<div class="label">
 				Use the filters below to view Theatre schedules:
 			</div>
-			<?php if ($this->canPrint()) {?>
+			<?php if ($this->checkAccess('OprnPrint')) {?>
 				<div class="button-bar">
 					<button id="btn_print_diary" class="small">Print</button>
 					<button id="btn_print_diary_list" class="small">Print list</button>
@@ -45,7 +45,6 @@
 	<div class="search-filters theatre-diaries">
 		<?php $this->beginWidget('CActiveForm', array(
 			'id'=>'theatre-filter',
-			'action'=>Yii::app()->createUrl('/OphTrOperationbooking/theatre/search'),
 			'htmlOptions'=>array(
 				'class' => 'row'
 			),

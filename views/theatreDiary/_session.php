@@ -63,7 +63,7 @@
 			<li class="selected">
 				<a class="aBtn_inactive" href="#">View</a>
 			</li>
-			<?php if (BaseController::checkUserLevel(4)) { ?>
+			<?php if ($this->checkAccess('OprnEditTheatreSession')) { ?>
 				<li class="aBtn edit-event">
 					<a href="#" rel="<?php echo $session->id?>" class="edit-session">Edit</a>
 				</li>
@@ -182,7 +182,7 @@
 					</table>
 				</div>
 				<div class="sessionComments large-3 column">
-					<?php if (Yii::app()->user->checkAccess('purplerinse')) {?>
+					<?php if ($this->checkAccess('OprnEditTheatreSessionDetails')) {?>
 						<div class="panel session-options hidden diaryEditMode" data-id="<?php echo $session->id?>">
 							<input type="hidden" name="consultant_<?php echo $session->id?>" value="0" />
 							<input type="hidden" name="paediatric_<?php echo $session->id?>" value="0" />
