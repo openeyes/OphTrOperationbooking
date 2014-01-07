@@ -212,32 +212,13 @@ class TheatreDiaryController extends BaseEventTypeController
 				'site',
 				'sessions' => array(
 					'with' => array(
-						'activeBookings' => array(
-							'order' => 'activeBookings.display_order',
-							'with' => array(
-								'operation.anaesthetic_type',
-								'operation.priority',
-								'operation.event.episode.patient',
-								'operation.event.episode.patient.episodes',
-								'operation.event.episode.patient.contact',
-								'operation.event.episode.patient.allergies',
-								'operation.procedures',
-								'operation.eye',
-								'ward',
-								'user',
-								'usermodified'
-							),
-						),
-						'firm' => array(
-							'with' => array(
-								'serviceSubspecialtyAssignment' => array(
-									'with' => 'subspecialty',
-								),
-							),
-						),
+						'activeBookings',
+						'activeBookings.ward',
+						'firm',
+						'firm.serviceSubspecialtyAssignment',
+						'firm.serviceSubspecialtyAssignment.subspecialty',
 						'session_user',
 						'session_usermodified',
-						'theatre',
 					),
 				),
 			))

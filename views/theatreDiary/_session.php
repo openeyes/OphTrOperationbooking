@@ -105,7 +105,28 @@
 						</tr>
 						</thead>
 						<tbody id="tbody_<?php echo $session->id?>">
-						<?php foreach ($session->activeBookings as $booking) {
+						<?php
+							$active_bookings = $session->activeBookings(array(
+								'with' => array(
+									'operation',
+									'operation.anaesthetic_type',
+									'operation.priority',
+									'operation.event',
+									'operation.event.episode',
+									'operation.event.episode.patient',
+									'operation.event.episode.patient.episodes',
+									'operation.event.episode.patient.contact',
+									'operation.event.episode.patient.allergies',
+									'operation.procedures',
+									'operation.op_usermodified',
+									'operation.op_user',
+									'operation.eye',
+									'ward',
+									'user',
+								),
+							));
+						?>
+						<?php foreach ($active_bookings as $booking) {
 							// FIXME: this conditional is here because the query that is built to pull in the activebookings is not excluding those events that have been deleted
 							// this works around that fact.
 							if ($booking->operation->event) { ?>
