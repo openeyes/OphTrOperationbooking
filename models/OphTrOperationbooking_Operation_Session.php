@@ -101,25 +101,15 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 			'theatre' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Theatre', 'theatre_id'),
 			'firm' => array(self::BELONGS_TO, 'Firm', 'firm_id'),
 			'sequence' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Sequence', 'sequence_id'),
+			'activeBookings' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Booking', 'session_id',
+				'on' => 'activeBookings.booking_cancellation_date is null',
+				'with' => array(
+					'operation',
+					'operation.event' => array('joinType' => 'join'),
+					'operation.event.episode' => array('joinType' => 'join')
+				),
+			),
 		);
-	}
-
-	public function getActiveBookings()
-	{
-		$criteria = new CDbCriteria;
-		$criteria->addCondition('event.deleted = 0');
-		$criteria->addCondition('episode.deleted = 0');
-		$criteria->addCondition('t.booking_cancellation_date is null');
-		$criteria->addCondition('t.session_id = :session_id');
-		$criteria->params[':session_id'] = $this->id;
-
-		return OphTrOperationbooking_Operation_Booking::model()
-			->with(array('operation' => array(
-				'with' => array('event' => array(
-					'with' => array('episode'),
-				)),
-			)))
-			->findAll($criteria);
 	}
 
 	/**

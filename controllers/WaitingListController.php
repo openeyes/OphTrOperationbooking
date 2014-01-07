@@ -412,7 +412,6 @@ class WaitingListController extends BaseController
 		}
 
 		if ($gp = $patient->gp) {
-			error_log($gp->contact->fullname);
 			$to_name = $gp->contact->fullname;
 		} else {
 			$to_name = Gp::UNKNOWN_NAME;
