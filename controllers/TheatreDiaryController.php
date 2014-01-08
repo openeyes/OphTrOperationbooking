@@ -184,7 +184,7 @@ class TheatreDiaryController extends BaseEventTypeController
 				$criteria->params[':siteId'] = $_POST['site-id'];
 			}
 			if (@$_POST['theatre-id']) {
-				$criteria->addCondition("theatre.id = :theatreId");
+				$criteria->addCondition("`t`.id = :theatreId");
 				$criteria->params[':theatreId'] = $_POST['theatre-id'];
 			}
 			if (@$_POST['subspecialty-id']) {
