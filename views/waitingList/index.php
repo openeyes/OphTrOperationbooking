@@ -27,7 +27,7 @@
 			</div>
 			<div class="button-bar">
 
-				<?php if ($this->canPrint()) {?>
+				<?php if ($this->checkAccess('OprnPrint')) {?>
 					<button id="btn_print_all" class="small">Print all</button>
 					<button id="btn_print" class="small">Print selected</button>
 				<?php }?>
@@ -60,7 +60,7 @@
 						</select>
 					</div>
 				<?php }?>
-				<?php if (BaseController::checkUserLevel(4)) { ?>
+				<?php if ($this->checkAccess('OprnConfirmBookingLetterPrinted')) { ?>
 					<button type="submit" class="small secondary" id="btn_confirm_selected">
 						Confirm selected
 					</button>

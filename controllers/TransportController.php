@@ -17,7 +17,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class TransportController extends BaseController
+class TransportController extends BaseModuleController
 {
 	public $layout='//layouts/main';
 	public $items_per_page = 100;
@@ -29,30 +29,36 @@ class TransportController extends BaseController
 	public function accessRules()
 	{
 		return array(
-			// Level 2 or below can't change anything
-			array('deny',
-				'actions' => array('confirm', 'print', 'printlist'),
-				'expression' => '!BaseController::checkUserLevel(3)',
-			),
-			// Level 2 or above can do anything else
 			array('allow',
-				'expression' => 'BaseController::checkUserLevel(2)',
+				'actions' => array('index', 'TCIs'),
+				'roles' => array('OprnViewClinical'),
 			),
-			array('deny'),
+			array('allow',
+				'actions' => $this->printActions(),
+				'roles' => array('OprnPrint'),
+			),
+			array('allow',
+				'actions' => array('confirm'),
+				'roles' => array('OprnConfirmTransport')
+			),
 		);
 	}
 
-	protected function beforeAction($action)
+	/**
+	 * @return array
+	 * (non-phpdoc)
+	 * @see parent::printActions()
+	 */
+	public function printActions()
 	{
-		if ($action->id == 'index') {
-			$assetPath = Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.'.$this->getModule()->name.'.assets'), false, -1, YII_DEBUG);
-			$this->registerCssFile('module.css',$assetPath.'/css/module.css',10);
-			Yii::app()->clientScript->registerScriptFile($assetPath.'/js/TransportController.js');
-		}
-
-		return parent::beforeAction($action);
+		return array(
+			'print', 'printList', 'downloadCsv'
+		);
 	}
 
+	/**
+	 * initial view loads framework for TCI list - actual list is loaded through ajax request
+	 */
 	public function actionIndex()
 	{
 		!isset($_GET['include_bookings']) and $_GET['include_bookings'] = 1;
@@ -62,27 +68,37 @@ class TransportController extends BaseController
 		$this->render('index');
 	}
 
+	/**
+	 * Ajax action to load the list of TCIs based on the request criteria
+	 */
 	public function actionTCIs()
 	{
 		if (ctype_digit(@$_GET['page'])) $this->page = $_GET['page'];
-		$this->renderPartial('_list',array('operations'=>$this->getTransportList()));
+		$this->renderPartial('_list',array('operations'=>$this->getTransportList($_GET)));
 	}
 
-	public function getTransportList($all=false)
+	/**
+	 * Get all the operations that have TCI requirements based on the given criteria
+	 *
+	 * @param $data
+	 * @param bool $all
+	 * @return Element_OphTrOperationbooking_Operation[]
+	 */
+	public function getTransportList($data, $all=false)
 	{
-		if (!empty($_GET)) {
-			if (preg_match('/^[0-9]+ [a-zA-Z]{3} [0-9]{4}$/',@$_GET['date_from']) && preg_match('/^[0-9]+ [a-zA-Z]{3} [0-9]{4}$/',@$_GET['date_to'])) {
-				$date_from = Helper::convertNHS2MySQL($_GET['date_from'])." 00:00:00";
-				$date_to = Helper::convertNHS2MySQL($_GET['date_to'])." 23:59:59";
+		if (!empty($data)) {
+			if (preg_match('/^[0-9]+ [a-zA-Z]{3} [0-9]{4}$/',@$data['date_from']) && preg_match('/^[0-9]+ [a-zA-Z]{3} [0-9]{4}$/',@$data['date_to'])) {
+				$date_from = Helper::convertNHS2MySQL($data['date_from'])." 00:00:00";
+				$date_to = Helper::convertNHS2MySQL($data['date_to'])." 23:59:59";
 			}
 		}
 
-		!isset($_GET['include_bookings']) and $_GET['include_bookings'] = 1;
-		!isset($_GET['include_reschedules']) and $_GET['include_reschedules'] = 1;
-		!isset($_GET['include_cancellations']) and $_GET['include_cancellations'] = 1;
+		!isset($data['include_bookings']) and $data['include_bookings'] = 1;
+		!isset($data['include_reschedules']) and $data['include_reschedules'] = 1;
+		!isset($data['include_cancellations']) and $data['include_cancellations'] = 1;
 
-		if (!@$_GET['include_bookings'] && !@$_GET['include_reschedules'] && !@$_GET['include_cancellations']) {
-			$_GET['include_bookings'] = 1;
+		if (!@$data['include_bookings'] && !@$data['include_reschedules'] && !@$data['include_cancellations']) {
+			$data['include_bookings'] = 1;
 		}
 
 		$criteria = new CDbCriteria;
@@ -97,17 +113,17 @@ class TransportController extends BaseController
 			$criteria->params[':toDate'] = $date_to;
 		}
 
-		if (!$_GET['include_bookings']) {
+		if (!$data['include_bookings']) {
 			$criteria->addCondition('latestBooking.booking_cancellation_date is not null or status_id != :two');
 			$criteria->params[':two'] = 2;
 		}
 
-		if (!$_GET['include_reschedules']) {
+		if (!$data['include_reschedules']) {
 			$criteria->addCondition('latestBooking.booking_cancellation_date is not null or status_id = :two');
 			$criteria->params[':two'] = 2;
 		}
 
-		if (!$_GET['include_cancellations']) {
+		if (!$data['include_cancellations']) {
 			$criteria->addCondition('latestBooking.booking_cancellation_date is null');
 		}
 
@@ -194,10 +210,13 @@ class TransportController extends BaseController
 			->findAll($criteria);
 	}
 
+	/**
+	 * Print the list based on given criteria
+	 */
 	public function actionPrintList()
 	{
 		if (ctype_digit(@$_GET['page'])) $this->page = $_GET['page'];
-		$this->renderPartial('_printList',array('operations' => $this->getTransportList(true)));
+		$this->renderPartial('_printList',array('operations' => $this->getTransportList($_GET, true)));
 	}
 
 	/**
@@ -238,6 +257,11 @@ class TransportController extends BaseController
 		}
 	}
 
+	/**
+	 * Ajax method to mark the given operations with transport arranged
+	 *
+	 * @throws Exception
+	 */
 	public function actionConfirm()
 	{
 		if (is_array(@$_POST['operations'])) {
@@ -262,6 +286,10 @@ class TransportController extends BaseController
 		echo '1';
 	}
 
+	/**
+	 * Download a CSV of the operations requiring transport changes
+	 *
+	 */
 	public function actionDownloadcsv()
 	{
 		header("Content-type: application/csv");
@@ -271,7 +299,7 @@ class TransportController extends BaseController
 
 		echo "Hospital number,First name,Last name,TCI date,Admission time,Site,Ward,Method,Firm,Specialty,DTA,Priority\n";
 
-		$operations = $this->getTransportList(true);
+		$operations = $this->getTransportList($_GET, true);
 
 		foreach ($operations as $operation) {
 			echo '"'.$operation->event->episode->patient->hos_num.'","'.trim($operation->event->episode->patient->first_name).'","'.trim($operation->event->episode->patient->last_name).'","'.date('j-M-Y',strtotime($operation->latestBooking->session_date)).'","'.substr($operation->latestBooking->session_start_time,0,5).'","'.$operation->latestBooking->theatre->site->shortName.'","'.$operation->latestBooking->ward->name.'","'.$operation->transportStatus.'","'.$operation->event->episode->firm->pas_code.'","'.$operation->event->episode->firm->serviceSubspecialtyAssignment->subspecialty->ref_spec.'","'.$operation->NHSDate('decision_date').'","'.$operation->priority->name.'"'."\n";

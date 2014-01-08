@@ -17,7 +17,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class TheatreDiaryController extends BaseController
+class TheatreDiaryController extends BaseModuleController
 {
 	public $layout='//layouts/main';
 	public $renderPatientPanel = false;
@@ -25,40 +25,39 @@ class TheatreDiaryController extends BaseController
 	public function accessRules()
 	{
 		return array(
-			// Level 2 or below can't change anything
-			array('deny',
-				'actions' => array('savesessions'),
-				'expression' => '!BaseController::checkUserLevel(4)',
-			),
-			array('deny',
-				'actions' => array('printdiary', 'printlist'),
-				'expression' => '!BaseController::checkUserLevel(3)',
-			),
-			// Level 2 or above can do anything else
 			array('allow',
-				'expression' => 'BaseController::checkUserLevel(2)',
+				'actions' => array('index', 'search', 'filterFirms', 'filterTheatres', 'filterWards', 'setDiaryFilter', 'getSessionTimestamps', 'checkRequired'),
+				'roles' => array('OprnViewClinical'),
 			),
-			array('deny'),
+			array('allow',
+				'actions' => $this->printActions(),
+				'roles' => array('OprnPrint'),
+			),
+			array('allow',
+				'actions' => array('saveSession'),
+				'roles' => array('OprnEditTheatreSession'),
+			),
 		);
 	}
 
-	protected function beforeAction($action)
+	/**
+	 * @return array
+	 * (non-phpdoc)
+	 * @see parent::printActions()
+	 */
+	public function printActions()
 	{
-		$assetPath = Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.'.$this->getModule()->name.'.assets'), false, -1, YII_DEBUG);
-
-		if (in_array($action->id,array('index','printDiary','printList'))) {
-			$this->registerCssFile('module.css',$assetPath.'/css/module.css',10);
-		}
-
-		if ($action->id == 'index') {
-			Yii::app()->clientScript->registerScriptFile($assetPath.'/js/TheatreDiaryController.js');
-		}
-
-		return parent::beforeAction($action);
+		return array('printDiary', 'printList');
 	}
 
+	/**
+	 * Shows the standard theatre diary list
+	 *
+	 * @throws CHttpException
+	 */
 	public function actionIndex()
 	{
+		//TODO: determine whether we actually need this check
 		$firm = Firm::model()->findByPk($this->selectedFirmId);
 
 		if (empty($firm)) {
@@ -109,41 +108,69 @@ class TheatreDiaryController extends BaseController
 		$this->render('index', array('wards'=>$wards, 'theatres'=>$theatres));
 	}
 
+	/**
+	 * Print the diary
+	 */
 	public function actionPrintDiary()
 	{
 		Audit::add('diary','print',serialize($_POST));
 
-		$this->renderPartial('_print_diary', array('diary'=>$this->getDiary()), false, true);
+		Yii::app()->getClientScript()->registerCssFile(Yii::app()->createUrl(
+			Yii::app()->getAssetManager()->publish(
+				Yii::getPathOfAlias('application.modules.'.$this->getModule()->name.'.assets')
+			).'/css/module.css'
+		));
+
+		$this->renderPartial('_print_diary', array('diary'=>$this->getDiaryTheatres($_POST)), false, true);
 	}
 
+	/**
+	 * Print the booking list
+	 */
 	public function actionPrintList()
 	{
 		Audit::add('diary','print list',serialize($_POST));
 
-		$this->renderPartial('_print_list', array('bookings'=>$this->getBookingList()), false, true);
+		Yii::app()->getClientScript()->registerCssFile(Yii::app()->createUrl(
+			Yii::app()->getAssetManager()->publish(
+				Yii::getPathOfAlias('application.modules.'.$this->getModule()->name.'.assets')
+			).'/css/module.css'
+		));
+
+		$this->renderPartial('_print_list', array('bookings'=>$this->getBookingList($_POST)), false, true);
 	}
 
+	/**
+	 * Ajax action to retrieve diary data
+	 */
 	public function actionSearch()
 	{
 		Audit::add('diary','search',serialize($_POST));
 
-		$list = $this->renderPartial('_list', array('diary' => $this->getDiary(), 'assetPath'=>Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.OphTrOperationbooking.assets'), false, -1, YII_DEBUG)), true, true);
+		$list = $this->renderPartial('_list', array('diary' => $this->getDiaryTheatres($_POST), 'assetPath'=> $this->assetPath), true, true);
 
 		echo json_encode(array('status'=>'success','data'=>$list));
 	}
 
-	public function getDiary()
+	/**
+	 * Uses $data criteria to retrieve theatre objects that have operations booked
+	 * The theatre objects will preload relevant related objects for use in displaying data in the diary layout
+	 *
+	 * @param $data
+	 * @return OphTrOperationbooking_Operation_Theatre[] $theatres
+	 */
+	public function getDiaryTheatres($data)
 	{
 		$firmId = Yii::app()->session['selected_firm_id'];
 
-		$_POST['date-start'] = Helper::convertNHS2MySQL(@$_POST['date-start']);
-		$_POST['date-end'] = Helper::convertNHS2MySQL(@$_POST['date-end']);
+		$data['date-start'] = Helper::convertNHS2MySQL(@$data['date-start']);
+		$data['date-end'] = Helper::convertNHS2MySQL(@$data['date-end']);
 
-		if (empty($_POST['date-start']) || empty($_POST['date-end'])) {
+		if (empty($data['date-start']) || empty($data['date-end'])) {
 			$startDate = $endDate = $this->getNextSessionDate($firmId);
 		} else {
-			$startDate = $_POST['date-start'];
-			$endDate = $_POST['date-end'];
+			$startDate = $data['date-start'];
+			$endDate = $data['date-end'];
 
 			if (preg_match('/^([0-9]{1,2})\/([0-9]{1,2})\/([0-9]{2})$/',$startDate,$m)) {
 				$m[1] = str_pad($m[1],2,0,STR_PAD_LEFT);
@@ -177,36 +204,36 @@ class TheatreDiaryController extends BaseController
 			':endDate' => $endDate,
 		);
 
-		if (@$_POST['emergency_list']) {
+		if (@$data['emergency_list']) {
 			$criteria->addCondition("firm.id is null");
 		} else {
 			$criteria->addCondition("firm.id is not null");
 
-			if (@$_POST['site-id']) {
+			if (@$data['site-id']) {
 				$criteria->addCondition("`t`.site_id = :siteId");
-				$criteria->params[':siteId'] = $_POST['site-id'];
+				$criteria->params[':siteId'] = $data['site-id'];
 			}
-			if (@$_POST['theatre-id']) {
+			if (@$data['theatre-id']) {
 				$criteria->addCondition("theatre.id = :theatreId");
-				$criteria->params[':theatreId'] = $_POST['theatre-id'];
+				$criteria->params[':theatreId'] = $data['theatre-id'];
 			}
-			if (@$_POST['subspecialty-id']) {
+			if (@$data['subspecialty-id']) {
 				$criteria->addCondition("subspecialty_id = :subspecialtyId");
-				$criteria->params[':subspecialtyId'] = $_POST['subspecialty-id'];
+				$criteria->params[':subspecialtyId'] = $data['subspecialty-id'];
 			}
-			if (@$_POST['firm-id']) {
+			if (@$data['firm-id']) {
 				$criteria->addCondition("firm.id = :firmId");
-				$criteria->params[':firmId'] = $_POST['firm-id'];
+				$criteria->params[':firmId'] = $data['firm-id'];
 			}
-			if (@$_POST['ward-id']) {
+			if (@$data['ward-id']) {
 				$criteria->addCondition("ward.id = :wardId");
-				$criteria->params[':wardId'] = $_POST['ward-id'];
+				$criteria->params[':wardId'] = $data['ward-id'];
 			}
 		}
 
-		$criteria->addCondition("(event.deleted = :deleted or event.deleted is null) and (episode.deleted = :deleted or episode.deleted is null)");
-		$criteria->params[':deleted'] = 0;
-		$criteria->order = 'site.short_name, `t`.display_order, `t`.code, sessions.date, sessions.start_time, sessions.end_time, activeBookings.display_order';
+		//$criteria->addCondition("(event.deleted = :deleted or event.deleted is null) and (episode.deleted = :deleted or episode.deleted is null)");
+		//$criteria->params[':deleted'] = 0;
+		$criteria->order = 'site.short_name, `t`.display_order, `t`.code, sessions.date, sessions.start_time, sessions.end_time';
 
 		Yii::app()->event->dispatch('start_batch_mode');
 
@@ -216,29 +243,19 @@ class TheatreDiaryController extends BaseController
 				'sessions' => array(
 					'with' => array(
 						'activeBookings' => array(
+							'order' => 'activeBookings.display_order',
 							'with' => array(
-								'operation' => array(
-									'with' => array(
-										'anaesthetic_type',
-										'priority',
-										'event' => array(
-											'with' => array(
-												'episode' => array(
-													'with' => array(
-														'patient' => array(
-															'with' => 'contact',
-														),
-													),
-												),
-											),
-										),
-										'procedures',
-										'op_usermodified',
-										'op_user',
-										'eye',
-									),
-								),
+								'operation.anaesthetic_type',
+								'operation.priority',
+								'operation.event.episode.patient',
+								'operation.event.episode.patient.episodes',
+								'operation.event.episode.patient.contact',
+								'operation.event.episode.patient.allergies',
+								'operation.procedures',
+								'operation.eye',
 								'ward',
+								'user',
+								'usermodified'
 							),
 						),
 						'firm' => array(
@@ -257,28 +274,33 @@ class TheatreDiaryController extends BaseController
 			->findAll($criteria);
 	}
 
-	public function getNextSessionDate($firmId)
+	/**
+	 * Get the date of the next session for the given firm id, or return today's date
+	 *
+	 * @param $firm_id
+	 * @return string $date Y-m-d
+	 */
+	public function getNextSessionDate($firm_id)
 	{
-		$criteria = new CDbCriteria;
-		$criteria->addCondition("firm_id = :firmId and date >= :date");
-		$criteria->params = array(
-			'firmId' => $firmId,
-			'date' => date('Y-m-d'),
-		);
-		$criteria->order = 'date asc';
-
-		if ($session = OphTrOperationbooking_Operation_Session::model()->find($criteria)) {
+		if ($session = OphTrOperationbooking_Operation_Session::getNextSessionForFirmId($firm_id)) {
 			return $session->date;
 		} else {
 			return date('Y-m-d');
 		}
 	}
 
-	public function getBookingList()
+	/**
+	 * Get bookings for the given selection criteria
+	 *
+	 * @param $data
+	 * @return OphTrOperationbooking_Operation_Booking[] $bookings
+	 * @throws Exception
+	 */
+	public function getBookingList($data)
 	{
 		foreach (array('date-start', 'date-end', 'subspecialty-id', 'site-id') as $required) {
-			if (!isset($_POST[$required])) {
-				throw new CHttpException('invalid request for booking list');
+			if (!isset($data[$required])) {
+				throw new Exception('invalid request for booking list');
 			}
 		}
 
@@ -287,25 +309,25 @@ class TheatreDiaryController extends BaseController
 		$criteria->addCondition('session.date >= :dateFrom and session.date <= :dateTo');
 		$criteria->addInCondition('operation.status_id',array(2,4));
 
-		$criteria->params[':dateFrom'] = Helper::convertNHS2MySQL($_POST['date-start']);
-		$criteria->params[':dateTo'] = Helper::convertNHS2MySQL($_POST['date-end']);
+		$criteria->params[':dateFrom'] = Helper::convertNHS2MySQL($data['date-start']);
+		$criteria->params[':dateTo'] = Helper::convertNHS2MySQL($data['date-end']);
 
-		if (@$_POST['emergency_list']) {
+		if (@$data['emergency_list']) {
 			$criteria->addCondition('firm.id IS NULL');
 		} else {
 			$criteria->addCondition('theatre.site_id = :siteId and subspecialty_id = :subspecialtyId');
-			$criteria->params[':siteId'] = $_POST['site-id'];
-			$criteria->params[':subspecialtyId'] = $_POST['subspecialty-id'];
+			$criteria->params[':siteId'] = $data['site-id'];
+			$criteria->params[':subspecialtyId'] = $data['subspecialty-id'];
 		}
 
-		if (@$_POST['ward-id']) {
+		if (@$data['ward-id']) {
 			$criteria->addCondition('ward.id = :wardId');
-			$criteria->params[':wardId'] = $_POST['ward-id'];
+			$criteria->params[':wardId'] = $data['ward-id'];
 		}
 
-		if (@$_POST['firm-id']) {
+		if (@$data['firm-id']) {
 			$criteria->addCondition('firm.id = :firmId');
-			$criteria->params[':firmId'] = $_POST['firm-id'];
+			$criteria->params[':firmId'] = $data['firm-id'];
 		}
 
 		$criteria->addCondition('`t`.booking_cancellation_date is null');
@@ -349,9 +371,9 @@ class TheatreDiaryController extends BaseController
 	}
 
 	/**
-		* Generates a firm list based on a subspecialty id provided via POST
-		* echoes form option tags for display
-		*/
+	* Generates a firm list based on a subspecialty id provided via POST
+	* echoes form option tags for display
+	*/
 	public function actionFilterFirms()
 	{
 		if (@$_POST['empty']) {
@@ -376,9 +398,9 @@ class TheatreDiaryController extends BaseController
 	}
 
 	/**
-		* Generates a theatre list based on a site id provided via POST
-		* echoes form option tags for display
-		*/
+	* Generates a theatre list based on a site id provided via POST
+	* echoes form option tags for display
+	*/
 	public function actionFilterTheatres()
 	{
 		if (@$_POST['empty']) {
@@ -397,9 +419,9 @@ class TheatreDiaryController extends BaseController
 	}
 
 	/**
-		* Generates a theatre list based on a site id provided via POST
-		* echoes form option tags for display
-		*/
+	* Generates a theatre list based on a site id provided via POST
+	* echoes form option tags for display
+	*/
 	public function actionFilterWards()
 	{
 		echo CHtml::tag('option', array('value'=>''), CHtml::encode('All wards'), true);
@@ -413,6 +435,9 @@ class TheatreDiaryController extends BaseController
 		}
 	}
 
+	/**
+	 * Ajax action to update a session
+	 */
 	public function actionSaveSession()
 	{
 		if (!$session = OphTrOperationbooking_Operation_Session::model()->findByPk(@$_POST['session_id'])) {
@@ -459,7 +484,7 @@ class TheatreDiaryController extends BaseController
 			return;
 		}
 
-		if (Yii::app()->user->checkAccess('purplerinse')) {
+		if ($this->checkAccess('OprnEditTheatreSessionDetails')) {
 			$session->consultant = $_POST['consultant_'.$session->id];
 			$session->paediatric = $_POST['paediatric_'.$session->id];
 			$session->anaesthetist = $_POST['anaesthetist_'.$session->id];
@@ -510,17 +535,17 @@ class TheatreDiaryController extends BaseController
 	}
 
 	/**
-		* Helper method to fetch firms by subspecialty ID
-		*
-		* @param integer $subspecialtyId
-		*
-		* @return array
-		*/
-	protected function getFilteredFirms($subspecialtyId)
+	* Helper method to fetch firms by subspecialty ID
+	*
+	* @param integer $subspecialty_id
+	*
+	* @return array
+	*/
+	protected function getFilteredFirms($subspecialty_id)
 	{
 		$criteria = new CDbCriteria;
-		$criteria->addCondition('subspecialty_id = :subspecialtyId');
-		$criteria->params[':subspecialtyId'] = $subspecialtyId;
+		$criteria->addCondition('subspecialty_id = :subspecialty_id');
+		$criteria->params[':subspecialty_id'] = $subspecialty_id;
 		$criteria->order = 'name';
 
 		$firms = CHtml::listData(Firm::model()->with('serviceSubspecialtyAssignment')->findAll($criteria),'id','name');
@@ -529,39 +554,43 @@ class TheatreDiaryController extends BaseController
 	}
 
 	/**
-		* Helper method to fetch theatres by site ID
-		*
-		* @param integer $siteId
-		*
-		* @return array
-		*/
-	protected function getFilteredTheatres($siteId)
+	* Helper method to fetch theatres by site ID
+	*
+	* @param integer $site_id
+	*
+	* @return array
+	*/
+	protected function getFilteredTheatres($site_id)
 	{
 		$criteria = new CDbCriteria;
-		$criteria->addCondition('site_id = :siteId');
-		$criteria->params[':siteId'] = $siteId;
+		$criteria->addCondition('site_id = :site_id');
+		$criteria->params[':site_id'] = $site_id;
 		$criteria->order = 'display_order';
 
 		return CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll($criteria),'id','name');
 	}
 
 	/**
-		* Helper method to fetch theatres by site ID
-		*
-		* @param integer $siteId
-		*
-		* @return array
-		*/
-	protected function getFilteredWards($siteId)
+	* Helper method to fetch theatres by site ID
+	*
+	* @param integer $site_id
+	*
+	* @return array
+	*/
+	protected function getFilteredWards($site_id)
 	{
 		$criteria = new CDbCriteria;
-		$criteria->addCondition('site_id = :siteId');
-		$criteria->params[':siteId'] = $siteId;
+		$criteria->addCondition('site_id = :site_id');
+		$criteria->params[':site_id'] = $site_id;
 		$criteria->order = 'name';
 
 		return CHtml::listData(OphTrOperationbooking_Operation_Ward::model()->findAll($criteria),'id','name');
 	}
 
+	/**
+	 * Ajax method to store theatre search options to the session
+	 * @TODO: should the keys for this not be validated?
+	 */
 	public function actionSetDiaryFilter()
 	{
 		foreach ($_POST as $key => $value) {
@@ -569,6 +598,9 @@ class TheatreDiaryController extends BaseController
 		}
 	}
 
+	/**
+	 * Ajax action to retrieve the modification data for a given session
+	 */
 	public function actionGetSessionTimestamps()
 	{
 		if (isset($_POST['session_id'])) {
@@ -582,6 +614,12 @@ class TheatreDiaryController extends BaseController
 		}
 	}
 
+	/**
+	 * Ajax method to check whether various attributes are required on a given session
+	 * (used to prevent them being turned off when they are needed on the session)
+	 *
+	 * @throws Exception
+	 */
 	public function actionCheckRequired()
 	{
 		if (!$session = OphTrOperationbooking_Operation_Session::model()->findByPk(@$_POST['session_id'])) {

@@ -19,59 +19,186 @@
 
 class DefaultController extends BaseEventTypeController
 {
+	static protected $action_types = array(
+		'cancel' => self::ACTION_TYPE_EDIT,
+		'admissionLetter' => self::ACTION_TYPE_PRINT,
+	);
+
 	public $eventIssueCreate = 'Operation requires scheduling';
+	protected $operation_required = false;
+	/** @var Element_OphTrOperation_Operation $operation */
+	protected $operation = null;
 
 	protected function beforeAction($action)
 	{
-		$this->assetPath = Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.'.$this->getModule()->name.'.assets'), false, -1, YII_DEBUG);
 		Yii::app()->clientScript->registerScriptFile($this->assetPath.'/js/booking.js');
 		Yii::app()->clientScript->registerScriptFile('/js/jquery.validate.min.js');
 		Yii::app()->clientScript->registerScriptFile('/js/additional-validators.js');
 		return parent::beforeAction($action);
 	}
 
-	public function actionCreate()
+	/**
+	 * Various default options for operation should be driven by the episode
+	 *
+	 * @param BaseEventTypeElement $element
+	 * @param string $action
+	 */
+	protected function setElementDefaultOptions($element, $action)
 	{
+		parent::setElementDefaultOptions($element, $action);
+		if ($action == 'create') {
+			$kls = get_class($element);
+			if ($kls == 'Element_OphTrOperationbooking_Diagnosis') {
+				// set default eye and disorder
+				if ($this->episode && $this->episode->diagnosis) {
+					$element->eye_id = $this->episode->eye_id;
+					$element->disorder_id = $this->episode->disorder_id;
+				}
+			}
+			elseif ($kls == 'Element_OphTrOperationbooking_Operation') {
+				// set the default eye
+				if ($this->episode && $this->episode->diagnosis) {
+					$element->eye_id = $this->episode->eye_id;
+				}
+
+				// set default anaesthetic based on whether patient is a child or not.
+				$key = $this->patient->isChild() ? 'ophtroperationbooking_default_anaesthetic_child' : 'ophtroperationbooking_default_anaesthetic';
+
+				if (isset(Yii::app()->params[$key])) {
+					if ($at = AnaestheticType::model()->find('code=?',array(Yii::app()->params[$key]))) {
+						$element->anaesthetic_type_id = $at->id;
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Sets up operation based on the event
+	 *
+	 * @param $id
+	 * @throws CHttpException
+	 * (non-phpdoc)
+	 * @see BaseEventTypeController::initWithEventId($id)
+	 */
+	protected function initWithEventId($id)
+	{
+		parent::initWithEventId($id);
+
+		$this->operation = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($this->event->id));
+		if ($this->operation_required && !$this->operation) {
+			throw new CHttpException(500,'Operation not found');
+		}
+	}
+
+	/**
+	 * Checks whether schedule now has been requested
+	 *
+	 * (non-phpdoc)
+	 * @see BaseEventTypeController::initActionCreate()
+	 */
+	protected function initActionCreate()
+	{
+		parent::initActionCreate();
 		if (@$_POST['schedule_now']) {
 			$this->successUri = 'booking/schedule/';
 		}
-
-		parent::actionCreate();
 	}
 
-	public function actionUpdate($id)
+	/**
+	 * Make the operation element directly available for templates
+	 *
+	 * @see BaseEventTypeController::initActionView()
+	 */
+	public function initActionView()
 	{
-		parent::actionUpdate($id);
-	}
+		$this->operation_required = true;
+		parent::initActionView();
 
-	public function actionView($id)
-	{
 		$this->extraViewProperties = array(
-			'operation' => Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($id)),
+			'operation' => $this->operation,
 		);
-
-		parent::actionView($id);
 	}
 
-	public function actionPrint($id)
+	/**
+	 * @see BaseEventTypeController::setElementComplexAttributesFromData($element, $data, $index)
+	 */
+	protected function setElementComplexAttributesFromData($element, $data, $index = null)
 	{
-		parent::actionPrint($id);
+		// Using the ProcedureSelection widget, so the field doesn't map directly to the element attribute
+		if (get_class($element) == 'Element_OphTrOperationbooking_Operation') {
+			if (isset($data['Element_OphTrOperationbooking_Operation']['total_duration_procs'])) {
+				$element->total_duration = $data['Element_OphTrOperationbooking_Operation']['total_duration_procs'];
+			}
+			$procs = array();
+			if (isset($data['Procedures_procs'])) {
+				foreach ($data['Procedures_procs'] as $proc_id) {
+					$procs[] = Procedure::model()->findByPk($proc_id);
+				}
+			}
+			$element->procedures = $procs;
+		}
 	}
 
-	public function printActions()
+	/**
+	 * Set procedures for Element_OphTrOperationbooking_Operation
+	 *
+	 * @param $data
+	 */
+	protected function saveEventComplexAttributesFromData($data)
 	{
-		return array('print','admissionLetter');
+		foreach ($this->open_elements as $element) {
+			if (get_class($element) == 'Element_OphTrOperationbooking_Operation') {
+				// using the ProcedureSelection widget, so not a direct field on the operation element
+				$element->updateProcedures(isset($data['Procedures_procs']) ? $data['Procedures_procs'] : array());
+			}
+		}
 	}
 
+	/**
+	 * Extend standard behaviour to perform validation of elements across the event
+	 * 
+	 * @param array $data
+	 * @return array
+	 */
+	protected function setAndValidateElementsFromData($data)
+	{
+		$errors = parent::setAndValidateElementsFromData($data);
+		// need to do some validation at the event level
+
+		$event_errors = OphTrOperationbooking_BookingHelper::validateElementsForEvent($this->open_elements);
+		if ($event_errors) {
+			if ($errors['Event']) {
+				$errors['Event'] = array_merge($errors['Event'], $event_errors);
+			}
+			else {
+				$errors['Event'] = $event_errors;
+			}
+		}
+
+		return $errors;
+	}
+
+	/**
+	 * Setup event properties
+	 */
+	protected function initActionCancel()
+	{
+		$this->operation_required = true;
+		$this->initWithEventId(@$_GET['id']);
+	}
+
+	/**
+	 * Cancel operation action
+	 *
+	 * @param $id
+	 * @throws CHttpException
+	 * @throws Exception
+	 */
 	public function actionCancel($id)
 	{
-		if (!$event = Event::model()->findByPk($id)) {
-			throw new Exception('Unable to find event: '.$id);
-		}
 
-		if (!$operation = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($event->id))) {
-			throw new CHttpException(500,'Operation not found');
-		}
+		$operation = $this->operation;
 
 		if ($operation->status->name == 'Cancelled') {
 			return $this->redirect(array('default/view/'.$event->id));
@@ -117,23 +244,33 @@ class DefaultController extends BaseEventTypeController
 		));
 	}
 
-	public function actionAdmissionLetter($id)
+	/**
+	 * Setup event properties
+	 */
+	protected function initActionAdmissionLetter()
 	{
-		if (!$event = Event::model()->findByPk($id)) {
-			throw new Exception('Event not found: '.$id);
-		}
+		$this->operation_required = true;
+		$this->initWithEventId(@$_GET['id']);
+	}
 
+	/**
+	 * Generate admission letter for operation booking
+	 *
+	 * @return bool
+	 * @throws Exception
+	 */
+	public function actionAdmissionLetter()
+	{
 		$this->layout = '//layouts/pdf';
 
-		if ($event->episode->patient->date_of_death) {
+		if ($this->patient->date_of_death) {
+			// no admission for dead patients
 			return false;
 		}
 
-		if (!$operation = Element_OphTrOperationbooking_Operation::model()->find('event_id = ?',array($id))) {
-			throw new Exception('Operation not found for event: '.$id);
-		}
+		$operation = $this->operation;
 
-		$event->audit('admission letter','print',false);
+		$this->event->audit('admission letter','print',false);
 
 		$this->logActivity('printed admission letter');
 
@@ -148,14 +285,14 @@ class DefaultController extends BaseEventTypeController
 
 		$body = $this->render('../letters/admission_letter', array(
 			'site' => $site,
-			'patient' => $event->episode->patient,
+			'patient' => $this->event->episode->patient,
 			'firm' => $firm,
 			'emergencyList' => $emergency_list,
 			'operation' => $operation,
 		), true);
 
 		$oeletter = new OELetter(
-			$event->episode->patient->getLetterAddress(array(
+			$this->event->episode->patient->getLetterAddress(array(
 				'include_name' => true,
 				'delimiter' => "\n",
 			)),
@@ -175,7 +312,7 @@ class DefaultController extends BaseEventTypeController
 		$body = $this->render('../letters/admission_form', array(
 				'operation' => $operation,
 				'site' => $site,
-				'patient' => $event->episode->patient,
+				'patient' => $this->event->episode->patient,
 				'firm' => $firm,
 				'emergencyList' => $emergency_list,
 		), true);

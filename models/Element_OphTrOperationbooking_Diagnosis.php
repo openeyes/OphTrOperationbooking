@@ -98,8 +98,8 @@ class Element_OphTrOperationbooking_Diagnosis extends BaseEventTypeElement
 		return array(
 			'id' => 'ID',
 			'event_id' => 'Event',
-'eye_id' => 'Eyes',
-'disorder_id' => 'Diagnosis',
+			'eye_id' => 'Eyes',
+			'disorder_id' => 'Diagnosis',
 		);
 	}
 
@@ -125,21 +125,8 @@ class Element_OphTrOperationbooking_Diagnosis extends BaseEventTypeElement
 	}
 
 	/**
-	 * Set default values for forms on create
+	 * Reset diagnosis data on the event based on the diagnosis set on this element
 	 */
-	public function setDefaultOptions()
-	{
-		if (Yii::app()->getController()->getAction()->id == 'create') {
-			$patient_id = (int) $_REQUEST['patient_id'];
-			$firm = Yii::app()->getController()->firm;
-			$episode = Episode::getCurrentEpisodeByFirm($patient_id, $firm);
-			if ($episode && $episode->diagnosis) {
-				$this->eye_id = $episode->eye_id;
-				$this->disorder_id = $episode->disorder_id;
-			}
-		}
-	}
-
 	protected function afterSave()
 	{
 		if (!$this->event->episode->eye && !$this->event->episode->disorder_id) {

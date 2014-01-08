@@ -55,16 +55,34 @@ $(document).ready(function() {
 	});
 
 	handleButton($('button.btn_transport_print'),function(e) {
-		var url = window.location.href.replace(/(\/index)?(\/)?$/,'');
-		url += '/printList';
+		var get = '';
+
+		url = baseUrl+"/OphTrOperationbooking/transport/printList?";
+		get = "page="+($(document).getUrlParam('page') || 1);
+		if ($('#transport_date_from').val().length >0 && $('#transport_date_to').val().length >0) {
+			get += "&date_from="+$('#transport_date_from').val()+"&date_to="+$('#transport_date_to').val();
+		}
+
+		if (!$('#include_bookings').is(':checked')) get += "&include_bookings=0";
+		if (!$('#include_reschedules').is(':checked')) get += "&include_reschedules=0";
+		if (!$('#include_cancellations').is(':checked')) get += "&include_cancellations=0";
+
+		url += get;
+
 		printIFrameUrl(url,null);
 		setTimeout('enableButtons();',3000);
 		e.preventDefault();
 	});
 
-	handleButton($('button.btn_transport_download'),function() {
+	$('button.btn_transport_download').click(function(e) {
+		e.preventDefault();
+
+		$('#csvform input[name="date_from"]').val($('#transport_date_from').val());
+		$('#csvform input[name="date_to"]').val($('#transport_date_to').val());
+		$('#csvform input[name="include_bookings"]').val($('#include_bookings').val());
+		$('#csvform input[name="include_reschedules"]').val($('#include_reschedules').val());
+		$('#csvform input[name="include_cancellations"]').val($('#include_cancellations').val());
 		$('#csvform').submit();
-		enableButtons();
 	});
 
 	$('#transport_checkall').die('click').live('click',function() {

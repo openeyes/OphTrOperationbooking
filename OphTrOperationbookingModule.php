@@ -39,6 +39,7 @@ class OphTrOperationbookingModule extends BaseEventTypeModule
 		$this->setImport(array(
 			'OphTrOperationbooking.models.*',
 			'OphTrOperationbooking.components.*',
+			'OphTrOperationbooking.components.Exceptions',
 			'OphTrOperationbooking.helpers.*',
 		));
 
@@ -54,4 +55,15 @@ class OphTrOperationbookingModule extends BaseEventTypeModule
 		} else
 			return false;
 	}
+}
+
+/**
+ * Class RaceConditionException
+ *
+ * Used for operation booking scheduling - a specific class of exception
+ * to raise when two users attempt to schedule the same operation booking
+ *
+ */
+class RaceConditionException extends Exception
+{
 }

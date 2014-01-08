@@ -94,9 +94,9 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		// will receive user inputs.
 		return array(
 			array('event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments,comments_rtt, anaesthetist_required, total_duration, status_id, operation_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id, latest_booking_id', 'safe'),
-			array('eye_id', 'matchDiagnosisEye'),
 			array('cancellation_comment', 'length', 'max' => 200),
-			array('eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date', 'required'),
+			array('procedures', 'required', 'message' => 'At least one procedure must be entered'),
+			array('eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, total_duration', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments, comments_rtt', 'safe', 'on' => 'search'),
@@ -185,30 +185,6 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			));
 	}
 
-	/**
-	 * Set default values for forms on create
-	 */
-	public function setDefaultOptions()
-	{
-		$patient_id = (int) $_REQUEST['patient_id'];
-		$firm = Yii::app()->getController()->firm;
-		$episode = Episode::getCurrentEpisodeByFirm($patient_id, $firm);
-		if ($episode && $episode->diagnosis) {
-			$this->eye_id = $episode->eye_id;
-		}
-		$this->site_id = Yii::app()->session['selected_site_id'];
-
-		if ($patient = Patient::model()->findByPk($patient_id)) {
-			$key = $patient->isChild() ? 'ophtroperationbooking_default_anaesthetic_child' : 'ophtroperationbooking_default_anaesthetic';
-
-			if (isset(Yii::app()->params[$key])) {
-				if ($at = AnaestheticType::model()->find('code=?',array(Yii::app()->params[$key]))) {
-					$this->anaesthetic_type_id = $at->id;
-				}
-			}
-		}
-	}
-
 	public function getproc_defaults()
 	{
 		$ids = array();
@@ -218,6 +194,10 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		return $ids;
 	}
 
+	/**
+	 * Sets flags based on element properties
+	 * @return bool
+	 */
 	protected function beforeSave()
 	{
 		$anaesthetistRequired = array(
@@ -229,68 +209,48 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			$this->status_id = 1;
 		}
 
-		if (isset($_POST['Element_OphTrOperationbooking_Operation']['total_duration_procs'])) {
-			$this->total_duration = $_POST['Element_OphTrOperationbooking_Operation']['total_duration_procs'];
-		}
-
 		return parent::beforeSave();
 	}
 
-	protected function afterSave()
+	/**
+	 * Stores procedures identified by the given procedure ids against this element
+	 *
+	 * @param array $procedure_ids
+	 * @throws Exception
+	 */
+	public function updateProcedures($procedure_ids)
 	{
-		if (!empty($_POST['Procedures_procs'])) {
+		$existing_ids = array();
 
-			$existing_ids = array();
-
-			foreach (OphTrOperationbooking_Operation_Procedures::model()->findAll('element_id = :elementId', array(':elementId' => $this->id)) as $item) {
-				$existing_ids[] = $item->proc_id;
+		foreach (OphTrOperationbooking_Operation_Procedures::model()->findAll('element_id = :elementId', array(':elementId' => $this->id)) as $item) {
+			$existing_ids[$item->proc_id] = $item->id;
+		}
+		foreach ($procedure_ids as $id) {
+			if (in_array($id,$existing_ids)) {
+				unset($existing_ids[$id]);
 			}
+			else {
+				$item = new OphTrOperationbooking_Operation_Procedures;
+				$item->element_id = $this->id;
+				$item->proc_id = $id;
 
-			foreach ($_POST['Procedures_procs'] as $id) {
-				if (!in_array($id,$existing_ids)) {
-					$item = new OphTrOperationbooking_Operation_Procedures;
-					$item->element_id = $this->id;
-					$item->proc_id = $id;
-
-					if (!$item->save()) {
-						throw new Exception('Unable to save MultiSelect item: '.print_r($item->getErrors(),true));
-					}
-				}
-			}
-
-			foreach ($existing_ids as $id) {
-				if (!in_array($id,$_POST['Procedures_procs'])) {
-					if ($item = OphTrOperationbooking_Operation_Procedures::model()->find('element_id = :elementId and proc_id = :lookupfieldId',array(':elementId' => $this->id, ':lookupfieldId' => $id))) {
-						if (!$item->delete()) {
-							throw new Exception('Unable to delete MultiSelect item: '.print_r($item->getErrors(),true));
-						}
-					}
+				if (!$item->save()) {
+					throw new Exception('Unable to save MultiSelect item: '.print_r($item->getErrors(),true));
 				}
 			}
 		}
 
-		return parent::afterSave();
+		OphTrOperationbooking_Operation_Procedures::model()->deleteByPk(array_values($existing_ids));
 	}
 
-	protected function beforeValidate()
-	{
-		return parent::beforeValidate();
-	}
 
 	protected function afterValidate()
 	{
-		if (!empty($_POST['Element_OphTrOperationbooking_Operation']) && empty($_POST['Procedures_procs'])) {
-			$this->addError('procedures', 'At least one procedure must be entered');
-		}
-
 		if ($this->booking) {
-			if (isset($_POST['Element_OphTrOperationbooking_Operation']['consultant_required'])) {
-				if ($_POST['Element_OphTrOperationbooking_Operation']['consultant_required'] && !$this->booking->session->consultant) {
-					$this->addError('consultant', 'The booked session does not have a consultant present, you must change the session or cancel the booking before making this change');
-				}
+			if ($this->consultant_required && !$this->booking->session->consultant) {
+				$this->addError('consultant', 'The booked session does not have a consultant present, you must change the session or cancel the booking before making this change');
 			}
-			if (isset($_POST['Element_OphTrOperationbooking_Operation']['anaesthetic_type_id'])) {
-				$anaesthetic = AnaestheticType::model()->findByPk($_POST['Element_OphTrOperationbooking_Operation']['anaesthetic_type_id'])->name;
+			if ($anaesthetic = AnaestheticType::model()->findByPk($this->anaesthetic_type_id)->name) {
 				if (in_array($anaesthetic,array('LAC','LAS','GA')) && !$this->booking->session->anaesthetist) {
 					$this->addError('anaesthetist', 'The booked session does not have an anaesthetist present, you must change the session or cancel the booking before making this change');
 				}
@@ -892,7 +852,9 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		return $this->status->name != 'Cancelled' && $this->status->name != 'Completed';
 	}
 
-	public function schedule($booking_attributes, $operation_comments, $session_comments, $operation_comments_rtt, $reschedule=false)
+
+
+	public function schedule($booking_attributes, $operation_comments, $session_comments, $operation_comments_rtt, $reschedule=false, $cancellation_data = null)
 	{
 		$booking = new OphTrOperationbooking_Operation_Booking;
 		$booking->attributes = $booking_attributes;
@@ -915,24 +877,31 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			$booking->admission_time = $booking_attributes['admission_time'];
 		}
 
-		if ($this->booking && !$reschedule) {
-			// race condition, two users attempted to book the same operation at the same time
-			Yii::app()->user->setFlash('notice',"This operation has already been scheduled by ".($this->booking->user->fullName));
-			return Yii::app()->getController()->redirect(array('/OphTrOperationbooking/default/view/'.$this->event_id));
+		// parse the cancellation data
+		$cancellation_submitted = false;
+		$cancellation_reason_id = null;
+		$cancellation_comment = null;
+		if ($cancellation_data) {
+			$cancellation_submitted = $cancellation_data['submitted'];
+			$cancellation_reason_id = $cancellation_data['reason_id'];
+			$cancellation_comment = $cancellation_data['comment'];
 		}
 
-		if ($reschedule && !isset($_POST['cancellation_reason']) && $this->booking) {
+		if ($this->booking && !$reschedule) {
 			// race condition, two users attempted to book the same operation at the same time
-			Yii::app()->user->setFlash('notice',"This operation has already been scheduled by ".($this->booking->user->fullName));
-			return Yii::app()->getController()->redirect(array('/OphTrOperationbooking/default/view/'.$this->event_id));
+			throw new RaceConditionException('This operation has already been scheduled by ' . ($this->booking->user->fullName));
+		}
+
+		if ($reschedule && !$cancellation_submitted && $this->booking) {
+			// race condition, two users attempted to book the same operation at the same time
+			throw new RaceConditionException('This operation has already been scheduled by ' . ($this->booking->user->fullName));
 		}
 
 		if ($reschedule && $this->booking) {
-			if (!$reason = OphTrOperationbooking_Operation_Cancellation_Reason::model()->findByPk($_POST['cancellation_reason'])) {
+			if (!$reason = OphTrOperationbooking_Operation_Cancellation_Reason::model()->findByPk($cancellation_reason_id)) {
 				return array(array('Please select a rescheduling reason'));
 			}
-
-			$this->booking->cancel($reason,$_POST['cancellation_comment'],$reschedule);
+			$this->booking->cancel($reason,$cancellation_comment,$reschedule);
 		}
 
 		foreach (array('date','start_time','end_time','theatre_id') as $field) {
@@ -977,12 +946,19 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 				} else {
 					$targets = Yii::app()->params['urgent_booking_notify_email'];
 				}
+
+				if ($reschedule) {
+					$subject = "[OpenEyes] Urgent reschedule made";
+					$body = "A patient booking was rescheduled with a TCI date within the next 24 hours.\n\nDisorder: ".$this->getDisorderText()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.";
+
+				} else {
+					$subject = "[OpenEyes] Urgent booking made";
+					$body = "A patient booking was made with a TCI date within the next 24 hours.\n\nDisorder: ".$this->getDisorderText()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.";
+				}
+				$headers = "From: ".Yii::app()->params['urgent_booking_notify_email_from']."\r\n";
+
 				foreach ($targets as $email) {
-					if ($reschedule) {
-						mail($email, "[OpenEyes] Urgent reschedule made","A patient booking was rescheduled with a TCI date within the next 24 hours.\n\nDisorder: ".$this->getDisorderText()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.","From: ".Yii::app()->params['urgent_booking_notify_email_from']."\r\n");
-					} else {
-						mail($email, "[OpenEyes] Urgent booking made","A patient booking was made with a TCI date within the next 24 hours.\n\nDisorder: ".$this->getDisorderText()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.","From: ".Yii::app()->params['urgent_booking_notify_email_from']."\r\n");
-					}
+					mail($email, $subject, $body, $headers);
 				}
 			}
 		}
@@ -1006,7 +982,6 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		if (!$session->save()) {
 			throw new Exception('Unable to save session comments: '.print_r($session->getErrors(),true));
 		}
-
 		return true;
 	}
 
@@ -1236,21 +1211,6 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		return in_array($last_letter,array(
 			Element_OphTrOperationbooking_Operation::LETTER_GP
 		));
-	}
-
-	public function matchDiagnosisEye()
-	{
-		if (isset($_POST['Element_OphTrOperationbooking_Diagnosis']['eye_id']) &&
-			isset($_POST['Element_OphTrOperationbooking_Operation']['eye_id'])
-		) {
-			$diagnosis = $_POST['Element_OphTrOperationbooking_Diagnosis']['eye_id'];
-			$operation = $_POST['Element_OphTrOperationbooking_Operation']['eye_id'];
-			if ($diagnosis != 3 &&
-				$diagnosis != $operation
-			) {
-				$this->addError('eye_id', 'Operation eye must match diagnosis eye!');
-			}
-		}
 	}
 
 	public function delete()
