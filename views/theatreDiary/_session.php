@@ -126,10 +126,7 @@
 								),
 							));
 						?>
-						<?php foreach ($active_bookings as $booking) {
-							// FIXME: this conditional is here because the query that is built to pull in the activebookings is not excluding those events that have been deleted
-							// this works around that fact.
-							if ($booking->operation->event) { ?>
+						<?php foreach ($active_bookings as $booking) { ?>
 								<tr id="oprow_<?php echo $booking->element_id?>">
 									<td class="session">
 										<input style="display: none;" type="text" class="admitTime diaryEditMode" name="admitTime_<?php echo $booking->element_id?>" data-id="<?php echo $session->id?>" data-operation-id="<?php echo $booking->element_id?>" value="<?php echo substr($booking->admission_time,0,5)?>" size="4">
@@ -177,8 +174,7 @@
 										<img src="<?php echo $assetPath?>/img/diaryIcons/booked_user.png" alt="Created by: <?php echo $booking->user->fullName."\n"?>Last modified by: <?php echo $booking->usermodified->fullName?>" title="Created by: <?php echo $booking->user->fullName."\n"?>Last modified by: <?php echo $booking->usermodified->fullName?>" width="17" height="17" />
 									</td>
 								</tr>
-							<?php }
-						}?>
+						<?php } ?>
 						</tbody>
 						<tfoot>
 						<tr>

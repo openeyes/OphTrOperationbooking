@@ -201,8 +201,6 @@ class TheatreDiaryController extends BaseEventTypeController
 			}
 		}
 
-		//$criteria->addCondition("(event.deleted = :deleted or event.deleted is null) and (episode.deleted = :deleted or episode.deleted is null)");
-		//$criteria->params[':deleted'] = 0;
 		$criteria->order = 'site.short_name, `t`.display_order, `t`.code, sessions.date, sessions.start_time, sessions.end_time';
 
 		Yii::app()->event->dispatch('start_batch_mode');
