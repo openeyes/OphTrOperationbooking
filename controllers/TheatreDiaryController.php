@@ -210,13 +210,17 @@ class TheatreDiaryController extends BaseEventTypeController
 				'site',
 				'sessions' => array(
 					'with' => array(
-						'activeBookings',
-						'activeBookings.ward',
+						'activeBookings' => array(
+							'with' => array(
+								'ward',
+							),
+						),
 						'firm',
 						'firm.serviceSubspecialtyAssignment',
 						'firm.serviceSubspecialtyAssignment.subspecialty',
 						'session_user',
 						'session_usermodified',
+
 					),
 				),
 			))
