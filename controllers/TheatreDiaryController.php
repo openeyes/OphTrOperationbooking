@@ -124,7 +124,11 @@ class TheatreDiaryController extends BaseEventTypeController
 	{
 		Audit::add('diary','search',serialize($_POST));
 
-		$list = $this->renderPartial('_list', array('diary' => $this->getDiary(), 'assetPath'=>Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.OphTrOperationbooking.assets'), false, -1, YII_DEBUG)), true, true);
+		$list = $this->renderPartial('_list', array(
+			'diary' => $this->getDiary(),
+			'assetPath'=>Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.OphTrOperationbooking.assets'), false, -1, YII_DEBUG),
+			'ward_id' => @$_POST['ward-id']
+		), true, true);
 
 		echo json_encode(array('status'=>'success','data'=>$list));
 	}
@@ -166,8 +170,8 @@ class TheatreDiaryController extends BaseEventTypeController
 
 		$criteria = new CDbCriteria;
 
-		$criteria->addCondition("date >= :startDate");
-		$criteria->addCondition("date <= :endDate");
+		$criteria->addCondition("sessions.date >= :startDate");
+		$criteria->addCondition("sessions.date <= :endDate");
 
 		$criteria->params = array(
 			':startDate' => $startDate,
@@ -196,7 +200,7 @@ class TheatreDiaryController extends BaseEventTypeController
 				$criteria->params[':firmId'] = $_POST['firm-id'];
 			}
 			if (@$_POST['ward-id']) {
-				$criteria->addCondition("ward.id = :wardId");
+				$criteria->addCondition("activeBookings.ward_id = :wardId");
 				$criteria->params[':wardId'] = $_POST['ward-id'];
 			}
 		}
@@ -211,9 +215,10 @@ class TheatreDiaryController extends BaseEventTypeController
 				'sessions' => array(
 					'with' => array(
 						'activeBookings' => array(
-							'with' => array(
-								'ward',
-							),
+							// Don't eager load as activeBookings need to be queried again in _session view
+							'select' => false,
+							// Override with to supress joins
+							'with' => array(),
 						),
 						'firm',
 						'firm.serviceSubspecialtyAssignment',

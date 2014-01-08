@@ -106,7 +106,7 @@
 						</thead>
 						<tbody id="tbody_<?php echo $session->id?>">
 						<?php
-							$active_bookings = $session->activeBookings(array(
+							$criteria = array(
 								'with' => array(
 									'operation',
 									'operation.anaesthetic_type',
@@ -123,8 +123,13 @@
 									'operation.eye',
 									'ward',
 									'user',
-								),
-							));
+								)
+							);
+							if((int)$ward_id) {
+								$criteria['condition'] = 'ward.id = :ward_id';
+								$criteria['params'][':ward_id'] = (int)$ward_id;
+							}
+							$active_bookings = $session->activeBookings($criteria);
 						?>
 						<?php foreach ($active_bookings as $booking) { ?>
 								<tr id="oprow_<?php echo $booking->element_id?>">
