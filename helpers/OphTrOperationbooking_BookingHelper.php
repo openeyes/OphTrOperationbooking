@@ -54,7 +54,7 @@ class OphTrOperationbooking_BookingHelper
 	 * @param $elements
 	 * @return array
 	 */
-	public function validateElementsForEvent($elements)
+	static public function validateElementsForEvent($elements)
 	{
 		$errors = array();
 		foreach ($elements as $element) {
