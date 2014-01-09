@@ -137,7 +137,7 @@ $sequences = $sequences['data'];
 						<td><?php echo $sequence->firm ? $sequence->firm->nameAndSubspecialtyCode: 'Emergency'?></td>
 						<td><?php echo $sequence->theatre->name?></td>
 						<td><?php echo $sequence->dates?></td>
-						<td><?php echo $sequence->start_time?> - <?php echo $sequence->end_time?></td>
+						<td><?php echo $sequence->start_time?> - <?php echo $sequence->end_time?><br/>adm: <?php echo $sequence->default_admission_time?></td>
 						<td><?php echo $sequence->interval->name?></td>
 						<td><?php echo $sequence->weekdayText?></td>
 						<td>

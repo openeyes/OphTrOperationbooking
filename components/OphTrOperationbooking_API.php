@@ -297,7 +297,7 @@ class OphTrOperationbooking_API extends BaseAPI
 				foreach ($dateList as $date) {
 					// TODO: Check for collisions, maybe in Session validation code
 					$new_session = new OphTrOperationbooking_Operation_Session;
-					foreach (array('start_time','end_time','consultant','anaesthetist','paediatric','general_anaesthetic','theatre_id') as $attribute) {
+					foreach (array('start_time','end_time','consultant','anaesthetist','paediatric','general_anaesthetic','theatre_id','default_admission_time') as $attribute) {
 						$new_session->$attribute = $sequence->$attribute;
 					}
 					$new_session->date = $date;

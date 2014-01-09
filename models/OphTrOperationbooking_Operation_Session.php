@@ -70,7 +70,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		return array(
 			array('sequence_id, date, start_time, end_time, theatre_id', 'required'),
 			array('sequence_id, theatre_id', 'length', 'max' => 10),
-			array('comments, available, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id, theatre_id, start_time, end_time, deleted', 'safe'),
+			array('comments, available, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id, theatre_id, start_time, end_time, deleted, default_admission_time', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, sequence_id, theatre_id, date, start_time, end_time, comments, available, firm_id, site_id, weekday, consultant, paediatric, anaesthetist, general_anaesthetic', 'safe', 'on'=>'search'),
@@ -125,6 +125,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 			'start_time' => 'Start time',
 			'end_time' => 'End time',
 			'general_anaesthetic' => 'General anaesthetic',
+			'default_admission_time' => 'Default admission time',
 		);
 	}
 

@@ -155,7 +155,7 @@ class BookingController extends BaseEventTypeController
 						throw $e;
 					}
 				} else {
-					$_POST['Booking']['admission_time'] = ($session['start_time'] == '13:30:00') ? '12:00' : date('H:i', strtotime('-1 hour', strtotime($session['start_time'])));
+					$_POST['Booking']['admission_time'] = substr($session['default_admission_time'],0,5);
 					$_POST['Booking']['ward_id'] = key($operation->getWardOptions($_session));
 					$_POST['Session']['comments'] = $session['comments'];
 					$_POST['Operation']['comments'] = $operation->comments;
