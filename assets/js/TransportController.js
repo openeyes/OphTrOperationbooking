@@ -79,9 +79,9 @@ $(document).ready(function() {
 
 		$('#csvform input[name="date_from"]').val($('#transport_date_from').val());
 		$('#csvform input[name="date_to"]').val($('#transport_date_to').val());
-		$('#csvform input[name="include_bookings"]').val($('#include_bookings').val());
-		$('#csvform input[name="include_reschedules"]').val($('#include_reschedules').val());
-		$('#csvform input[name="include_cancellations"]').val($('#include_cancellations').val());
+		$('#csvform input[name="include_bookings"]').val($('#include_bookings').is(':checked') ? 1 : 0);
+		$('#csvform input[name="include_reschedules"]').val($('#include_reschedules').is(':checked') ? 1 : 0);
+		$('#csvform input[name="include_cancellations"]').val($('#include_cancellations').is(':checked') ? 1 : 0);
 		$('#csvform').submit();
 	});
 
