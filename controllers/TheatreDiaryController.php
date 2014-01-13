@@ -147,7 +147,11 @@ class TheatreDiaryController extends BaseModuleController
 	{
 		Audit::add('diary','search',serialize($_POST));
 
-		$list = $this->renderPartial('_list', array('diary' => $this->getDiaryTheatres($_POST), 'assetPath'=> $this->assetPath), true, true);
+		$list = $this->renderPartial('_list', array(
+			'diary' => $this->getDiaryTheatres($_POST),
+			'assetPath'=> $this->assetPath,
+			'ward_id' => @$_POST['ward-id'],
+		), true, true);
 
 		echo json_encode(array('status'=>'success','data'=>$list));
 	}
@@ -196,8 +200,8 @@ class TheatreDiaryController extends BaseModuleController
 
 		$criteria = new CDbCriteria;
 
-		$criteria->addCondition("date >= :startDate");
-		$criteria->addCondition("date <= :endDate");
+		$criteria->addCondition("sessions.date >= :startDate");
+		$criteria->addCondition("sessions.date <= :endDate");
 
 		$criteria->params = array(
 			':startDate' => $startDate,
@@ -213,9 +217,9 @@ class TheatreDiaryController extends BaseModuleController
 				$criteria->addCondition("`t`.site_id = :siteId");
 				$criteria->params[':siteId'] = $data['site-id'];
 			}
-			if (@$data['theatre-id']) {
-				$criteria->addCondition("theatre.id = :theatreId");
-				$criteria->params[':theatreId'] = $data['theatre-id'];
+			if (@$_POST['theatre-id']) {
+				$criteria->addCondition("`t`.id = :theatreId");
+				$criteria->params[':theatreId'] = $_POST['theatre-id'];
 			}
 			if (@$data['subspecialty-id']) {
 				$criteria->addCondition("subspecialty_id = :subspecialtyId");
@@ -225,14 +229,12 @@ class TheatreDiaryController extends BaseModuleController
 				$criteria->addCondition("firm.id = :firmId");
 				$criteria->params[':firmId'] = $data['firm-id'];
 			}
-			if (@$data['ward-id']) {
-				$criteria->addCondition("ward.id = :wardId");
-				$criteria->params[':wardId'] = $data['ward-id'];
+			if (@$_POST['ward-id']) {
+				$criteria->addCondition("activeBookings.ward_id = :wardId");
+				$criteria->params[':wardId'] = $_POST['ward-id'];
 			}
 		}
 
-		//$criteria->addCondition("(event.deleted = :deleted or event.deleted is null) and (episode.deleted = :deleted or episode.deleted is null)");
-		//$criteria->params[':deleted'] = 0;
 		$criteria->order = 'site.short_name, `t`.display_order, `t`.code, sessions.date, sessions.start_time, sessions.end_time';
 
 		Yii::app()->event->dispatch('start_batch_mode');
@@ -243,31 +245,17 @@ class TheatreDiaryController extends BaseModuleController
 				'sessions' => array(
 					'with' => array(
 						'activeBookings' => array(
-							'order' => 'activeBookings.display_order',
-							'with' => array(
-								'operation.anaesthetic_type',
-								'operation.priority',
-								'operation.event.episode.patient',
-								'operation.event.episode.patient.episodes',
-								'operation.event.episode.patient.contact',
-								'operation.event.episode.patient.allergies',
-								'operation.procedures',
-								'operation.eye',
-								'ward',
-								'user',
-								'usermodified'
-							),
+							// Don't eager load as activeBookings need to be queried again in _session view
+							'select' => false,
+							// Override with to supress joins
+							'with' => array(),
 						),
-						'firm' => array(
-							'with' => array(
-								'serviceSubspecialtyAssignment' => array(
-									'with' => 'subspecialty',
-								),
-							),
-						),
+						'firm',
+						'firm.serviceSubspecialtyAssignment',
+						'firm.serviceSubspecialtyAssignment.subspecialty',
 						'session_user',
 						'session_usermodified',
-						'theatre',
+
 					),
 				),
 			))
