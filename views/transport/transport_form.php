@@ -50,7 +50,7 @@
 	<br />Telephone: <?php echo $patient->primary_phone ?>
 </p>
 <p>
-	<?php echo $patient->fullname ?> is due to attend <strong><?php echo $booking->ward->name ?>, <?php echo $booking->ward->site->name ?></strong> at <strong><?php echo date('g:i A', strtotime($booking->admission_time)) ?></strong>
+	<?php echo $patient->fullname ?> is due to attend <strong><?php echo $booking ? $booking->ward->name.', ' : '' ?><?php echo $booking->theatre->site->name?></strong> at <strong><?php echo date('g:i A', strtotime($booking->admission_time)) ?></strong>
 </p>
 <table>
 	<tr>

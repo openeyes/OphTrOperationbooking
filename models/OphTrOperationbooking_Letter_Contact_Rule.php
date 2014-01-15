@@ -125,10 +125,10 @@ class OphTrOperationbooking_Letter_Contact_Rule extends BaseTree
 			));
 	}
 
-	public function applies($site_id, $subspecialty_id, $theatre_id, $firm_id)
+	public function applies($site_id, $subspecialty_id, $theatre_id, $firm_id, $is_child)
 	{
-		foreach (array('site_id','subspecialty_id','theatre_id','firm_id') as $field) {
-			if ($this->{$field} && $this->{$field} != ${$field}) {
+		foreach (array('site_id','subspecialty_id','theatre_id','firm_id','is_child') as $field) {
+			if ($this->{$field} !== null && $this->{$field} != ${$field}) {
 				return false;
 			}
 		}

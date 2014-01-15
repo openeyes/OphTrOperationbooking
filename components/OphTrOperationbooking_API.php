@@ -208,6 +208,7 @@ class OphTrOperationbooking_API extends BaseAPI
 		// Get sequences
 		$today = date('Y-m-d');
 		$initialEndDate = empty($args) ? strtotime('+13 months') : strtotime($args[0]);
+
 		$sequences = OphTrOperationbooking_Operation_Sequence::model()->findAll(
 			'start_date <= :end_date AND (end_date IS NULL or end_date >= :today)',
 			array(':end_date'=>date('Y-m-d', $initialEndDate), ':today'=>$today)
@@ -296,7 +297,7 @@ class OphTrOperationbooking_API extends BaseAPI
 				foreach ($dateList as $date) {
 					// TODO: Check for collisions, maybe in Session validation code
 					$new_session = new OphTrOperationbooking_Operation_Session;
-					foreach (array('start_time','end_time','consultant','anaesthetist','paediatric','general_anaesthetic','theatre_id') as $attribute) {
+					foreach (array('start_time','end_time','consultant','anaesthetist','paediatric','general_anaesthetic','theatre_id','default_admission_time') as $attribute) {
 						$new_session->$attribute = $sequence->$attribute;
 					}
 					$new_session->date = $date;

@@ -149,7 +149,7 @@ $sessions = $sessions['data'];
 				<td><?php echo $session->firm ? $session->firm->nameAndSubspecialtyCode: 'Emergency'?></td>
 				<td><?php echo $session->theatre->name?></td>
 				<td><?php echo $session->NHSDate('date')?></td>
-				<td><?php echo $session->start_time?> - <?php echo $session->end_time?></td>
+				<td><?php echo $session->start_time?> - <?php echo $session->end_time?><br/>adm: <?php echo $session->default_admission_time?></td>
 				<td><?php echo $session->weekdayText?></td>
 				<td><?php echo $session->available ? 'Yes' : 'No'?></td>
 				<td>

@@ -27,12 +27,12 @@
 			</div>
 			<div class="button-bar">
 
-				<?php if ($this->canPrint()) {?>
+				<?php if ($this->checkAccess('OprnPrint')) {?>
 					<button id="btn_print_all" class="small">Print all</button>
 					<button id="btn_print" class="small">Print selected</button>
 				<?php }?>
 				<?php if (Yii::app()->user->checkAccess('admin')) {?>
-					<div class="panel orange">
+					<div class="panel admin">
 						<label for="adminconfirmdate">Set latest letter sent to be:</label>
 						<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
 								'name'=>'adminconfirmdate',
@@ -49,7 +49,7 @@
 								)
 							))?>
 					</div>
-					<div class="panel orange">
+					<div class="panel admin">
 						<select name="adminconfirmto" id="adminconfirmto">
 							<option value="OFF">Off</option>
 							<option value="noletters">No letters sent</option>
@@ -60,7 +60,7 @@
 						</select>
 					</div>
 				<?php }?>
-				<?php if (BaseController::checkUserLevel(4)) { ?>
+				<?php if ($this->checkAccess('OprnConfirmBookingLetterPrinted')) { ?>
 					<button type="submit" class="small secondary" id="btn_confirm_selected">
 						Confirm selected
 					</button>

@@ -437,6 +437,33 @@ class AdminController extends ModuleAdminController
 		echo json_encode(array());
 	}
 
+	public function actionAddWaitingListContactRule()
+	{
+		$rule = new OphTrOperationbooking_Waiting_List_Contact_Rule;
+
+		$errors = array();
+
+		if (!empty($_POST)) {
+			$rule->attributes = $_POST['OphTrOperationbooking_Waiting_List_Contact_Rule'];
+
+			if (!$rule->save()) {
+				$errors = $rule->getErrors();
+			} else {
+				Audit::add('admin','update',serialize($_POST),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Waiting_List_Contact_Rule'));
+				$this->redirect(array('/OphTrOperationbooking/admin/viewWaitingListContactRules'));
+			}
+		}
+
+		$this->jsVars['OE_rule_model'] = 'WaitingListContactRule';
+
+		Audit::add('admin','list',null,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Waiting_List_Contact_Rule'));
+
+		$this->render('editwaitinglistcontactrule',array(
+			'rule' => $rule,
+			'errors' => $errors,
+		));
+	}
+
 	public function actionEditWaitingListContactRule($id)
 	{
 		if (!$rule = OphTrOperationbooking_Waiting_List_Contact_Rule::model()->findByPk($id)) {

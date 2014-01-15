@@ -44,6 +44,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.
+	 * @param string $className
 	 * @return the static model class
 	 */
 	public static function model($className = __CLASS__)
@@ -69,7 +70,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 		return array(
 			array('sequence_id, date, start_time, end_time, theatre_id', 'required'),
 			array('sequence_id, theatre_id', 'length', 'max' => 10),
-			array('comments, available, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id, theatre_id, start_time, end_time, deleted', 'safe'),
+			array('comments, available, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id, theatre_id, start_time, end_time, deleted, default_admission_time', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, sequence_id, theatre_id, date, start_time, end_time, comments, available, firm_id, site_id, weekday, consultant, paediatric, anaesthetist, general_anaesthetic', 'safe', 'on'=>'search'),
@@ -100,8 +101,16 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
 			'theatre' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Theatre', 'theatre_id'),
 			'firm' => array(self::BELONGS_TO, 'Firm', 'firm_id'),
-			'activeBookings' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Booking', 'session_id', 'on' => 'booking_cancellation_date is null'),
 			'sequence' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Sequence', 'sequence_id'),
+			'activeBookings' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Booking', 'session_id',
+				'on' => 'activeBookings.booking_cancellation_date is null',
+				'order' => 'activeBookings.display_order ASC',
+				'with' => array(
+					'operation',
+					'operation.event' => array('joinType' => 'join'),
+					'operation.event.episode' => array('joinType' => 'join')
+				),
+			),
 		);
 	}
 
@@ -117,6 +126,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 			'start_time' => 'Start time',
 			'end_time' => 'End time',
 			'general_anaesthetic' => 'General anaesthetic',
+			'default_admission_time' => 'Default admission time',
 		);
 	}
 
@@ -278,4 +288,26 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 
 		return parent::beforeSave();
 	}
+
+	/**
+	 * Get the next session for the given firm id
+	 *
+	 * @param $firm_id
+	 * @return OphTrOperationbooking_Operation_Session|null
+	 */
+	public static function getNextSessionForFirmId($firm_id)
+	{
+		$criteria = new CDbCriteria;
+		$criteria->addCondition("firm_id = :firm_id and date >= :date");
+		$criteria->params = array(
+			'firm_id' => $firm_id,
+			'date' => date('Y-m-d'),
+		);
+		$criteria->order = 'date asc';
+
+		if ($session = OphTrOperationbooking_Operation_Session::model()->find($criteria)) {
+			return $session;
+		}
+	}
+
 }

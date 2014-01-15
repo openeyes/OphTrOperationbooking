@@ -38,6 +38,7 @@
 	<?php echo $form->dropDownList($sequence,'weekday',array(1=>'Monday',2=>'Tuesday',3=>'Wednesday',4=>'Thursday',5=>'Friday',6=>'Saturday',7=>'Sunday'),array('empty'=>'- Weekday -'))?>
 	<?php echo $form->textField($sequence,'start_time',array(),array(),array('field'=>2))?>
 	<?php echo $form->textField($sequence,'end_time',array(),array(),array('field'=>2))?>
+	<?php echo $form->textField($sequence,'default_admission_time',array(),array(),array('field'=>2))?>
 	<?php echo $form->dropDownList($sequence,'interval_id',CHtml::listData(OphTrOperationbooking_Operation_Sequence_Interval::model()->findAll(array('order'=>'name')),'id','name'))?>
 	<?php echo $form->radioBoolean($sequence,'consultant')?>
 	<?php echo $form->radioBoolean($sequence,'paediatric')?>

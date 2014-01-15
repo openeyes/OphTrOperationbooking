@@ -19,11 +19,19 @@
 
 class BookingController extends BaseEventTypeController
 {
+	static protected $action_types = array(
+		'schedule' => self::ACTION_TYPE_EDIT,
+		'reschedule' => self::ACTION_TYPE_EDIT,
+		'rescheduleLater' => self::ACTION_TYPE_EDIT,
+	);
+
 	public $reschedule = false;
+	protected $operation_required = false;
+	/** @var Element_OphTrOperation_Operation $operation */
+	protected $operation = null;
 
 	protected function beforeAction($action)
 	{
-		$this->assetPath = Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.'.$this->getModule()->name.'.assets'), false, -1, YII_DEBUG);
 		Yii::app()->clientScript->registerScriptFile($this->assetPath.'/js/booking.js');
 		Yii::app()->clientScript->registerScriptFile('/js/jquery.validate.min.js');
 		Yii::app()->clientScript->registerScriptFile('/js/additional-validators.js');
@@ -31,36 +39,44 @@ class BookingController extends BaseEventTypeController
 		return parent::beforeAction($action);
 	}
 
-	public function accessRules()
+	/**
+	 * (non-phpdoc)
+	 * @see BaseEventTypeController::initAction($action)
+	 */
+	protected function initAction($action)
 	{
-		return array(
-			// Level 3 or above can do anything
-			array('allow',
-				'expression' => 'BaseController::checkUserLevel(4)',
-			),
-			array('deny'),
-		);
-	}
+		parent::initAction($action);
 
-	public function actionSchedule($id)
-	{
-		if (!$event = Event::model()->findByPk($id)) {
-			throw new Exception('Unable to find event: '.$id);
+		if (!$this->event && in_array(strtolower($action), array('schedule', 'reschedule', 'reschedulelater'))) {
+			$this->initWithEventId(@$_GET['id']);
+			$this->operation_required = true;
 		}
 
+		// setup the Operation that we are concerned with
+		if ($this->operation_required) {
+			if (!$this->operation = Element_OphTrOperationbooking_Operation::model()->find('event_id = ?', array($this->event->id))) {
+				throw new Exception('Operation not found');
+			};
+		}
+
+	}
+
+	/**
+	 * Action to schedule an event operation
+	 *
+	 * @throws Exception
+	 */
+	public function actionSchedule()
+	{
 		if (!$this->title) {
 			$this->title = "Schedule operation";
 		}
 
-		if (!$operation = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($id))) {
-			throw new Exception('Operation not found');
-		}
+		$operation = $this->operation;
 
 		if ($operation->status->name == 'Cancelled') {
-			return $this->redirect(array('default/view/'.$event->id));
+			return $this->redirect(array('default/view/'.$this->event->id));
 		}
-
-		$this->patient = $event->episode->patient;
 
 		if (@$_GET['firm_id']) {
 			if ($_GET['firm_id'] == 'EMG') {
@@ -72,7 +88,7 @@ class BookingController extends BaseEventTypeController
 				}
 			}
 		} else {
-			$firm = Firm::model()->findByPk(Yii::app()->session['selected_firm_id']);
+			$firm = $this->firm;
 		}
 
 		if (preg_match('/^([0-9]{4})([0-9]{2})$/',@$_GET['date'],$m)) {
@@ -91,6 +107,7 @@ class BookingController extends BaseEventTypeController
 				$criteria->addCondition('`t`.booking_cancellation_date is null');
 				$criteria->addCondition('event.deleted = 0');
 				$criteria->order = 'display_order ASC';
+				//FIXME: this should be retrieved by a method on the operation
 				$bookings = OphTrOperationbooking_Operation_Booking::model()->with(array('operation'=>array('with'=>'event')))->findAll($criteria);
 
 				foreach ($theatres as $theatre) {
@@ -106,15 +123,43 @@ class BookingController extends BaseEventTypeController
 						throw new Exception('Operation not found: '.$_POST['Booking']['element_id']);
 					}
 
-					if (($result = $operation->schedule($_POST['Booking'], $_POST['Operation']['comments'], $_POST['Session']['comments'], $this->reschedule)) !== true) {
-						$errors = $result;
-					} else {
+					$transaction = Yii::app()->db->beginTransaction();
+
+					try {
+						$cancellation_data = array(
+							'submitted' => isset($_POST['cancellation_reason']),
+							'reason_id' => @$_POST['cancellation_reason'],
+							'comment' => @$_POST['cancellation_comment']
+						);
+						if ($result = $operation->schedule(
+								$_POST['Booking'],
+								$_POST['Operation']['comments'],
+								$_POST['Session']['comments'],
+								$_POST['Operation']['comments_rtt'],
+								($this->reschedule !== true),
+								$cancellation_data) !== true) {
+							$errors = $result;
+						} else {
+							$transaction->commit();
+							$this->redirect(array('default/view/'.$operation->event_id));
+						}
+					}
+					catch (RaceConditionException $e) {
+						$transaction->rollback();
+						Yii::app()->user->setFlash('notice',$e->getMessage());
 						$this->redirect(array('default/view/'.$operation->event_id));
 					}
+					catch (Exception $e) {
+						// no handling of this at the moment
+						$transaction->rollback();
+						throw $e;
+					}
 				} else {
-					$_POST['Booking']['admission_time'] = ($session['start_time'] == '13:30:00') ? '12:00' : date('H:i', strtotime('-1 hour', strtotime($session['start_time'])));
+					$_POST['Booking']['admission_time'] = substr($session['default_admission_time'],0,5);
+					$_POST['Booking']['ward_id'] = key($operation->getWardOptions($_session));
 					$_POST['Session']['comments'] = $session['comments'];
 					$_POST['Operation']['comments'] = $operation->comments;
+					$_POST['Operation']['comments_rtt'] = $operation->comments_rtt;
 				}
 			}
 		} elseif ($operation->booking) {
@@ -124,7 +169,7 @@ class BookingController extends BaseEventTypeController
 		$this->processJsVars();
 
 		$this->render('schedule', array(
-			'event' => $event,
+			'event' => $this->event,
 			'operation' => $operation,
 			'firm' => $firm,
 			'firmList' => Firm::model()->listWithSpecialties,
@@ -140,6 +185,11 @@ class BookingController extends BaseEventTypeController
 		));
 	}
 
+	/**
+	 * Reschedule an operation for the given event
+	 *
+	 * @param $id
+	 */
 	public function actionReschedule($id)
 	{
 		$this->title = "Reschedule operation";
@@ -147,18 +197,16 @@ class BookingController extends BaseEventTypeController
 		return $this->actionSchedule($id);
 	}
 
-	public function actionRescheduleLater($id)
+	/**
+	 * Cancels and reschedules an operation
+	 *
+	 * @throws Exception
+	 */
+	public function actionRescheduleLater()
 	{
-		if (!$event = Event::model()->findByPk($id)) {
-			throw new Exception('Unable to find event: '.$id);
-		}
-
-		if (!$operation = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($id))) {
-			throw new Exception('Operation not found');
-		}
-
+		$operation = $this->operation;
 		if (in_array($operation->status->name,array('Requires scheduling','Requires rescheduling','Cancelled'))) {
-			return $this->redirect(array('default/view/'.$event->id));
+			return $this->redirect(array('default/view/'.$this->event->id));
 		}
 
 		$this->patient = $operation->event->episode->patient;
@@ -180,7 +228,7 @@ class BookingController extends BaseEventTypeController
 				$booking->cancel($reason,$_POST['cancellation_comment'],false);
 				$operation->setStatus('Requires rescheduling');
 
-				$this->redirect(array('default/view/'.$event->id));
+				$this->redirect(array('default/view/'.$this->event->id));
 			}
 		}
 

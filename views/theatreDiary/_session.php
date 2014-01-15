@@ -63,7 +63,7 @@
 			<li class="selected">
 				<a class="aBtn_inactive" href="#">View</a>
 			</li>
-			<?php if (BaseController::checkUserLevel(4)) { ?>
+			<?php if ($this->checkAccess('OprnEditTheatreSession')) { ?>
 				<li class="aBtn edit-event">
 					<a href="#" rel="<?php echo $session->id?>" class="edit-session">Edit</a>
 				</li>
@@ -105,10 +105,33 @@
 						</tr>
 						</thead>
 						<tbody id="tbody_<?php echo $session->id?>">
-						<?php foreach ($session->activeBookings as $booking) {
-							// FIXME: this conditional is here because the query that is built to pull in the activebookings is not excluding those events that have been deleted
-							// this works around that fact.
-							if ($booking->operation->event) { ?>
+						<?php
+							$criteria = array(
+								'with' => array(
+									'operation',
+									'operation.anaesthetic_type',
+									'operation.priority',
+									'operation.event' => array('joinType' => 'join'),
+									'operation.event.episode' => array('joinType' => 'join'),
+									'operation.event.episode.patient',
+									'operation.event.episode.patient.episodes',
+									'operation.event.episode.patient.contact',
+									'operation.event.episode.patient.allergies',
+									'operation.procedures',
+									'operation.op_usermodified',
+									'operation.op_user',
+									'operation.eye',
+									'ward',
+									'user',
+								)
+							);
+							if((int)$ward_id) {
+								$criteria['condition'] = 'ward.id = :ward_id';
+								$criteria['params'][':ward_id'] = (int)$ward_id;
+							}
+							$active_bookings = $session->activeBookings($criteria);
+						?>
+						<?php foreach ($active_bookings as $booking) { ?>
 								<tr id="oprow_<?php echo $booking->element_id?>">
 									<td class="session">
 										<input style="display: none;" type="text" class="admitTime diaryEditMode" name="admitTime_<?php echo $booking->element_id?>" data-id="<?php echo $session->id?>" data-operation-id="<?php echo $booking->element_id?>" value="<?php echo substr($booking->admission_time,0,5)?>" size="4">
@@ -124,7 +147,7 @@
 									<td class="operation leftAlign"><?php echo $booking->operation->procedures ? '['.$booking->operation->eye->adjective.'] '.$booking->operation->getProceduresCommaSeparated() : 'No procedures'?></td>
 									<td class=""><?php echo $booking->operation->priority->name?></td>
 									<td class="anesthetic"><?php echo $booking->operation->anaesthetic_type->name?></td>
-									<td class="ward"><?php echo $booking->ward->name?></td>
+									<td class="ward"><?php echo $booking->ward ? $booking->ward->name : 'None'?></td>
 									<td class="alerts">
 										<?php if ($booking->operation->event->episode->patient->gender == 'M') {?>
 											<img src="<?php echo $assetPath?>/img/diaryIcons/male.png" alt="male" title="male" width="17" height="17" />
@@ -143,6 +166,10 @@
 										<?php if ($booking->operation->comments && preg_match('/\w/', $booking->operation->comments)) {?>
 											<img src="<?php echo $assetPath?>/img/diaryIcons/comment.png" alt="<?php echo htmlentities($booking->operation->comments, ENT_COMPAT, 'UTF-8') ?>" title="<?php echo htmlentities($booking->operation->comments, ENT_COMPAT, 'UTF-8') ?>" width="17" height="17" />
 										<?php }?>
+										<?php
+										if ($booking->operation->comments_rtt && preg_match('/\w/', $booking->operation->comments_rtt)) {?>
+											<img src="<?php echo $assetPath?>/img/diaryIcons/comment_rtt.png" alt="<?php echo htmlentities($booking->operation->comments_rtt, ENT_COMPAT, 'UTF-8') ?>" title="<?php echo htmlentities($booking->operation->comments_rtt, ENT_COMPAT, 'UTF-8') ?>" width="17" height="17" />
+										<?php }?>
 										<?php if ($booking->operation->overnight_stay) {?>
 											<img src="<?php echo $assetPath?>/img/diaryIcons/overnight.png" alt="Overnight stay required" title="Overnight stay required" width="17" height="17" />
 										<?php }?>
@@ -152,8 +179,7 @@
 										<img src="<?php echo $assetPath?>/img/diaryIcons/booked_user.png" alt="Created by: <?php echo $booking->user->fullName."\n"?>Last modified by: <?php echo $booking->usermodified->fullName?>" title="Created by: <?php echo $booking->user->fullName."\n"?>Last modified by: <?php echo $booking->usermodified->fullName?>" width="17" height="17" />
 									</td>
 								</tr>
-							<?php }
-						}?>
+						<?php } ?>
 						</tbody>
 						<tfoot>
 						<tr>
@@ -178,7 +204,7 @@
 					</table>
 				</div>
 				<div class="sessionComments large-3 column">
-					<?php if (Yii::app()->user->checkAccess('purplerinse')) {?>
+					<?php if ($this->checkAccess('OprnEditTheatreSessionDetails')) {?>
 						<div class="panel session-options hidden diaryEditMode" data-id="<?php echo $session->id?>">
 							<input type="hidden" name="consultant_<?php echo $session->id?>" value="0" />
 							<input type="hidden" name="paediatric_<?php echo $session->id?>" value="0" />

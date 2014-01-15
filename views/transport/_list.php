@@ -55,7 +55,7 @@
 						<td><?php echo date('j-M-Y',strtotime($operation->latestBooking->session_date))?></td>
 						<td><?php echo $operation->latestBooking->session_start_time?></td>
 						<td><?php echo $operation->latestBooking->theatre->site->shortName?></td>
-						<td><?php echo $operation->latestBooking->ward->name?></td>
+						<td><?php echo $operation->latestBooking->ward ? $operation->latestBooking->ward->name : 'None'?></td>
 						<td><?php echo $operation->transportStatus?></td>
 						<td><?php echo $operation->event->episode->firm ? $operation->event->episode->firm->pas_code : 'Support service'?></td>
 						<td><?php echo $operation->event->episode->firm ? $operation->event->episode->firm->serviceSubspecialtyAssignment->subspecialty->ref_spec : ''?></td>

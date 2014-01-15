@@ -69,7 +69,7 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecordVersioned
 		// will receive user inputs.
 		return array(
 			array('theatre_id, start_date, start_time, end_time, interval_id', 'required'),
-			array('end_date, week_selection, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id, theatre_id, start_date, start_time, end_time, interval_id, deleted, weekday', 'safe'),
+			array('end_date, week_selection, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id, theatre_id, start_date, start_time, end_time, interval_id, deleted, weekday, default_admission_time', 'safe'),
 			array('start_date', 'date', 'format'=>'yyyy-MM-dd'),
 			array('start_time', 'date', 'format'=>array('H:mm', 'H:mm:ss')),
 			array('end_time', 'date', 'format'=>array('H:mm', 'H:mm:ss')),
@@ -119,6 +119,7 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecordVersioned
 			'end_time' => 'End time',
 			'interval_id' => 'Interval',
 			'general_anaesthetic' => 'General anaesthetic',
+			'default_admission_time' => 'Default admission time',
 		);
 	}
 

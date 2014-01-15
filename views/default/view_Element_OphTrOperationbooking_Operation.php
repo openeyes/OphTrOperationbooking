@@ -197,34 +197,29 @@
 <?php }?>
 
 <?php
-if ($element->status->name != 'Cancelled' && $this->event->editable) {
+if ($element->status->name != 'Cancelled' && $this->checkEditAccess()) {
 	if (empty($element->booking)) {
-		if ($element->letterType && $this->canPrint()) {
+		if ($element->letterType && $this->checkPrintAccess()) {
 			$print_letter_options = null;
 			if (!$element->has_gp || !$element->has_address) {
 				$print_letter_options['disabled'] = true;
 			}
-			if (BaseController::checkUserLevel(3)) {
-				$this->event_actions[] = EventAction::button("Print ".$element->letterType." letter", 'print-letter', $print_letter_options, array('id' => 'btn_print-letter', 'class'=>'button small'));
-			}
+			$this->event_actions[] = EventAction::button("Print ".$element->letterType." letter", 'print-letter', $print_letter_options, array('id' => 'btn_print-letter', 'class'=>'button small'));
 		}
-		if (BaseController::checkUserLevel(4)) {
-			$this->event_actions[] = EventAction::link("Schedule now",
-				Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/schedule/'.$element->event_id),
-				array('level'=>'secondary'),
-				array('id' => 'btn_schedule-now', 'class'=>'button small'));
-		}
+		$this->event_actions[] = EventAction::link("Schedule now",
+			Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/schedule/'.$element->event_id),
+			array('level'=>'secondary'),
+			array('id' => 'btn_schedule-now', 'class'=>'button small'));
 	} else {
-		if ($this->canPrint()) {
+		if ($this->checkPrintAccess()) {
 			$print_letter_options = null;
 			if (!$element->has_address) {
 				$print_letter_options['disabled'] = true;
 			}
-			if (BaseController::checkUserLevel(3)) {
-				$this->event_actions[] = EventAction::button("Print letter", 'print-letter', $print_letter_options, array('id' => 'btn_print-admissionletter','class'=>'small button'));
-			}
+			$this->event_actions[] = EventAction::button("Print letter", 'print-letter', $print_letter_options, array('id' => 'btn_print-admissionletter','class'=>'small button'));
+
 		}
-		if (BaseController::checkUserLevel(4) && $element->status->name != 'Completed') {
+		if ($element->status->name != 'Completed') {
 			$this->event_actions[] = EventAction::link("Reschedule now",
 				Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/reschedule/'.$element->event_id),
 				array('level' => 'secondary'),
@@ -235,11 +230,11 @@ if ($element->status->name != 'Cancelled' && $this->event->editable) {
 				array('id' => 'btn_reschedule-later','class' => 'button small'));
 		}
 	}
-}
-if (BaseController::checkUserLevel(4) && $element->status->name != 'Cancelled' && $element->status->name != 'Completed' && $element->event->episode->editable) {
-	$this->event_actions[] = EventAction::link("Cancel operation",
-		Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/default/cancel/'.$element->event_id),
-		array(),
-		array('id' => 'btn_cancel-operation', 'class'=>'warning button small'));
+	if ($element->status->name != 'Completed') {
+		$this->event_actions[] = EventAction::link("Cancel operation",
+			Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/default/cancel/'.$element->event_id),
+			array(),
+			array('id' => 'btn_cancel-operation', 'class'=>'warning button small'));
+	}
 }
 ?>

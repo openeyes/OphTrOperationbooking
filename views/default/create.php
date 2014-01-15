@@ -33,7 +33,7 @@
 		<input type="hidden" name="schedule_now" id="schedule_now" value="0" />
 		<?php
 		$this->displayErrors($errors);
-		$this->renderDefaultElements($this->action->id, $form);
+		$this->renderOpenElements($this->action->id, $form);
 		$this->renderOptionalElements($this->action->id, $form);
 		$this->displayErrors($errors, true);
 		?>

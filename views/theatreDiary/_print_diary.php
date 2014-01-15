@@ -73,7 +73,7 @@ foreach ($diary as $i => $theatre) {?>
 								<td><?php echo $booking->operation->event->episode->patient->hos_num?></td>
 								<td><?php echo strtoupper($booking->operation->event->episode->patient->last_name)?>, <?php echo $booking->operation->event->episode->patient->first_name?></td>
 								<td><?php echo $booking->operation->event->episode->patient->age?></td>
-								<td><?php echo htmlspecialchars($booking->ward->name)?></td>
+								<td><?php echo $booking->ward ? htmlspecialchars($booking->ward->name) : 'None'?></td>
 								<td><?php echo htmlspecialchars($booking->operation->anaesthetic_type->name)?></td>
 								<td><?php echo $booking->operation->priority->name?></td>
 								<td style="max-width: 500px; word-wrap:break-word; overflow: hidden;">

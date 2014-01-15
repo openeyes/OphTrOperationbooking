@@ -42,7 +42,7 @@
 	<?php }?>
 
 	<?php
-	$this->renderDefaultElements($this->action->id);
+	$this->renderOpenElements($this->action->id);
 	$this->renderOptionalElements($this->action->id);
 	?>
 

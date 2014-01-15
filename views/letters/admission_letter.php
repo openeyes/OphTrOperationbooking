@@ -44,7 +44,7 @@
 		<tr>
 			<th>Ward:</th>
 			<td>
-				<?php echo $operation->booking->ward->longName?>
+				<?php echo $operation->booking->ward ? $operation->booking->ward->longName : 'None'?>
 			</td>
 		</tr>
 		<tr>
@@ -105,12 +105,14 @@
 		<li>
 			Bring this letter with you on date of admission
 		</li>
-		<li>
-			Please go directly to <?php echo $operation->booking->ward->directionsText?>
-			<?php if ($patient->isChild()) {?>
-				at the time of your child's admission
-			<?php }?>
-		</li>
+		<?php if ($operation->booking->ward) {?>
+			<li>
+				Please go directly to <?php echo $operation->booking->ward->directionsText?>
+				<?php if ($patient->isChild()) {?>
+					at the time of your child's admission
+				<?php }?>
+			</li>
+		<?php }?>
 		<?php if (!$patient->isChild()) {?>
 			<li>
 				You must not drive yourself to or from hospital
