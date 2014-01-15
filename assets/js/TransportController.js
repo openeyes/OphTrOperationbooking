@@ -108,7 +108,7 @@ function initAjaxPagination() {
 
 function transport_load_tcis(url) {
 
-	$('#transportList tbody').html('<tr><td colspan="12"><img src="'+baseUrl+'/img/ajax-loader.gif" class="loader" /> loading data ...</td></tr>');
+	$('#transportList tbody').html('<tr><td colspan="12"><img src="'+baseUrl+OE_core_asset_path+'/img/ajax-loader.gif" class="loader" /> loading data ...</td></tr>');
 	$('#transportList tfoot').hide();
 
 	var get = '';

@@ -68,7 +68,7 @@ $this->beginContent('//patient/event_container'); ?>
 		<div class="row field-row">
 			<div class="large-10 column large-offset-2">
 				<button type="submit" class="warning" id="cancel">Cancel operation</button>
-				<img class="loader" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
+				<img class="loader" src="<?php echo Yii::app()->assetManager->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 			</div>
 		</div>
 	</div>

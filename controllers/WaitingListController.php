@@ -51,17 +51,6 @@ class WaitingListController extends BaseModuleController
 		);
 	}
 
-	protected function beforeAction($action)
-	{
-		if ($action->id == 'index') {
-			$assetPath = Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('application.modules.'.$this->getModule()->name.'.assets'), false, -1, YII_DEBUG);
-			$this->registerCssFile('module.css',$assetPath.'/css/module.css',10);
-			Yii::app()->clientScript->registerScriptFile($assetPath.'/js/WaitingListController.js');
-		}
-
-		return parent::beforeAction($action);
-	}
-
 	/**
 	* Lists all models.
 	*/

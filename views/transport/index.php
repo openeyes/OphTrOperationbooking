@@ -62,7 +62,7 @@
 								<button type="submit" class="small btn_transport_viewall">
 									View all
 								</button>
-								<img src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" class="loader" style="display: none;" />
+								<img src="<?php echo Yii::app()->assetManager->createUrl('img/ajax-loader.gif')?>" class="loader" style="display: none;" />
 							</div>
 							<div class="field-row">
 								<fieldset class="inline">

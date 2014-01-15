@@ -27,7 +27,7 @@
 
 <?php $this->beginWidget('CActiveForm', array('id'=>'session_form'.$session->id, 'action'=>Yii::app()->createUrl('/OphTrOperationbooking/theatreDiary/saveSession'), 'enableAjaxValidation'=>false))?>
 <div class="action_options diaryViewMode" data-id="<?php echo $session->id?>" style="float: right;">
-	<img id="loader_<?php echo $session->id?>" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="margin-right: 5px; margin-bottom: 4px; display: none;" />
+	<img id="loader_<?php echo $session->id?>" src="<?php echo Yii::app()->assetManager->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="margin-right: 5px; margin-bottom: 4px; display: none;" />
 </div>
 
 <div class="row">
@@ -257,7 +257,7 @@
 
 			<div class="row">
 				<div style="display: none;" data-id="<?php echo $session->id?>" class="large-12 column text-right theatre-booking-edit-actions diaryEditMode">
-					<img id="loader2_<?php echo $session->id?>" src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="margin-right: 2px; display: none" />
+					<img id="loader2_<?php echo $session->id?>" src="<?php echo Yii::app()->assetManager->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="margin-right: 2px; display: none" />
 					<button type="submit" class="secondary small theatre" id="btn_edit_session_save_<?php echo $session->id?>"><span class="button-span button-span-green">Save changes to session</span></button>
 					<button type="submit" class="warning small theatre" id="btn_edit_session_cancel_<?php echo $session->id?>"><span class="button-span button-span-red">Cancel</span></button>
 				</div>
