@@ -23,7 +23,7 @@ CREATE TABLE `et_ophtroperationbooking_diagnosis_version` (
 	CONSTRAINT `acv_et_ophtroperationbooking_diagnosis_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_et_ophtroperationbooking_diagnosis_ev_fk` FOREIGN KEY (`event_id`) REFERENCES `event` (`id`),
 	CONSTRAINT `acv_et_ophtroperationbooking_diagnosis_eye_id_fk` FOREIGN KEY (`eye_id`) REFERENCES `eye` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('et_ophtroperationbooking_diagnosis_version','id','int(10) unsigned NOT NULL');
@@ -49,14 +49,14 @@ CREATE TABLE `et_ophtroperationbooking_operation_version` (
 	`site_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`priority_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`decision_date` date DEFAULT NULL,
-	`comments` text COLLATE utf8_bin,
+	`comments` text,
 	`total_duration` smallint(5) unsigned NOT NULL,
 	`status_id` int(10) unsigned NOT NULL,
 	`anaesthetist_required` tinyint(1) unsigned DEFAULT '0',
 	`operation_cancellation_date` datetime DEFAULT NULL,
 	`cancellation_user_id` int(10) unsigned DEFAULT NULL,
 	`cancellation_reason_id` int(10) unsigned DEFAULT NULL,
-	`cancellation_comment` varchar(200) COLLATE utf8_bin NOT NULL,
+	`cancellation_comment` varchar(200) NOT NULL,
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 	`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -85,7 +85,7 @@ CREATE TABLE `et_ophtroperationbooking_operation_version` (
 	CONSTRAINT `acv_et_ophtroperationbooking_operation_priority_fk` FOREIGN KEY (`priority_id`) REFERENCES `ophtroperationbooking_operation_priority` (`id`),
 	CONSTRAINT `acv_et_ophtroperationbooking_operation_site_id_fk` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`),
 	CONSTRAINT `acv_et_ophtroperationbooking_operation_status_is_fk` FOREIGN KEY (`status_id`) REFERENCES `ophtroperationbooking_operation_status` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('et_ophtroperationbooking_operation_version','id','int(10) unsigned NOT NULL');
@@ -118,7 +118,7 @@ CREATE TABLE `et_ophtroperationbooking_scheduleope_version` (
 	CONSTRAINT `acv_et_ophtroperationbooking_scheduleope_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_et_ophtroperationbooking_scheduleope_ev_fk` FOREIGN KEY (`event_id`) REFERENCES `event` (`id`),
 	CONSTRAINT `acv_et_ophtroperationbooking_scheduleope_schedule_options_fk` FOREIGN KEY (`schedule_options_id`) REFERENCES `ophtroperationbooking_scheduleope_schedule_options` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('et_ophtroperationbooking_scheduleope_version','id','int(10) unsigned NOT NULL');
@@ -144,7 +144,7 @@ CREATE TABLE `ophtroperationbooking_admission_letter_warning_rule_version` (
 	`subspecialty_id` int(10) unsigned DEFAULT NULL,
 	`is_child` tinyint(1) unsigned DEFAULT NULL,
 	`show_warning` tinyint(1) unsigned NOT NULL DEFAULT '1',
-	`warning_text` text COLLATE utf8_bin NOT NULL,
+	`warning_text` text NOT NULL,
 	`emphasis` tinyint(1) unsigned NOT NULL DEFAULT '0',
 	`strong` tinyint(1) unsigned NOT NULL DEFAULT '0',
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -169,7 +169,7 @@ CREATE TABLE `ophtroperationbooking_admission_letter_warning_rule_version` (
 	CONSTRAINT `acv_ophtroperationbooking_admission_lwr_site_fk` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_admission_lwr_si_fk` FOREIGN KEY (`subspecialty_id`) REFERENCES `subspecialty` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_admission_lwr_ti_fk` FOREIGN KEY (`theatre_id`) REFERENCES `ophtroperationbooking_operation_theatre` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophtroperationbooking_admission_letter_warning_rule_version','id','int(10) unsigned NOT NULL');
@@ -187,7 +187,7 @@ CREATE TABLE `ophtroperationbooking_admission_letter_warning_rule_version` (
 		$this->execute("
 CREATE TABLE `ophtroperationbooking_admission_letter_warning_rule_type_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`name` varchar(64) COLLATE utf8_bin NOT NULL,
+	`name` varchar(64) NOT NULL,
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 	`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -197,7 +197,7 @@ CREATE TABLE `ophtroperationbooking_admission_letter_warning_rule_type_version` 
 	KEY `acv_ophtroperationbooking_admission_letter_wrt_cui_fk` (`created_user_id`),
 	CONSTRAINT `acv_ophtroperationbooking_admission_letter_wrt_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_admission_letter_wrt_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophtroperationbooking_admission_letter_warning_rule_type_version','id','int(10) unsigned NOT NULL');
@@ -221,9 +221,9 @@ CREATE TABLE `ophtroperationbooking_letter_contact_rule_version` (
 	`subspecialty_id` int(10) unsigned DEFAULT NULL,
 	`theatre_id` int(10) unsigned DEFAULT NULL,
 	`firm_id` int(10) unsigned DEFAULT NULL,
-	`refuse_telephone` varchar(64) COLLATE utf8_bin NOT NULL,
-	`health_telephone` varchar(64) COLLATE utf8_bin NOT NULL,
-	`refuse_title` varchar(64) COLLATE utf8_bin NOT NULL,
+	`refuse_telephone` varchar(64) NOT NULL,
+	`health_telephone` varchar(64) NOT NULL,
+	`refuse_title` varchar(64) NOT NULL,
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 	`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -244,7 +244,7 @@ CREATE TABLE `ophtroperationbooking_letter_contact_rule_version` (
 	CONSTRAINT `acv_ophtroperationbooking_letter_contact_rule_site_id_fk` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_letter_contact_rule_subspecialty_id_fk` FOREIGN KEY (`subspecialty_id`) REFERENCES `subspecialty` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_letter_contact_rule_theatre_id_fk` FOREIGN KEY (`theatre_id`) REFERENCES `ophtroperationbooking_operation_theatre` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophtroperationbooking_letter_contact_rule_version','id','int(10) unsigned NOT NULL');
@@ -276,7 +276,7 @@ CREATE TABLE `ophtroperationbooking_operation_booking_version` (
 	`transport_arranged_date` date DEFAULT NULL,
 	`booking_cancellation_date` datetime DEFAULT NULL,
 	`cancellation_reason_id` int(10) unsigned DEFAULT NULL,
-	`cancellation_comment` varchar(200) COLLATE utf8_bin NOT NULL,
+	`cancellation_comment` varchar(200) NOT NULL,
 	`cancellation_user_id` int(10) unsigned DEFAULT NULL,
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
@@ -299,7 +299,7 @@ CREATE TABLE `ophtroperationbooking_operation_booking_version` (
 	CONSTRAINT `acv_et_ophtroperationbooking_operation_booking_ses_fk` FOREIGN KEY (`session_id`) REFERENCES `ophtroperationbooking_operation_session` (`id`),
 	CONSTRAINT `acv_et_ophtroperationbooking_operation_booking_sti_fk` FOREIGN KEY (`session_theatre_id`) REFERENCES `ophtroperationbooking_operation_theatre` (`id`),
 	CONSTRAINT `acv_et_ophtroperationbooking_operation_booking_wid_fk` FOREIGN KEY (`ward_id`) REFERENCES `ophtroperationbooking_operation_ward` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophtroperationbooking_operation_booking_version','id','int(10) unsigned NOT NULL');
@@ -317,7 +317,7 @@ CREATE TABLE `ophtroperationbooking_operation_booking_version` (
 		$this->execute("
 CREATE TABLE `ophtroperationbooking_operation_cancellation_reason_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`text` varchar(255) COLLATE utf8_bin NOT NULL DEFAULT '',
+	`text` varchar(255) NOT NULL DEFAULT '',
 	`parent_id` int(10) unsigned DEFAULT NULL,
 	`list_no` tinyint(2) unsigned NOT NULL,
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -329,7 +329,7 @@ CREATE TABLE `ophtroperationbooking_operation_cancellation_reason_version` (
 	KEY `acv_ophtroperationbooking_operation_cancellation_reason_cui_fk` (`created_user_id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_cancellation_reason_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_cancellation_reason_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophtroperationbooking_operation_cancellation_reason_version','id','int(10) unsigned NOT NULL');
@@ -364,7 +364,7 @@ CREATE TABLE `ophtroperationbooking_operation_date_letter_sent_version` (
 	CONSTRAINT `acv_ophtroperationbooking_operation_dls_created_user_id_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_dls_element_fk` FOREIGN KEY (`element_id`) REFERENCES `et_ophtroperationbooking_operation` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_dls_last_modified_user_id_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophtroperationbooking_operation_date_letter_sent_version','id','int(10) unsigned NOT NULL');
@@ -410,7 +410,7 @@ CREATE TABLE `ophtroperationbooking_operation_erod_version` (
 	CONSTRAINT `acv_ophtroperationbooking_operation_erod_element_id_fk` FOREIGN KEY (`element_id`) REFERENCES `et_ophtroperationbooking_operation` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_erod_session_id_fk` FOREIGN KEY (`session_id`) REFERENCES `ophtroperationbooking_operation_session` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_erod_firm_id_fk` FOREIGN KEY (`firm_id`) REFERENCES `firm` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophtroperationbooking_operation_erod_version','id','int(10) unsigned NOT NULL');
@@ -440,7 +440,7 @@ CREATE TABLE `ophtroperationbooking_operation_erod_rule_version` (
 	CONSTRAINT `acv_ophtroperationbooking_operation_erod_rule_sid_fk` FOREIGN KEY (`subspecialty_id`) REFERENCES `subspecialty` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_erod_rule_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_erod_rule_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophtroperationbooking_operation_erod_rule_version','id','int(10) unsigned NOT NULL');
@@ -459,7 +459,7 @@ CREATE TABLE `ophtroperationbooking_operation_erod_rule_version` (
 CREATE TABLE `ophtroperationbooking_operation_erod_rule_item_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`erod_rule_id` int(10) unsigned NOT NULL,
-	`item_type` varchar(64) COLLATE utf8_bin NOT NULL,
+	`item_type` varchar(64) NOT NULL,
 	`item_id` int(10) unsigned NOT NULL,
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
@@ -472,7 +472,7 @@ CREATE TABLE `ophtroperationbooking_operation_erod_rule_item_version` (
 	CONSTRAINT `acv_ophtroperationbooking_operation_erod_rule_item_eri_fk` FOREIGN KEY (`erod_rule_id`) REFERENCES `ophtroperationbooking_operation_erod_rule` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_erod_rule_item_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_erod_rule_item_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophtroperationbooking_operation_erod_rule_item_version','id','int(10) unsigned NOT NULL');
@@ -491,7 +491,7 @@ CREATE TABLE `ophtroperationbooking_operation_erod_rule_item_version` (
 CREATE TABLE `ophtroperationbooking_operation_name_rule_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`theatre_id` int(10) unsigned DEFAULT NULL,
-	`name` varchar(64) COLLATE utf8_bin NOT NULL,
+	`name` varchar(64) NOT NULL,
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_date` datetime NOT NULL DEFAULT '1900-01-01 00:00:00',
 	`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -503,7 +503,7 @@ CREATE TABLE `ophtroperationbooking_operation_name_rule_version` (
 	CONSTRAINT `acv_ophtroperationbooking_operation_name_rt_id_fk` FOREIGN KEY (`theatre_id`) REFERENCES `ophtroperationbooking_operation_theatre` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_name_r_cid_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_name_r_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophtroperationbooking_operation_name_rule_version','id','int(10) unsigned NOT NULL');
@@ -521,7 +521,7 @@ CREATE TABLE `ophtroperationbooking_operation_name_rule_version` (
 		$this->execute("
 CREATE TABLE `ophtroperationbooking_operation_priority_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`name` varchar(128) COLLATE utf8_bin NOT NULL,
+	`name` varchar(128) NOT NULL,
 	`display_order` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
@@ -532,7 +532,7 @@ CREATE TABLE `ophtroperationbooking_operation_priority_version` (
 	KEY `acv_ophtroperationbooking_operation_priority_cui_fk` (`created_user_id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_priority_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_priority_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophtroperationbooking_operation_priority_version','id','int(10) unsigned NOT NULL');
@@ -566,7 +566,7 @@ CREATE TABLE `ophtroperationbooking_operation_procedures_procedures_version` (
 	CONSTRAINT `acv_ophtroperationbooking_operation_procedures_procedures_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_procedures_procedures_ele_fk` FOREIGN KEY (`element_id`) REFERENCES `et_ophtroperationbooking_operation` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_procedures_procedures_lku_fk` FOREIGN KEY (`proc_id`) REFERENCES `proc` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophtroperationbooking_operation_procedures_procedures_version','id','int(10) unsigned NOT NULL');
@@ -614,7 +614,7 @@ CREATE TABLE `ophtroperationbooking_operation_sequence_version` (
 	CONSTRAINT `acv_ophtroperationbooking_operation_sequence_interval_id_fk` FOREIGN KEY (`interval_id`) REFERENCES `ophtroperationbooking_operation_sequence_interval` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_sequence_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_sequence_theatre_id_fk` FOREIGN KEY (`theatre_id`) REFERENCES `ophtroperationbooking_operation_theatre` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophtroperationbooking_operation_sequence_version','id','int(10) unsigned NOT NULL');
@@ -632,7 +632,7 @@ CREATE TABLE `ophtroperationbooking_operation_sequence_version` (
 		$this->execute("
 CREATE TABLE `ophtroperationbooking_operation_sequence_interval_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`name` varchar(32) COLLATE utf8_bin NOT NULL,
+	`name` varchar(32) NOT NULL,
 	`display_order` int(10) unsigned NOT NULL DEFAULT '0',
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
@@ -643,7 +643,7 @@ CREATE TABLE `ophtroperationbooking_operation_sequence_interval_version` (
 	KEY `acv_ophtroperationbooking_operation_sequencei_cui_fk` (`created_user_id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_sequencei_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_sequencei_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophtroperationbooking_operation_sequence_interval_version','id','int(10) unsigned NOT NULL');
@@ -666,7 +666,7 @@ CREATE TABLE `ophtroperationbooking_operation_session_version` (
 	`date` date NOT NULL,
 	`start_time` time NOT NULL,
 	`end_time` time NOT NULL,
-	`comments` text COLLATE utf8_bin,
+	`comments` text,
 	`available` tinyint(1) unsigned NOT NULL DEFAULT '1',
 	`consultant` tinyint(1) unsigned NOT NULL DEFAULT '1',
 	`paediatric` tinyint(1) unsigned NOT NULL DEFAULT '0',
@@ -689,7 +689,7 @@ CREATE TABLE `ophtroperationbooking_operation_session_version` (
 	CONSTRAINT `acv_ophtroperationbooking_operation_session_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_session_sequence_id_fk` FOREIGN KEY (`sequence_id`) REFERENCES `ophtroperationbooking_operation_sequence` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_session_theatre_id_fk` FOREIGN KEY (`theatre_id`) REFERENCES `ophtroperationbooking_operation_theatre` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophtroperationbooking_operation_session_version','id','int(10) unsigned NOT NULL');
@@ -707,7 +707,7 @@ CREATE TABLE `ophtroperationbooking_operation_session_version` (
 		$this->execute("
 CREATE TABLE `ophtroperationbooking_operation_status_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`name` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+	`name` varchar(64) DEFAULT NULL,
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 	`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -717,7 +717,7 @@ CREATE TABLE `ophtroperationbooking_operation_status_version` (
 	KEY `acv_ophtroperationbooking_operation_status_cui_fk` (`created_user_id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_status_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_status_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophtroperationbooking_operation_status_version','id','int(10) unsigned NOT NULL');
@@ -735,9 +735,9 @@ CREATE TABLE `ophtroperationbooking_operation_status_version` (
 		$this->execute("
 CREATE TABLE `ophtroperationbooking_operation_theatre_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`name` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+	`name` varchar(255) DEFAULT NULL,
 	`site_id` int(10) unsigned NOT NULL,
-	`code` varchar(4) COLLATE utf8_bin NOT NULL,
+	`code` varchar(4) NOT NULL,
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 	`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -754,7 +754,7 @@ CREATE TABLE `ophtroperationbooking_operation_theatre_version` (
 	CONSTRAINT `acv_ophtroperationbooking_operation_theatre_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_theatre_site_id_fk` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_theatre_ward_id_fk` FOREIGN KEY (`ward_id`) REFERENCES `ophtroperationbooking_operation_ward` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophtroperationbooking_operation_theatre_version','id','int(10) unsigned NOT NULL');
@@ -773,11 +773,11 @@ CREATE TABLE `ophtroperationbooking_operation_theatre_version` (
 CREATE TABLE `ophtroperationbooking_operation_ward_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`site_id` int(10) unsigned NOT NULL,
-	`name` varchar(255) COLLATE utf8_bin NOT NULL,
-	`long_name` varchar(255) COLLATE utf8_bin NOT NULL,
-	`directions` varchar(255) COLLATE utf8_bin NOT NULL,
+	`name` varchar(255) NOT NULL,
+	`long_name` varchar(255) NOT NULL,
+	`directions` varchar(255) NOT NULL,
 	`restriction` tinyint(1) unsigned NOT NULL DEFAULT '0',
-	`code` varchar(10) COLLATE utf8_bin NOT NULL,
+	`code` varchar(10) NOT NULL,
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 	`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -789,7 +789,7 @@ CREATE TABLE `ophtroperationbooking_operation_ward_version` (
 	CONSTRAINT `acv_ophtroperationbooking_operation_ward_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_ward_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_ward_site_id_fk` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophtroperationbooking_operation_ward_version','id','int(10) unsigned NOT NULL');
@@ -807,7 +807,7 @@ CREATE TABLE `ophtroperationbooking_operation_ward_version` (
 		$this->execute("
 CREATE TABLE `ophtroperationbooking_scheduleope_schedule_options_version` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`name` varchar(128) COLLATE utf8_bin NOT NULL,
+	`name` varchar(128) NOT NULL,
 	`display_order` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
@@ -818,7 +818,7 @@ CREATE TABLE `ophtroperationbooking_scheduleope_schedule_options_version` (
 	KEY `acv_ophtroperationbooking_scheduleope_schedule_options_cui_fk` (`created_user_id`),
 	CONSTRAINT `acv_ophtroperationbooking_scheduleope_schedule_options_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_scheduleope_schedule_options_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophtroperationbooking_scheduleope_schedule_options_version','id','int(10) unsigned NOT NULL');
@@ -842,8 +842,8 @@ CREATE TABLE `ophtroperationbooking_waiting_list_contact_rule_version` (
 	`service_id` int(10) unsigned DEFAULT NULL,
 	`firm_id` int(10) unsigned DEFAULT NULL,
 	`is_child` tinyint(1) unsigned DEFAULT NULL,
-	`name` varchar(64) COLLATE utf8_bin NOT NULL,
-	`telephone` varchar(64) COLLATE utf8_bin NOT NULL,
+	`name` varchar(64) NOT NULL,
+	`telephone` varchar(64) NOT NULL,
 	`last_modified_user_id` int(10) unsigned NOT NULL DEFAULT '1',
 	`last_modified_date` datetime NOT NULL DEFAULT '1901-01-01 00:00:00',
 	`created_user_id` int(10) unsigned NOT NULL DEFAULT '1',
@@ -861,7 +861,7 @@ CREATE TABLE `ophtroperationbooking_waiting_list_contact_rule_version` (
 	CONSTRAINT `acv_ophtroperationbooking_waiting_list_cr_firm_id_fk` FOREIGN KEY (`firm_id`) REFERENCES `firm` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_waiting_list_cr_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_waiting_list_cr_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->alterColumn('ophtroperationbooking_waiting_list_contact_rule_version','id','int(10) unsigned NOT NULL');
