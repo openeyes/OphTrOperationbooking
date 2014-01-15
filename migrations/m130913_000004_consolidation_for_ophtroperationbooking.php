@@ -99,7 +99,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  CONSTRAINT `et_ophtroperationbooking_diagnosis_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `et_ophtroperationbooking_diagnosis_ev_fk` FOREIGN KEY (`event_id`) REFERENCES `event` (`id`),
 			  CONSTRAINT `et_ophtroperationbooking_diagnosis_eye_id_fk` FOREIGN KEY (`eye_id`) REFERENCES `eye` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `et_ophtroperationbooking_operation` (
@@ -148,7 +148,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  CONSTRAINT `et_ophtroperationbooking_operation_priority_fk` FOREIGN KEY (`priority_id`) REFERENCES `ophtroperationbooking_operation_priority` (`id`),
 			  CONSTRAINT `et_ophtroperationbooking_operation_site_id_fk` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`),
 			  CONSTRAINT `et_ophtroperationbooking_operation_status_is_fk` FOREIGN KEY (`status_id`) REFERENCES `ophtroperationbooking_operation_status` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `et_ophtroperationbooking_scheduleope` (
@@ -168,7 +168,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  CONSTRAINT `et_ophtroperationbooking_scheduleope_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `et_ophtroperationbooking_scheduleope_ev_fk` FOREIGN KEY (`event_id`) REFERENCES `event` (`id`),
 			  CONSTRAINT `et_ophtroperationbooking_scheduleope_schedule_options_fk` FOREIGN KEY (`schedule_options_id`) REFERENCES `ophtroperationbooking_scheduleope_schedule_options` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_admission_letter_warning_rule` (
@@ -206,7 +206,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  CONSTRAINT `ophtroperationbooking_admission_lwr_site_fk` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`),
 			  CONSTRAINT `ophtroperationbooking_admission_lwr_si_fk` FOREIGN KEY (`subspecialty_id`) REFERENCES `subspecialty` (`id`),
 			  CONSTRAINT `ophtroperationbooking_admission_lwr_ti_fk` FOREIGN KEY (`theatre_id`) REFERENCES `ophtroperationbooking_operation_theatre` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_admission_letter_warning_rule_type` (
@@ -221,7 +221,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  KEY `ophtroperationbooking_admission_letter_wrt_cui_fk` (`created_user_id`),
 			  CONSTRAINT `ophtroperationbooking_admission_letter_wrt_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophtroperationbooking_admission_letter_wrt_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_letter_contact_rule` (
@@ -255,7 +255,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  CONSTRAINT `ophtroperationbooking_letter_contact_rule_site_id_fk` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`),
 			  CONSTRAINT `ophtroperationbooking_letter_contact_rule_subspecialty_id_fk` FOREIGN KEY (`subspecialty_id`) REFERENCES `subspecialty` (`id`),
 			  CONSTRAINT `ophtroperationbooking_letter_contact_rule_theatre_id_fk` FOREIGN KEY (`theatre_id`) REFERENCES `ophtroperationbooking_operation_theatre` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_operation_booking` (
@@ -297,7 +297,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  CONSTRAINT `et_ophtroperationbooking_operation_booking_ses_fk` FOREIGN KEY (`session_id`) REFERENCES `ophtroperationbooking_operation_session` (`id`),
 			  CONSTRAINT `et_ophtroperationbooking_operation_booking_sti_fk` FOREIGN KEY (`session_theatre_id`) REFERENCES `ophtroperationbooking_operation_theatre` (`id`),
 			  CONSTRAINT `et_ophtroperationbooking_operation_booking_wid_fk` FOREIGN KEY (`ward_id`) REFERENCES `ophtroperationbooking_operation_ward` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_operation_cancellation_reason` (
@@ -314,7 +314,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  KEY `ophtroperationbooking_operation_cancellation_reason_cui_fk` (`created_user_id`),
 			  CONSTRAINT `ophtroperationbooking_operation_cancellation_reason_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophtroperationbooking_operation_cancellation_reason_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_operation_date_letter_sent` (
@@ -336,7 +336,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  CONSTRAINT `ophtroperationbooking_operation_dls_created_user_id_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophtroperationbooking_operation_dls_element_fk` FOREIGN KEY (`element_id`) REFERENCES `et_ophtroperationbooking_operation` (`id`),
 			  CONSTRAINT `ophtroperationbooking_operation_dls_last_modified_user_id_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_operation_erod` (
@@ -369,7 +369,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  CONSTRAINT `ophtroperationbooking_operation_erod_element_id_fk` FOREIGN KEY (`element_id`) REFERENCES `et_ophtroperationbooking_operation` (`id`),
 			  CONSTRAINT `ophtroperationbooking_operation_erod_session_id_fk` FOREIGN KEY (`session_id`) REFERENCES `ophtroperationbooking_operation_session` (`id`),
 			  CONSTRAINT `ophtroperationbooking_operation_erod_firm_id_fk` FOREIGN KEY (`firm_id`) REFERENCES `firm` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_operation_erod_rule` (
@@ -386,7 +386,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  CONSTRAINT `ophtroperationbooking_operation_erod_rule_sid_fk` FOREIGN KEY (`subspecialty_id`) REFERENCES `subspecialty` (`id`),
 			  CONSTRAINT `ophtroperationbooking_operation_erod_rule_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophtroperationbooking_operation_erod_rule_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_operation_erod_rule_item` (
@@ -405,7 +405,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  CONSTRAINT `ophtroperationbooking_operation_erod_rule_item_eri_fk` FOREIGN KEY (`erod_rule_id`) REFERENCES `ophtroperationbooking_operation_erod_rule` (`id`),
 			  CONSTRAINT `ophtroperationbooking_operation_erod_rule_item_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophtroperationbooking_operation_erod_rule_item_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_operation_name_rule` (
@@ -423,7 +423,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  CONSTRAINT `ophtroperationbooking_operation_name_rt_id_fk` FOREIGN KEY (`theatre_id`) REFERENCES `ophtroperationbooking_operation_theatre` (`id`),
 			  CONSTRAINT `ophtroperationbooking_operation_name_r_cid_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophtroperationbooking_operation_name_r_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_operation_priority` (
@@ -439,7 +439,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  KEY `ophtroperationbooking_operation_priority_cui_fk` (`created_user_id`),
 			  CONSTRAINT `ophtroperationbooking_operation_priority_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophtroperationbooking_operation_priority_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-			) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_operation_procedures_procedures` (
@@ -460,7 +460,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  CONSTRAINT `ophtroperationbooking_operation_procedures_procedures_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophtroperationbooking_operation_procedures_procedures_ele_fk` FOREIGN KEY (`element_id`) REFERENCES `et_ophtroperationbooking_operation` (`id`),
 			  CONSTRAINT `ophtroperationbooking_operation_procedures_procedures_lku_fk` FOREIGN KEY (`proc_id`) REFERENCES `proc` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_operation_sequence` (
@@ -495,7 +495,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  CONSTRAINT `ophtroperationbooking_operation_sequence_interval_id_fk` FOREIGN KEY (`interval_id`) REFERENCES `ophtroperationbooking_operation_sequence_interval` (`id`),
 			  CONSTRAINT `ophtroperationbooking_operation_sequence_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophtroperationbooking_operation_sequence_theatre_id_fk` FOREIGN KEY (`theatre_id`) REFERENCES `ophtroperationbooking_operation_theatre` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_operation_sequence_interval` (
@@ -511,7 +511,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  KEY `ophtroperationbooking_operation_sequencei_cui_fk` (`created_user_id`),
 			  CONSTRAINT `ophtroperationbooking_operation_sequencei_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophtroperationbooking_operation_sequencei_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-			) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_operation_session` (
@@ -544,7 +544,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  CONSTRAINT `ophtroperationbooking_operation_session_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophtroperationbooking_operation_session_sequence_id_fk` FOREIGN KEY (`sequence_id`) REFERENCES `ophtroperationbooking_operation_sequence` (`id`),
 			  CONSTRAINT `ophtroperationbooking_operation_session_theatre_id_fk` FOREIGN KEY (`theatre_id`) REFERENCES `ophtroperationbooking_operation_theatre` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_operation_status` (
@@ -559,7 +559,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  KEY `ophtroperationbooking_operation_status_cui_fk` (`created_user_id`),
 			  CONSTRAINT `ophtroperationbooking_operation_status_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophtroperationbooking_operation_status_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-			) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_operation_theatre` (
@@ -583,7 +583,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  CONSTRAINT `ophtroperationbooking_operation_theatre_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophtroperationbooking_operation_theatre_site_id_fk` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`),
 			  CONSTRAINT `ophtroperationbooking_operation_theatre_ward_id_fk` FOREIGN KEY (`ward_id`) REFERENCES `ophtroperationbooking_operation_ward` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_operation_ward` (
@@ -605,7 +605,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  CONSTRAINT `ophtroperationbooking_operation_ward_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophtroperationbooking_operation_ward_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophtroperationbooking_operation_ward_site_id_fk` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_scheduleope_schedule_options` (
@@ -621,7 +621,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  KEY `ophtroperationbooking_scheduleope_schedule_options_cui_fk` (`created_user_id`),
 			  CONSTRAINT `ophtroperationbooking_scheduleope_schedule_options_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophtroperationbooking_scheduleope_schedule_options_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-			) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$this->execute("CREATE TABLE `ophtroperationbooking_waiting_list_contact_rule` (
@@ -651,7 +651,7 @@ class m130913_000004_consolidation_for_ophtroperationbooking extends OEMigration
 			  CONSTRAINT `ophtroperationbooking_waiting_list_cr_firm_id_fk` FOREIGN KEY (`firm_id`) REFERENCES `firm` (`id`),
 			  CONSTRAINT `ophtroperationbooking_waiting_list_cr_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 			  CONSTRAINT `ophtroperationbooking_waiting_list_cr_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
 		$migrations_path = dirname(__FILE__);
