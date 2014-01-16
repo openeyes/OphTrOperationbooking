@@ -105,33 +105,7 @@
 						</tr>
 						</thead>
 						<tbody id="tbody_<?php echo $session->id?>">
-						<?php
-							$criteria = array(
-								'with' => array(
-									'operation',
-									'operation.anaesthetic_type',
-									'operation.priority',
-									'operation.event' => array('joinType' => 'join'),
-									'operation.event.episode' => array('joinType' => 'join'),
-									'operation.event.episode.patient',
-									'operation.event.episode.patient.episodes',
-									'operation.event.episode.patient.contact',
-									'operation.event.episode.patient.allergies',
-									'operation.procedures',
-									'operation.op_usermodified',
-									'operation.op_user',
-									'operation.eye',
-									'ward',
-									'user',
-								)
-							);
-							if((int)$ward_id) {
-								$criteria['condition'] = 'ward.id = :ward_id';
-								$criteria['params'][':ward_id'] = (int)$ward_id;
-							}
-							$active_bookings = $session->activeBookings($criteria);
-						?>
-						<?php foreach ($active_bookings as $booking) { ?>
+						<?php foreach ($session->getActiveBookingsForWard($ward_id) as $booking) { ?>
 								<tr id="oprow_<?php echo $booking->element_id?>">
 									<td class="session">
 										<input style="display: none;" type="text" class="admitTime diaryEditMode" name="admitTime_<?php echo $booking->element_id?>" data-id="<?php echo $session->id?>" data-operation-id="<?php echo $booking->element_id?>" value="<?php echo substr($booking->admission_time,0,5)?>" size="4">

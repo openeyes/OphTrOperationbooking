@@ -104,7 +104,7 @@ class TheatreDiaryController extends BaseEventTypeController
 			).'/css/module.css'
 		));
 
-		$this->renderPartial('_print_diary', array('diary'=>$this->getDiary()), false, true);
+		$this->renderPartial('_print_diary', array('diary'=>$this->getDiary(), 'ward_id' => @$_POST['ward-id']), false, true);
 	}
 
 	public function actionPrintList()
