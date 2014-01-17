@@ -40,14 +40,7 @@ $(document).ready(function() {
 
 	handleButton($('#btn_cancel-operation'));
 
-	handleButton($('#et_canceldelete'),function(e) {
-		if (m = window.location.href.match(/\/delete\/[0-9]+/)) {
-			window.location.href = window.location.href.replace('/delete/','/view/');
-		} else {
-			window.location.href = baseUrl+'/patient/episodes/'+OE_patient_id;
-		}
-		e.preventDefault();
-	});
+	handleButton($('#et_canceldelete'));
 
 	$('select.populate_textarea').unbind('change').change(function() {
 		if ($(this).val() != '') {
