@@ -69,8 +69,9 @@ class TransportController extends BaseEventTypeController
 		!isset($_REQUEST['include_bookings']) and $_REQUEST['include_bookings'] = 1;
 		!isset($_REQUEST['include_reschedules']) and $_REQUEST['include_reschedules'] = 1;
 		!isset($_REQUEST['include_cancellations']) and $_REQUEST['include_cancellations'] = 1;
+		!isset($_REQUEST['include_completed']) and $_REQUEST['include_completed'] = 0;
 
-		if (!@$_REQUEST['include_bookings'] && !@$_REQUEST['include_reschedules'] && !@$_REQUEST['include_cancellations']) {
+		if (!@$_REQUEST['include_bookings'] && !@$_REQUEST['include_reschedules'] && !@$_REQUEST['include_cancellations'] && !@$_REQUEST['include_completed']) {
 			$_REQUEST['include_bookings'] = 1;
 		}
 
@@ -98,6 +99,11 @@ class TransportController extends BaseEventTypeController
 
 		if (!$_REQUEST['include_cancellations']) {
 			$criteria->addCondition('latestBooking.booking_cancellation_date is null');
+		}
+
+		if (!$_REQUEST['include_completed']) {
+			$criteria->addCondition('status_id != :six');
+			$criteria->params[':six'] = 6;
 		}
 
 		if (!empty(Yii::app()->params['transport_exclude_sites'])) {
