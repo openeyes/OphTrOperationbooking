@@ -576,7 +576,7 @@ class AdminController extends ModuleAdminController
 			$this->redirectWith($_GET);
 		}
 
-		if (empty($_GET) && !empty(Yii::app()->session['admin_sequences'])) {
+		if (empty($_GET) && empty($_POST) && !empty(Yii::app()->session['admin_sequences'])) {
 			$this->redirectWith(Yii::app()->session['admin_sequences']);
 		} elseif (!empty($_GET)) {
 			Yii::app()->session['admin_sequences'] = $_GET;
