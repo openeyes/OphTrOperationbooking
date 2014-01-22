@@ -34,7 +34,7 @@
 		background: #f08a6f;
 	}
 	.error {
-		font-size: emCalc(13px);
+		font-size: rem-cacl(11px);
 		font-weight: bold;
 		white-space: nowrap;
 	}
@@ -59,14 +59,14 @@
 		}
 		.letters-sent-out {
 			li {
-				line-height: emCalc(17px);
+				line-height: rem-calc(17px);
 			}
 		}
 	}
 }
 
 .waiting-list-key {
-	padding-top: emCalc(20px);
+	padding-top: rem-calc(20px);
 	.key-box {
 		border: 1px solid #999999;
 		display: inline-block;

@@ -17,8 +17,8 @@
 .theatre-bookings {
 	margin: 0;
 	input[type="text"] {
-		max-width: emCalc(70px);
-		min-width: emCalc(55px);
+		max-width: rem-calc(70px);
+		min-width: rem-calc(55px);
 		text-align: center;
 	}
 	tfoot {
@@ -45,9 +45,9 @@
 		background: white;
 		border: 2px solid #cccccc;
 		float: right;
-		font-size: emCalc(11px);
+		font-size: rem-calc(11px);
 		line-height: 1.2;
-		padding: emCalc(6px) emCalc(8px) emCalc(6px) emCalc(17px);
+		padding: rem-calc(6px) rem-calc(8px) rem-calc(6px) rem-calc(17px);
 		text-align: right;
 	}
 	.alerts {
