@@ -312,4 +312,13 @@ class OphTrOperationbooking_API extends BaseAPI
 			return $output;
 		}
 	}
+
+	public function findSiteForBookingEvent($event)
+	{
+		if ($eo = Element_OphTrOperationbooking_Operation::model()->with('booking')->find('event_id=?',array($event->id))) {
+			if ($eo->booking) {
+				return $eo->booking->theatre->site;
+			}
+		}
+	}
 }
