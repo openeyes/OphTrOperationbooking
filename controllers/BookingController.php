@@ -58,7 +58,6 @@ class BookingController extends BaseEventTypeController
 				throw new Exception('Operation not found');
 			};
 		}
-
 	}
 
 	/**
