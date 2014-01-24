@@ -179,7 +179,6 @@ class BookingController extends BaseEventTypeController
 			'session' => @$session,
 			'bookings' => @$bookings,
 			'bookable' => @$bookable,
-			'inthepast' => @$inthepast,
 			'errors' => @$errors,
 		));
 	}
