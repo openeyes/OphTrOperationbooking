@@ -81,6 +81,10 @@
 										<input type="checkbox" name="include_cancellations" id="include_cancellations" class="filter" value="1"<?php if (@$_GET['include_cancellations']) {?> checked="checked"<?php }?> />
 										Cancellations
 									</label>
+									<label class="inline">
+										<input type="checkbox" name="include_completed" id="include_completed" class="filter" value="1"<?php if (@$_GET['include_completed']) {?> checked="checked"<?php }?> />
+										Completed
+									</label>
 								</fieldset>
 							</div>
 						</form>
@@ -98,6 +102,7 @@
 						<input type="hidden" name="include_bookings" value="<?php echo (@$_GET['include_bookings'] ? 1 : 0)?>" />
 						<input type="hidden" name="include_reschedules" value="<?php echo (@$_GET['include_reschedules'] ? 1 : 0)?>" />
 						<input type="hidden" name="include_cancellations" value="<?php echo (@$_GET['include_cancellations'] ? 1 : 0)?>" />
+						<input type="hidden" name="include_completed" value="<?php echo (@$_GET['include_completed'] ? 1 : 0)?>" />
 					</form>
 					<div id="transport_data">
 						<?php echo $this->renderPartial('/transport/_list_header')?>

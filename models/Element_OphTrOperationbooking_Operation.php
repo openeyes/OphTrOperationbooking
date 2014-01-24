@@ -1286,6 +1286,10 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			return 'Cancelled';
 		}
 
+		if ($this->status_id == 6) {
+			return 'Completed';
+		}
+
 		if ($this->status_id == 4) {
 			return 'Rescheduled';
 		}
