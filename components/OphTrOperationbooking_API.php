@@ -321,4 +321,19 @@ class OphTrOperationbooking_API extends BaseAPI
 			}
 		}
 	}
+
+	public function canUpdate($event_id)
+	{
+		$eo = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($event_id));
+
+		return $eo->isEditable();
+	}
+
+	public function showDeleteIcon($event_id)
+	{
+		$eo = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($event_id));
+
+		return $eo->isEditable();
+	}
+
 }
