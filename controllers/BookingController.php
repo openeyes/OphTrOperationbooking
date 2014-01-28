@@ -58,7 +58,6 @@ class BookingController extends BaseEventTypeController
 				throw new Exception('Operation not found');
 			};
 		}
-
 	}
 
 	/**
@@ -180,7 +179,6 @@ class BookingController extends BaseEventTypeController
 			'session' => @$session,
 			'bookings' => @$bookings,
 			'bookable' => @$bookable,
-			'inthepast' => @$inthepast,
 			'errors' => @$errors,
 		));
 	}

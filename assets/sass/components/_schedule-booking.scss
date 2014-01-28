@@ -129,7 +129,7 @@
 				color: #fff;
 			}
 			&.outside_rtt {
-				background-image: url(../img/bookingIcons/RTT-warning.png);
+				background-image: image-url("bookingIcons/RTT-warning.png");
 				background-position: bottom right;
 				background-repeat: no-repeat;
 			}
@@ -186,7 +186,7 @@
 			background: #3665ff;
 		}
 		#outside_rtt .color_box {
-			background: transparent url(../img/bookingIcons/RTT-warning_tiny.png) top left no-repeat;
+			background: transparent image-url("bookingIcons/RTT-warning_tiny.png") top left no-repeat;
 		}
 	}
 }

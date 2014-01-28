@@ -104,7 +104,7 @@ if (!$reschedule) {
 		<div class="row field-row" style="position:relative;">
 			<div class="large-2 column">
 				<label for="Session_comments"><strong>Session Comments:</strong></label>
-				<!-- <img src="<?php echo Yii::app()->createUrl('img/_elements/icons/alerts/comment.png')?>" alt="comment" width="17" height="17" style="position:absolute; bottom:10px; left:10px;" /> -->
+				<!-- <img src="<?php echo Yii::app()->assetManager->createUrl('img/_elements/icons/alerts/comment.png')?>" alt="comment" width="17" height="17" style="position:absolute; bottom:10px; left:10px;" /> -->
 			</div>
 			<div class="large-5 column end">
 				<div class="sessionComments">

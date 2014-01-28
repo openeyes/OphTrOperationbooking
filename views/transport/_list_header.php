@@ -41,7 +41,7 @@
 		<tbody>
 			<tr>
 				<td colspan="12">
-					<img src="<?php echo Yii::app()->createUrl('img/ajax-loader.gif')?>" class="loader" /> loading data ...
+					<img src="<?php echo Yii::app()->assetManager->createUrl('img/ajax-loader.gif')?>" class="loader" /> loading data ...
 				</td>
 			</tr>
 		</tbody>
