@@ -849,7 +849,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 
 	public function isEditable()
 	{
-		return $this->status->name != 'Cancelled' && $this->status->name != 'Completed';
+		return !in_array($this->status->name,array('Cancelled','Completed'));
 	}
 
 
