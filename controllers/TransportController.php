@@ -80,6 +80,7 @@ class TransportController extends BaseEventTypeController
 		$criteria->addCondition('transport_arranged = :zero or transport_arranged_date = :today');
 		$criteria->params[':zero'] = 0;
 		$criteria->params[':today'] = date('Y-m-d');
+		$criteria->params[':six'] = 6;
 
 		if (@$date_from && @$date_to) {
 			$criteria->addCondition('session_date >= :fromDate and session_date <= :toDate');
@@ -88,22 +89,21 @@ class TransportController extends BaseEventTypeController
 		}
 
 		if (!$_REQUEST['include_bookings']) {
-			$criteria->addCondition('latestBooking.booking_cancellation_date is not null or status_id != :two');
+			$criteria->addCondition('latestBooking.booking_cancellation_date is not null or status_id != :two or status_id = :six');
 			$criteria->params[':two'] = 2;
 		}
 
 		if (!$_REQUEST['include_reschedules']) {
-			$criteria->addCondition('latestBooking.booking_cancellation_date is not null or status_id = :two');
+			$criteria->addCondition('latestBooking.booking_cancellation_date is not null or status_id = :two or status_id = :six');
 			$criteria->params[':two'] = 2;
 		}
 
 		if (!$_REQUEST['include_cancellations']) {
-			$criteria->addCondition('latestBooking.booking_cancellation_date is null');
+			$criteria->addCondition('latestBooking.booking_cancellation_date is null or status_id = :six');
 		}
 
 		if (!$_REQUEST['include_completed']) {
 			$criteria->addCondition('status_id != :six');
-			$criteria->params[':six'] = 6;
 		}
 
 		if (!empty(Yii::app()->params['transport_exclude_sites'])) {
