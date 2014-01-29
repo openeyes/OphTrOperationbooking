@@ -219,7 +219,7 @@ if ($element->status->name != 'Cancelled' && $this->checkEditAccess()) {
 			$this->event_actions[] = EventAction::button("Print letter", 'print-letter', $print_letter_options, array('id' => 'btn_print-admissionletter','class'=>'small button'));
 
 		}
-		if ($element->status->name != 'Completed') {
+		if ($element->status->name != 'Completed' && !$this->event->isLocked()) {
 			$this->event_actions[] = EventAction::link("Reschedule now",
 				Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/reschedule/'.$element->event_id),
 				array('level' => 'secondary'),
@@ -230,7 +230,7 @@ if ($element->status->name != 'Cancelled' && $this->checkEditAccess()) {
 				array('id' => 'btn_reschedule-later','class' => 'button small'));
 		}
 	}
-	if ($element->status->name != 'Completed') {
+	if ($element->status->name != 'Completed' && !$this->event->isLocked()) {
 		$this->event_actions[] = EventAction::link("Cancel operation",
 			Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/default/cancel/'.$element->event_id),
 			array(),
