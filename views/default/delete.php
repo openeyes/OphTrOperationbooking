@@ -44,3 +44,4 @@
 			<img class="loader" src="<?php echo Yii::app()->assetManager->createUrl('img/ajax-loader.gif');?>" alt="loading..." style="display: none;" />
 		<?php echo CHtml::endForm();?>
 	</div>
+<?php $this->endContent() ?>
