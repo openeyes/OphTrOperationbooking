@@ -43,7 +43,7 @@
 }
 /* line 36, ../sass/components/tables/_waiting-list-table.scss */
 .waiting-list .error {
-  font-size: rem-cacl(11px);
+  font-size: 0.6875rem;
   font-weight: bold;
   white-space: nowrap;
 }
@@ -55,7 +55,7 @@
 /* line 46, ../sass/components/tables/_waiting-list-table.scss */
 .waiting-list tfoot h3 {
   float: left;
-  font-size: 1em;
+  font-size: 0.8125rem;
   margin: 0;
 }
 /* line 51, ../sass/components/tables/_waiting-list-table.scss */
@@ -74,7 +74,7 @@
 
 /* line 68, ../sass/components/tables/_waiting-list-table.scss */
 .waiting-list-key {
-  padding-top: 1.25rem;
+  padding-top: 12px;
 }
 /* line 70, ../sass/components/tables/_waiting-list-table.scss */
 .waiting-list-key .key-box {
@@ -83,10 +83,6 @@
   height: 10px;
   width: 10px;
 }
-/* line 77, ../sass/components/tables/_waiting-list-table.scss */
-.waiting-list-key .inline-list li {
-  font-size: 1em;
-}
 
 /* line 17, ../sass/components/tables/_theatre-bookings-table.scss */
 .theatre-bookings {
@@ -94,8 +90,8 @@
 }
 /* line 19, ../sass/components/tables/_theatre-bookings-table.scss */
 .theatre-bookings input[type="text"] {
-  max-width: 4.375rem;
-  min-width: 3.4375rem;
+  max-width: 57px;
+  min-width: 45px;
   text-align: center;
 }
 /* line 25, ../sass/components/tables/_theatre-bookings-table.scss */
@@ -132,7 +128,7 @@
   float: right;
   font-size: 0.6875rem;
   line-height: 1.2;
-  padding: 0.375rem 0.5rem 0.375rem 1.0625rem;
+  padding: 4px 6px 4px 12px;
   text-align: right;
 }
 /* line 53, ../sass/components/tables/_theatre-bookings-table.scss */
@@ -162,8 +158,8 @@ table.transport .status.Green {
   border-bottom: 0;
   display: inline-block;
   font-size: 0.8125rem;
-  margin: 0 0 0 0.625rem;
-  padding: 0.375rem 0.75rem;
+  margin: 0 0 0 8px;
+  padding: 5px 10px;
   -moz-border-radius-bottomleft: 0;
   -webkit-border-bottom-left-radius: 0;
   border-bottom-left-radius: 0;
@@ -178,7 +174,7 @@ table.transport .status.Green {
 }
 /* line 20, ../sass/components/panels/_theatre-sessions-panel.scss */
 .panel.theatre-sessions .theatre-booking-edit-actions {
-  padding-top: 0.625rem;
+  padding-top: 10px;
 }
 
 /* line 18, ../sass/components/panels/_patient-reminder.scss */
@@ -186,7 +182,7 @@ table.transport .status.Green {
   background: #fff2d7;
   border: 0;
   font-size: 0.8125rem;
-  margin: 0.625rem 0;
+  margin: 8px 0;
 }
 /* line 23, ../sass/components/panels/_patient-reminder.scss */
 .panel.patient-reminder .surname {
@@ -195,9 +191,9 @@ table.transport .status.Green {
 
 /* line 18, ../sass/components/tabs/_theatre-booking-actions-tabs.scss */
 .tabs.theatre-booking-actions {
-  bottom: -0.0625rem;
+  bottom: -1px;
   float: right;
-  margin: 0 0.625rem 0 0;
+  margin: 0 10px 0 0;
   position: relative;
   z-index: 1;
 }
@@ -207,7 +203,7 @@ table.transport .status.Green {
 }
 /* line 26, ../sass/components/tabs/_theatre-booking-actions-tabs.scss */
 .tabs.theatre-booking-actions li:first-child {
-  margin-right: 0.3125rem;
+  margin-right: 4px;
 }
 /* line 30, ../sass/components/tabs/_theatre-booking-actions-tabs.scss */
 .tabs.theatre-booking-actions li.selected a {
@@ -221,12 +217,12 @@ table.transport .status.Green {
   -o-border-radius: 3px 3px 0 0;
   border-radius: 3px 3px 0 0;
   background: #dadada;
-  padding: 0.375rem 0.75rem;
+  padding: 5px 10px 4px 10px;
 }
 
 /* line 19, ../sass/components/_search-filters.scss */
 .search-filters.theatre-diaries table {
-  margin: 0 0 0.3125rem 0;
+  margin: 0 0 5px 0;
 }
 
 /* line 17, ../sass/components/_event.scss */
@@ -420,54 +416,53 @@ table.transport .status.Green {
 #operation #key .label {
   display: inline-block;
   margin-left: 4px;
-  font-size: 1.2em;
 }
-/* line 170, ../sass/components/_schedule-booking.scss */
+/* line 169, ../sass/components/_schedule-booking.scss */
 #operation #key #day .color_box {
   background: #666;
 }
-/* line 173, ../sass/components/_schedule-booking.scss */
+/* line 172, ../sass/components/_schedule-booking.scss */
 #operation #key #available .color_box {
   background: #69bd51;
 }
-/* line 176, ../sass/components/_schedule-booking.scss */
+/* line 175, ../sass/components/_schedule-booking.scss */
 #operation #key #limited .color_box {
   background: #8dbd7f;
 }
-/* line 179, ../sass/components/_schedule-booking.scss */
+/* line 178, ../sass/components/_schedule-booking.scss */
 #operation #key #full .color_box {
   background: #427633;
 }
-/* line 182, ../sass/components/_schedule-booking.scss */
+/* line 181, ../sass/components/_schedule-booking.scss */
 #operation #key #closed .color_box {
   background: #828282;
 }
-/* line 185, ../sass/components/_schedule-booking.scss */
+/* line 184, ../sass/components/_schedule-booking.scss */
 #operation #key #selected_date .color_box {
   background: #3665ff;
 }
-/* line 188, ../sass/components/_schedule-booking.scss */
+/* line 187, ../sass/components/_schedule-booking.scss */
 #operation #key #outside_rtt .color_box {
   background: transparent url('../img/bookingIcons/RTT-warning_tiny.png?1383822735') top left no-repeat;
 }
 
 /* theatres */
-/* line 196, ../sass/components/_schedule-booking.scss */
+/* line 195, ../sass/components/_schedule-booking.scss */
 #theatres {
   margin-top: 10px;
 }
-/* line 198, ../sass/components/_schedule-booking.scss */
+/* line 197, ../sass/components/_schedule-booking.scss */
 #theatres > h4 {
   font-weight: bold;
 }
 
-/* line 204, ../sass/components/_schedule-booking.scss */
+/* line 203, ../sass/components/_schedule-booking.scss */
 #theatre-times h5 {
   margin: 20px 0 5px 10px;
   padding: 0;
   font-size: 16px;
 }
-/* line 209, ../sass/components/_schedule-booking.scss */
+/* line 208, ../sass/components/_schedule-booking.scss */
 #theatre-times .sessionTimes .timeBlock {
   display: inline-block;
   width: 370px;
@@ -478,36 +473,36 @@ table.transport .status.Green {
   text-align: center;
   position: relative;
 }
-/* line 218, ../sass/components/_schedule-booking.scss */
+/* line 217, ../sass/components/_schedule-booking.scss */
 #theatre-times .sessionTimes .timeBlock.bookable {
   background: #69bd51;
   color: #000;
 }
-/* line 221, ../sass/components/_schedule-booking.scss */
+/* line 220, ../sass/components/_schedule-booking.scss */
 #theatre-times .sessionTimes .timeBlock.bookable:hover {
   background: #3665ff;
   color: #fff;
   cursor: pointer;
 }
-/* line 226, ../sass/components/_schedule-booking.scss */
+/* line 225, ../sass/components/_schedule-booking.scss */
 #theatre-times .sessionTimes .timeBlock.bookable.full {
   background: #ffda56;
   color: #000;
 }
-/* line 231, ../sass/components/_schedule-booking.scss */
+/* line 230, ../sass/components/_schedule-booking.scss */
 #theatre-times .sessionTimes .timeBlock.selected_session {
   background: #3665ff;
   color: #fff;
 }
-/* line 235, ../sass/components/_schedule-booking.scss */
+/* line 234, ../sass/components/_schedule-booking.scss */
 #theatre-times .sessionTimes .timeBlock .time {
   font-size: 16px;
 }
-/* line 238, ../sass/components/_schedule-booking.scss */
+/* line 237, ../sass/components/_schedule-booking.scss */
 #theatre-times .sessionTimes .timeBlock .session_id {
   display: none;
 }
-/* line 241, ../sass/components/_schedule-booking.scss */
+/* line 240, ../sass/components/_schedule-booking.scss */
 #theatre-times .sessionTimes .timeBlock .metadata {
   position: absolute;
   bottom: 6px;
@@ -522,16 +517,16 @@ table.transport .status.Green {
   margin: 0;
   border: 0;
 }
-/* line 254, ../sass/components/_schedule-booking.scss */
+/* line 253, ../sass/components/_schedule-booking.scss */
 #theatre-times .sessionTimes .timeBlock .metadata div {
   opacity: 1;
 }
-/* line 258, ../sass/components/_schedule-booking.scss */
+/* line 257, ../sass/components/_schedule-booking.scss */
 #theatre-times .sessionTimes .timeBlock.inthepast {
   background: #828282;
   color: #000;
 }
-/* line 261, ../sass/components/_schedule-booking.scss */
+/* line 260, ../sass/components/_schedule-booking.scss */
 #theatre-times .sessionTimes .timeBlock.inthepast:hover {
   background: #C2C2C2;
   color: #fff;
@@ -539,16 +534,16 @@ table.transport .status.Green {
 }
 
 /* session details */
-/* line 272, ../sass/components/_schedule-booking.scss */
+/* line 271, ../sass/components/_schedule-booking.scss */
 #session_details {
   margin-top: 20px;
 }
-/* line 274, ../sass/components/_schedule-booking.scss */
+/* line 273, ../sass/components/_schedule-booking.scss */
 #session_details > h4 {
   font-weight: bold;
   margin-bottom: 20px;
 }
-/* line 278, ../sass/components/_schedule-booking.scss */
+/* line 277, ../sass/components/_schedule-booking.scss */
 #session_details #siteSelected {
   display: block;
   padding: 10px;
@@ -556,7 +551,7 @@ table.transport .status.Green {
   font-size: 15px;
   margin-top: 10px;
 }
-/* line 285, ../sass/components/_schedule-booking.scss */
+/* line 284, ../sass/components/_schedule-booking.scss */
 #session_details #dateSelected {
   display: block;
   padding: 10px;
@@ -565,7 +560,7 @@ table.transport .status.Green {
   margin-top: 3px;
 }
 
-/* line 294, ../sass/components/_schedule-booking.scss */
+/* line 293, ../sass/components/_schedule-booking.scss */
 #siteSelected > .highlighted, #dateSelected > .highlighted {
   font-weight: bold;
 }

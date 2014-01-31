@@ -20,8 +20,8 @@
 		border-bottom: 0;
 		display: inline-block;
 		font-size: $default-font-size;
-		margin: 0 0 0 rem-calc(10px);
-		padding: rem-calc(6px) rem-calc(12px);
+		margin: 0 0 0 8px;
+		padding: 5px 10px;
 		@include border-bottom-left-radius(0);
 		@include border-bottom-right-radius(0);
 	}
