@@ -16,6 +16,10 @@
 Yii::import('application.modules.OphTrOperationbooking.controllers.*');
 Yii::import('application.modules.OphTrOperationbooking.helpers.*');
 
+/**
+ * Class BookingControllerTest
+ * @group controllers
+ */
 class BookingControllerTest extends CDbTestCase
 {
 	static public function setupBeforeClass()
