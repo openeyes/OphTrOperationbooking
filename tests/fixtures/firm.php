@@ -44,6 +44,5 @@ return array(
 		'id' => 4,
 		'service_subspecialty_assignment_id' => null,
 		'name' => 'Support Services Firm',
-		'service_subspecialty_assignment_id' => 1,
 	),
 );
