@@ -32,7 +32,7 @@
  *
  */
 
-class OphTrOperationbooking_Operation_Theatre extends SoftDelete
+class OphTrOperationbooking_Operation_Theatre extends BaseActiveRecordVersionedSoftDelete
 {
 	/**
 	 * Returns the static model of the specified AR class.
