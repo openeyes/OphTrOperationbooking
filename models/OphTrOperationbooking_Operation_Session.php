@@ -70,18 +70,10 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 		return array(
 			array('sequence_id, date, start_time, end_time, theatre_id', 'required'),
 			array('sequence_id, theatre_id', 'length', 'max' => 10),
-			array('comments, available, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id, theatre_id, start_time, end_time, deleted, default_admission_time', 'safe'),
+			array('comments, available, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id, theatre_id, start_time, end_time, default_admission_time', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, sequence_id, theatre_id, date, start_time, end_time, comments, available, firm_id, site_id, weekday, consultant, paediatric, anaesthetist, general_anaesthetic', 'safe', 'on'=>'search'),
-		);
-	}
-
-	public function defaultScope()
-	{
-		$table_alias = $this->getTableAlias(false,false);
-		return array(
-			'condition' => $table_alias.'.deleted = 0',
 		);
 	}
 
