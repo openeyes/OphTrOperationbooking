@@ -27,7 +27,7 @@
  *
  */
 
-class OphTrOperationbooking_Operation_Cancellation_Reason extends BaseActiveRecordVersioned
+class OphTrOperationbooking_Operation_Cancellation_Reason extends SoftDelete
 {
 	/**
 	 * Returns the static model of the specified AR class.

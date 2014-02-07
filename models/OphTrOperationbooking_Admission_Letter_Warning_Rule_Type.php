@@ -24,7 +24,7 @@
  * @property string $name
  */
 
-class OphTrOperationbooking_Admission_Letter_Warning_Rule_Type extends BaseActiveRecordVersioned
+class OphTrOperationbooking_Admission_Letter_Warning_Rule_Type extends SoftDelete
 {
 	/**
 	 * Returns the static model of the specified AR class.

@@ -35,7 +35,7 @@
  *
  */
 
-class OphTrOperationbooking_Operation_Ward extends BaseActiveRecordVersioned
+class OphTrOperationbooking_Operation_Ward extends SoftDelete
 {
 	const RESTRICTION_MALE = 1;
 	const RESTRICTION_FEMALE = 2;
