@@ -336,4 +336,12 @@ class OphTrOperationbooking_API extends BaseAPI
 		return $eo->isEditable();
 	}
 
+	public function findBookingByEventID($event_id)
+	{
+		if ($eo = Element_OphTrOperationbooking_Operation::model()->with('booking')->find('event_id=?',array($event_id))) {
+			return $eo->booking;
+		}
+
+		return false;
+	}
 }
