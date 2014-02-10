@@ -106,6 +106,7 @@ class TransportController extends BaseModuleController
 		$criteria->addCondition('transport_arranged = :zero or transport_arranged_date = :today');
 		$criteria->params[':zero'] = 0;
 		$criteria->params[':today'] = date('Y-m-d');
+		$criteria->params[':six'] = 6;
 
 		if (@$date_from && @$date_to) {
 			$criteria->addCondition('session_date >= :fromDate and session_date <= :toDate');

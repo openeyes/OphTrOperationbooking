@@ -23,6 +23,7 @@ $(document).ready(function() {
 		$('#include_bookings').attr('checked','checked');
 		$('#include_reschedules').attr('checked','checked');
 		$('#include_cancellations').attr('checked','checked');
+		$('#include_completed').attr('checked','checked');
 		transport_load_tcis();
 		e.preventDefault();
 	});
@@ -66,6 +67,7 @@ $(document).ready(function() {
 		if (!$('#include_bookings').is(':checked')) get += "&include_bookings=0";
 		if (!$('#include_reschedules').is(':checked')) get += "&include_reschedules=0";
 		if (!$('#include_cancellations').is(':checked')) get += "&include_cancellations=0";
+		if ($('#include_completed').is(':checked')) get += "&include_completed=1";
 
 		url += get;
 
@@ -82,6 +84,7 @@ $(document).ready(function() {
 		$('#csvform input[name="include_bookings"]').val($('#include_bookings').is(':checked') ? 1 : 0);
 		$('#csvform input[name="include_reschedules"]').val($('#include_reschedules').is(':checked') ? 1 : 0);
 		$('#csvform input[name="include_cancellations"]').val($('#include_cancellations').is(':checked') ? 1 : 0);
+		$('#csvform input[name="include_completed"]').val($('#include_completed').is(':checked') ? 1 : 0);
 		$('#csvform').submit();
 	});
 
@@ -124,6 +127,7 @@ function transport_load_tcis(url) {
 	if (!$('#include_bookings').is(':checked')) get += "&include_bookings=0";
 	if (!$('#include_reschedules').is(':checked')) get += "&include_reschedules=0";
 	if (!$('#include_cancellations').is(':checked')) get += "&include_cancellations=0";
+	if ($('#include_completed').is(':checked')) get += "&include_completed=1";
 
 	url += get;
 
@@ -137,4 +141,3 @@ function transport_load_tcis(url) {
 		}
 	});
 }
-
