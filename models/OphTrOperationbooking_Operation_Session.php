@@ -106,6 +106,34 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 		);
 	}
 
+	public function getActiveBookingsForWard($ward_id = null)
+	{
+		$criteria = array(
+			'with' => array(
+				'operation',
+				'operation.anaesthetic_type',
+				'operation.priority',
+				'operation.event' => array('joinType' => 'join'),
+				'operation.event.episode' => array('joinType' => 'join'),
+				'operation.event.episode.patient',
+				'operation.event.episode.patient.episodes',
+				'operation.event.episode.patient.contact',
+				'operation.event.episode.patient.allergies',
+				'operation.procedures',
+				'operation.op_usermodified',
+				'operation.op_user',
+				'operation.eye',
+				'ward',
+				'user',
+			)
+		);
+		if((int)$ward_id) {
+			$criteria['condition'] = 'ward.id = :ward_id';
+			$criteria['params'][':ward_id'] = (int)$ward_id;
+		}
+		return $this->activeBookings($criteria);
+	}
+
 	/**
 	 * @return array customized attribute labels (name=>label)
 	 */
