@@ -30,7 +30,6 @@ CREATE TABLE `et_ophtroperationbooking_diagnosis_version` (
 		$this->dropPrimaryKey('id','et_ophtroperationbooking_diagnosis_version');
 
 		$this->createIndex('et_ophtroperationbooking_diagnosis_aid_fk','et_ophtroperationbooking_diagnosis_version','id');
-		$this->addForeignKey('et_ophtroperationbooking_diagnosis_aid_fk','et_ophtroperationbooking_diagnosis_version','id','et_ophtroperationbooking_diagnosis','id');
 
 		$this->addColumn('et_ophtroperationbooking_diagnosis_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -92,7 +91,6 @@ CREATE TABLE `et_ophtroperationbooking_operation_version` (
 		$this->dropPrimaryKey('id','et_ophtroperationbooking_operation_version');
 
 		$this->createIndex('et_ophtroperationbooking_operation_aid_fk','et_ophtroperationbooking_operation_version','id');
-		$this->addForeignKey('et_ophtroperationbooking_operation_aid_fk','et_ophtroperationbooking_operation_version','id','et_ophtroperationbooking_operation','id');
 
 		$this->addColumn('et_ophtroperationbooking_operation_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -125,7 +123,6 @@ CREATE TABLE `et_ophtroperationbooking_scheduleope_version` (
 		$this->dropPrimaryKey('id','et_ophtroperationbooking_scheduleope_version');
 
 		$this->createIndex('et_ophtroperationbooking_scheduleope_aid_fk','et_ophtroperationbooking_scheduleope_version','id');
-		$this->addForeignKey('et_ophtroperationbooking_scheduleope_aid_fk','et_ophtroperationbooking_scheduleope_version','id','et_ophtroperationbooking_scheduleope','id');
 
 		$this->addColumn('et_ophtroperationbooking_scheduleope_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -176,7 +173,6 @@ CREATE TABLE `ophtroperationbooking_admission_letter_warning_rule_version` (
 		$this->dropPrimaryKey('id','ophtroperationbooking_admission_letter_warning_rule_version');
 
 		$this->createIndex('ophtroperationbooking_admission_letter_warning_rule_aid_fk','ophtroperationbooking_admission_letter_warning_rule_version','id');
-		$this->addForeignKey('ophtroperationbooking_admission_letter_warning_rule_aid_fk','ophtroperationbooking_admission_letter_warning_rule_version','id','ophtroperationbooking_admission_letter_warning_rule','id');
 
 		$this->addColumn('ophtroperationbooking_admission_letter_warning_rule_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -251,7 +247,6 @@ CREATE TABLE `ophtroperationbooking_letter_contact_rule_version` (
 		$this->dropPrimaryKey('id','ophtroperationbooking_letter_contact_rule_version');
 
 		$this->createIndex('ophtroperationbooking_letter_contact_rule_aid_fk','ophtroperationbooking_letter_contact_rule_version','id');
-		$this->addForeignKey('ophtroperationbooking_letter_contact_rule_aid_fk','ophtroperationbooking_letter_contact_rule_version','id','ophtroperationbooking_letter_contact_rule','id');
 
 		$this->addColumn('ophtroperationbooking_letter_contact_rule_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -306,7 +301,6 @@ CREATE TABLE `ophtroperationbooking_operation_booking_version` (
 		$this->dropPrimaryKey('id','ophtroperationbooking_operation_booking_version');
 
 		$this->createIndex('ophtroperationbooking_operation_booking_aid_fk','ophtroperationbooking_operation_booking_version','id');
-		$this->addForeignKey('ophtroperationbooking_operation_booking_aid_fk','ophtroperationbooking_operation_booking_version','id','ophtroperationbooking_operation_booking','id');
 
 		$this->addColumn('ophtroperationbooking_operation_booking_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -371,7 +365,6 @@ CREATE TABLE `ophtroperationbooking_operation_date_letter_sent_version` (
 		$this->dropPrimaryKey('id','ophtroperationbooking_operation_date_letter_sent_version');
 
 		$this->createIndex('ophtroperationbooking_operation_date_letter_sent_aid_fk','ophtroperationbooking_operation_date_letter_sent_version','id');
-		$this->addForeignKey('ophtroperationbooking_operation_date_letter_sent_aid_fk','ophtroperationbooking_operation_date_letter_sent_version','id','ophtroperationbooking_operation_date_letter_sent','id');
 
 		$this->addColumn('ophtroperationbooking_operation_date_letter_sent_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -417,7 +410,6 @@ CREATE TABLE `ophtroperationbooking_operation_erod_version` (
 		$this->dropPrimaryKey('id','ophtroperationbooking_operation_erod_version');
 
 		$this->createIndex('ophtroperationbooking_operation_erod_aid_fk','ophtroperationbooking_operation_erod_version','id');
-		$this->addForeignKey('ophtroperationbooking_operation_erod_aid_fk','ophtroperationbooking_operation_erod_version','id','ophtroperationbooking_operation_erod','id');
 
 		$this->addColumn('ophtroperationbooking_operation_erod_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -447,7 +439,6 @@ CREATE TABLE `ophtroperationbooking_operation_erod_rule_version` (
 		$this->dropPrimaryKey('id','ophtroperationbooking_operation_erod_rule_version');
 
 		$this->createIndex('ophtroperationbooking_operation_erod_rule_aid_fk','ophtroperationbooking_operation_erod_rule_version','id');
-		$this->addForeignKey('ophtroperationbooking_operation_erod_rule_aid_fk','ophtroperationbooking_operation_erod_rule_version','id','ophtroperationbooking_operation_erod_rule','id');
 
 		$this->addColumn('ophtroperationbooking_operation_erod_rule_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -479,7 +470,6 @@ CREATE TABLE `ophtroperationbooking_operation_erod_rule_item_version` (
 		$this->dropPrimaryKey('id','ophtroperationbooking_operation_erod_rule_item_version');
 
 		$this->createIndex('ophtroperationbooking_operation_erod_rule_item_aid_fk','ophtroperationbooking_operation_erod_rule_item_version','id');
-		$this->addForeignKey('ophtroperationbooking_operation_erod_rule_item_aid_fk','ophtroperationbooking_operation_erod_rule_item_version','id','ophtroperationbooking_operation_erod_rule_item','id');
 
 		$this->addColumn('ophtroperationbooking_operation_erod_rule_item_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -510,7 +500,6 @@ CREATE TABLE `ophtroperationbooking_operation_name_rule_version` (
 		$this->dropPrimaryKey('id','ophtroperationbooking_operation_name_rule_version');
 
 		$this->createIndex('ophtroperationbooking_operation_name_rule_aid_fk','ophtroperationbooking_operation_name_rule_version','id');
-		$this->addForeignKey('ophtroperationbooking_operation_name_rule_aid_fk','ophtroperationbooking_operation_name_rule_version','id','ophtroperationbooking_operation_name_rule','id');
 
 		$this->addColumn('ophtroperationbooking_operation_name_rule_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -573,7 +562,6 @@ CREATE TABLE `ophtroperationbooking_operation_procedures_procedures_version` (
 		$this->dropPrimaryKey('id','ophtroperationbooking_operation_procedures_procedures_version');
 
 		$this->createIndex('ophtroperationbooking_operation_procedures_procedures_aid_fk','ophtroperationbooking_operation_procedures_procedures_version','id');
-		$this->addForeignKey('ophtroperationbooking_operation_procedures_procedures_aid_fk','ophtroperationbooking_operation_procedures_procedures_version','id','ophtroperationbooking_operation_procedures_procedures','id');
 
 		$this->addColumn('ophtroperationbooking_operation_procedures_procedures_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -621,7 +609,6 @@ CREATE TABLE `ophtroperationbooking_operation_sequence_version` (
 		$this->dropPrimaryKey('id','ophtroperationbooking_operation_sequence_version');
 
 		$this->createIndex('ophtroperationbooking_operation_sequence_aid_fk','ophtroperationbooking_operation_sequence_version','id');
-		$this->addForeignKey('ophtroperationbooking_operation_sequence_aid_fk','ophtroperationbooking_operation_sequence_version','id','ophtroperationbooking_operation_sequence','id');
 
 		$this->addColumn('ophtroperationbooking_operation_sequence_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -650,7 +637,6 @@ CREATE TABLE `ophtroperationbooking_operation_sequence_interval_version` (
 		$this->dropPrimaryKey('id','ophtroperationbooking_operation_sequence_interval_version');
 
 		$this->createIndex('ophtroperationbooking_operation_sequence_interval_aid_fk','ophtroperationbooking_operation_sequence_interval_version','id');
-		$this->addForeignKey('ophtroperationbooking_operation_sequence_interval_aid_fk','ophtroperationbooking_operation_sequence_interval_version','id','ophtroperationbooking_operation_sequence_interval','id');
 
 		$this->addColumn('ophtroperationbooking_operation_sequence_interval_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -696,7 +682,6 @@ CREATE TABLE `ophtroperationbooking_operation_session_version` (
 		$this->dropPrimaryKey('id','ophtroperationbooking_operation_session_version');
 
 		$this->createIndex('ophtroperationbooking_operation_session_aid_fk','ophtroperationbooking_operation_session_version','id');
-		$this->addForeignKey('ophtroperationbooking_operation_session_aid_fk','ophtroperationbooking_operation_session_version','id','ophtroperationbooking_operation_session','id');
 
 		$this->addColumn('ophtroperationbooking_operation_session_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -724,7 +709,6 @@ CREATE TABLE `ophtroperationbooking_operation_status_version` (
 		$this->dropPrimaryKey('id','ophtroperationbooking_operation_status_version');
 
 		$this->createIndex('ophtroperationbooking_operation_status_aid_fk','ophtroperationbooking_operation_status_version','id');
-		$this->addForeignKey('ophtroperationbooking_operation_status_aid_fk','ophtroperationbooking_operation_status_version','id','ophtroperationbooking_operation_status','id');
 
 		$this->addColumn('ophtroperationbooking_operation_status_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -868,7 +852,6 @@ CREATE TABLE `ophtroperationbooking_waiting_list_contact_rule_version` (
 		$this->dropPrimaryKey('id','ophtroperationbooking_waiting_list_contact_rule_version');
 
 		$this->createIndex('ophtroperationbooking_waiting_list_contact_rule_aid_fk','ophtroperationbooking_waiting_list_contact_rule_version','id');
-		$this->addForeignKey('ophtroperationbooking_waiting_list_contact_rule_aid_fk','ophtroperationbooking_waiting_list_contact_rule_version','id','ophtroperationbooking_waiting_list_contact_rule','id');
 
 		$this->addColumn('ophtroperationbooking_waiting_list_contact_rule_version','version_date',"datetime not null default '1900-01-01 00:00:00'");
 
@@ -876,47 +859,18 @@ CREATE TABLE `ophtroperationbooking_waiting_list_contact_rule_version` (
 		$this->addPrimaryKey('version_id','ophtroperationbooking_waiting_list_contact_rule_version','version_id');
 		$this->alterColumn('ophtroperationbooking_waiting_list_contact_rule_version','version_id','int(10) unsigned NOT NULL AUTO_INCREMENT');
 
-		$this->addColumn('et_ophtroperationbooking_diagnosis','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('et_ophtroperationbooking_diagnosis_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('et_ophtroperationbooking_operation','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('et_ophtroperationbooking_operation_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('et_ophtroperationbooking_scheduleope','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('et_ophtroperationbooking_scheduleope_version','deleted','tinyint(1) unsigned not null');
-
-		$this->addColumn('ophtroperationbooking_admission_letter_warning_rule','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophtroperationbooking_admission_letter_warning_rule_version','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophtroperationbooking_admission_letter_warning_rule_type','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophtroperationbooking_admission_letter_warning_rule_type_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophtroperationbooking_letter_contact_rule','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophtroperationbooking_letter_contact_rule_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophtroperationbooking_operation_booking','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophtroperationbooking_operation_booking_version','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophtroperationbooking_operation_cancellation_reason','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophtroperationbooking_operation_cancellation_reason_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophtroperationbooking_operation_date_letter_sent','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophtroperationbooking_operation_date_letter_sent_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophtroperationbooking_operation_erod','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophtroperationbooking_operation_erod_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophtroperationbooking_operation_erod_rule','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophtroperationbooking_operation_erod_rule_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophtroperationbooking_operation_erod_rule_item','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophtroperationbooking_operation_erod_rule_item_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophtroperationbooking_operation_name_rule','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophtroperationbooking_operation_name_rule_version','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophtroperationbooking_operation_priority','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophtroperationbooking_operation_priority_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophtroperationbooking_operation_procedures_procedures','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophtroperationbooking_operation_procedures_procedures_version','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophtroperationbooking_operation_sequence_interval','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophtroperationbooking_operation_sequence_interval_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophtroperationbooking_operation_status','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophtroperationbooking_operation_status_version','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophtroperationbooking_operation_ward','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophtroperationbooking_operation_ward_version','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophtroperationbooking_scheduleope_schedule_options','deleted','tinyint(1) unsigned not null');
 		$this->addColumn('ophtroperationbooking_scheduleope_schedule_options_version','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophtroperationbooking_waiting_list_contact_rule','deleted','tinyint(1) unsigned not null');
-		$this->addColumn('ophtroperationbooking_waiting_list_contact_rule_version','deleted','tinyint(1) unsigned not null');
 	}
 
 	public function down()
@@ -925,23 +879,11 @@ CREATE TABLE `ophtroperationbooking_waiting_list_contact_rule_version` (
 		$this->dropColumn('et_ophtroperationbooking_operation','deleted');
 		$this->dropColumn('et_ophtroperationbooking_scheduleope','deleted');
 
-		$this->dropColumn('ophtroperationbooking_admission_letter_warning_rule','deleted');
 		$this->dropColumn('ophtroperationbooking_admission_letter_warning_rule_type','deleted');
-		$this->dropColumn('ophtroperationbooking_letter_contact_rule','deleted');
-		$this->dropColumn('ophtroperationbooking_operation_booking','deleted');
 		$this->dropColumn('ophtroperationbooking_operation_cancellation_reason','deleted');
-		$this->dropColumn('ophtroperationbooking_operation_date_letter_sent','deleted');
-		$this->dropColumn('ophtroperationbooking_operation_erod','deleted');
-		$this->dropColumn('ophtroperationbooking_operation_erod_rule','deleted');
-		$this->dropColumn('ophtroperationbooking_operation_erod_rule_item','deleted');
-		$this->dropColumn('ophtroperationbooking_operation_name_rule','deleted');
 		$this->dropColumn('ophtroperationbooking_operation_priority','deleted');
-		$this->dropColumn('ophtroperationbooking_operation_procedures_procedures','deleted');
-		$this->dropColumn('ophtroperationbooking_operation_sequence_interval','deleted');
-		$this->dropColumn('ophtroperationbooking_operation_status','deleted');
 		$this->dropColumn('ophtroperationbooking_operation_ward','deleted');
 		$this->dropColumn('ophtroperationbooking_scheduleope_schedule_options','deleted');
-		$this->dropColumn('ophtroperationbooking_waiting_list_contact_rule','deleted');
 
 		$this->dropTable('et_ophtroperationbooking_diagnosis_version');
 		$this->dropTable('et_ophtroperationbooking_operation_version');
