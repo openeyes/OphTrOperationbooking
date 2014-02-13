@@ -359,13 +359,13 @@ $(document).ready(function() {
 
 	new OpenEyes.UI.StickyElement('.panel.actions', {
 		offset: -44,
-		enableHandler: function() {
-			this.element.width(this.element.width());
-			this.enable();
+		enableHandler: function(instance) {
+			instance.element.width(instance.element.width());
+			instance.enable();
 		},
-		disableHandler: function() {
-			this.element.width('auto');
-			this.disable();
+		disableHandler: function(instance) {
+			instance.element.width('auto');
+			instance.disable();
 		}
 	});
 });

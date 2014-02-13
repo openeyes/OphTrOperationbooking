@@ -314,6 +314,15 @@ class OphTrOperationbooking_API extends BaseAPI
 		}
 	}
 
+	public function findSiteForBookingEvent($event)
+	{
+		if ($eo = Element_OphTrOperationbooking_Operation::model()->with('booking')->find('event_id=?',array($event->id))) {
+			if ($eo->booking) {
+				return $eo->booking->theatre->site;
+			}
+		}
+	}
+
 	public function canUpdate($event_id)
 	{
 		$eo = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($event_id));
@@ -326,5 +335,14 @@ class OphTrOperationbooking_API extends BaseAPI
 		$eo = Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($event_id));
 
 		return $eo->isEditable();
+	}
+
+	public function findBookingByEventID($event_id)
+	{
+		if ($eo = Element_OphTrOperationbooking_Operation::model()->with('booking')->find('event_id=?',array($event_id))) {
+			return $eo->booking;
+		}
+
+		return false;
 	}
 }
