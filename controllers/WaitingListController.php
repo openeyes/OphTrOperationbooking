@@ -257,7 +257,6 @@ class WaitingListController extends BaseModuleController
 	public function actionPrintLetters()
 	{
 		Audit::add('waiting list',(@$_REQUEST['all']=='true' ? 'print all' : 'print selected'),serialize($_POST));
-
 		if (isset($_REQUEST['event_id'])) {
 			$operations = Element_OphTrOperationbooking_Operation::model()->findAll('event_id=?',array($_REQUEST['event_id']));
 			$auto_confirm = true;
@@ -273,9 +272,14 @@ class WaitingListController extends BaseModuleController
 		// Print letter(s) for each operation
 		$this->layout = '//layouts/pdf';
 		$pdf_print = new OEPDFPrint('Openeyes', 'Waiting list letters', 'Waiting list letters');
+		// for large number of letters we manipulate the the time limit on the script
+		// to prevent timeouts.
+		// FIXME: provide a means by which progress can be reported back to the user, possibly via session and parallel polling?
 		foreach ($operations as $operation) {
+			set_time_limit(3);
 			$this->printLetter($pdf_print, $operation, $auto_confirm);
 		}
+		set_time_limit(10);
 		$pdf_print->output();
 	}
 
@@ -369,7 +373,7 @@ class WaitingListController extends BaseModuleController
 		$letter->setBarcode('E:'.$operation->event_id);
 		$letter->setFont('helvetica','10');
 		$letter->addBody($body);
-		$pdf->addLetter($letter);
+		$pdf->addLetterRender($letter);
 	}
 
 	/**
@@ -392,7 +396,7 @@ class WaitingListController extends BaseModuleController
 		), true);
 		$letter = new OELetter($to_address, $this->getFromAddress($operation), $body);
 		$letter->setBarcode('E:'.$operation->event_id);
-		$pdf->addLetter($letter);
+		$pdf->addLetterRender($letter);
 	}
 
 	/**
@@ -415,7 +419,7 @@ class WaitingListController extends BaseModuleController
 		), true);
 		$letter = new OELetter($to_address, $this->getFromAddress($operation), $body);
 		$letter->setBarcode('E:'.$operation->event_id);
-		$pdf->addLetter($letter);
+		$pdf->addLetterRender($letter);
 	}
 
 	/**
@@ -454,7 +458,7 @@ class WaitingListController extends BaseModuleController
 		), true);
 		$letter = new OELetter($to_address, $this->getFromAddress($operation), $body);
 		$letter->setBarcode('E:'.$operation->event_id);
-		$pdf->addLetter($letter);
+		$pdf->addLetterRender($letter);
 
 		// Patient letter
 		$to_address = $patient->getLetterAddress(array(
@@ -468,7 +472,7 @@ class WaitingListController extends BaseModuleController
 		), true);
 		$letter = new OELetter($to_address, $this->getFromAddress($operation), $body);
 		$letter->setBarcode('E:'.$operation->event_id);
-		$pdf->addLetter($letter);
+		$pdf->addLetterRender($letter);
 
 	}
 
