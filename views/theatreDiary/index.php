@@ -159,19 +159,18 @@
 				</div>
 			</div>
 		<?php $this->endWidget()?>
+	</div>
 
-		<div class="row hide" id="theatre-search-loading">
-			<div class="large-12 column">
-				<div class="alert-box">
-					<img src="<?php echo Yii::app()->assetManager->createUrl('img/ajax-loader.gif');?>" class="spinner" /> <strong>Please wait...</strong>
-				</div>
+	<div class="row hide" id="theatre-search-loading">
+		<div class="large-12 column">
+			<div class="alert-box">
+				<img src="<?php echo Yii::app()->assetManager->createUrl('img/ajax-loader.gif');?>" class="spinner" /> <strong>Please wait...</strong>
 			</div>
 		</div>
-
-		<div id="theatreList" class="theatres-list"></div>
-		<div class="printable" id="printable"></div>
-
 	</div>
+
+	<div id="theatreList" class="theatres-list"></div>
+	<div class="printable" id="printable"></div>
 </div>
 
 <div id="iframeprintholder" style="display: none;"></div>

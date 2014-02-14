@@ -19,6 +19,12 @@
 		white-space: nowrap;
 		img {
 			max-width: none;
+			@media print {
+				margin: 2px 0;
+			}
+		}
+		@media print {
+			white-space: normal;
 		}
 	}
 	.send-another-reminder {
