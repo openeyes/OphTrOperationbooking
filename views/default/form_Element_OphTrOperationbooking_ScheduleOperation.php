@@ -25,6 +25,6 @@
 	<h3 class="element-title"><?php  echo $element->elementType->name; ?></h3>
 	</header>
 	<fieldset class="element-fields">
-	<?php echo $form->radioButtons($element, 'schedule_options_id', 'ophtroperationbooking_scheduleope_schedule_options')?>
+	<?php echo $form->radioButtons($element, 'schedule_options_id', CHtml::listData(OphTrOperationbooking_ScheduleOperation_Options::model()->findAll(array('order'=>'display_order asc')),'id','name'))?>
 	</fieldset>
 </section>
