@@ -125,6 +125,14 @@ class OphTrOperationbooking_Letter_Contact_Rule extends BaseTree
 			));
 	}
 
+	/**
+	 * @param $site_id
+	 * @param $subspecialty_id
+	 * @param $theatre_id
+	 * @param $firm_id
+	 * @param $is_child - is the patient a child?
+	 * @return bool
+	 */
 	public function applies($site_id, $subspecialty_id, $theatre_id, $firm_id, $is_child)
 	{
 		foreach (array('site_id','subspecialty_id','theatre_id','firm_id','is_child') as $field) {
@@ -136,11 +144,19 @@ class OphTrOperationbooking_Letter_Contact_Rule extends BaseTree
 		return true;
 	}
 
-	public function parse($site_id, $subspecialty_id, $theatre_id, $firm_id)
+	/**
+	 * @param $site_id
+	 * @param $subspecialty_id
+	 * @param $theatre_id
+	 * @param $firm_id
+	 * @param $is_child - is the patient a child?
+	 * @return $this
+	 */
+	public function parse($site_id, $subspecialty_id, $theatre_id, $firm_id, $is_child)
 	{
 		foreach ($this->children as $child_rule) {
-			if ($child_rule->applies($site_id, $subspecialty_id, $theatre_id, $firm_id)) {
-				return $child_rule->parse($site_id, $subspecialty_id, $theatre_id, $firm_id);
+			if ($child_rule->applies($site_id, $subspecialty_id, $theatre_id, $firm_id, $is_child)) {
+				return $child_rule->parse($site_id, $subspecialty_id, $theatre_id, $firm_id, $is_child);
 			}
 		}
 
