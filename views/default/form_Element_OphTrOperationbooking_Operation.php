@@ -25,13 +25,13 @@
 		<h3 class="element-title"><?php  echo $element->elementType->name; ?></h3>
 	</header>
 	<fieldset class="element-fields">
-	<?php echo $form->radioButtons($element, 'eye_id', 'eye')?>
+	<?php echo $form->radioButtons($element, 'eye_id', CHtml::listData(Eye::model()->findAll(array('order'=>'display_order asc')),'id','name'))?>
 	<?php $form->widget('application.widgets.ProcedureSelection',array(
 		'element' => $element,
 		'durations' => true,
 	))?>
 	<?php echo $form->radioBoolean($element, 'consultant_required')?>
-	<?php echo $form->radioButtons($element, 'anaesthetic_type_id', 'anaesthetic_type')?>
+	<?php echo $form->radioButtons($element, 'anaesthetic_type_id', CHtml::listData(AnaestheticType::model()->active()->findAll(array('order'=>'id asc')),'id','name'))?>
 	<?php echo $form->radioBoolean($element, 'overnight_stay')?>
 	<?php
 	$criteria = new CDbCriteria;

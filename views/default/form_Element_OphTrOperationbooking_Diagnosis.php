@@ -25,7 +25,7 @@
 		<h3 class="element-title"><?php  echo $element->elementType->name; ?></h3>
 	</header>
 	<fieldset class="element-fields" id="editDiagnosis">
-		<?php echo $form->radioButtons($element, 'eye_id', 'eye')?>
+		<?php echo $form->radioButtons($element, 'eye_id', CHtml::listData(Eye::model()->findAll(array('order'=>'display_order asc')),'id','name'))?>
 		<?php $form->widget('application.widgets.DiagnosisSelection',array(
 			'field' => 'disorder_id',
 			'element' => $element,
