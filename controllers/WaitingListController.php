@@ -244,6 +244,7 @@ class WaitingListController extends BaseModuleController
 		$criteria->order = '`t`.name asc';
 
 		return CHtml::listData(Firm::model()
+			->active()
 			->with(array('serviceSubspecialtyAssignment'))
 			->findAll($criteria),'id','name');
 	}

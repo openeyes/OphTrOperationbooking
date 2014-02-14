@@ -536,7 +536,7 @@ class TheatreDiaryController extends BaseModuleController
 		$criteria->params[':subspecialty_id'] = $subspecialty_id;
 		$criteria->order = 'name';
 
-		$firms = CHtml::listData(Firm::model()->with('serviceSubspecialtyAssignment')->findAll($criteria),'id','name');
+		$firms = CHtml::listData(Firm::model()->active()->with('serviceSubspecialtyAssignment')->findAll($criteria),'id','name');
 
 		return $firms;
 	}
