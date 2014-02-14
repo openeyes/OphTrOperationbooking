@@ -31,7 +31,7 @@
 		'durations' => true,
 	))?>
 	<?php echo $form->radioBoolean($element, 'consultant_required')?>
-	<?php echo $form->radioButtons($element, 'anaesthetic_type_id', CHtml::listData(AnaestheticType::model()->active()->findAll(array('order'=>'id asc')),'id','name'))?>
+	<?php echo $form->radioButtons($element, 'anaesthetic_type_id', CHtml::listData(AnaestheticType::model()->active()->findAll(array('order'=>'display_order asc')),'id','name'))?>
 	<?php echo $form->radioBoolean($element, 'overnight_stay')?>
 	<?php
 	$criteria = new CDbCriteria;
