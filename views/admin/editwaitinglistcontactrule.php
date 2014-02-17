@@ -35,7 +35,7 @@
 	<?php echo $form->errorSummary($rule); ?>
 	<?php echo $form->dropDownList($rule,'parent_rule_id',CHtml::listData(OphTrOperationbooking_Waiting_List_Contact_Rule::model()->getListAsTree(),'id','treeName'),array('empty'=>'- None -'))?>
 	<?php echo $form->textField($rule,'rule_order',array(),array(),array('field'=>2))?>
-	<?php echo $form->dropDownList($rule,'site_id',CHtml::listData(Site::model()->findAll(array('order'=>'name asc','condition'=>'institution_id = 1')),'id','name'),array('empty'=>'- Not set -'))?>
+	<?php echo $form->dropDownList($rule,'site_id',Site::model()->getListForCurrentInstitution('name'),array('empty'=>'- Not set -'))?>
 	<?php echo $form->dropDownList($rule,'firm_id',Firm::model()->getListWithSpecialties(),array('empty'=>'- Not set -'))?>
 	<?php echo $form->dropDownList($rule,'service_id',CHtml::listData(Service::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Not set -'))?>
 	<?php echo $form->textField($rule,'name')?>

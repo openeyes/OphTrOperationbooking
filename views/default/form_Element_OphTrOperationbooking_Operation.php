@@ -38,7 +38,7 @@
 	$criteria->compare('institution_id',1);
 	$criteria->order = 'short_name asc';
 	?>
-	<?php echo $form->dropDownList($element, 'site_id', CHtml::listData(Site::model()->findAll($criteria),'id','short_name'),array(),false,array('field'=>2))?>
+	<?php echo $form->dropDownList($element, 'site_id', Site::model()->getListForCurrentInstitution(false,true),array(),false,array('field'=>2))?>
 	<?php echo $form->radioButtons($element, 'priority_id', CHtml::listData(OphTrOperationbooking_Operation_Priority::model()->findAll(array('order'=>'display_order asc')),'id','name'))?>
 	<?php echo $form->datePicker($element, 'decision_date', array('maxDate' => 'today'), array(), array_merge($form->layoutColumns, array('field' => 2)))?>
 	<?php echo $form->textArea($element, 'comments', array('rows' => 4), false, array(), array_merge($form->layoutColumns, array('field' => 4)))?>
