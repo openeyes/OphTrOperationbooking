@@ -16,25 +16,17 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
  ?>
-<section class="element <?php echo $element->elementType->class_name?>"
-	data-element-type-id="<?php echo $element->elementType->id?>"
-	data-element-type-class="<?php echo $element->elementType->class_name?>"
-	data-element-type-name="<?php echo $element->elementType->name?>"
-	data-element-display-order="<?php echo $element->elementType->display_order?>">
-	<header class="element-header">
-		<h3 class="element-title"><?php  echo $element->elementType->name; ?></h3>
-	</header>
-	<fieldset class="element-fields" id="editDiagnosis">
-		<?php echo $form->radioButtons($element, 'eye_id', CHtml::listData(Eye::model()->findAll(array('order'=>'display_order asc')),'id','name'))?>
-		<?php $form->widget('application.widgets.DiagnosisSelection',array(
-			'field' => 'disorder_id',
-			'element' => $element,
-			'options' => CommonOphthalmicDisorder::getList(Firm::model()->findByPk($this->selectedFirmId)),
-			'layoutColumns' => array(
-				'label' => $form->layoutColumns['label'],
-				'field' => 4
-			)
-		));
-		?>
-	</fieldset>
-</section>
+
+<fieldset class="element-fields" id="editDiagnosis">
+	<?php echo $form->radioButtons($element, 'eye_id', CHtml::listData(Eye::model()->findAll(array('order'=>'display_order asc')),'id','name'))?>
+	<?php $form->widget('application.widgets.DiagnosisSelection',array(
+		'field' => 'disorder_id',
+		'element' => $element,
+		'options' => CommonOphthalmicDisorder::getList(Firm::model()->findByPk($this->selectedFirmId)),
+		'layoutColumns' => array(
+			'label' => $form->layoutColumns['label'],
+			'field' => 4
+		)
+	));
+	?>
+</fieldset>

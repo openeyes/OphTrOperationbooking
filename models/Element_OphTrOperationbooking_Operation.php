@@ -1279,4 +1279,9 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 
 		return 'Booked';
 	}
+
+	public function getContainer_view_view()
+	{
+		return false;
+	}
 }
