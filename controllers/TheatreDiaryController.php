@@ -259,6 +259,7 @@ class TheatreDiaryController extends BaseModuleController
 					),
 				),
 			))
+			->active()
 			->findAll($criteria);
 	}
 
@@ -555,7 +556,7 @@ class TheatreDiaryController extends BaseModuleController
 		$criteria->params[':site_id'] = $site_id;
 		$criteria->order = 'display_order';
 
-		return CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll($criteria),'id','name');
+		return CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->active()->findAll($criteria),'id','name');
 	}
 
 	/**
@@ -572,7 +573,7 @@ class TheatreDiaryController extends BaseModuleController
 		$criteria->params[':site_id'] = $site_id;
 		$criteria->order = 'name';
 
-		return CHtml::listData(OphTrOperationbooking_Operation_Ward::model()->findAll($criteria),'id','name');
+		return CHtml::listData(OphTrOperationbooking_Operation_Ward::model()->active()->findAll($criteria),'id','name');
 	}
 
 	/**

@@ -697,10 +697,10 @@ class AdminController extends ModuleAdminController
 		$page = @$_REQUEST['page'] ? $_REQUEST['page'] : 1;
 
 		if ($all) {
-			return OphTrOperationbooking_Operation_Sequence::model()->findAll($criteria);
+			return OphTrOperationbooking_Operation_Sequence::model()->active()->findAll($criteria);
 		}
 
-		$count = OphTrOperationbooking_Operation_Sequence::model()->count($criteria);
+		$count = OphTrOperationbooking_Operation_Sequence::model()->active()->count($criteria);
 		$pages = ceil($count/$this->sequences_items_per_page);
 
 		if ($page <1) $page = 1;
@@ -748,8 +748,8 @@ class AdminController extends ModuleAdminController
 		);
 
 		$this->items_per_page = $this->sessions_items_per_page;
-		$pagination = $this->initPagination(OphTrOperationbooking_Operation_Sequence::model()->with($with), $criteria);
-		$data = OphTrOperationbooking_Operation_Sequence::model()->with($with)->findAll($criteria);
+		$pagination = $this->initPagination(OphTrOperationbooking_Operation_Sequence::model()->active()->with($with), $criteria);
+		$data = OphTrOperationbooking_Operation_Sequence::model()->with($with)->active()->findAll($criteria);
 
 		return array(
 			'data' => $data,
@@ -786,7 +786,7 @@ class AdminController extends ModuleAdminController
 		if (!empty($_POST['sequence'])) {
 			$criteria = new CDbCriteria;
 			$criteria->addInCondition('id',$_POST['sequence']);
-			$sequences = OphTrOperationbooking_Operation_Sequence::model()->findAll($criteria);
+			$sequences = OphTrOperationbooking_Operation_Sequence::model()->active()->findAll($criteria);
 		} elseif (@$_POST['use_filters']) {
 			$sequences = $this->getSequences(true);
 		}
@@ -1028,10 +1028,10 @@ class AdminController extends ModuleAdminController
 		$page = @$_REQUEST['page'] ? $_REQUEST['page'] : 1;
 
 		if ($all) {
-			return OphTrOperationbooking_Operation_Session::model()->with('sequence')->findAll($criteria);
+			return OphTrOperationbooking_Operation_Session::model()->with('sequence')->active()->findAll($criteria);
 		}
 
-		$count = OphTrOperationbooking_Operation_Session::model()->with('sequence')->count($criteria);
+		$count = OphTrOperationbooking_Operation_Session::model()->with('sequence')->active()->count($criteria);
 		$pages = ceil($count/$this->sessions_items_per_page);
 
 		if ($page <1) $page = 1;
@@ -1078,8 +1078,8 @@ class AdminController extends ModuleAdminController
 		);
 
 		$this->items_per_page = $this->sessions_items_per_page;
-		$pagination = $this->initPagination(OphTrOperationbooking_Operation_Session::model()->with($with), $criteria);
-		$data = OphTrOperationbooking_Operation_Session::model()->with($with)->findAll($criteria);
+		$pagination = $this->initPagination(OphTrOperationbooking_Operation_Session::model()->active()->with($with), $criteria);
+		$data = OphTrOperationbooking_Operation_Session::model()->with($with)->active()->findAll($criteria);
 
 		return array(
 			'data' => $data,

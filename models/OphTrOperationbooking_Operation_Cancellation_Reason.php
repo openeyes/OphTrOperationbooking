@@ -113,6 +113,6 @@ class OphTrOperationbooking_Operation_Cancellation_Reason extends BaseActiveReco
 		$criteria->params[':listNo'] = $listNo;
 		$criteria->order = 'text asc';
 
-		return CHtml::listData(OphTrOperationbooking_Operation_Cancellation_Reason::model()->findAll($criteria),'id','text');
+		return CHtml::listData(OphTrOperationbooking_Operation_Cancellation_Reason::model()->notDeleted()->findAll($criteria),'id','text');
 	}
 }

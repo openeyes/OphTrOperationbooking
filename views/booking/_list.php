@@ -82,7 +82,7 @@ if (!$reschedule) {
 				<label for="Booking_admission_time"><strong>Ward:</strong></label>
 			</div>
 			<div class="large-2 column end">
-				<?php echo CHtml::dropDownList('Booking[ward_id]',@$_POST['Booking']['ward_id'],CHtml::listData(OphTrOperationbooking_Operation_Ward::model()->findAll(array('order'=>'name asc')),'id','name'),array('empty'=> '- None -'))?>
+				<?php echo CHtml::dropDownList('Booking[ward_id]',@$_POST['Booking']['ward_id'],CHtml::listData(OphTrOperationbooking_Operation_Ward::model()->active()->findAll(array('order'=>'name asc')),'id','name'),array('empty'=> '- None -'))?>
 				<span id="Booking_ward_id_error"></span>
 			</div>
 		</div>

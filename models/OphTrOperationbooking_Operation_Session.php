@@ -40,7 +40,7 @@
  *
  */
 
-class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
+class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersionedSoftDelete
 {
 	/**
 	 * Returns the static model of the specified AR class.
