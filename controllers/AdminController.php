@@ -1539,7 +1539,7 @@ class AdminController extends ModuleAdminController
 			if (!$option->delete()) {
 				throw new Exception("Unable to delete scheduling option: ".print_r($option->getErrors(),true));
 			}
-			Audit::add('admin','delete',$option->id,false,array('OphTrOperationbooking','model'=>'OphTrOperationbooking_ScheduleOperation_Options'));
+			Audit::add('admin','delete',$option->id,false,array('module' => 'OphTrOperationbooking','model'=>'OphTrOperationbooking_ScheduleOperation_Options'));
 		}
 
 		echo "1";
@@ -1559,13 +1559,13 @@ class AdminController extends ModuleAdminController
 			if (!$option->save()) {
 				$errors = $option->getErrors();
 			} else {
-				Audit::add('admin','update',serialize(array_merge(array('id'=>$id),$_POST)),false,array('OphTrOperationbooking','model'=>'OphTrOperationbooking_ScheduleOperation_Options'));
+				Audit::add('admin','update',serialize(array_merge(array('id'=>$id),$_POST)),false,array('module' => 'OphTrOperationbooking','model'=>'OphTrOperationbooking_ScheduleOperation_Options'));
 
 				$this->redirect(array('/OphTrOperationbooking/admin/viewSchedulingOptions'));
 			}
 		}
 
-		Audit::add('admin','view',$id,false,array('OphTrOperationbooking','model'=>'OphTrOperationbooking_ScheduleOperation_Options'));
+		Audit::add('admin','view',$id,false,array('module' => 'OphTrOperationbooking','model'=>'OphTrOperationbooking_ScheduleOperation_Options'));
 
 		$this->render('/admin/editschedulingoption',array(
 			'option' => $option,
@@ -1584,7 +1584,7 @@ class AdminController extends ModuleAdminController
 			if (!$option->save()) {
 				$errors = $option->getErrors();
 			} else {
-				Audit::add('admin','create',serialize($_POST),false,array('OphTrOperationbooking','model'=>'OphTrOperationbooking_ScheduleOperation_Options'));
+				Audit::add('admin','create',serialize($_POST),false,array('module' => 'OphTrOperationbooking','model'=>'OphTrOperationbooking_ScheduleOperation_Options'));
 				$this->redirect(array('/OphTrOperationbooking/admin/viewSchedulingOptions'));
 			}
 		}
