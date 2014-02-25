@@ -50,17 +50,17 @@
 	</form>
 </div>
 
-<div id="confirm_delete_scheduleoptions" title="Confirm delete scheduleoption" style="display: none;">
+<div id="confirm_delete_scheduleoptions" title="Confirm delete scheduling option(s)" style="display: none;">
 	<div id="delete_scheduleoptions">
 		<div class="alert-box alert with-icon">
-			<strong>WARNING: This will remove the scheduleoptions from the system.<br/>This action cannot be undone.</strong>
+			<strong>WARNING: This will remove the scheduling option(s) from the system.<br/>This action cannot be undone.</strong>
 		</div>
 		<p>
 			<strong>Are you sure you want to proceed?</strong>
 		</p>
 		<div class="buttons">
 			<input type="hidden" id="medication_id" value="" />
-			<button type="submit" class="warnin btn_remove_scheduleoptions">Remove scheduleoption(s)</button>
+			<button type="submit" class="warning btn_remove_scheduleoptions">Remove scheduling option(s)</button>
 			<button type="submit" class="secondary btn_cancel_remove_scheduleoptions">Cancel</button>
 			<img class="loader" src="<?php echo Yii::app()->assetManager->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 		</div>
@@ -85,16 +85,6 @@
 			'success': function(resp) {
 				if (resp == "1") {
 					enableButtons();
-
-					if ($('input[type="checkbox"][name="scheduleoption[]"]:checked').length == 1) {
-						$('#confirm_delete_scheduleoptions').attr('title','Confirm delete scheduleoption');
-						$('#delete_scheduleoptions').children('div').children('strong').html("WARNING: This will remove the scheduling option from the system.<br/><br/>This action cannot be undone.");
-						$('button.btn_remove_scheduleoptions').children('span').text('Remove option');
-					} else {
-						$('#confirm_delete_scheduleoptions').attr('title','Confirm delete scheduleoptions');
-						$('#delete_scheduleoptions').children('div').children('strong').html("WARNING: This will remove the scheduling options from the system.<br/><br/>This action cannot be undone.");
-						$('button.btn_remove_scheduleoptions').children('span').text('Remove options');
-					}
 
 					$('#confirm_delete_scheduleoptions').dialog({
 						resizable: false,
