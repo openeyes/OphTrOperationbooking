@@ -149,4 +149,9 @@ class Element_OphTrOperationbooking_Diagnosis extends BaseEventTypeElement
 
 		return parent::afterSave();
 	}
+
+	public function getContainer_view_view()
+	{
+		return false;
+	}
 }

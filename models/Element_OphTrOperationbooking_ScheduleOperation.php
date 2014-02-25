@@ -148,4 +148,9 @@ $criteria->compare('schedule_options_id', $this->schedule_options_id);
 	{
 		return parent::beforeValidate();
 	}
+
+	public function getContainer_view_view()
+	{
+		return false;
+	}
 }
