@@ -57,6 +57,7 @@ return array(
 			'Letter warning rules' => '/OphTrOperationbooking/admin/viewLetterWarningRules',
 			'Operation name rules' => '/OphTrOperationbooking/admin/viewOperationNameRules',
 			'Waiting list contact rules' => '/OphTrOperationbooking/admin/viewWaitingListContactRules',
+			'Patient unavailable reasons' => '/OphTrOperationbooking/admin/viewPatientUnavailableReasons'
 		),
 		// Default anaesthetic settings
 		//'ophtroperationbooking_default_anaesthetic_child' => 'GA',

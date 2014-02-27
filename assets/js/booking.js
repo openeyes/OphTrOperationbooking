@@ -42,6 +42,11 @@ $(document).ready(function() {
 
 	handleButton($('#et_canceldelete'));
 
+	$(this).delegate('.addUnavailable', 'click', function(e) {
+		OphTrOperationbooking_PatientUnavailable_add();
+		e.preventDefault();
+	});
+
 	$('select.populate_textarea').unbind('change').change(function() {
 		if ($(this).val() != '') {
 			var cLass = $(this).parent().parent().parent().attr('class').match(/Element.*/);
@@ -137,4 +142,48 @@ $(document).ready(function() {
 				break;
 		}
 	});
+
+	$(this).delegate('.remove-unavailable', 'click', function(e) {
+		$(this).closest('tr').remove();
+		e.preventDefault();
+	});
+
+	$(this).delegate('.unavailable-start-date', 'change', function(e) {
+		var end = $(this).closest('tr').find('.unavailable-end-date');
+		if ($(this).datepicker('getDate') > end.datepicker('getDate')) {
+			end.val($(this).val());
+		}
+	});
+
+	$(this).delegate('.unavailable-end-date', 'change', function(e) {
+		var start = $(this).closest('tr').find('.unavailable-start-date');
+		if ($(this).datepicker('getDate') < start.datepicker('getDate')) {
+			start.val($(this).val());
+		}
+	});
 });
+
+function OphTrOperationbooking_PatientUnavailable_getNextKey() {
+	var keys = $('#event-content .Element_OphTrOperationbooking_ScheduleOperation .patient-unavailable').map(function(index, el) {
+		return parseInt($(el).attr('data-key'));
+	}).get();
+	var v = Math.max.apply(null, keys);
+	if (v >= 0) {
+		return v+1;
+	}
+	return 1;
+}
+
+function OphTrOperationbooking_PatientUnavailable_add() {
+	var template = $('#intraocularpressure_reading_template').html();
+	var data = {
+		"key" : OphTrOperationbooking_PatientUnavailable_getNextKey()
+	};
+	var form = Mustache.render(template, data);
+	$('.unavailables').append(form);
+	$('.unavailables').find('[id$="date"]').each(function() {
+		$(this).datepicker({
+			'showAnim': 'fold',
+			'dateFormat': nhs_date_format});
+	});
+}

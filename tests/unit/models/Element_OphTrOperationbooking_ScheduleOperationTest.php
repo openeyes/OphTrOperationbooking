@@ -1,0 +1,62 @@
+<?php
+/**
+ * (C) OpenEyes Foundation, 2013
+ * This file is part of OpenEyes.
+ * OpenEyes is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * OpenEyes is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with OpenEyes in a file titled COPYING. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @package OpenEyes
+ * @link http://www.openeyes.org.uk
+ * @author OpenEyes <info@openeyes.org.uk>
+ * @copyright Copyright (C) 2013, OpenEyes Foundation
+ * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
+ */
+
+class Element_OphTrOperationbooking_ScheduleOperationTest extends CDbTestCase
+{
+	public function testUnavailableDatesCantOverlap()
+	{
+		$unavailable1 = new OphTrOperationbooking_ScheduleOperation_PatientUnavailable();
+		$unavailable1->attributes = array(
+			'start_date' => '2014-04-02',
+			'end_date' => '2014-04-10',
+			'reason_id' => 1
+		);
+		$unavailable2 = new OphTrOperationbooking_ScheduleOperation_PatientUnavailable();
+		$unavailable2->attributes = array(
+				'start_date' => '2014-04-07',
+				'end_date' => '2014-04-15',
+				'reason_id' => 1
+		);
+		$test = new Element_OphTrOperationbooking_ScheduleOperation();
+		$test->event_id = 1;
+		$test->patient_unavailables = array($unavailable1, $unavailable2);
+		$test->schedule_options_id = 1;
+
+		$this->assertFalse($test->validate());
+		// ensure patient_unavailables is only attribute with errors when rest is valid
+		$errs = $test->getErrors();
+		$this->assertArrayHasKey('patient_unavailables', $errs);
+		$this->assertEquals(count(array_keys($errs)), 1);
+	}
+
+	public function testUnavailablesAreValidated()
+	{
+		$unavailable = $this->getMockBuilder('OphTrOperationbooking_ScheduleOperation_PatientUnavailable')
+					->disableOriginalConstructor()
+					->setMethods(array('validate'))
+					->getMock();
+		$unavailable->expects($this->once())
+				->method('validate')
+				->will($this->returnValue(true));
+
+		$test = new Element_OphTrOperationbooking_ScheduleOperation();
+		$test->event_id = 1;
+		$test->patient_unavailables = array($unavailable);
+		$test->schedule_options_id = 1;
+
+		$test->validate();
+
+	}
+}

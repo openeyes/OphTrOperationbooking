@@ -1591,7 +1591,7 @@ class AdminController extends ModuleAdminController
 	public function actionEditSchedulingOption($id)
 	{
 		if (!$option = OphTrOperationbooking_ScheduleOperation_Options::model()->findByPk($id)) {
-			throw new Exception("Ward not found: $id");
+			throw new Exception("Schedule Option not found: $id");
 		}
 
 		$errors = array();
@@ -1636,5 +1636,120 @@ class AdminController extends ModuleAdminController
 			'option' => $option,
 			'errors' => $errors,
 		));
+	}
+
+	/**
+	 * List all the OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason objects
+	 */
+	public function actionViewPatientUnavailableReasons()
+	{
+		Audit::add('admin','list',null,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason'));
+
+		$this->render('patientunavailablereasons');
+	}
+
+	/**
+	 * Edit the OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason specified by $id
+	 *
+	 * @param $id
+	 * @throws Exception
+	 */
+	public function actionEditPatientUnavailableReason($id)
+	{
+		if (!$reason = OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason::model()->findByPk($id)) {
+			throw new Exception("Patient Unavailable Reason not found: $id");
+		}
+
+		$errors = array();
+
+		if (!empty($_POST)) {
+			$reason->attributes = $_POST['OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason'];
+
+			if (!$reason->save()) {
+				$errors = $reason->getErrors();
+			} else {
+				Audit::add('admin','update',serialize(array_merge(array('id'=>$id),$_POST)),false,array('module' => 'OphTrOperationbooking','model'=>'OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason'));
+
+				$this->redirect(array('/OphTrOperationbooking/admin/viewPatientUnavailableReasons'));
+			}
+		}
+
+		Audit::add('admin','view',$id,false,array('module' => 'OphTrOperationbooking','model'=>'OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason'));
+
+		$this->render('/admin/editpatientunavailablereason',array(
+			'reason' => $reason,
+			'errors' => $errors,
+		));
+	}
+
+	/**
+	 * Add a OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason
+	 */
+	public function actionAddPatientUnavailableReason()
+	{
+		$errors = array();
+
+		$reason = new OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason();
+
+		if (!empty($_POST)) {
+			$reason->attributes = $_POST['OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason'];
+			if (!$reason->save()) {
+				$errors = $reason->getErrors();
+			} else {
+				Audit::add('admin','create',serialize($_POST),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason'));
+				$this->redirect(array('admin/viewPatientUnavailableReasons'));
+			}
+		}
+
+		$this->render('/admin/editpatientunavailablereason', array(
+					'reason' => $reason,
+					'errors' => $errors
+				));
+	}
+
+	/**
+	 * Reorder the OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason objects
+	 *
+	 * @throws Exception
+	 */
+	public function actionSortPatientUnavailableReasons()
+	{
+		if (!empty($_POST['order'])) {
+			foreach ($_POST['order'] as $i => $id) {
+				if ($reason = OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason::model()->findByPk($id)) {
+					$reason->display_order = $i+1;
+					if (!$reason->save()) {
+						throw new Exception("Unable to save patient unavailable reason: " . print_r($reason->getErrors(),true));
+					}
+				}
+			}
+			Audit::add('admin', 'sort', serialize($_POST), false, array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason'));
+		}
+	}
+
+	/**
+	 * Disable or enable a OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason
+	 *
+	 * @throws Exception
+	 */
+	public function actionSwitchEnabledPatientUnavailableReason()
+	{
+		if (!$reason = OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason::model()->findByPk(@$_POST['id'])) {
+			throw new Exception("Patient Unavailable Reason not found: $id");
+		}
+
+		if ($reason->enabled) {
+			$reason->enabled = 0;
+			$action = 'disabled';
+		}
+		else {
+			$reason->enabled = 1;
+			$action = 'enabled';
+		}
+		if (!$reason->save()) {
+			throw new Exception("Unexpected error changing enabled status for Patient Unavailable Reason " . print_r($reason->getErrors(), true));
+		}
+
+		Audit::add('admin', $action, serialize($_POST), false, array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason'));
 	}
 }

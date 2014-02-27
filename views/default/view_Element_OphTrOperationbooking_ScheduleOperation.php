@@ -17,7 +17,25 @@
 * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
 */
 ?>
+
 <section class="element element-data">
 	<h3 class="data-title"><?= $element->elementType->name; ?></h3>
 	<div class="data-value"><?= $element->schedule_options->name; ?></div>
+	<div class="row">
+		<div class="large-6 column">
+			<h3 class="data-title"><?php echo $element->getAttributeLabel('patient_unavailables') ?></h3>
+			<div class="data-value">
+				<?php if ($element->patient_unavailables) {
+					foreach ($element->patient_unavailables as $unavailable) {?>
+						<div class="data-row">
+							<?php echo Helper::convertDate2NHS($unavailable->start_date); ?> to <?php echo Helper::convertDate2NHS($unavailable->end_date); ?> (<?php echo $unavailable->reason->name ?>).
+						</div>
+					<?php }
+				} else { ?>
+					No known availability restrictions.
+				<?php } ?>
+			</div>
+		</div>
+	</div>
 </section>
+

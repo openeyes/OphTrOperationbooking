@@ -178,6 +178,37 @@ $(document).ready(function() {
 		e.preventDefault();
 		window.location.href = baseUrl+'/OphTrOperationbooking/admin/addSchedulingOption';
 	});
+
+	var fixHelperModified = function(e, tr) {
+		var $originals = tr.children();
+		var $helper = tr.clone();
+		$helper.children().each(function(index)
+		{
+			$(this).width($originals.eq(index).width())
+		});
+		return $helper;
+	};
+
+	$('.sortable').sortable({
+		helper: fixHelperModified,
+		update: function (event, ui) {
+			var ids = [];
+			$('tbody.sortable').children('tr').map(function () {
+				ids.push($(this).attr('data-attr-id'));
+			});
+			$.ajax({
+				'type': 'POST',
+				'url': $('tbody.sortable').data('sort-uri'),
+				'data': {order: ids, YII_CSRF_TOKEN: YII_CSRF_TOKEN},
+				'success': function (data) {
+					new OpenEyes.UI.Dialog.Alert({
+						content: 'Re-ordered'
+					}).open();
+				}
+			});
+
+		}
+	}).disableSelection();
 });
 
 function OphTrOperationbooking_showMatchingRule() {
