@@ -71,10 +71,11 @@
 		e.preventDefault();
 
 		if ($('input[type="checkbox"][name="scheduleoption[]"]:checked').length <1) {
-			new OpenEyes.UI.Dialog.Alert({
+			var dialog = new OpenEyes.UI.Dialog.Alert({
 				content: "Please select the scheduling option(s) you wish to delete."
-			}).open();
-			enableButtons();
+			});
+			dialog.on('close', function() {enableButtons();});
+			dialog.open();
 			return;
 		}
 

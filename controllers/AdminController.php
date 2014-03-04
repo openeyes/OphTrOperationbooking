@@ -92,7 +92,7 @@ class AdminController extends ModuleAdminController
 		$erod = new OphTrOperationbooking_Operation_EROD_Rule;
 
 		if (!empty($_POST)) {
-			$erod->subspecialty_id = $_POST['OphTrOperationbooking_Operation_EROD_Rule']['subspecialty_id'];
+			$erod->subspecialty_id = @$_POST['OphTrOperationbooking_Operation_EROD_Rule']['subspecialty_id'];
 			if (!$erod->save()) {
 				$errors = $erod->getErrors();
 			} else {
@@ -101,20 +101,22 @@ class AdminController extends ModuleAdminController
 					$firm_ids[] = $item['item_id'];
 				}
 
-				foreach ($_POST['Firms'] as $firm_id) {
-					if (!in_array($firm_id,$firm_ids)) {
-						$item = new OphTrOperationbooking_Operation_EROD_Rule_Item;
-						$item->erod_rule_id = $erod->id;
-						$item->item_type = 'firm';
-						$item->item_id = $firm_id;
-						if (!$item->save()) {
-							$errors = array_merge($errors,$item->getErrors());
+				if (@$_POST['Firms']) {
+					foreach (@$_POST['Firms'] as $firm_id) {
+						if (!in_array($firm_id,$firm_ids)) {
+							$item = new OphTrOperationbooking_Operation_EROD_Rule_Item;
+							$item->erod_rule_id = $erod->id;
+							$item->item_type = 'firm';
+							$item->item_id = $firm_id;
+							if (!$item->save()) {
+								$errors = array_merge($errors,$item->getErrors());
+							}
 						}
 					}
 				}
 
 				foreach ($firm_ids as $firm_id) {
-					if (!in_array($firm_id,$_POST['Firms'])) {
+					if (!in_array($firm_id,@$_POST['Firms'])) {
 						if (!$item = OphTrOperationbooking_Operation_EROD_Rule_Item::model()->find('erod_rule_id=? and item_type=? and item_id=?',array($erod->id,'firm',$firm_id))) {
 							throw new Exception("Rule item not found: [$erod->id][firm][$firm_id]");
 						}
