@@ -92,13 +92,14 @@ $(document).ready(function() {
 		window.location.href = baseUrl+'/OphTrOperationbooking/admin/add'+OE_rule_model;
 	});
 
+	$('#et_add_operation_name_rule').click(function(e) {
+		e.preventDefault();
+		window.location.href = baseUrl+'/OphTrOperationbooking/admin/add'+OE_rule_model;
+	});
+
 	$('#rules a.addTreeItemHere').click(function(e) {
 		e.preventDefault();
 		window.location.href = baseUrl+'/OphTrOperationbooking/admin/add'+OE_rule_model+'?parent_rule_id='+$(this).attr('rel');
-	});
-
-	$('#et_add_operation_name_rule').click(function() {
-		window.location.href = baseUrl+'/OphTrOperationbooking/admin/addOperationNameRule';
 	});
 
 	$('#operation_name_rules li .column_theatre, #operation_name_rules li .column_name').click(function(e) {

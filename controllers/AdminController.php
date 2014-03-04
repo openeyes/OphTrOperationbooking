@@ -523,6 +523,9 @@ class AdminController extends ModuleAdminController
 
 	public function actionViewOperationNameRules()
 	{
+		$this->jsVars['OE_rule_model'] = 'OperationNameRule';
+
+
 		Audit::add('admin','list',null,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Name_Rule'));
 
 		$this->render('operationnamerules');
