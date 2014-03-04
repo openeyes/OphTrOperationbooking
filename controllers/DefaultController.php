@@ -179,7 +179,7 @@ class DefaultController extends BaseEventTypeController
 
 		$event_errors = OphTrOperationbooking_BookingHelper::validateElementsForEvent($this->open_elements);
 		if ($event_errors) {
-			if ($errors['Event']) {
+			if (@$errors['Event']) {
 				$errors['Event'] = array_merge($errors['Event'], $event_errors);
 			}
 			else {
