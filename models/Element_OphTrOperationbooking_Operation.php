@@ -457,7 +457,13 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		return Element_OphTrOperationbooking_ScheduleOperation::model()->find('event_id=?',array($this->event_id));
 	}
 
-	public function getFirmCalendarForMonth($firm, $timestamp)
+	/**
+	 * @param $firm
+	 * @param $timestamp
+	 * @param Element_OphTrOperationbooking_ScheduleOperation $schedule_options
+	 * @return array
+	 */
+	public function getFirmCalendarForMonth($firm, $timestamp, $schedule_options = null)
 	{
 		$sessions = array();
 
@@ -502,7 +508,10 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 								}
 							}
 
-							if ($full == count($sessiondata[$date])) {
+							if (!$schedule_options->isPatientAvailable($date)) {
+								$status = 'patient-unavailable';
+							}
+							elseif ($full == count($sessiondata[$date])) {
 								$status = 'full';
 							} elseif ($full >0 and $open >0) {
 								$status = 'limited';
@@ -847,13 +856,34 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 	}
 
 
-
-	public function schedule($booking_attributes, $operation_comments, $session_comments, $operation_comments_rtt, $reschedule=false, $cancellation_data = null)
+	/**
+	 * @param $booking_attributes
+	 * @param $operation_comments
+	 * @param $session_comments
+	 * @param $operation_comments_rtt
+	 * @param bool $reschedule
+	 * @param null $cancellation_data
+	 * @param Element_OphTrOperationbooking_ScheduleOperation $schedule_op
+	 * @return array|bool
+	 * @throws RaceConditionException
+	 * @throws Exception
+	 */
+	public function schedule($booking_attributes, $operation_comments, $session_comments, $operation_comments_rtt,
+			$reschedule=false, $cancellation_data = null, $schedule_op = null)
 	{
+		if ($schedule_op == null) {
+			throw new Exception('schedule_op argument required for scheduling');
+		}
+
+		// TODO: try passing in the booking object rather than the attributes for it - easier for testing, and cleaner implementation
 		$booking = new OphTrOperationbooking_Operation_Booking;
 		$booking->attributes = $booking_attributes;
 
 		$session = $booking->session;
+
+		if (!$schedule_op->isPatientAvailable($session->date)) {
+			return array(array('Cannot book patient into a session they are not available for.'));
+		}
 
 		$helper = new OphTrOperationbooking_BookingHelper;
 		if (($errors = $helper->checkSessionCompatibleWithOperation($session, $this))) {

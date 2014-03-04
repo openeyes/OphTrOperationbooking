@@ -171,37 +171,6 @@ $criteria->compare('schedule_options_id', $this->schedule_options_id);
 	}
 
 	/**
-	 * get the possible deviation reasons for the side (encapsulated to ensure we get any reasons that may
-	 * no longer be enabled)
-	 *
-	 * @return OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason[]
-	 */
-	public function getPatientUnavailableReasons()
-	{
-		$criteria = new CDbCriteria;
-		$criteria->condition = 'enabled = true';
-		$criteria->order = 'display_order asc';
-
-		$reasons = OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason::model()->findAll($criteria);
-
-		$all_risks = array();
-		$r_ids = array();
-
-		foreach ($reasons as $reason) {
-			$all_reasons[] = $reason;
-			$r_ids[] = $reason->id;
-		}
-
-		foreach ($this->{$side . '_deviationreasons'} as $curr) {
-			if (!in_array($curr->id, $r_ids)) {
-				$all_reasons[] = $curr;
-			}
-		}
-
-		return $all_reasons;
-	}
-
-	/**
 	 * Set the patient unavailable objects for this element
 	 *
 	 * @param $unavailables
@@ -251,5 +220,27 @@ $criteria->compare('schedule_options_id', $this->schedule_options_id);
 			}
 		}
 
+	}
+
+	protected $_unavailable_dates;
+
+	/**
+	 * Given a date (yyyy-mm-dd) check if the patient is available, and return true or false as appropriate.
+	 *
+	 * @param $date
+	 * @return bool
+	 */
+	public function isPatientAvailable($date) {
+		if (!$this->_unavailable_dates) {
+			// cache the patient unavailable dates as we don't want to do this every time
+			foreach ($this->patient_unavailables as $unavailable) {
+				$dt = strtotime($unavailable->start_date);
+				while ($dt <= strtotime($unavailable->end_date)) {
+					$this->_unavailable_dates[] = $dt;
+					$dt+=86400;
+				}
+			}
+		}
+		return !in_array(strtotime($date), $this->_unavailable_dates);
 	}
 }

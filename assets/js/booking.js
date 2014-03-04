@@ -95,7 +95,9 @@ $(document).ready(function() {
 	$('#calendar table td').click(function() {
 		var day = $(this).text().match(/[0-9]+/);
 		if (day == null) return false;
-		window.location.href = URI(window.location.href).setSearch('day',day).removeSearch('session_id');
+		if (!$(this).hasClass('patient-unavailable')) {
+			window.location.href = URI(window.location.href).setSearch('day',day).removeSearch('session_id');
+		}
 		return false;
 	});
 

@@ -57,6 +57,42 @@ class Element_OphTrOperationbooking_ScheduleOperationTest extends CDbTestCase
 		$test->schedule_options_id = 1;
 
 		$test->validate();
+	}
+
+	public function testIsPatientUnavailable()
+	{
+		$unavailables_data = array(
+				array(
+						'start_date' => '2014-04-03',
+						'end_date' => '2014-04-03',
+				),
+				array(
+						'start_date' => '2014-04-12',
+						'end_date' => '2014-05-03',
+				),
+		);
+
+		$unavailables = array();
+		foreach ($unavailables_data as $data) {
+			$u = new OphTrOperationbooking_ScheduleOperation_PatientUnavailable();
+			$u->attributes = $data;
+			$unavailables[] = $u;
+		}
+
+		$test1 = new Element_OphTrOperationbooking_ScheduleOperation();
+		$test1->patient_unavailables = array($unavailables[0]);
+		$this->assertFalse($test1->isPatientAvailable('2014-04-03'));
+		$this->assertTrue($test1->isPatientAvailable('2014-04-04'));
+
+		$test2 = new Element_OphTrOperationbooking_ScheduleOperation();
+		$test2->patient_unavailables = array($unavailables[0], $unavailables[1]);
+		$this->assertTrue($test2->isPatientAvailable('2014-04-02'));
+		$this->assertFalse($test2->isPatientAvailable('2014-04-03'));
+		$this->assertTrue($test2->isPatientAvailable('2014-04-09'));
+		$this->assertFalse($test2->isPatientAvailable('2014-04-12'));
+		$this->assertFalse($test2->isPatientAvailable('2014-04-19'));
+		$this->assertFalse($test2->isPatientAvailable('2014-05-03'));
+		$this->assertTrue($test2->isPatientAvailable('2014-05-04'));
 
 	}
 }

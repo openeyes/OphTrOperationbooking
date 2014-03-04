@@ -85,4 +85,5 @@ class OphTrOperationbooking_ScheduleOperation_PatientUnavailableTest extends CDb
 
 		$this->assertTrue($test->validate());
 	}
+
 }

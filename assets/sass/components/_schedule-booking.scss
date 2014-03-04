@@ -137,6 +137,10 @@
 				background: #828282;
 				font-size: 16px;
 			}
+			&.patient-unavailable {
+				background: #990000;
+				font-size: 16px;
+			}
 		}
 	}
 	td {
@@ -187,6 +191,9 @@
 		}
 		#outside_rtt .color_box {
 			background: transparent image-url("bookingIcons/RTT-warning_tiny.png") top left no-repeat;
+		}
+		#patient-unavailable .color_box {
+			background: #990000;
 		}
 	}
 }

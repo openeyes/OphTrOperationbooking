@@ -72,6 +72,7 @@ class BookingController extends BaseEventTypeController
 		}
 
 		$operation = $this->operation;
+		$schedule_options = Element_OphTrOperationbooking_ScheduleOperation::model()->find('event_id = ?', array($this->event->id));
 
 		if ($operation->status->name == 'Cancelled') {
 			return $this->redirect(array('default/view/'.$this->event->id));
@@ -136,7 +137,8 @@ class BookingController extends BaseEventTypeController
 								$_POST['Session']['comments'],
 								$_POST['Operation']['comments_rtt'],
 								($this->reschedule !== true),
-								$cancellation_data)) !== true) {
+								$cancellation_data,
+								$schedule_options)) !== true) {
 							$errors = $result;
 						} else {
 							$transaction->commit();
@@ -174,7 +176,7 @@ class BookingController extends BaseEventTypeController
 			'firmList' => Firm::model()->listWithSpecialties,
 			'date' => $date,
 			'selectedDate' => @$selectedDate,
-			'sessions' => $operation->getFirmCalendarForMonth($firm, $date),
+			'sessions' => $operation->getFirmCalendarForMonth($firm, $date, $schedule_options),
 			'theatres' => @$theatres,
 			'session' => @$session,
 			'bookings' => @$bookings,

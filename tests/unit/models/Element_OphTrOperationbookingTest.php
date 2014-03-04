@@ -13,6 +13,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
+//TODO: rename this to Element_OphTrOperationbooking_OperationTest
 class Element_OphTrOperationbookingTest extends CDbTestCase
 {
 	public $fixtures = array(
@@ -180,5 +181,24 @@ class Element_OphTrOperationbookingTest extends CDbTestCase
 		$this->assertOrderedAssocArrayEqual($expected,$res);
 	}
 
+	public function testCantScheduleOperationWhenPatientUnavailable()
+	{
+		$theatre = ComponentStubGenerator::generate('OphTrOperationbooking_Operation_Theatre',
+				array('site_id' => 1));
+		$session = $this->getSessionForTheatre($theatre);
+		$op = $this->getOperationForPatient($this->getMalePatient());
+		$op_opts = $this->getMockBuilder('Element_OphTrOperationbooking_ScheduleOperation')
+				->disableOriginalConstructor()
+				->setMethods(array('isPatientAvailable'))
+				->getMock();
+		$op_opts->expects($this->once())
+			->method('isPatientAvailable')
+			->will($this->returnValue(false));
 
+		$res = $op->schedule(array('session' => $session), '', '', '', false, null, $op_opts);
+		$this->assertFalse($res === true);
+		# arrays are error messages
+		$this->assertTrue(gettype($res) == 'array');
+
+	}
 }
