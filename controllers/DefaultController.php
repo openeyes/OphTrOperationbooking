@@ -29,6 +29,12 @@ class DefaultController extends BaseEventTypeController
 	/** @var Element_OphTrOperation_Operation $operation */
 	protected $operation = null;
 
+	/**
+	 * setup the various js scripts for this controller
+	 *
+	 * @param CAction $action
+	 * @return bool
+	 */
 	protected function beforeAction($action)
 	{
 		Yii::app()->clientScript->registerScriptFile($this->assetPath.'/js/booking.js');
@@ -38,38 +44,43 @@ class DefaultController extends BaseEventTypeController
 	}
 
 	/**
-	 * Various default options for operation should be driven by the episode
-	 *
-	 * @param BaseEventTypeElement $element
-	 * @param string $action
+	 * @param Element_OphTrOperationbooking_Diagnosis $element
+	 * @param $action
 	 */
-	protected function setElementDefaultOptions($element, $action)
+	protected function setElementDefaultOptions_Element_OphTrOperationbooking_Diagnosis($element, $action)
 	{
-		parent::setElementDefaultOptions($element, $action);
 		if ($action == 'create') {
-			$kls = get_class($element);
-			if ($kls == 'Element_OphTrOperationbooking_Diagnosis') {
+			if ($this->episode && $this->episode->diagnosis) {
 				// set default eye and disorder
-				if ($this->episode && $this->episode->diagnosis) {
-					$element->eye_id = $this->episode->eye_id;
-					$element->disorder_id = $this->episode->disorder_id;
+				$element->eye_id = $this->episode->eye_id;
+				$element->disorder_id = $this->episode->disorder_id;
+			}
+		}
+	}
+
+	/**
+	 *
+	 * @param Element_OphTrOperationbooking_Operation $element
+	 * @param $action
+	 */
+	protected function setElementDefaultOptions_Element_OphTrOperationbooking_Operation($element, $action)
+	{
+		if ($action == 'create') {
+			// set the default eye
+			if ($this->episode && $this->episode->diagnosis) {
+				$element->eye_id = $this->episode->eye_id;
+			}
+
+			// set default anaesthetic based on whether patient is a child or not.
+			$key = $this->patient->isChild() ? 'ophtroperationbooking_default_anaesthetic_child' : 'ophtroperationbooking_default_anaesthetic';
+
+			if (isset(Yii::app()->params[$key])) {
+				if ($at = AnaestheticType::model()->find('code=?',array(Yii::app()->params[$key]))) {
+					$element->anaesthetic_type_id = $at->id;
 				}
 			}
-			elseif ($kls == 'Element_OphTrOperationbooking_Operation') {
-				// set the default eye
-				if ($this->episode && $this->episode->diagnosis) {
-					$element->eye_id = $this->episode->eye_id;
-				}
 
-				// set default anaesthetic based on whether patient is a child or not.
-				$key = $this->patient->isChild() ? 'ophtroperationbooking_default_anaesthetic_child' : 'ophtroperationbooking_default_anaesthetic';
-
-				if (isset(Yii::app()->params[$key])) {
-					if ($at = AnaestheticType::model()->find('code=?',array(Yii::app()->params[$key]))) {
-						$element->anaesthetic_type_id = $at->id;
-					}
-				}
-			}
+			$element->site_id = Yii::app()->session['selected_site_id'];
 		}
 	}
 
@@ -157,7 +168,7 @@ class DefaultController extends BaseEventTypeController
 
 	/**
 	 * Extend standard behaviour to perform validation of elements across the event
-	 * 
+	 *
 	 * @param array $data
 	 * @return array
 	 */
