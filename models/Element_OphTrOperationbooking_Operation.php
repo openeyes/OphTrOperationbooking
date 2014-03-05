@@ -649,7 +649,6 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		if (!$session || !$session->id) {
 			throw new Exception('Session is required.');
 		}
-
 		$siteId = $session->theatre->site_id;
 		$theatreId = $session->theatre_id;
 
@@ -664,7 +663,6 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		if (empty($results)) {
 			// otherwise select by site and patient age/gender
 			$patient = $this->event->episode->patient;
-
 			$genderRestrict = $ageRestrict = 0;
 			$genderRestrict = ('M' == $patient->gender) ? OphTrOperationbooking_Operation_Ward::RESTRICTION_MALE : OphTrOperationbooking_Operation_Ward::RESTRICTION_FEMALE;
 			$ageRestrict = ($patient->isChild($session->date)) ? OphTrOperationbooking_Operation_Ward::RESTRICTION_CHILD : OphTrOperationbooking_Operation_Ward::RESTRICTION_ADULT;
@@ -676,6 +674,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			$criteria->params[':siteId'] = $siteId;
 			$criteria->params[':r1'] = $genderRestrict;
 			$criteria->params[':r2'] = $ageRestrict;
+			$criteria->order = 't.name asc';
 
 			$results = CHtml::listData(OphTrOperationbooking_Operation_Ward::model()->active()->findAll($criteria),'id','name');
 		}
@@ -1278,5 +1277,10 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		}
 
 		return 'Booked';
+	}
+
+	public function getContainer_view_view()
+	{
+		return false;
 	}
 }

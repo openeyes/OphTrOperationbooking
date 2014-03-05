@@ -17,11 +17,10 @@
  */
 
 /**
- * This is the model class for table "et_ophtroperationbooking_letter_contact_rule".
+ * This is the model class for table "ophtroperationbooking_letter_contact_rule".
  *
  * The followings are the available columns in table:
  * @property integer $id
- * @property integer $contact_type_id
  * @property integer $site_id
  * @property integer $subspecialty_id
  * @property integer $theatre_id
@@ -66,10 +65,10 @@ class OphTrOperationbooking_Letter_Contact_Rule extends BaseTree
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('parent_rule_id, contact_type_id, site_id, subspecialty_id, theatre_id, firm_id, refuse_telephone, health_telephone, refuse_title, rule_order, is_child', 'safe'),
+			array('parent_rule_id, site_id, subspecialty_id, theatre_id, firm_id, refuse_telephone, health_telephone, refuse_title, rule_order, is_child', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, contact_type_id, site_id, subspecialty_id, theatre_id', 'safe', 'on' => 'search'),
+			array('id, site_id, subspecialty_id, theatre_id', 'safe', 'on' => 'search'),
 		);
 	}
 
