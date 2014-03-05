@@ -1520,6 +1520,7 @@ class AdminController extends ModuleAdminController
 	{
 		$criteria = new CDbCriteria;
 		$criteria->addInCondition('schedule_options_id',$_POST['scheduleoption']);
+		$criteria->addCondition('episode.id is not null');
 
 		if (Element_OphTrOperationbooking_ScheduleOperation::model()
 			->with(array(
@@ -1527,7 +1528,7 @@ class AdminController extends ModuleAdminController
 					'with' => 'episode',
 				),
 			))
-			->find($criteria)) {
+			->count($criteria)) {
 			echo "0";
 		} else {
 			echo "1";
