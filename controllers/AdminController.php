@@ -37,43 +37,66 @@ class AdminController extends ModuleAdminController
 
 		$errors = array();
 
+		//NOTE at the moment we only have rules relating to firms, so the items are all assumed to be firms in the code below
+		// this will need to change if we introduce other item types to the EROD rules.
 		if (!empty($_POST)) {
 			$erod->subspecialty_id = $_POST['OphTrOperationbooking_Operation_EROD_Rule']['subspecialty_id'];
-			if (!$erod->save()) {
-				$errors = $erod->getErrors();
-			} else {
-				$firm_ids = array();
-				foreach ($erod->items as $item) {
-					$firm_ids[] = $item['item_id'];
+			$current_items = $erod->items;
+			$posted_items = array();
+			$posted_by_firm = array();
+			if (@$_POST['Firms']) {
+				foreach ($_POST['Firms'] as $posted_firm_id) {
+					if (!Firm::model()->findByPk($posted_firm_id)) {
+						throw new CHttpException('invalid firm id posted');
+					}
+					$item = new OphTrOperationbooking_Operation_EROD_Rule_Item();
+					$item->item_type = 'firm';
+					$item->item_id = $posted_firm_id;
+					$posted_items[] = $item;
+					$posted_by_firm[$posted_firm_id] = $item;
 				}
+			}
+			$erod->items = $posted_items;
 
-				foreach ($_POST['Firms'] as $firm_id) {
-					if (!in_array($firm_id,$firm_ids)) {
-						$item = new OphTrOperationbooking_Operation_EROD_Rule_Item;
-						$item->erod_rule_id = $erod->id;
-						$item->item_type = 'firm';
-						$item->item_id = $firm_id;
-						if (!$item->save()) {
-							$errors = array_merge($errors,$item->getErrors());
+			$transaction = Yii::app()->db->beginTransaction();
+			try {
+				if (!$erod->save()) {
+					$errors = $erod->getErrors();
+				} else {
+					$firm_ids = array();
+					foreach ($current_items as $curr_item) {
+						$curr_firm_ids[] = $curr_item->item_id;
+						$curr_by_firm_id[$curr_item->item_id] = $curr_item;
+					}
+
+					foreach ($posted_items as $posted_item) {
+						if (!in_array($posted_item->item_id,$curr_firm_ids)) {
+							$posted_item->erod_rule_id = $erod->id;
+							if (!$posted_item->save()) {
+								$errors = array_merge($errors,$item->getErrors());
+								throw new Exception();
+							}
+						}
+						else {
+							unset($curr_by_firm_id[$posted_item->item_id]);
 						}
 					}
-				}
 
-				foreach ($firm_ids as $firm_id) {
-					if (!in_array($firm_id,$_POST['Firms'])) {
-						if (!$item = OphTrOperationbooking_Operation_EROD_Rule_Item::model()->find('erod_rule_id=? and item_type=? and item_id=?',array($erod->id,'firm',$firm_id))) {
-							throw new Exception("Rule item not found: [$erod->id][firm][$firm_id]");
-						}
-						if (!$item->delete()) {
+					foreach ($curr_by_firm_id as $id => $curr_item) {
+						if (!$curr_item->delete()) {
 							throw new Exception("Rule item delete failed: ".print_r($item->getErrors(),true));
 						}
 					}
-				}
 
-				if (empty($errors)) {
-					Audit::add('admin','update',serialize(array_merge(array('id'=>$id),$_POST)),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_EROD_Rule'));
-					$this->redirect(array('/OphTrOperationbooking/admin/viewERODRules'));
+					if (empty($errors)) {
+						$transaction->commit();
+						Audit::add('admin','update',serialize(array_merge(array('id'=>$id),$_POST)),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_EROD_Rule'));
+						$this->redirect(array('/OphTrOperationbooking/admin/viewERODRules'));
+					}
 				}
+			}
+			catch (Exception $e) {
+				$transaction->rollback();
 			}
 		}
 
@@ -93,43 +116,46 @@ class AdminController extends ModuleAdminController
 
 		if (!empty($_POST)) {
 			$erod->subspecialty_id = @$_POST['OphTrOperationbooking_Operation_EROD_Rule']['subspecialty_id'];
-			if (!$erod->save()) {
-				$errors = $erod->getErrors();
-			} else {
-				$firm_ids = array();
-				foreach ($erod->items as $item) {
-					$firm_ids[] = $item['item_id'];
+			$posted_items = array();
+			$posted_by_firm = array();
+			if (@$_POST['Firms']) {
+				foreach ($_POST['Firms'] as $posted_firm_id) {
+					if (!Firm::model()->findByPk($posted_firm_id)) {
+						throw new CHttpException('invalid firm id posted');
+					}
+					$item = new OphTrOperationbooking_Operation_EROD_Rule_Item();
+					$item->item_type = 'firm';
+					$item->item_id = $posted_firm_id;
+					$posted_items[] = $item;
+					$posted_by_firm[$posted_firm_id] = $item;
 				}
+			}
+			$erod->items = $posted_items;
 
-				if (@$_POST['Firms']) {
-					foreach (@$_POST['Firms'] as $firm_id) {
-						if (!in_array($firm_id,$firm_ids)) {
-							$item = new OphTrOperationbooking_Operation_EROD_Rule_Item;
-							$item->erod_rule_id = $erod->id;
-							$item->item_type = 'firm';
-							$item->item_id = $firm_id;
-							if (!$item->save()) {
-								$errors = array_merge($errors,$item->getErrors());
-							}
+			$transaction = Yii::app()->db->beginTransaction();
+			try {
+
+				if (!$erod->save()) {
+					$errors = $erod->getErrors();
+				} else {
+					foreach ($posted_items as $posted_item) {
+						$posted_item->erod_rule_id = $erod->id;
+						if (!$posted_item->save()) {
+							$errors = array_merge($errors,$item->getErrors());
+							throw new Exception();
 						}
 					}
-				}
 
-				foreach ($firm_ids as $firm_id) {
-					if (!in_array($firm_id,@$_POST['Firms'])) {
-						if (!$item = OphTrOperationbooking_Operation_EROD_Rule_Item::model()->find('erod_rule_id=? and item_type=? and item_id=?',array($erod->id,'firm',$firm_id))) {
-							throw new Exception("Rule item not found: [$erod->id][firm][$firm_id]");
-						}
-						if (!$item->delete()) {
-							throw new Exception("Rule item delete failed: ".print_r($item->getErrors(),true));
-						}
+					if (empty($errors)) {
+						$transaction->commit();
+						Audit::add('admin','create',serialize($_POST),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_EROD_Rule'));
+						$this->redirect(array('/OphTrOperationbooking/admin/viewERODRules'));
 					}
 				}
-
-				if (empty($errors)) {
-					Audit::add('admin','create',serialize($_POST),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_EROD_Rule'));
-					$this->redirect(array('/OphTrOperationbooking/admin/viewERODRules'));
-				}
+			}
+			catch (Exception $e) {
+				$transaction->rollback();
+				throw $e;
 			}
 		}
 

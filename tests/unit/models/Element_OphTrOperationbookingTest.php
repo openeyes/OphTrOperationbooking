@@ -179,4 +179,6 @@ class Element_OphTrOperationbookingTest extends CDbTestCase
 		);
 		$this->assertOrderedAssocArrayEqual($expected,$res);
 	}
+
+
 }

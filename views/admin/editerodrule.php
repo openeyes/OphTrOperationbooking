@@ -31,7 +31,7 @@
 			)
 		))?>
 	<?php echo $form->errorSummary($erod); ?>
-	<?php echo $form->dropDownList($erod,'subspecialty_id',CHtml::listData(Subspecialty::model()->findAll(array('order'=>'name')),'id','name'),array('style'=>'margin-bottom:6px;','empty'=>'- Subspecialty -'))?>
+	<?php echo $form->dropDownList($erod,'subspecialty_id',CHtml::listData($erod->getSubspecialtyOptions(),'id','name'),array('style'=>'margin-bottom:6px;','empty'=>'- Subspecialty -'))?>
 	<?php echo $form->multiSelectList($erod, 'Firms', 'firms', 'item_id', Firm::model()->getListWithSpecialties(), array(), array('empty' => '- Firms -', 'label' => 'Firms'))?>
 	<?php echo $form->formActions();?>
 	<?php $this->endWidget()?>
