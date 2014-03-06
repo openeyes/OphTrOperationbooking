@@ -212,7 +212,7 @@ class DefaultController extends BaseEventTypeController
 		$operation = $this->operation;
 
 		if ($operation->status->name == 'Cancelled') {
-			return $this->redirect(array('default/view/'.$event->id));
+			return $this->redirect(array('default/view/'.$this->event->id));
 		}
 
 		$errors = array();
@@ -224,7 +224,7 @@ class DefaultController extends BaseEventTypeController
 			if ($result['result']) {
 				$operation->event->deleteIssues();
 
-				$event->audit('event','cancel',false);
+				$this->event->audit('event','cancel',false);
 
 				die(json_encode(array()));
 			}
