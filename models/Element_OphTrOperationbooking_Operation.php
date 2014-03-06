@@ -443,11 +443,6 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 	{
 		$date = strtotime($this->event->created_date);
 
-		if ($this->schedule_timeframe->schedule_options_id != 1) {
-			$interval = str_replace('After ', '+', $this->getScheduleText());
-			$date = strtotime($interval, $date);
-		}
-
 		$thisMonth = mktime(0, 0, 0, date('m'), 1, date('Y'));
 
 		if ($date < $thisMonth) {
