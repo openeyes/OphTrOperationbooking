@@ -67,6 +67,7 @@ class Element_OphTrOperationbooking_ScheduleOperation extends BaseEventTypeEleme
 			array('event_id, schedule_options_id, ', 'safe'),
 			array('schedule_options_id, ', 'required'),
 			array('patient_unavailables', 'validateNoDateRangeOverlap'),
+			array('patient_unavailables', 'validateNoBookingCollision'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, event_id, schedule_options_id, ', 'safe', 'on' => 'search'),
@@ -136,6 +137,18 @@ $criteria->compare('schedule_options_id', $this->schedule_options_id);
 	}
 
 	/**
+	 * Get the operation booking for the event
+	 *
+	 * @return OphTrOperationbooking_Operation_Booking
+	 */
+	public function getCurrentBooking()
+	{
+		if ($this->event_id && ($op = Element_OphTrOperationbooking_Operation::model()->with('booking')->find('event_id = ?', array($this->event_id)))) {
+			return $op->booking;
+		}
+	}
+
+	/**
 	 * validate a date is earlier or equal to another
 	 *
 	 * @param $attribute - the element attribute that must be an earlier date
@@ -149,11 +162,26 @@ $criteria->compare('schedule_options_id', $this->schedule_options_id);
 			for ($j = $i+1; $j < count($this->$attribute); $j++) {
 				if ($dr->$pstart < $this->{$attribute}[$j]->$pend && $dr->$pend > $this->{$attribute}[$j]->$pstart) {
 					$this->addError($attribute, "Data ranges cannot overlap");
-					return;
 				}
 			}
 		}
 	}
+
+	/**
+	 * Ensure that if there is a current booking on this event, the patient unavailables dates don't collide with the booking.
+	 *
+	 * @param $attribute
+	 * @param $params
+	 */
+	public function validateNoBookingCollision($attribute, $params)
+	{
+		if ($booking = $this->getCurrentBooking()) {
+			if (!$this->isPatientAvailable($booking->session_date)) {
+				$this->addError($attribute, "Cannot set the patient to be unavailable on the day of the current booking.");
+			}
+		}
+	}
+
 
 	/**
 	 * Make sure patient_unavailables are validated
@@ -223,6 +251,21 @@ $criteria->compare('schedule_options_id', $this->schedule_options_id);
 	}
 
 	protected $_unavailable_dates;
+
+	/**
+	 * make sure the cached dates array is reset when patient_unavailables is updated
+	 *
+	 * @param string $name
+	 * @param mixed $value
+	 * @return mixed|void
+	 */
+	public function __set($name,$value)
+	{
+		if ($name == 'patient_unavailables') {
+			$this->_unavailable_dates = null;
+		}
+		parent::__set($name, $value);
+	}
 
 	/**
 	 * Given a date (yyyy-mm-dd) check if the patient is available, and return true or false as appropriate.

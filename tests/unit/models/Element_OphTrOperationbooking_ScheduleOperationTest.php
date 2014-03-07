@@ -95,4 +95,31 @@ class Element_OphTrOperationbooking_ScheduleOperationTest extends CDbTestCase
 		$this->assertTrue($test2->isPatientAvailable('2014-05-04'));
 
 	}
+
+	public function testCantSetUnavailableCoveringBookedOperationDate()
+	{
+		$u = new OphTrOperationbooking_ScheduleOperation_PatientUnavailable();
+		$u->start_date = '2014-04-03';
+		$u->end_date = '2014-04-03';
+		$u->reason_id = 1;
+
+		$test1 = $this->getMockBuilder('Element_OphTrOperationbooking_ScheduleOperation')
+				->disableOriginalConstructor()
+				->setMethods(array('getCurrentBooking'))
+				->getMock();
+		$test1->patient_unavailables = array($u);
+		$test1->schedule_options_id = 1;
+
+		$b = new OphTrOperationbooking_Operation_Booking();
+		$b->session_date = '2014-04-03';
+
+		$test1->expects($this->once())
+			->method('getCurrentBooking')
+			->will($this->returnValue($b));
+
+		$this->assertFalse($test1->validate());
+		$errs = $test1->getErrors();
+		$this->assertArrayHasKey('patient_unavailables', $errs);
+		$this->assertEquals(count(array_keys($errs)), 1);
+	}
 }
