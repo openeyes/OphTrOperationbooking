@@ -293,6 +293,8 @@ class OphTrOperationbooking_API extends BaseAPI
 			}
 
 			if (!empty($dateList)) {
+				$transaction = Yii::app()->db->beginTransaction('GenerateSessions','Session');
+
 				// Process dateList into sessions
 				foreach ($dateList as $date) {
 					// TODO: Check for collisions, maybe in Session validation code
@@ -306,6 +308,8 @@ class OphTrOperationbooking_API extends BaseAPI
 					$new_session->save();
 				}
 				$output .= "Sequence ID {$sequence->id}: Created " . count($dateList) . " session(s).\n";
+
+				$transaction->commit();
 			}
 		}
 
