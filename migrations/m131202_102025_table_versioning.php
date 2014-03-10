@@ -73,7 +73,6 @@ CREATE TABLE `et_ophtroperationbooking_operation_version` (
 	KEY `acv_et_ophtroperationbooking_operation_status_id_fk` (`status_id`),
 	KEY `acv_et_ophtroperationbooking_operation_cancellation_user_id_fk` (`cancellation_user_id`),
 	KEY `acv_et_ophtroperationbooking_operation_latest_booking_id_fk` (`latest_booking_id`),
-	CONSTRAINT `acv_et_ophtroperationbooking_operation_latest_booking_id_fk` FOREIGN KEY (`latest_booking_id`) REFERENCES `ophtroperationbooking_operation_booking` (`id`),
 	CONSTRAINT `acv_et_ophtroperationbooking_operation_anaesthetic_type_id_fk` FOREIGN KEY (`anaesthetic_type_id`) REFERENCES `anaesthetic_type` (`id`),
 	CONSTRAINT `acv_et_ophtroperationbooking_operation_cancellation_reason_id_fk` FOREIGN KEY (`cancellation_reason_id`) REFERENCES `ophtroperationbooking_operation_cancellation_reason` (`id`),
 	CONSTRAINT `acv_et_ophtroperationbooking_operation_cancellation_user_id_fk` FOREIGN KEY (`cancellation_user_id`) REFERENCES `user` (`id`),
@@ -82,8 +81,7 @@ CREATE TABLE `et_ophtroperationbooking_operation_version` (
 	CONSTRAINT `acv_et_ophtroperationbooking_operation_eye_id_fk` FOREIGN KEY (`eye_id`) REFERENCES `eye` (`id`),
 	CONSTRAINT `acv_et_ophtroperationbooking_operation_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_et_ophtroperationbooking_operation_priority_fk` FOREIGN KEY (`priority_id`) REFERENCES `ophtroperationbooking_operation_priority` (`id`),
-	CONSTRAINT `acv_et_ophtroperationbooking_operation_site_id_fk` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`),
-	CONSTRAINT `acv_et_ophtroperationbooking_operation_status_is_fk` FOREIGN KEY (`status_id`) REFERENCES `ophtroperationbooking_operation_status` (`id`)
+	CONSTRAINT `acv_et_ophtroperationbooking_operation_site_id_fk` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
 
@@ -161,7 +159,6 @@ CREATE TABLE `ophtroperationbooking_admission_letter_warning_rule_version` (
 	CONSTRAINT `acv_ophtroperationbooking_alw_rule_fidfk` FOREIGN KEY (`firm_id`) REFERENCES `firm` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_admission_lwr_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_admission_lwr_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_ophtroperationbooking_admission_lwr_pri_fk` FOREIGN KEY (`parent_rule_id`) REFERENCES `ophtroperationbooking_admission_letter_warning_rule` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_admission_lwr_rti_fk` FOREIGN KEY (`rule_type_id`) REFERENCES `ophtroperationbooking_admission_letter_warning_rule_type` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_admission_lwr_site_fk` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_admission_lwr_si_fk` FOREIGN KEY (`subspecialty_id`) REFERENCES `subspecialty` (`id`),
@@ -236,7 +233,6 @@ CREATE TABLE `ophtroperationbooking_letter_contact_rule_version` (
 	CONSTRAINT `acv_ophtroperationbooking_letter_contact_rule_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_letter_contact_rule_firm_id_fk` FOREIGN KEY (`firm_id`) REFERENCES `firm` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_letter_contact_rule_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_ophtroperationbooking_letter_contact_rule_pi_fk` FOREIGN KEY (`parent_rule_id`) REFERENCES `ophtroperationbooking_letter_contact_rule` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_letter_contact_rule_site_id_fk` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_letter_contact_rule_subspecialty_id_fk` FOREIGN KEY (`subspecialty_id`) REFERENCES `subspecialty` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_letter_contact_rule_theatre_id_fk` FOREIGN KEY (`theatre_id`) REFERENCES `ophtroperationbooking_operation_theatre` (`id`)
@@ -289,7 +285,6 @@ CREATE TABLE `ophtroperationbooking_operation_booking_version` (
 	CONSTRAINT `acv_et_ophtroperationbooking_operation_booking_caui_fk` FOREIGN KEY (`cancellation_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_et_ophtroperationbooking_operation_booking_cri_fk` FOREIGN KEY (`cancellation_reason_id`) REFERENCES `ophtroperationbooking_operation_cancellation_reason` (`id`),
 	CONSTRAINT `acv_et_ophtroperationbooking_operation_booking_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_et_ophtroperationbooking_operation_booking_ele_fk` FOREIGN KEY (`element_id`) REFERENCES `et_ophtroperationbooking_operation` (`id`),
 	CONSTRAINT `acv_et_ophtroperationbooking_operation_booking_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_et_ophtroperationbooking_operation_booking_ses_fk` FOREIGN KEY (`session_id`) REFERENCES `ophtroperationbooking_operation_session` (`id`),
 	CONSTRAINT `acv_et_ophtroperationbooking_operation_booking_sti_fk` FOREIGN KEY (`session_theatre_id`) REFERENCES `ophtroperationbooking_operation_theatre` (`id`),
@@ -356,7 +351,6 @@ CREATE TABLE `ophtroperationbooking_operation_date_letter_sent_version` (
 	KEY `acv_ophtroperationbooking_operation_dls_last_modified_user_id_fk` (`last_modified_user_id`),
 	KEY `acv_ophtroperationbooking_operation_dls_created_user_id_fk` (`created_user_id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_dls_created_user_id_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_ophtroperationbooking_operation_dls_element_fk` FOREIGN KEY (`element_id`) REFERENCES `et_ophtroperationbooking_operation` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_dls_last_modified_user_id_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
@@ -400,7 +394,6 @@ CREATE TABLE `ophtroperationbooking_operation_erod_version` (
 	KEY `acv_ophtroperationbooking_operation_erod_firm_id_fk` (`firm_id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_erod_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_erod_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_ophtroperationbooking_operation_erod_element_id_fk` FOREIGN KEY (`element_id`) REFERENCES `et_ophtroperationbooking_operation` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_erod_session_id_fk` FOREIGN KEY (`session_id`) REFERENCES `ophtroperationbooking_operation_session` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_erod_firm_id_fk` FOREIGN KEY (`firm_id`) REFERENCES `firm` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
@@ -460,7 +453,6 @@ CREATE TABLE `ophtroperationbooking_operation_erod_rule_item_version` (
 	KEY `acv_ophtroperationbooking_operation_erod_rule_item_eri_fk` (`erod_rule_id`),
 	KEY `acv_ophtroperationbooking_operation_erod_rule_item_lmui_fk` (`last_modified_user_id`),
 	KEY `acv_ophtroperationbooking_operation_erod_rule_item_cui_fk` (`created_user_id`),
-	CONSTRAINT `acv_ophtroperationbooking_operation_erod_rule_item_eri_fk` FOREIGN KEY (`erod_rule_id`) REFERENCES `ophtroperationbooking_operation_erod_rule` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_erod_rule_item_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_erod_rule_item_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
@@ -553,7 +545,6 @@ CREATE TABLE `ophtroperationbooking_operation_procedures_procedures_version` (
 	KEY `acv_ophtroperationbooking_operation_procedures_procedures_lku_fk` (`proc_id`),
 	CONSTRAINT `acv_roperationbooking_operation_procedures_procedures_lmui_fk` FOREIGN KEY (`last_modified_user_id`) REFERENCES `user` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_procedures_procedures_cui_fk` FOREIGN KEY (`created_user_id`) REFERENCES `user` (`id`),
-	CONSTRAINT `acv_ophtroperationbooking_operation_procedures_procedures_ele_fk` FOREIGN KEY (`element_id`) REFERENCES `et_ophtroperationbooking_operation` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_operation_procedures_procedures_lku_fk` FOREIGN KEY (`proc_id`) REFERENCES `proc` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 		");
@@ -839,7 +830,6 @@ CREATE TABLE `ophtroperationbooking_waiting_list_contact_rule_version` (
 	KEY `acv_ophtroperationbooking_waiting_list_cr_firm_id_fk` (`firm_id`),
 	KEY `acv_ophtroperationbooking_waiting_list_cr_lmui_fk` (`last_modified_user_id`),
 	KEY `acv_ophtroperationbooking_waiting_list_cr_cui_fk` (`created_user_id`),
-	CONSTRAINT `acv_ophtroperationbooking_waiting_list_cr_parent_rule_id_fk` FOREIGN KEY (`parent_rule_id`) REFERENCES `ophtroperationbooking_waiting_list_contact_rule` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_waiting_list_cr_site_id_fk` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_waiting_list_cr_service_id_fk` FOREIGN KEY (`service_id`) REFERENCES `service` (`id`),
 	CONSTRAINT `acv_ophtroperationbooking_waiting_list_cr_firm_id_fk` FOREIGN KEY (`firm_id`) REFERENCES `firm` (`id`),
