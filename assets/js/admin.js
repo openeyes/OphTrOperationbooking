@@ -5,7 +5,8 @@ $(document).ready(function() {
 		window.location.href = baseUrl+'/OphTrOperationbooking/admin/addERODRule';
 	});
 
-	$('#et_delete_erod_rule').click(function() {
+	$('#et_delete_erod_rule').click(function(e) {
+		e.preventDefault();
 		if ($('input.erod_rules[type="checkbox"]:checked').length == 0) {
 			new OpenEyes.UI.Dialog.Alert({
 				content: "You haven't selected any rules to delete."
@@ -20,9 +21,13 @@ $(document).ready(function() {
 						window.location.reload();
 					} else {
 						new OpenEyes.UI.Dialog.Alert({
-							content: "Something went wrong trying to delete the rules. Please try again or contact support for assistance."
+							content: "Something went wrong trying to delete the rules. Please try again or contact support for assistance.\n\n" + resp
 						}).open();
 					}
+				},
+				'error': function(resp, status, error) {
+					new OpenEyes.UI.Dialog.Alert({
+						content: "Something went wrong " + status + ": " + error}).open();
 				}
 			});
 		}

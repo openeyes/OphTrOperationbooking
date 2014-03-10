@@ -168,22 +168,34 @@ class AdminController extends ModuleAdminController
 	public function actionDeleteERODRules()
 	{
 		if (!empty($_POST['erod'])) {
-			foreach ($_POST['erod'] as $erod_id) {
-				if ($_erod = OphTrOperationbooking_Operation_EROD_Rule::model()->findByPk($erod_id)) {
-					foreach ($_erod->items as $item) {
-						if (!$item->delete()) {
-							throw new Exception("Unable to delete rule item: ".print_r($item->getErrors(),true));
+			$transaction = Yii::app()->db->beginTransaction();
+			try {
+throw new Exception("Test message");
+				foreach ($_POST['erod'] as $erod_id) {
+					if ($_erod = OphTrOperationbooking_Operation_EROD_Rule::model()->findByPk($erod_id)) {
+						foreach ($_erod->items as $item) {
+							if (!$item->delete()) {
+								throw new Exception("Unable to delete rule item: ".print_r($item->getErrors(),true));
+							}
+						}
+						if (!$_erod->delete()) {
+							throw new Exception("Unable to delete erod rule: ".print_r($_erod->getErrors(),true));
 						}
 					}
-					if (!$_erod->delete()) {
-						throw new Exception("Unable to delete erod rule: ".print_r($_erod->getErrors(),true));
+					else {
+						throw new Exception("EROD Rule not found for id " . $erod_id);
 					}
 				}
+
+				Audit::add('admin','delete',serialize($_POST),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_EROD_Rule'));
+				$transaction->commit();
 			}
-
-			Audit::add('admin','delete',serialize($_POST),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_EROD_Rule'));
+			catch (Exception $e) {
+				$transaction->rollback();
+				echo $e->getMessage();
+				Yii::app()->end();
+			}
 		}
-
 		echo "1";
 	}
 
