@@ -122,7 +122,7 @@ class BookingController extends BaseEventTypeController
 						throw new Exception('Operation not found: '.$_POST['Booking']['element_id']);
 					}
 
-					$transaction = Yii::app()->db->beginTransaction('Schedule','Operation');
+					$transaction = Yii::app()->db->beginTransaction(($this->reschedule ? 'Reschedule' : 'Schedule'),'Operation');
 
 					try {
 						$cancellation_data = array(
