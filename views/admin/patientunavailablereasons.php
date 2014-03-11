@@ -42,7 +42,6 @@
 			<tr>
 				<td colspan="2">
 					<?php echo EventAction::button('Add', 'add', null,array('class'=>'button small', 'data-uri' => '/OphTrOperationbooking/admin/AddPatientUnavailableReason'))->toHtml()?>
-					<?php echo EventAction::button('Delete', 'delete_patientunavailablereason', null,array('class'=>'button small'))->toHtml()?>
 				</td>
 			</tr>
 			</tfoot>
@@ -50,22 +49,6 @@
 	</form>
 </div>
 
-<div id="confirm_delete_patientunavailablereasons" title="Confirm delete patientunavailablereason" style="display: none;">
-	<div id="delete_patientunavailablereasons">
-		<div class="alert-box alert with-icon">
-			<strong>WARNING: This will remove the patientunavailablereasons from the system.<br/>This action cannot be undone.</strong>
-		</div>
-		<p>
-			<strong>Are you sure you want to proceed?</strong>
-		</p>
-		<div class="buttons">
-			<input type="hidden" id="medication_id" value="" />
-			<button type="submit" class="warnin btn_remove_patientunavailablereasons">Remove scheduleoption(s)</button>
-			<button type="submit" class="secondary btn_cancel_remove_patientunavailablereasons">Cancel</button>
-			<img class="loader" src="<?php echo Yii::app()->assetManager->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
-		</div>
-	</div>
-</div>
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('.patientunavailablereasons-enabled').on('change', function() {
