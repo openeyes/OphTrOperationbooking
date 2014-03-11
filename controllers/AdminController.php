@@ -170,7 +170,6 @@ class AdminController extends ModuleAdminController
 		if (!empty($_POST['erod'])) {
 			$transaction = Yii::app()->db->beginTransaction();
 			try {
-throw new Exception("Test message");
 				foreach ($_POST['erod'] as $erod_id) {
 					if ($_erod = OphTrOperationbooking_Operation_EROD_Rule::model()->findByPk($erod_id)) {
 						foreach ($_erod->items as $item) {
