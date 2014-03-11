@@ -51,9 +51,6 @@ class WaitingListController extends BaseModuleController
 		);
 	}
 
-	/**
-	* Lists all models.
-	*/
 	public function actionIndex()
 	{
 		if (empty($_POST)) {
@@ -66,9 +63,18 @@ class WaitingListController extends BaseModuleController
 				);
 			}
 
+			$transaction = Yii::app()->db->beginTransaction('View','Waiting list');
+
 			Audit::add('waiting list','view');
+
+			$transaction->commit();
+
 		} else {
+			$transaction = Yii::app()->db->beginTransaction('Search','Waiting list');
+
 			Audit::add('waiting list','search');
+
+			$transaction->commit();
 		}
 
 		$this->render('index');
@@ -79,7 +85,11 @@ class WaitingListController extends BaseModuleController
 	 */
 	public function actionSearch()
 	{
+		$transaction = Yii::app()->db->beginTransaction('Search','Waiting list');
+
 		Audit::add('waiting list','search');
+
+		$transaction->commit();
 
 		if (empty($_POST)) {
 			$operations = array();
@@ -257,7 +267,10 @@ class WaitingListController extends BaseModuleController
 	*/
 	public function actionPrintLetters()
 	{
+		$transaction = Yii::app()->db->beginTransaction('Print','Letters');
+
 		Audit::add('waiting list',(@$_REQUEST['all']=='true' ? 'print all' : 'print selected'),serialize($_POST));
+
 		if (isset($_REQUEST['event_id'])) {
 			$operations = Element_OphTrOperationbooking_Operation::model()->findAll('event_id=?',array($_REQUEST['event_id']));
 			$auto_confirm = true;
@@ -280,6 +293,9 @@ class WaitingListController extends BaseModuleController
 			set_time_limit(3);
 			$this->printLetter($pdf_print, $operation, $auto_confirm);
 		}
+
+		$transaction->commit();
+
 		set_time_limit(10);
 		$pdf_print->output();
 	}
@@ -482,6 +498,8 @@ class WaitingListController extends BaseModuleController
 	 */
 	public function actionConfirmPrinted()
 	{
+		$transaction = Yii::app()->db->beginTransaction('Confirm','Waiting list');
+
 		Audit::add('waiting list','confirm');
 
 		foreach ($_POST['operations'] as $operation_id) {
@@ -493,5 +511,7 @@ class WaitingListController extends BaseModuleController
 				}
 			}
 		}
+
+		$transaction->commit();
 	}
 }

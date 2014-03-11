@@ -197,7 +197,6 @@ class DefaultController extends BaseEventTypeController
 	 */
 	public function actionCancel($id)
 	{
-
 		$operation = $this->operation;
 
 		if ($operation->status->name == 'Cancelled') {
@@ -207,13 +206,15 @@ class DefaultController extends BaseEventTypeController
 		$errors = array();
 
 		if (isset($_POST['cancellation_reason']) && isset($_POST['operation_id'])) {
+			$transaction = Yii::app()->db->beginTransaction('Cancel','Operation');
+
 			$comment = (isset($_POST['cancellation_comment'])) ? strip_tags(@$_POST['cancellation_comment']) : '';
 			$result = $operation->cancel(@$_POST['cancellation_reason'], $comment);
 
 			if ($result['result']) {
 				$operation->event->deleteIssues();
 
-				$event->audit('event','cancel');
+				$operation->event->audit('event','cancel');
 
 				die(json_encode(array()));
 			}
@@ -222,6 +223,12 @@ class DefaultController extends BaseEventTypeController
 				foreach ($form_errors as $error) {
 					$errors[] = $error;
 				}
+			}
+
+			if (empty($errors)) {
+				$transaction->commit();
+			} else {
+				$transaction->rollback();
 			}
 
 			die(json_encode($errors));
@@ -270,9 +277,13 @@ class DefaultController extends BaseEventTypeController
 
 		$operation = $this->operation;
 
+		$transaction = Yii::app()->db->beginTransaction('Print','Admission letter');
+
 		$this->event->audit('admission letter','print',false);
 
 		$this->logActivity('printed admission letter');
+
+		$transaction->commit();
 
 		$site = $operation->booking->session->theatre->site;
 		if (!$firm = $operation->booking->session->firm) {

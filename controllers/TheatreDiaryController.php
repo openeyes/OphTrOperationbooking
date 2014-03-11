@@ -98,9 +98,18 @@ class TheatreDiaryController extends BaseModuleController
 				Yii::app()->session['theatre_searchoptions'] = $_POST;
 			}
 
+			$transaction = Yii::app()->db->beginTransaction('View','Theatre diary');
+
 			Audit::add('diary','view');
+
+			$transaction->commit();
+
 		} else {
+			$transaction = Yii::app()->db->beginTransaction('Search','Theatre diary');
+
 			Audit::add('diary','search');
+
+			$transaction->commit();
 		}
 
 		$this->jsVars['NHSDateFormat'] = Helper::NHS_DATE_FORMAT;
@@ -113,7 +122,11 @@ class TheatreDiaryController extends BaseModuleController
 	 */
 	public function actionPrintDiary()
 	{
+		$transaction = Yii::app()->db->beginTransaction('Print','Theatre diary');
+
 		Audit::add('diary','print');
+
+		$transaction->commit();
 
 		Yii::app()->getClientScript()->registerCssFile(Yii::app()->createUrl(
 			Yii::app()->getAssetManager()->publish(
@@ -129,7 +142,11 @@ class TheatreDiaryController extends BaseModuleController
 	 */
 	public function actionPrintList()
 	{
+		$transaction = Yii::app()->db->beginTransaction('Print list','Theatre diary');
+
 		Audit::add('diary','print list');
+
+		$transaction->commit();
 
 		Yii::app()->getClientScript()->registerCssFile(Yii::app()->createUrl(
 			Yii::app()->getAssetManager()->publish(
@@ -145,7 +162,11 @@ class TheatreDiaryController extends BaseModuleController
 	 */
 	public function actionSearch()
 	{
+		$transaction = Yii::app()->db->beginTransaction('Search','Theatre diary');
+
 		Audit::add('diary','search');
+
+		$transaction->commit();
 
 		$list = $this->renderPartial('_list', array(
 			'diary' => $this->getDiaryTheatres($_POST),
@@ -483,6 +504,8 @@ class TheatreDiaryController extends BaseModuleController
 
 		$session->comments = $_POST['comments_'.$session->id];
 
+		$transaction = Yii::app()->db->beginTransaction('Update','Session');
+
 		if (!$session->save()) {
 			throw new Exception('Unable to save session: '.print_r($session->getErrors(),true));
 		}
@@ -504,7 +527,6 @@ class TheatreDiaryController extends BaseModuleController
 
 		$previous_display_order = -1;
 		foreach ($bookings as $new_position => $booking_data) {
-
 			// Check if relative position of booking has changed and adjust display_order as required
 			if($booking_data['booking_id'] != $original_booking_ids[$new_position]) {
 				$booking_data['booking']->display_order = $previous_display_order +1;
@@ -515,10 +537,14 @@ class TheatreDiaryController extends BaseModuleController
 			// Save booking if it has changed
 			if ($booking_data['changed']) {
 				if (!$booking_data['booking']->save()) {
+					$transaction->rollback();
+
 					throw new Exception('Unable to save booking: '.print_r($booking_data['booking']->getErrors(), true));
 				}
 			}
 		}
+
+		$transaction->commit();
 
 		echo json_encode(array());
 	}

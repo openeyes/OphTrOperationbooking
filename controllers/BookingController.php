@@ -223,8 +223,12 @@ class BookingController extends BaseEventTypeController
 					throw new Exception('Booking not found: '.@$_POST['booking_id']);
 				}
 
+				$transaction = Yii::app()->db->beginTransaction('Cancel','Booking');
+
 				$booking->cancel($reason,$_POST['cancellation_comment'],false);
 				$operation->setStatus('Requires rescheduling');
+
+				$transaction->commit();
 
 				$this->redirect(array('default/view/'.$this->event->id));
 			}

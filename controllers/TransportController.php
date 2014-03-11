@@ -266,6 +266,8 @@ class TransportController extends BaseModuleController
 	public function actionConfirm()
 	{
 		if (is_array(@$_POST['operations'])) {
+			$transaction = Yii::app()->db->beginTransaction('Confirm','Transport');
+
 			foreach ($_POST['operations'] as $operation_id) {
 				if (!$operation = Element_OphTrOperationbooking_Operation::model()->with('latestBooking')->findByPk($operation_id)) {
 					throw new Exception('Operation not found: '.$operation_id);
@@ -282,6 +284,8 @@ class TransportController extends BaseModuleController
 					}
 				}
 			}
+
+			$transaction->commit();
 		}
 
 		echo '1';

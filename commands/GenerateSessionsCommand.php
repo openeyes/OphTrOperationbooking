@@ -36,6 +36,13 @@ class GenerateSessionsCommand extends CConsoleCommand
 		Yii::import('application.modules.OphTrOperationbooking.helpers.*');
 
 		$api = new OphTrOperationbooking_API;
-		return $api->generateSessions($args);
+
+		$transaction = Yii::app()->db->beginTransaction('GenerateSessions','Command Script');
+
+		$return = $api->generateSessions($args);
+
+		$transaction->commit();
+
+		return $return;
 	}
 }
