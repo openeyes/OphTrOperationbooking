@@ -186,6 +186,10 @@ table.transport .status.Green {
   margin-bottom: 0.625em;
   width: auto;
 }
+/* line 28, ../sass/components/panels/_theatre-sessions-panel.scss */
+.panel.theatre-sessions .max-procedures-val {
+  color: #f00;
+}
 
 /* line 18, ../sass/components/panels/_patient-reminder.scss */
 .panel.patient-reminder {

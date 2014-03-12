@@ -44,4 +44,147 @@ class OphTrOperationbooking_Operation_SessionTest  extends CDbTestCase
 		$this->assertArrayHasKey("unavailablereason_id", $errs);
 
 	}
+
+	public function testOperationBookableSessionUnavailable()
+	{
+		$test = new OphTrOperationbooking_Operation_Session();
+		$test->available = false;
+		$op = new Element_OphTrOperationbooking_Operation();
+		$this->assertFalse($test->operationBookable($op));
+	}
+
+	public function testUnbookableReasonUnavailableNoReason()
+	{
+		$test = new OphTrOperationbooking_Operation_Session();
+		$test->available = false;
+		$op = new Element_OphTrOperationbooking_Operation();
+		$this->assertEquals($test->unbookableReason($op), OphTrOperationbooking_Operation_Session::$DEFAULT_UNAVAILABLE_REASON);
+	}
+
+	public function testUnbookableReasonUnavailableReason()
+	{
+		$test = new OphTrOperationbooking_Operation_Session();
+		$reason = new OphTrOperationbooking_Operation_Session_UnavailableReason();
+		$reason->name = "Test Reason";
+		$test->available = false;
+		$test->unavailablereason = $reason;
+		$op = new Element_OphTrOperationbooking_Operation();
+
+		$this->assertEquals($test->unbookableReason($op), $reason->name);
+	}
+
+	public function testCurrentProcedureCount()
+	{
+		$total_proc = 0;
+		$ops = array();
+		$proc_counts = array(2,5,1);
+		foreach ($proc_counts as $ct) {
+			$op = $this->getMockBuilder('Element_OphTrOperationbooking_Operation')
+					->disableOriginalConstructor()
+					->setMethods(array('getProcedureCount'))
+					->getMock();
+			$op->expects($this->once())
+				->method('getProcedureCount')
+				->will($this->returnValue($ct));
+			$ops[] = $op;
+			$total_proc+=$ct;
+		}
+
+
+		$test = new OphTrOperationbooking_Operation_Session();
+		$test->activeBookings = $ops;
+
+		$this->assertEquals($test->getBookedProcedureCount(), $total_proc);
+	}
+
+	public function testOperationBookableTooManyProcedures()
+	{
+		$op = $this->getMockBuilder('Element_OphTrOperationbooking_Operation')
+				->disableOriginalConstructor()
+				->setMethods(array('getProcedureCount'))
+				->getMock();
+
+		$op->expects($this->once())
+			->method('getProcedureCount')
+			->will($this->returnValue(5));
+
+		$test = $this->getMockBuilder('OphTrOperationbooking_Operation_Session')
+				->disableOriginalConstructor()
+				->setMethods(array('getBookedProcedureCount'))
+				->getMock();
+
+		$test->expects($this->once())
+			->method('getBookedProcedureCount')
+			->will($this->returnValue(0));
+
+		$test->max_procedures = 4;
+		$test->available = true;
+
+		$this->assertFalse($test->operationBookable($op));
+	}
+
+	public function testUnbookableReasonTooManyProcedures()
+	{
+		$op = $this->getMockBuilder('Element_OphTrOperationbooking_Operation')
+				->disableOriginalConstructor()
+				->setMethods(array('getProcedureCount'))
+				->getMock();
+
+		$op->expects($this->once())
+				->method('getProcedureCount')
+				->will($this->returnValue(5));
+
+		$test = $this->getMockBuilder('OphTrOperationbooking_Operation_Session')
+				->disableOriginalConstructor()
+				->setMethods(array('getBookedProcedureCount'))
+				->getMock();
+
+		$test->expects($this->once())
+				->method('getBookedProcedureCount')
+				->will($this->returnValue(0));
+
+		$test->max_procedures = 4;
+		$test->available = true;
+
+		$this->assertEquals($test->unbookableReason($op), OphTrOperationbooking_Operation_Session::$TOO_MANY_PROCEDURES_REASON);
+	}
+
+	public function testOperationBookableUnderProcedureLimit()
+	{
+		$op = $this->getMockBuilder('Element_OphTrOperationbooking_Operation')
+				->disableOriginalConstructor()
+				->setMethods(array('getProcedureCount'))
+				->getMock();
+
+		$op->expects($this->once())
+				->method('getProcedureCount')
+				->will($this->returnValue(5));
+
+		$helper = $this->getMockBuilder('OphTrOperationbooking_BookingHelper')
+				->disableOriginalConstructor()
+				->setMethods(array('checkSessionCompatibleWithOperation'))
+				->getMock();
+		$helper->expects($this->once())
+			->method('checkSessionCompatibleWithOperation')
+			->will($this->returnValue(array()));
+
+		$test = $this->getMockBuilder('OphTrOperationbooking_Operation_Session')
+				->disableOriginalConstructor()
+				->setMethods(array('getBookedProcedureCount', 'getHelper'))
+				->getMock();
+
+		$test->expects($this->once())
+				->method('getBookedProcedureCount')
+				->will($this->returnValue(0));
+		$test->expects($this->once())
+			->method('getHelper')
+			->will($this->returnValue($helper));
+
+		$test->max_procedures = 7;
+		$test->available = true;
+		$test->date = date('Y-m-d');
+
+		$this->assertTrue($test->operationBookable($op));
+	}
+
 }

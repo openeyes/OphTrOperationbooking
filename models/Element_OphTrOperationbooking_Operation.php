@@ -1278,4 +1278,19 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 
 		return 'Booked';
 	}
+
+	/**
+	 * Calculates the total number of procedures this operation requires.
+	 *
+	 * @return int
+	 */
+	public function getProcedureCount()
+	{
+		$total = count($this->procedures);
+
+		if ($this->eye_id == Eye::BOTH) {
+			$total *= 2;
+		}
+		return $total;
+	}
 }

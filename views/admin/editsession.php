@@ -50,6 +50,7 @@
 	<?php }?>
 	<?php echo $form->textField($session,'start_time',array(),array(),array('field'=>2))?>
 	<?php echo $form->textField($session,'end_time',array(),array(),array('field'=>2))?>
+	<?php echo $form->textField($session, 'max_procedures', array(), array(), array('field'=>2)); ?>
 	<?php echo $form->radioBoolean($session,'consultant')?>
 	<?php echo $form->radioBoolean($session,'paediatric')?>
 	<?php echo $form->radioBoolean($session,'anaesthetist')?>

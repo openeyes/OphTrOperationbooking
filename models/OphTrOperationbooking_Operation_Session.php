@@ -45,6 +45,9 @@
 
 class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 {
+
+	public static $DEFAULT_UNAVAILABLE_REASON = "This session is unavailable at this time";
+	public static $TOO_MANY_PROCEDURES_REASON = "This operation has too many procedures for this session";
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className
@@ -184,6 +187,20 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 			));
 	}
 
+	protected $_helper;
+
+	/**
+	 * Wrapper for getting the helper class
+	 *
+	 * @return OphTrOperationbooking_BookingHelper
+	 */
+	public function getHelper() {
+		if (!$this->_helper) {
+			$this->_helper = new OphTrOperationbooking_BookingHelper();
+		}
+		return $this->_helper;
+	}
+
 	public function getDuration()
 	{
 		return (mktime(substr($this->end_time,0,2),substr($this->end_time,3,2),0,1,1,date('Y')) - mktime(substr($this->start_time,0,2),substr($this->start_time,3,2),0,1,1,date('Y'))) / 60;
@@ -238,13 +255,41 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		}
 	}
 
+	/**
+	 * Get the total number of procedures booked into this session across all bookings
+	 *
+	 * @return int
+	 */
+	public function getBookedProcedureCount()
+	{
+		$total = 0;
+
+		foreach ($this->activeBookings as $booking) {
+			$total += $booking->procedureCount;
+		}
+
+		return $total;
+	}
+
+	/**
+	 * Test whether the given operation can be booked into this session
+	 *
+	 * @param $operation
+	 * @return bool
+	 */
 	public function operationBookable($operation)
 	{
 		if (!$this->available) {
 			return false;
 		}
 
-		$helper = new OphTrOperationbooking_BookingHelper;
+		if ($this->max_procedures) {
+			if ($this->getBookedProcedureCount() + $operation->getProcedureCount() > $this->max_procedures) {
+				return false;
+			}
+		}
+
+		$helper = $this->getHelper();
 		if ($helper->checkSessionCompatibleWithOperation($this, $operation)) {
 			return false;
 		}
@@ -256,13 +301,30 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		return true;
 	}
 
+	/**
+	 * Return the reason an operation cannot be booked into this session
+	 *
+	 * @param $operation
+	 * @return string
+	 */
 	public function unbookableReason($operation)
 	{
 		if (!$this->available) {
-			return "This session is unavailable at this time";
+			if (!$this->unavailablereason) {
+				return self::$DEFAULT_UNAVAILABLE_REASON;
+			}
+			else {
+				return $this->unavailablereason->name;
+			}
 		}
 
-		$helper = new OphTrOperationbooking_BookingHelper;
+		if ($this->max_procedures) {
+			if ($this->getBookedProcedureCount() + $operation->getProcedureCount() > $this->max_procedures) {
+				return self::$TOO_MANY_PROCEDURES_REASON;
+			}
+		}
+
+		$helper = $this->getHelper();
 		if (($errors = $helper->checkSessionCompatibleWithOperation($this, $operation))) {
 			switch ($errors[0]) {
 				case $helper::ANAESTHETIST_REQUIRED:
@@ -293,7 +355,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		}
 
 		// Ensure we are still compatible with any active bookings
-		$helper = new OphTrOperationbooking_BookingHelper;
+		$helper = $this->getHelper();
 		foreach ($this->activeBookings as $booking) {
 			foreach ($helper->checkSessionCompatibleWithOperation($this, $booking->operation) as $error) {
 				switch ($error) {

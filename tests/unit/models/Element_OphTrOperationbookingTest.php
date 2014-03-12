@@ -199,6 +199,22 @@ class Element_OphTrOperationbookingTest extends CDbTestCase
 		$this->assertFalse($res === true);
 		# arrays are error messages
 		$this->assertTrue(gettype($res) == 'array');
+	}
 
+	public function testProcedureCountSingleEye()
+	{
+		$op = new Element_OphTrOperationbooking_Operation();
+		$op->procedures = array(new Procedure(), new Procedure());
+
+		$this->assertEquals($op->getProcedureCount(), 2);
+	}
+
+	public function testProcedureCountBothEyes()
+	{
+		$op = new Element_OphTrOperationbooking_Operation();
+		$op->procedures = array(new Procedure(), new Procedure());
+		$op->eye_id = Eye::BOTH;
+		
+		$this->assertEquals($op->getProcedureCount(), 4);
 	}
 }

@@ -172,10 +172,11 @@ $session_unavailable_reasons = CHtml::listData(OphTrOperationbooking_Operation_S
 										<span id="session_unavailablereason_<?php echo $session->id ?>"><?php if ($session->unavailablereason) { echo " - " . $session->unavailablereason->name;  } ?></span>
 									</span>
 								</div>
-								<div class="specialists<?php if (!$session->consultant && !$session->anaesthetist && !$session->paediatric){ echo " hidden";}?>">
+								<div class="specialists<?php if (!$session->consultant && !$session->anaesthetist && !$session->paediatric && !$session->max_procedures){ echo " hidden";}?>">
 									<div<?php if (!$session->consultant) {?> style="display: none;"<?php }?> id="consultant_icon_<?php echo $session->id?>" class="consultant" title="Consultant Present">Consultant</div>
 									<div<?php if (!$session->anaesthetist) {?> style="display: none;"<?php }?> id="anaesthetist_icon_<?php echo $session->id?>" class="anaesthetist" title="Anaesthetist Present">Anaesthetist<?php if ($session->general_anaesthetic) {?> (GA)<?php }?></div>
 									<div<?php if (!$session->paediatric) {?> style="display: none;"<?php }?> id="paediatric_icon_<?php echo $session->id?>" class="paediatric" title="Paediatric Session">Paediatric</div>
+									<div<?php if (!$session->max_procedures) {?> style="display: none;"<?php }?> id="max_procedures_icon_<?php echo $session->id?>" class="max-procedures" title="Max <?php echo $session->max_procedures ?>">Max <span class="max-procedures-val"><?php echo $session->max_procedures ?></span> Procedures</div>
 								</div>
 							</td>
 						</tr>
