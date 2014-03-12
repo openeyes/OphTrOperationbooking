@@ -16,6 +16,9 @@
  * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
+
+$session_unavailable_reasons = CHtml::listData(OphTrOperationbooking_Operation_Session_UnavailableReason::model()->findAll(), 'id', 'name');
+
 ?>
 <div class="row hide" id="infoBox_<?php echo $session->id?>">
 	<div class="large-12 column">
@@ -165,7 +168,9 @@
 									<?php } else {?>
 										<?php echo abs($session->availableMinutes) ?> minutes overbooked
 									<?php }?>
-									<span<?php if ($session->available) {?> style="display: none;"<?php }?> class="session-unavailable" id="session_unavailable_<?php echo $session->id?>"> - session unavailable</span>
+									<span class="session-unavailable" id="session_unavailable_<?php echo $session->id?>" <?php if ($session->available){?>style="display:none;" <?php }?>> - session unavailable
+										<span id="session_unavailablereason_<?php echo $session->id ?>"><?php if ($session->unavailablereason) { echo " - " . $session->unavailablereason->name;  } ?></span>
+									</span>
 								</div>
 								<div class="specialists<?php if (!$session->consultant && !$session->anaesthetist && !$session->paediatric){ echo " hidden";}?>">
 									<div<?php if (!$session->consultant) {?> style="display: none;"<?php }?> id="consultant_icon_<?php echo $session->id?>" class="consultant" title="Consultant Present">Consultant</div>
@@ -202,8 +207,15 @@
 								General anaesthetic available
 							</label>
 							<label>
-								<input type="checkbox" id="available_<?php echo $session->id?>" name="available_<?php echo $session->id?>" value="1"<?php if ($session->available) {?> checked="checked"<?php }?> />
+								<input type="checkbox" class="session-available" id="available_<?php echo $session->id?>" name="available_<?php echo $session->id?>" value="1"<?php if ($session->available) {?> checked="checked"<?php }?> />
 								Session available
+							</label>
+							<label <?php if ($session->available) { ?>style="display: none;"<?php } ?>>
+								<?php echo CHtml::dropDownList("unavailablereason_id_" . $session->id, $session->unavailablereason_id, $session_unavailable_reasons, array('empty' => '- Please Select -', 'class' => 'unavailable-reasons'))?>
+							</label>
+							<input style="display: inline-block;" type="text" class="limited-width" id="max_procedures_<?php echo $session->id?>" maxlength="2" size="2" name="max_procedures_<?php echo $session->id?>" value="<?php echo $session->max_procedures; ?>" />
+							<label style="display: inline-block;">
+								<?php echo $session->getAttributeLabel('max_procedures'); ?>
 							</label>
 						</div>
 					<?php } else {?>

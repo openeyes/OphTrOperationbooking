@@ -435,91 +435,112 @@ class TheatreDiaryController extends BaseModuleController
 		$errors = array();
 		$bookings = array();
 
-		foreach ($_POST as $key => $value) {
-			if (preg_match('/^admitTime_([0-9]+)$/',$key,$m)) {
-				if (!$operation = Element_OphTrOperationbooking_Operation::model()->findByPk($m[1])) {
-					throw new Exception('Operation not found: '.$m[1]);
-				}
-				if (!$booking = $operation->booking) {
-					throw new Exception('Operation has no active booking: '.$m[1]);
-				}
-				$booking_data = array(
-						'original_display_order' => $booking->display_order,
-						'booking_id' => $booking->id,
-						'changed' => false,
-				);
+		$transaction = Yii::app()->db->beginTransaction();
+		try {
+			foreach ($_POST as $key => $value) {
+				if (preg_match('/^admitTime_([0-9]+)$/',$key,$m)) {
+					if (!$operation = Element_OphTrOperationbooking_Operation::model()->findByPk($m[1])) {
+						throw new Exception('Operation not found: '.$m[1]);
+					}
+					if (!$booking = $operation->booking) {
+						throw new Exception('Operation has no active booking: '.$m[1]);
+					}
+					$booking_data = array(
+							'original_display_order' => $booking->display_order,
+							'booking_id' => $booking->id,
+							'changed' => false,
+					);
 
-				// Check to see if the booking has been changed and so needs saving
-				$confirmed = @$_POST['confirm_'.$m[1]];
-				if ((date('H:i', strtotime($booking->admission_time)) != $value) || $booking->confirmed != $confirmed) {
+					// Check to see if the booking has been changed and so needs saving
+					$confirmed = @$_POST['confirm_'.$m[1]];
+					if ((date('H:i', strtotime($booking->admission_time)) != $value) || $booking->confirmed != $confirmed) {
+						$booking_data['changed'] = true;
+						$booking->admission_time = $value;
+						$booking->confirmed = @$_POST['confirm_'.$m[1]];
+					}
+
+					$booking_data['booking'] = $booking;
+					$bookings[] = $booking_data;
+
+					if (!$booking->validate()) {
+						$formErrors = $booking->getErrors();
+						$errors[(integer) $m[1]] = $formErrors['admission_time'][0];
+					}
+				}
+			}
+
+			if (!empty($errors)) {
+				echo json_encode($errors);
+				return;
+			}
+
+			if ($this->checkAccess('OprnEditTheatreSessionDetails')) {
+				$session->consultant = $_POST['consultant_'.$session->id];
+				$session->paediatric = $_POST['paediatric_'.$session->id];
+				$session->anaesthetist = $_POST['anaesthetist_'.$session->id];
+				$session->general_anaesthetic = $_POST['general_anaesthetic_'.$session->id];
+				$session->available = $_POST['available_'.$session->id];
+				$session->unavailablereason_id = $_POST['unavailablereason_id_' . $session->id];
+				$session->max_procedures = $_POST['max_procedures_' . $session->id];
+			}
+
+			$session->comments = $_POST['comments_'.$session->id];
+
+			if (!$session->save()) {
+				foreach ($session->getErrors() as $k => $v) {
+					$errors[$session->getAttributeLabel($k)] = $v;
+				};
+				throw new Exception('Unable to save session');
+			}
+
+			// Create array of booking IDs in the original display order
+			$original_bookings = array();
+			foreach($bookings as $booking_data) {
+				// this is an array [] because it's theoretically possible for bad data to occur where there are multiple bookings with the same display_order
+				$original_bookings[$booking_data['original_display_order']][] = $booking_data['booking_id'];
+			}
+			ksort($original_bookings);
+
+			$original_booking_ids = array();
+			foreach ($original_bookings as $original_display_order => $booking_ids) {
+				foreach ($booking_ids as $booking_id) {
+					$original_booking_ids[] = $booking_id;
+				}
+			}
+
+			$previous_display_order = -1;
+			foreach ($bookings as $new_position => $booking_data) {
+
+				// Check if relative position of booking has changed and adjust display_order as required
+				if($booking_data['booking_id'] != $original_booking_ids[$new_position]) {
+					$booking_data['booking']->display_order = $previous_display_order +1;
 					$booking_data['changed'] = true;
-					$booking->admission_time = $value;
-					$booking->confirmed = @$_POST['confirm_'.$m[1]];
 				}
+				$previous_display_order = $booking_data['booking']->display_order;
 
-				$booking_data['booking'] = $booking;
-				$bookings[] = $booking_data;
-
-				if (!$booking->validate()) {
-					$formErrors = $booking->getErrors();
-					$errors[(integer) $m[1]] = $formErrors['admission_time'][0];
-				}
-			}
-		}
-
-		if (!empty($errors)) {
-			echo json_encode($errors);
-			return;
-		}
-
-		if ($this->checkAccess('OprnEditTheatreSessionDetails')) {
-			$session->consultant = $_POST['consultant_'.$session->id];
-			$session->paediatric = $_POST['paediatric_'.$session->id];
-			$session->anaesthetist = $_POST['anaesthetist_'.$session->id];
-			$session->general_anaesthetic = $_POST['general_anaesthetic_'.$session->id];
-			$session->available = $_POST['available_'.$session->id];
-		}
-
-		$session->comments = $_POST['comments_'.$session->id];
-
-		if (!$session->save()) {
-			throw new Exception('Unable to save session: '.print_r($session->getErrors(),true));
-		}
-
-		// Create array of booking IDs in the original display order
-		$original_bookings = array();
-		foreach($bookings as $booking_data) {
-			// this is an array [] because it's theoretically possible for bad data to occur where there are multiple bookings with the same display_order
-			$original_bookings[$booking_data['original_display_order']][] = $booking_data['booking_id'];
-		}
-		ksort($original_bookings);
-
-		$original_booking_ids = array();
-		foreach ($original_bookings as $original_display_order => $booking_ids) {
-			foreach ($booking_ids as $booking_id) {
-				$original_booking_ids[] = $booking_id;
-			}
-		}
-
-		$previous_display_order = -1;
-		foreach ($bookings as $new_position => $booking_data) {
-
-			// Check if relative position of booking has changed and adjust display_order as required
-			if($booking_data['booking_id'] != $original_booking_ids[$new_position]) {
-				$booking_data['booking']->display_order = $previous_display_order +1;
-				$booking_data['changed'] = true;
-			}
-			$previous_display_order = $booking_data['booking']->display_order;
-
-			// Save booking if it has changed
-			if ($booking_data['changed']) {
-				if (!$booking_data['booking']->save()) {
-					throw new Exception('Unable to save booking: '.print_r($booking_data['booking']->getErrors(), true));
+				// Save booking if it has changed
+				if ($booking_data['changed']) {
+					if (!$booking_data['booking']->save()) {
+						$errors = $booking_data['booking']->getErrors();
+						throw new Exception('Unable to save booking');
+					}
 				}
 			}
+			if (empty($errors)) {
+				$transaction->commit();
+			}
+			else {
+				$transaction->rollback();
+			}
+		}
+		catch (Exception $e) {
+			$transaction->rollback();
+			if (empty($errors)) {
+				$errors[] = "An unexpected error has occurred." . $e->getMessage();
+			}
 		}
 
-		echo json_encode(array());
+		echo json_encode($errors);
 	}
 
 	/**

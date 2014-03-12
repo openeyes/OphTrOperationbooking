@@ -20,13 +20,9 @@ class OphTrOperationbooking_ScheduleOperation_PatientUnavailableTest extends CDb
 			'reasons' => 'OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason',
 	);
 
-	public static function setUpBeforeClass(){
+	public static function setUpBeforeClass()
+	{
 		date_default_timezone_set('UTC');
-		self::getFixtureManager()->basePath = Yii::getPathOfAlias( 'application.modules.ophtroperationbooking.tests.fixtures' );
-	}
-
-	static function tearDownAfterClass(){
-		self::getFixtureManager()->basePath = Yii::getPathOfAlias( 'application.tests.fixtures' );
 	}
 
 	public function testStartDateAfterEndDate()

@@ -180,6 +180,12 @@ table.transport .status.Green {
 .panel.theatre-sessions .theatre-booking-edit-actions {
   padding-top: 0.625em;
 }
+/* line 23, ../sass/components/panels/_theatre-sessions-panel.scss */
+.panel.theatre-sessions .limited-width {
+  font-size: 0.6875em;
+  margin-bottom: 0.625em;
+  width: auto;
+}
 
 /* line 18, ../sass/components/panels/_patient-reminder.scss */
 .panel.patient-reminder {

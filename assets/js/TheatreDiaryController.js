@@ -277,6 +277,19 @@ $(document).ready(function() {
 		}
 	});
 
+	$('.session-available').die('click').live('click',function() {
+		var reasons = $(this).parent().next().find('.unavailable-reasons');
+		if ($(this).is(':checked')) {
+			reasons.parent().hide();
+			reasons.data('orig', reasons.val());
+			reasons.val('');
+		}
+		else {
+			reasons.val(reasons.data('orig'));
+			reasons.parent().show();
+		}
+	});
+
 	$(this).undelegate('button[id^="btn_edit_session_save_"]','click').delegate('button[id^="btn_edit_session_save_"]','click',function() {
 		if (!$(this).hasClass('inactive')) {
 			disableButtons();
@@ -299,21 +312,32 @@ $(document).ready(function() {
 				dataType: 'json',
 				url: baseUrl+'/OphTrOperationbooking/theatreDiary/saveSession',
 				success: function(errors) {
-					var first = false;
+					var opErrs = null;
+					var nonOpErrs = '';
 					$('#tbody_'+session_id).children('tr').attr('style','');
 
 					for (var operation_id in errors) {
-						$('#oprow_'+operation_id).attr('style','background-color: #f00;');
-
-						if (!first) {
-							$('input[name="admitTime_'+operation_id+'"]').select().focus();
-							first = true;
+						if (!$('#oprow_'+operation_id).length) {
+							nonOpErrs += '<li>' + operation_id + ': ' + errors[operation_id] + '</li>';
+						}
+						else {
+							$('#oprow_'+operation_id).attr('style','background-color: #f00;');
+							if (!opErrs) {
+								$('input[name="admitTime_'+operation_id+'"]').select().focus();
+								opErrs = "One or more admission times were entered incorrectly, please correct the entries highlighted in red.";
+							}
 						}
 					}
+					if (nonOpErrs) {
+						if (opErrs) {
+							nonOpErrs += "<li>" + opErrs + "</li>"
+						}
+						opErrs = "Please check the following errors:<ul>"+nonOpErrs+"</ul>";
+					}
 
-					if (first) {
+					if (opErrs) {
 						new OpenEyes.UI.Dialog.Alert({
-							content: "One or more admission times were entered incorrectly, please correct the entries highlighted in red."
+							content: opErrs
 						}).open();
 						enableButtons();
 						return false;
@@ -335,7 +359,15 @@ $(document).ready(function() {
 						}
 					}
 
-					checkedOrOne($('#available_'+session_id)) ? $('#session_unavailable_'+session_id).hide() : $('#session_unavailable_'+session_id).show();
+					if (checkedOrOne($('#available_'+session_id))) {
+						$('#session_unavailable_'+session_id).hide();
+					}
+					else {
+						// because the unavailable reason might not be set in sessions before reasons was an option, we have to put the
+						// seperator in as well.
+						$('#session_unavailablereason_' + session_id).html(" - " + $('#unavailablereason_id_' + session_id).children(':selected').text());
+						$('#session_unavailable_'+session_id).show();
+					}
 					checkedOrOne($('#consultant_'+session_id)) ? $('#consultant_icon_'+session_id).show() : $('#consultant_icon_'+session_id).hide();
 					checkedOrOne($('#anaesthetist_'+session_id)) ? $('#anaesthetist_icon_'+session_id).show() : $('#anaesthetist_icon_'+session_id).hide();
 					$('#anaesthetist_icon_'+session_id).html(checkedOrOne($('#general_anaesthetic_'+session_id)) ? 'Anaesthetist (GA)' : 'Anaesthetist');

@@ -1752,4 +1752,148 @@ class AdminController extends ModuleAdminController
 
 		Audit::add('admin', $action, serialize($_POST), false, array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason'));
 	}
+
+	/**
+	 * List all the OphTrOperationbooking_Operation_Session_UnavailableReason objects
+	 */
+	public function actionViewSessionUnavailableReasons()
+	{
+		Audit::add('admin','list',null,false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Session_UnavailableReason'));
+
+		$this->render('sessionunavailablereasons');
+	}
+
+	/**
+	 * Edit the OphTrOperationbooking_Operation_Session_UnavailableReason specified by $id
+	 *
+	 * @param $id
+	 * @throws Exception
+	 */
+	public function actionEditSessionUnavailableReason($id)
+	{
+		if (!$reason = OphTrOperationbooking_Operation_Session_UnavailableReason::model()->findByPk($id)) {
+			throw new Exception("Session Unavailable Reason not found: $id");
+		}
+
+		$errors = array();
+
+		if (!empty($_POST)) {
+			$transaction = Yii::app()->db->beginTransaction();
+			try {
+				$reason->attributes = $_POST['OphTrOperationbooking_Operation_Session_UnavailableReason'];
+				if (!$reason->save()) {
+					$errors = $reason->getErrors();
+					$transaction->rollback();
+				} else {
+					Audit::add('admin','update',serialize(array_merge(array('id'=>$id),$_POST)),false,array('module' => 'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Session_UnavailableReason'));
+					$transaction->commit();
+				}
+			}
+			catch (Exception $e) {
+				$transaction->rollback();
+				throw $e;
+			}
+			if (empty($errors)) {
+				$this->redirect(array('/OphTrOperationbooking/admin/viewSessionUnavailableReasons'));
+			}
+		}
+
+		Audit::add('admin','view',$id,false,array('module' => 'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Session_UnavailableReason'));
+
+		$this->render('/admin/editsessionunavailablereason',array(
+						'reason' => $reason,
+						'errors' => $errors,
+				));
+	}
+
+	/**
+	 * Add a OphTrOperationbooking_Operation_Session_UnavailableReason
+	 */
+	public function actionAddSessionUnavailableReason()
+	{
+		$errors = array();
+
+		$reason = new OphTrOperationbooking_Operation_Session_UnavailableReason();
+
+		if (!empty($_POST)) {
+			$transaction = Yii::app()->db->beginTransaction();
+			try {
+				$reason->attributes = $_POST['OphTrOperationbooking_Operation_Session_UnavailableReason'];
+				if (!$reason->save()) {
+					$errors = $reason->getErrors();
+					$transaction->rollback();
+				} else {
+					Audit::add('admin','create',serialize($_POST),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Session_UnavailableReason'));
+					$transaction->commit();
+				}
+			}
+			catch (Exception $e) {
+				$transaction->rollback();
+				throw $e;
+			}
+			if (empty($errors)) {
+				$this->redirect(array('admin/viewSessionUnavailableReasons'));
+			}
+		}
+
+		$this->render('/admin/editsessionunavailablereason', array(
+						'reason' => $reason,
+						'errors' => $errors
+				));
+	}
+
+	/**
+	 * Reorder the OphTrOperationbooking_Operation_Session_UnavailableReason objects
+	 *
+	 * @throws Exception
+	 */
+	public function actionSortSessionUnavailableReasons()
+	{
+		if (!empty($_POST['order'])) {
+			$transaction = Yii::app()->db->beginTransaction();
+			try {
+				foreach ($_POST['order'] as $i => $id) {
+					if ($reason = OphTrOperationbooking_Operation_Session_UnavailableReason::model()->findByPk($id)) {
+						$reason->display_order = $i+1;
+						if (!$reason->save()) {
+							throw new Exception("Unable to save sessiion unavailable reason: " . print_r($reason->getErrors(),true));
+						}
+					}
+				}
+				Audit::add('admin', 'sort', serialize($_POST), false, array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason'));
+				$transaction->commit();
+			}
+			catch (Exception $e) {
+				$transaction->rollback();
+				throw $e;
+			}
+
+		}
+	}
+
+	/**
+	 * Disable or enable a OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason
+	 *
+	 * @throws Exception
+	 */
+	public function actionSwitchEnabledSessionUnavailableReason()
+	{
+		if (!$reason = OphTrOperationbooking_Operation_Session_UnavailableReason::model()->findByPk(@$_POST['id'])) {
+			throw new Exception("Session Unavailable Reason not found: $id");
+		}
+
+		if ($reason->enabled) {
+			$reason->enabled = 0;
+			$action = 'disabled';
+		}
+		else {
+			$reason->enabled = 1;
+			$action = 'enabled';
+		}
+		if (!$reason->save()) {
+			throw new Exception("Unexpected error changing enabled status for Session Unavailable Reason " . print_r($reason->getErrors(), true));
+		}
+
+		Audit::add('admin', $action, serialize($_POST), false, array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Session_UnavailableReason'));
+	}
 }

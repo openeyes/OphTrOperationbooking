@@ -32,11 +32,14 @@
  * @property boolean $anaesthetist
  * @property boolean $general_anaesthetic
  * @property integer $theatre_id
+ * @property integer $unavailablereason_id
+ * @property integer $max_procedures
  *
  * The followings are the available model relations:
  *
  * @property OphTrOperationbooking_Operation_Sequence $sequence
  * @property OphTrOperationbooking_Operation_Theatre $theatre
+ * @property OphTrOperationbooking_Operation_Session_UnavailableReason $unavailablereason
  *
  */
 
@@ -70,7 +73,8 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		return array(
 			array('sequence_id, date, start_time, end_time, theatre_id', 'required'),
 			array('sequence_id, theatre_id', 'length', 'max' => 10),
-			array('comments, available, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id, theatre_id, start_time, end_time, deleted, default_admission_time', 'safe'),
+			array('unavailablereason_id', 'validateRequiredIfAttrMatches', 'match_attr' => 'available', 'match_val' => false, 'message' => 'unavailable reason required if session unavailable.'),
+			array('comments, available, unavailablereason_id, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id, theatre_id, start_time, end_time, deleted, default_admission_time', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, sequence_id, theatre_id, date, start_time, end_time, comments, available, firm_id, site_id, weekday, consultant, paediatric, anaesthetist, general_anaesthetic', 'safe', 'on'=>'search'),
@@ -102,6 +106,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 			'theatre' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Theatre', 'theatre_id'),
 			'firm' => array(self::BELONGS_TO, 'Firm', 'firm_id'),
 			'sequence' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Sequence', 'sequence_id'),
+			'unavailablereason' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Session_UnavailableReason', 'unavailablereason_id'),
 			'activeBookings' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Booking', 'session_id',
 				'on' => 'activeBookings.booking_cancellation_date is null',
 				'order' => 'activeBookings.display_order ASC',
@@ -155,6 +160,8 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 			'end_time' => 'End time',
 			'general_anaesthetic' => 'General anaesthetic',
 			'default_admission_time' => 'Default admission time',
+			'unavailablereason_id' => 'Reason unavailable',
+			'max_procedures' => 'Max procedures'
 		);
 	}
 
@@ -338,4 +345,23 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		}
 	}
 
+
+	/**
+	 * The $attribute is required if the $params['match_attr'] is equal to the $params['match_val']
+	 *
+	 * @param $attribute - the element attribute that must be an earlier date
+	 * @param $params - 'later_date' is the attribute to compare it with
+	 */
+	public function validateRequiredIfAttrMatches($attribute, $params)
+	{
+		$match_a = $params['match_attr'];
+		$match_v = $params['match_val'];
+
+ 		if ($this->$match_a == $match_v) {
+			unset($params['match_attr']);
+			unset($params['match_val']);
+			$v = CValidator::createValidator('required', $this, array($attribute), $params);
+			$v->validate($this);
+		}
+	}
 }

@@ -13,39 +13,35 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class OphTrOperationbooking_Operation_EROD_RuleTest extends CDbTestCase
+class OphTrOperationbooking_Operation_SessionTest  extends CDbTestCase
 {
 	public $fixtures = array(
-		'specialties' => 'Specialty',
-		'subspecialties' => 'Subspecialty',
-		'service_subspecialty_assignment' => 'ServiceSubspecialtyAssignment',
-		'firms' => 'Firm'
+			'wards' => 'OphTrOperationbooking_Operation_Ward',
+			'theatres' =>  'OphTrOperationbooking_Operation_Theatre'
 	);
 
-	public static function setUpBeforeClass()
+	static public function setupBeforeClass()
 	{
-		date_default_timezone_set('UTC');
+		Yii::import('application.modules.OphTrOperationbooking.helpers.*');
 	}
 
-	public function testNoItemsRaisesError()
+	public function testUnavailableReasonRequired()
 	{
-		$test = new OphTrOperationbooking_Operation_EROD_Rule();
-		$test->subspecialty_id = $this->subspecialties('subspecialty1')->id;
+		$test = new OphTrOperationbooking_Operation_Session();
+		$basic_attrs = array(
+			'sequence_id' => 1,
+			'date' => '2014-04-03',
+			'start_time' => '08:30',
+			'end_time' => '13:30',
+			'theatre_id' => $this->theatres('th1')->id,
+		);
+
+		$test->attributes = $basic_attrs;
+
+		$test->available = false;
 		$this->assertFalse($test->validate());
 		$errs = $test->getErrors();
-		$this->assertArrayHasKey('items', $errs);
-	}
-
-	public function testCanValidateWithItem()
-	{
-		$test = new OphTrOperationbooking_Operation_EROD_Rule();
-		$test->subspecialty_id = $this->subspecialties('subspecialty1')->id;
-		$item = new OphTrOperationbooking_Operation_EROD_Rule_Item();
-		$item->item_type = 'firm';
-		$item->item_id = $this->firms('firm1')->id;
-		$test->items = array($item);
-		$this->assertTrue($test->validate());
+		$this->assertArrayHasKey("unavailablereason_id", $errs);
 
 	}
-
 }
