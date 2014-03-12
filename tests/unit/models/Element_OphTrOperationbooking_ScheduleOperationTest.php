@@ -94,6 +94,10 @@ class Element_OphTrOperationbooking_ScheduleOperationTest extends CDbTestCase
 		$this->assertFalse($test2->isPatientAvailable('2014-05-03'));
 		$this->assertTrue($test2->isPatientAvailable('2014-05-04'));
 
+		// check it works when no unavailable data
+		$test3 = new Element_OphTrOperationbooking_ScheduleOperation();
+		$this->assertTrue($test3->isPatientAvailable('2041-04-02'));
+
 	}
 
 	public function testCantSetUnavailableCoveringBookedOperationDate()

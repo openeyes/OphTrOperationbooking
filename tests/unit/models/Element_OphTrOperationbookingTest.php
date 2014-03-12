@@ -214,7 +214,7 @@ class Element_OphTrOperationbookingTest extends CDbTestCase
 		$op = new Element_OphTrOperationbooking_Operation();
 		$op->procedures = array(new Procedure(), new Procedure());
 		$op->eye_id = Eye::BOTH;
-		
+
 		$this->assertEquals($op->getProcedureCount(), 4);
 	}
 }

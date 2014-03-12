@@ -275,6 +275,7 @@ $criteria->compare('schedule_options_id', $this->schedule_options_id);
 	 */
 	public function isPatientAvailable($date) {
 		if (!$this->_unavailable_dates) {
+			$this->_unavailable_dates = array();
 			// cache the patient unavailable dates as we don't want to do this every time
 			foreach ($this->patient_unavailables as $unavailable) {
 				$dt = strtotime($unavailable->start_date);
@@ -283,6 +284,9 @@ $criteria->compare('schedule_options_id', $this->schedule_options_id);
 					$dt+=86400;
 				}
 			}
+		}
+		if (empty($this->_unavailable_dates)) {
+			return true;
 		}
 		return !in_array(strtotime($date), $this->_unavailable_dates);
 	}
