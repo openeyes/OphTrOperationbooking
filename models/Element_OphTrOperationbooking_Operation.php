@@ -885,12 +885,8 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			return array(array('Cannot book patient into a session they are not available for.'));
 		}
 
-		$helper = new OphTrOperationbooking_BookingHelper;
-		if (($errors = $helper->checkSessionCompatibleWithOperation($session, $this))) {
-			throw new Exception(
-				"Attempted to book operation into incompatible session: " .
-				"operation ID: {$this->id}, session ID: {$session->id}, errors: " . implode(", ", $errors)
-			);
+		if (!$session->operationBookable($this)) {
+			return array(array("Attempted to book operation into incompatible session: " . $session->unbookableReason($this)));
 		}
 
 		$reschedule = in_array($this->status_id,array(2,3,4));

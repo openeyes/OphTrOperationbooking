@@ -272,6 +272,19 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 	}
 
 	/**
+	 * Return the remaining number of procedures allowed in this session
+	 *
+	 * @return int
+	 */
+	public function getAvailableProcedureCount()
+	{
+		if (!$this->max_procedures) {
+			return;
+		}
+		return $this->max_procedures - $this->getBookedProcedureCount();
+	}
+
+	/**
 	 * Test whether the given operation can be booked into this session
 	 *
 	 * @param $operation
@@ -314,7 +327,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 				return self::$DEFAULT_UNAVAILABLE_REASON;
 			}
 			else {
-				return $this->unavailablereason->name;
+				return self::$DEFAULT_UNAVAILABLE_REASON . ": " . $this->unavailablereason->name;
 			}
 		}
 

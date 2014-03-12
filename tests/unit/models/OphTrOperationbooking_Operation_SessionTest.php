@@ -70,7 +70,7 @@ class OphTrOperationbooking_Operation_SessionTest  extends CDbTestCase
 		$test->unavailablereason = $reason;
 		$op = new Element_OphTrOperationbooking_Operation();
 
-		$this->assertEquals($test->unbookableReason($op), $reason->name);
+		$this->assertEquals($test->unbookableReason($op), OphTrOperationbooking_Operation_Session::$DEFAULT_UNAVAILABLE_REASON . ": " . $reason->name);
 	}
 
 	public function testCurrentProcedureCount()
@@ -95,6 +95,27 @@ class OphTrOperationbooking_Operation_SessionTest  extends CDbTestCase
 		$test->activeBookings = $bookings;
 
 		$this->assertEquals($test->getBookedProcedureCount(), $total_proc);
+	}
+
+	public function testAvailableProcedureCountNoMax()
+	{
+		$test = new OphTrOperationbooking_Operation_Session();
+		$this->assertNull($test->getAvailableProcedureCount());
+	}
+
+	public function testAvailableProcedureCount()
+	{
+		$test = $this->getMockBuilder('OphTrOperationbooking_Operation_Session')
+				->disableOriginalConstructor()
+				->setMethods(array('getBookedProcedureCount'))
+				->getMock();
+		$test->expects($this->once())
+			->method('getBookedProcedureCount')
+			->will($this->returnValue(2));
+
+		$test->max_procedures = 5;
+
+		$this->assertEquals($test->getAvailableProcedureCount(), 3);
 	}
 
 	public function testOperationBookableTooManyProcedures()

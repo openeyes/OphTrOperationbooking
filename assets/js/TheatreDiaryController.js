@@ -375,11 +375,16 @@ $(document).ready(function() {
 					$('#anaesthetist_icon_'+session_id).html(checkedOrOne($('#general_anaesthetic_'+session_id)) ? 'Anaesthetist (GA)' : 'Anaesthetist');
 					checkedOrOne($('#paediatric_'+session_id)) ? $('#paediatric_icon_'+session_id).show() : $('#paediatric_icon_'+session_id).hide();
 					if ($('#max_procedures_'+session_id).val()) {
-						$('#max_procedures_icon_'+session_id).find('.max-procedures-val').html($('#max_procedures_'+session_id).val());
+						var max = $('#max_procedures_'+session_id).val();
+						$('#max_procedures_icon_'+session_id).find('.max-procedures-val').html(max);
 						$('#max_procedures_icon_'+session_id).show();
+						var avail = max - $('#procedure_count_'+session_id).data('currproccount');
+						$('#procedure_count_'+session_id).find('.available-val').html(avail);
+						$('#procedure_count_'+session_id).show();
 					}
 					else {
 						$('#max_procedures_icon_'+session_id).hide();
+						$('#procedure_count_'+session_id).hide();
 					}
 					cancel_edit(true);
 					$('#infoBox_'+session_id).show();

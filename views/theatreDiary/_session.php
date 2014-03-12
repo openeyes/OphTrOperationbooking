@@ -168,6 +168,9 @@ $session_unavailable_reasons = CHtml::listData(OphTrOperationbooking_Operation_S
 									<?php } else {?>
 										<?php echo abs($session->availableMinutes) ?> minutes overbooked
 									<?php }?>
+									<span data-currproccount="<?php echo $session->getBookedProcedureCount() ?>" class="procedure-count" id="procedure_count_<?php echo $session->id ?>" <?php if (!$session->max_procedures) {?>style="display: none;"<?php }?>><br />
+										<span class="available-val"><?php echo $session->getAvailableProcedureCount() ?></span> procedures available
+									</span>
 									<span class="session-unavailable" id="session_unavailable_<?php echo $session->id?>" <?php if ($session->available){?>style="display:none;" <?php }?>> - session unavailable
 										<span id="session_unavailablereason_<?php echo $session->id ?>"><?php if ($session->unavailablereason) { echo " - " . $session->unavailablereason->name;  } ?></span>
 									</span>
