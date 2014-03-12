@@ -279,6 +279,8 @@ $(document).ready(function() {
 
 	$('.session-available').die('click').live('click',function() {
 		var reasons = $(this).parent().next().find('.unavailable-reasons');
+		// if they are changing status back and forth, don't want to lose any reason they may have selected,
+		// but don't want to submit it if they set it available
 		if ($(this).is(':checked')) {
 			reasons.parent().hide();
 			reasons.data('orig', reasons.val());

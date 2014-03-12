@@ -55,6 +55,14 @@
 	<?php echo $form->radioBoolean($session,'anaesthetist')?>
 	<?php echo $form->radioBoolean($session,'general_anaesthetic')?>
 	<?php echo $form->radioBoolean($session,'available')?>
+	<fieldset id="unavailablereason_id_wrapper" class="row field-row"<?php if ($session->available) {?> style="display: none;"<?php } ?>>
+		<div class="large-2 column">
+			<label for="OphTrOperationbooking_Operation_Session_unavailablereason_id"><?php echo $session->getAttributeLabel('unavailablereason_id'); ?>:</label>
+		</div>
+		<div class="large-5 column end">
+			<?php echo $form->dropDownList($session, 'unavailablereason_id', CHtml::listData($session->getUnavailableReasonList(), 'id', 'name'), array('empty'=> '- Please Select -', 'nowrapper' => true))?>
+		</div>
+	</fieldset>
 	<?php echo $form->errorSummary($session); ?>
 	<?php echo $form->formActions(array(
 		'delete' => $session->id ? 'Delete' : false
@@ -79,6 +87,18 @@
 	</div>
 </div>
 <script type="text/javascript">
+	$('input[name="OphTrOperationbooking_Operation_Session[available]"]').live('change', function() {
+		if ($(this).val() == '1') {
+			$('#unavailablereason_id_wrapper').hide();
+			$('#OphTrOperationbooking_Operation_Session_unavailablereason_id').data('orig', $('#OphTrOperationbooking_Operation_Session_unavailablereason_id').val());
+			$('#OphTrOperationbooking_Operation_Session_unavailablereason_id').val('');
+		}
+		else {
+			$('#OphTrOperationbooking_Operation_Session_unavailablereason_id').val($('#OphTrOperationbooking_Operation_Session_unavailablereason_id').data('orig'));
+			$('#unavailablereason_id_wrapper').show();
+		}
+	});
+
 	handleButton($('#et_cancel'),function(e) {
 		e.preventDefault();
 		window.location.href = baseUrl+'/OphTrOperationbooking/admin/viewSessions';

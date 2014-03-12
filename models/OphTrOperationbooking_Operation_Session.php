@@ -364,4 +364,39 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 			$v->validate($this);
 		}
 	}
+
+	/**
+	 * Retrieves all valid OphTrOperationbooking_Operation_Session_UnavailableReason that can be used for this
+	 * instance (i.e. includes the current value even if its no longer active).
+	 *
+	 * @return OphTrOperationbooking_Operation_Session_UnavailableReason[]
+	 */
+
+	public function getUnavailableReasonList()
+	{
+		$criteria = new CDbCriteria;
+		$criteria->condition = 'enabled = true';
+		$criteria->order = 'display_order asc';
+
+		$reasons = OphTrOperationbooking_Operation_Session_UnavailableReason::model()->findAll($criteria);
+		// just use standard list
+		if (!$this->unavailablereason_id) {
+			return $reasons;
+		}
+
+		$all_reasons = array();
+		$r_ids = array();
+
+		foreach ($reasons as $reason) {
+			$all_reasons[] = $reason;
+			$r_ids[] = $reason->id;
+		}
+
+		if (!in_array($this->unavailablereason_id, $r_ids)) {
+			$all_reasons[] = $this->unavailablereason;
+		}
+
+		return $all_reasons;
+	}
+
 }
