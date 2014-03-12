@@ -76,23 +76,23 @@ class OphTrOperationbooking_Operation_SessionTest  extends CDbTestCase
 	public function testCurrentProcedureCount()
 	{
 		$total_proc = 0;
-		$ops = array();
+		$bookings = array();
 		$proc_counts = array(2,5,1);
 		foreach ($proc_counts as $ct) {
-			$op = $this->getMockBuilder('Element_OphTrOperationbooking_Operation')
+			$booking = $this->getMockBuilder('OphTrOperationbooking_Operation_Booking')
 					->disableOriginalConstructor()
 					->setMethods(array('getProcedureCount'))
 					->getMock();
-			$op->expects($this->once())
+			$booking->expects($this->once())
 				->method('getProcedureCount')
 				->will($this->returnValue($ct));
-			$ops[] = $op;
+			$bookings[] = $booking;
 			$total_proc+=$ct;
 		}
 
 
 		$test = new OphTrOperationbooking_Operation_Session();
-		$test->activeBookings = $ops;
+		$test->activeBookings = $bookings;
 
 		$this->assertEquals($test->getBookedProcedureCount(), $total_proc);
 	}

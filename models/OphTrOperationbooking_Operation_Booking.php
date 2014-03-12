@@ -259,4 +259,14 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecord
 
 		return parent::afterValidate();
 	}
+
+	/**
+	 * Pass through convenience function
+	 *
+	 * @return int
+	 */
+	public function getProcedureCount()
+	{
+		return $this->operation->getProcedureCount();
+	}
 }
