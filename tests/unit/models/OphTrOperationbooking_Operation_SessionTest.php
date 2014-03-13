@@ -208,4 +208,23 @@ class OphTrOperationbooking_Operation_SessionTest  extends CDbTestCase
 		$this->assertTrue($test->operationBookable($op));
 	}
 
+	public function testWarnings()
+	{
+		$test = $this->getMockBuilder('OphTrOperationbooking_Operation_Session')
+				->disableOriginalConstructor()
+				->setMethods(array('getAvailableProcedureCount','getAvailableMinutes'))
+				->getMock();
+		$test->expects($this->once())
+			->method('getAvailableProcedureCount')
+			->will($this->returnValue(-2));
+
+		$test->expects($this->once())
+				->method('getAvailableMinutes')
+				->will($this->returnValue(-20));
+
+		$warnings = $test->getWarnings();
+		$this->assertCount(2, $warnings);
+	}
+
+
 }

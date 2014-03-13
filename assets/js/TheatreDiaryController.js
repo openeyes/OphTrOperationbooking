@@ -379,6 +379,9 @@ $(document).ready(function() {
 						$('#max_procedures_icon_'+session_id).find('.max-procedures-val').html(max);
 						$('#max_procedures_icon_'+session_id).show();
 						var avail = max - $('#procedure_count_'+session_id).data('currproccount');
+						if (avail < 0) {
+							avail = 0;
+						}
 						$('#procedure_count_'+session_id).find('.available-val').html(avail);
 						$('#procedure_count_'+session_id).show();
 					}

@@ -474,4 +474,24 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		return $all_reasons;
 	}
 
+	/**
+	 * Returns an array of warning messages when any limits on the session are exceeded
+	 *
+	 * @return array
+	 */
+	public function getWarnings()
+	{
+		$warnings = array();
+		$mins = $this->getAvailableMinutes();
+		if ($mins < 0) {
+			$warnings[] = "Overbooked by " . abs($mins) . " minutes";
+		}
+
+		$procs = $this->getAvailableProcedureCount();
+		if ($procs < 0) {
+			$warnings[] = "Overbooked by " . abs($procs) . " procedures";
+		}
+
+		return $warnings;
+	}
 }
