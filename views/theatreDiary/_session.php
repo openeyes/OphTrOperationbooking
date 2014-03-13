@@ -17,8 +17,6 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-$session_unavailable_reasons = CHtml::listData(OphTrOperationbooking_Operation_Session_UnavailableReason::model()->findAll(), 'id', 'name');
-
 ?>
 <div class="row hide" id="infoBox_<?php echo $session->id?>">
 	<div class="large-12 column">
@@ -215,7 +213,7 @@ $session_unavailable_reasons = CHtml::listData(OphTrOperationbooking_Operation_S
 								Session available
 							</label>
 							<label <?php if ($session->available) { ?>style="display: none;"<?php } ?>>
-								<?php echo CHtml::dropDownList("unavailablereason_id_" . $session->id, $session->unavailablereason_id, $session_unavailable_reasons, array('empty' => '- Please Select -', 'class' => 'unavailable-reasons'))?>
+								<?php echo CHtml::dropDownList("unavailablereason_id_" . $session->id, $session->unavailablereason_id, CHtml::listData($session->getUnavailableReasonList(), 'id', 'name'), array('empty' => '- Please Select -', 'class' => 'unavailable-reasons'))?>
 							</label>
 							<input style="display: inline-block;" type="text" class="limited-width" id="max_procedures_<?php echo $session->id?>" maxlength="2" size="2" name="max_procedures_<?php echo $session->id?>" value="<?php echo $session->max_procedures; ?>" />
 							<label style="display: inline-block;">
