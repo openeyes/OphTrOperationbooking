@@ -982,7 +982,9 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 				$from = Yii::app()->params['urgent_booking_notify_email_from'];
 
 				foreach ($targets as $email) {
-					Mailer::mail($email, $subject, $body, $from, 'E-mail Failure. Failed to send one or more urgent booking notification E-mails.');
+					if(!Mailer::mail($email, $subject, $body, $from)) {
+						Yii::app()->user->setFlash('warning.email-failure','E-mail Failure. Failed to send one or more urgent booking notification E-mails.');
+					}
 				}
 			}
 		}
