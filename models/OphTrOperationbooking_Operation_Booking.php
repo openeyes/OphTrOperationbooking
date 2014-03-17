@@ -176,7 +176,7 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecordVersioned
 						$targets = Yii::app()->params['urgent_booking_notify_email'];
 					}
 					foreach ($targets as $email) {
-						mail($email, "[OpenEyes] Urgent cancellation made","A cancellation was made with a TCI date within the next 24 hours.\n\nDisorder: ".$this->operation->getDisorderText()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.","From: ".Yii::app()->params['urgent_booking_notify_email_from']."\r\n");
+						Mailer::mail($email, "[OpenEyes] Urgent cancellation made","A cancellation was made with a TCI date within the next 24 hours.\n\nDisorder: ".$this->operation->getDisorderText()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.","From: ".Yii::app()->params['urgent_booking_notify_email_from']."\r\n",'E-mail Failure. Failed to send one or more urgent booking notification E-mails.');
 					}
 				}
 			}

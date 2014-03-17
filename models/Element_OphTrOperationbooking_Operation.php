@@ -979,10 +979,10 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 					$subject = "[OpenEyes] Urgent booking made";
 					$body = "A patient booking was made with a TCI date within the next 24 hours.\n\nDisorder: ".$this->getDisorderText()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.";
 				}
-				$headers = "From: ".Yii::app()->params['urgent_booking_notify_email_from']."\r\n";
+				$from = Yii::app()->params['urgent_booking_notify_email_from'];
 
 				foreach ($targets as $email) {
-					mail($email, $subject, $body, $headers);
+					Mailer::mail($email, $subject, $body, $from, 'E-mail Failure. Failed to send one or more urgent booking notification E-mails.');
 				}
 			}
 		}
