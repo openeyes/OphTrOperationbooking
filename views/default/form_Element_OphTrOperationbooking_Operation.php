@@ -40,6 +40,7 @@
 	?>
 	<?php echo $form->dropDownList($element, 'site_id', CHtml::listData(Site::model()->findAll($criteria),'id','short_name'),array(),false,array('field'=>2))?>
 	<?php echo $form->radioButtons($element, 'priority_id', 'ophtroperationbooking_operation_priority')?>
+	<?php echo $form->dropDownList($element, 'referral_id', CHtml::listData($this->getReferralChoices(),'id','description'),array(),false,array('field'=>2))?>
 	<?php echo $form->datePicker($element, 'decision_date', array('maxDate' => 'today'), array(), array_merge($form->layoutColumns, array('field' => 2)))?>
 	<?php echo $form->textArea($element, 'comments', array('rows' => 4), false, array(), array_merge($form->layoutColumns, array('field' => 4)))?>
 	<?php echo $form->textArea($element, 'comments_rtt', array('rows' => 4), false, array(), array_merge($form->layoutColumns, array('field' => 4)))?>

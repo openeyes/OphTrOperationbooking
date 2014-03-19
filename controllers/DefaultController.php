@@ -227,6 +227,21 @@ class DefaultController extends BaseEventTypeController
 	}
 
 	/**
+	 * Return the open referral choices for the patient
+	 *
+	 * @return Referral[]
+	 */
+	public function getReferralChoices()
+	{
+		$criteria = new CdbCriteria();
+		$criteria->addCondition('patient_id = :pid');
+		$criteria->addCondition('closed_date is null');
+		$criteria->params = array('pid' => $this->patient->id);
+		$criteria->order = 'received_date DESC';
+		return Referral::model()->findAll($criteria);
+	}
+
+	/**
 	 * Setup event properties
 	 */
 	protected function initActionCancel()

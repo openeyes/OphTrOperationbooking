@@ -32,6 +32,7 @@
  * @property string $decision_date
  * @property string $comments
  * @property string $comments_rtt
+ * @property integer $referral_id
  *
  * The followings are the available model relations:
  *
@@ -45,6 +46,7 @@
  * @property AnaestheticType $anaesthetic_type
  * @property Site $site
  * @property Element_OphTrOperationbooking_Operation_Priority $priority
+ * @property Referral $referal
  */
 
 class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
@@ -93,7 +95,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments,comments_rtt, anaesthetist_required, total_duration, status_id, operation_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id, latest_booking_id', 'safe'),
+			array('event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments,comments_rtt, anaesthetist_required, total_duration, status_id, operation_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id, latest_booking_id, referral_id', 'safe'),
 			array('cancellation_comment', 'length', 'max' => 200),
 			array('procedures', 'required', 'message' => 'At least one procedure must be entered'),
 			array('eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, total_duration', 'required'),
@@ -131,6 +133,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			'booking' => array(self::HAS_ONE, 'OphTrOperationbooking_Operation_Booking', 'element_id', 'condition' => 'booking_cancellation_date is null'),
 			'cancelledBooking' => array(self::HAS_ONE, 'OphTrOperationbooking_Operation_Booking', 'element_id', 'condition' => 'booking_cancellation_date is not null'),
 			'latestBooking' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Booking', 'latest_booking_id'),
+			'referral' => array(self::BELONGS_TO, 'Referral', 'referral_id'),
 		);
 	}
 
