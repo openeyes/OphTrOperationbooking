@@ -32,7 +32,7 @@
  *
  */
 
-class OphTrOperationbooking_Operation_Theatre extends BaseActiveRecordVersionedSoftDelete
+class OphTrOperationbooking_Operation_Theatre extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -51,6 +51,11 @@ class OphTrOperationbooking_Operation_Theatre extends BaseActiveRecordVersionedS
 		return 'ophtroperationbooking_operation_theatre';
 	}
 
+	public function defaultScope()
+	{
+		return array('order' => $this->getTableAlias(true, false) . '.name');
+	}
+
 	/**
 	 * @return array validation rules for model attributes.
 	 */
@@ -59,19 +64,11 @@ class OphTrOperationbooking_Operation_Theatre extends BaseActiveRecordVersionedS
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, site_id, code, ward_id, deleted', 'safe'),
+			array('name, site_id, code, ward_id', 'safe'),
 			array('name, site_id, code', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, name, site_id, code', 'safe', 'on' => 'search'),
-		);
-	}
-
-	public function defaultScope()
-	{
-		$table_alias = $this->getTableAlias(false,false);
-		return array(
-			'condition' => $table_alias.'.deleted = 0',
 		);
 	}
 
@@ -102,6 +99,13 @@ class OphTrOperationbooking_Operation_Theatre extends BaseActiveRecordVersionedS
 		return array(
 			'site_id' => 'Site',
 			'ward_id' => 'Ward',
+		);
+	}
+
+	public function behaviors()
+	{
+		return array(
+			'LookupTable' => 'LookupTable',
 		);
 	}
 

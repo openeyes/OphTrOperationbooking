@@ -24,7 +24,7 @@
  * @property string $name
  */
 
-class OphTrOperationbooking_Admission_Letter_Warning_Rule_Type extends BaseActiveRecordVersionedSoftDelete
+class OphTrOperationbooking_Admission_Letter_Warning_Rule_Type extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -41,6 +41,11 @@ class OphTrOperationbooking_Admission_Letter_Warning_Rule_Type extends BaseActiv
 	public function tableName()
 	{
 		return 'ophtroperationbooking_admission_letter_warning_rule_type';
+	}
+
+	public function defaultScope()
+	{
+		return array('order' => $this->getTableAlias(true, false) . '.name');
 	}
 
 	/**
@@ -70,7 +75,7 @@ class OphTrOperationbooking_Admission_Letter_Warning_Rule_Type extends BaseActiv
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 		);
 	}
-
+v
 	/**
 	 * @return array customized attribute labels (name=>label)
 	 */

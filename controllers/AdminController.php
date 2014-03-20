@@ -697,10 +697,10 @@ class AdminController extends ModuleAdminController
 		$page = @$_REQUEST['page'] ? $_REQUEST['page'] : 1;
 
 		if ($all) {
-			return OphTrOperationbooking_Operation_Sequence::model()->active()->findAll($criteria);
+			return OphTrOperationbooking_Operation_Sequence::model()->findAll($criteria);
 		}
 
-		$count = OphTrOperationbooking_Operation_Sequence::model()->active()->count($criteria);
+		$count = OphTrOperationbooking_Operation_Sequence::model()->count($criteria);
 		$pages = ceil($count/$this->sequences_items_per_page);
 
 		if ($page <1) $page = 1;
@@ -748,8 +748,8 @@ class AdminController extends ModuleAdminController
 		);
 
 		$this->items_per_page = $this->sessions_items_per_page;
-		$pagination = $this->initPagination(OphTrOperationbooking_Operation_Sequence::model()->active()->with($with), $criteria);
-		$data = OphTrOperationbooking_Operation_Sequence::model()->with($with)->active()->findAll($criteria);
+		$pagination = $this->initPagination(OphTrOperationbooking_Operation_Sequence::model()->with($with), $criteria);
+		$data = OphTrOperationbooking_Operation_Sequence::model()->with($with)->findAll($criteria);
 
 		return array(
 			'data' => $data,
@@ -786,7 +786,7 @@ class AdminController extends ModuleAdminController
 		if (!empty($_POST['sequence'])) {
 			$criteria = new CDbCriteria;
 			$criteria->addInCondition('id',$_POST['sequence']);
-			$sequences = OphTrOperationbooking_Operation_Sequence::model()->active()->findAll($criteria);
+			$sequences = OphTrOperationbooking_Operation_Sequence::model()->findAll($criteria);
 		} elseif (@$_POST['use_filters']) {
 			$sequences = $this->getSequences(true);
 		}
@@ -1028,10 +1028,10 @@ class AdminController extends ModuleAdminController
 		$page = @$_REQUEST['page'] ? $_REQUEST['page'] : 1;
 
 		if ($all) {
-			return OphTrOperationbooking_Operation_Session::model()->with('sequence')->active()->findAll($criteria);
+			return OphTrOperationbooking_Operation_Session::model()->with('sequence')->findAll($criteria);
 		}
 
-		$count = OphTrOperationbooking_Operation_Session::model()->with('sequence')->active()->count($criteria);
+		$count = OphTrOperationbooking_Operation_Session::model()->with('sequence')->count($criteria);
 		$pages = ceil($count/$this->sessions_items_per_page);
 
 		if ($page <1) $page = 1;
@@ -1078,8 +1078,8 @@ class AdminController extends ModuleAdminController
 		);
 
 		$this->items_per_page = $this->sessions_items_per_page;
-		$pagination = $this->initPagination(OphTrOperationbooking_Operation_Session::model()->active()->with($with), $criteria);
-		$data = OphTrOperationbooking_Operation_Session::model()->with($with)->active()->findAll($criteria);
+		$pagination = $this->initPagination(OphTrOperationbooking_Operation_Session::model()->with($with), $criteria);
+		$data = OphTrOperationbooking_Operation_Session::model()->with($with)->findAll($criteria);
 
 		return array(
 			'data' => $data,
@@ -1256,7 +1256,7 @@ class AdminController extends ModuleAdminController
 
 		foreach ($sessions as $session) {
 			if (!$session->delete()) {
-				throw new Exception("Unable to mark session deleted: ".print_r($session->getErrors(),true));
+				throw new Exception("Unable to delete session: ".print_r($session->getErrors(),true));
 			}
 			Audit::add('admin','delete',$session->id,null,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Session'));
 		}
@@ -1308,14 +1308,14 @@ class AdminController extends ModuleAdminController
 		}
 
 		foreach ($sequences as $sequence) {
-			if (!$sequence->delete()) {
-				throw new Exception("Unable to mark sequence deleted: ".print_r($sequence->getErrors(),true));
-			}
-
 			foreach ($sequence->sessions as $session) {
 				if (!$session->delete()) {
-					throw new Exception("Unable to mark session deleted: ".print_r($session->getErrors(),true));
+					throw new Exception("Unable to delete session: ".print_r($session->getErrors(),true));
 				}
+			}
+
+			if (!$sequence->save()) {
+				throw new Exception("Unable to delete sequence: ".print_r($sequence->getErrors(),true));
 			}
 
 			Audit::add('admin','delete',$sequence->id,null,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Sequence'));
@@ -1413,7 +1413,8 @@ class AdminController extends ModuleAdminController
 		$theatres = OphTrOperationbooking_Operation_Theatre::model()->findAll($criteria);
 
 		foreach ($theatres as $theatre) {
-			if (!$theatre->delete()) {
+			$theatre->active = false;
+			if (!$theatre->save()) {
 				throw new Exception("Unable to mark theatre deleted: ".print_r($theatre->getErrors(),true));
 			}
 			Audit::add('admin','delete',$_POST['theatre'],null,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Theatre'));
@@ -1530,7 +1531,8 @@ class AdminController extends ModuleAdminController
 		$options = OphTrOperationbooking_ScheduleOperation_Options::model()->findAll($criteria);
 
 		foreach ($options as $option) {
-			if (!$option->delete()) {
+			$option->active = false;
+			if (!$option->save()) {
 				throw new Exception("Unable to delete scheduling option: ".print_r($option->getErrors(),true));
 			}
 			Audit::add('admin','delete',$option->id,false,array('module' => 'OphTrOperationbooking','model'=>'OphTrOperationbooking_ScheduleOperation_Options'));

@@ -34,7 +34,7 @@
 	<?php echo $form->dropDownList($theatre,'site_id',Site::model()->getListForCurrentInstitution(),array('empty'=>'- Site -'))?>
 	<?php echo $form->textField($theatre,'name')?>
 	<?php echo $form->textField($theatre,'code',array('size'=>10))?>
-	<?php echo $form->dropDownList($theatre,'ward_id',CHtml::listData(OphTrOperationbooking_Operation_Ward::model()->activeOrPk($theatre->ward_id)->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- None -'))?>
+	<?php echo $form->dropDownList($theatre,'ward_id','OphTrOperationbooking_Operation_Ward',array('empty'=>'- None -'))?>
 	<?php echo $form->formActions();?>
 	<?php echo $form->errorSummary($theatre); ?>
 	<?php $this->endWidget()?>

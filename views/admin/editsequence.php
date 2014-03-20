@@ -39,7 +39,7 @@
 	<?php echo $form->textField($sequence,'start_time',array(),array(),array('field'=>2))?>
 	<?php echo $form->textField($sequence,'end_time',array(),array(),array('field'=>2))?>
 	<?php echo $form->textField($sequence,'default_admission_time',array(),array(),array('field'=>2))?>
-	<?php echo $form->dropDownList($sequence,'interval_id',CHtml::listData(OphTrOperationbooking_Operation_Sequence_Interval::model()->notDeletedOrPk($sequence->interval_id)->findAll(array('order'=>'name')),'id','name'))?>
+	<?php echo $form->dropDownList($sequence,'interval_id','OphTrOperationbooking_Operation_Sequence_Interval')?>
 	<?php echo $form->radioBoolean($sequence,'consultant')?>
 	<?php echo $form->radioBoolean($sequence,'paediatric')?>
 	<?php echo $form->radioBoolean($sequence,'anaesthetist')?>

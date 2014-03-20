@@ -35,7 +35,7 @@
  *
  */
 
-class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecordVersionedSoftDelete
+class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecordVersioned
 {
 	const SELECT_1STWEEK = 1;
 	const SELECT_2NDWEEK = 2;
@@ -247,7 +247,7 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecordVersioned
 
 		$conflicts = array();
 
-		foreach (OphTrOperationbooking_Operation_Sequence::model()->active()->findAll($criteria) as $sequence) {
+		foreach (OphTrOperationbooking_Operation_Sequence::model()->findAll($criteria) as $sequence) {
 			$s_dateList = $sequence->getDateListForMonths(12);
 
 			foreach ($s_dateList as $date) {
@@ -286,7 +286,7 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecordVersioned
 		$criteria->addInCondition('date',$dateList);
 
 		$conflicts = array();
-		foreach (OphTrOperationbooking_Operation_Session::model()->active()->findAll($criteria) as $session) {
+		foreach (OphTrOperationbooking_Operation_Session::model()->findAll($criteria) as $session) {
 			$start = strtotime("$session->date $this->start_time");
 			$end = strtotime("$session->date $this->end_time");
 

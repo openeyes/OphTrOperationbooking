@@ -35,7 +35,7 @@
  *
  */
 
-class OphTrOperationbooking_Operation_Ward extends BaseActiveRecordVersionedSoftDelete
+class OphTrOperationbooking_Operation_Ward extends BaseActiveRecordVersioned
 {
 	const RESTRICTION_MALE = 1;
 	const RESTRICTION_FEMALE = 2;
@@ -58,6 +58,11 @@ class OphTrOperationbooking_Operation_Ward extends BaseActiveRecordVersionedSoft
 	public function tableName()
 	{
 		return 'ophtroperationbooking_operation_ward';
+	}
+
+	public function defaultScope()
+	{
+		return array('order' => $this->getTableAlias(true, false) . '.name');
 	}
 
 	/**
@@ -110,6 +115,13 @@ class OphTrOperationbooking_Operation_Ward extends BaseActiveRecordVersionedSoft
 			'restriction_child' => 'Children only',
 			'restriction_adult' => 'Adult only',
 			'restriction_observation' => 'Observation only',
+		);
+	}
+
+	public function behaviors()
+	{
+		return array(
+			'LookupTable' => 'LookupTable',
 		);
 	}
 

@@ -35,7 +35,7 @@
 		<?php echo $form->textField($session,'sequence_id',array(),array(),array('field'=>2))?>
 	<?php }?>
 	<?php echo $form->dropDownList($session,'firm_id',Firm::model()->getListWithSpecialties(),array('empty'=>'- Emergency -'))?>
-	<?php echo $form->dropDownList($session,'theatre_id',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->activeOrPk($session->theatre_id)->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- None -'))?>
+	<?php echo $form->dropDownList($session,'theatre_id','OphTrOperationbooking_Operation_Theatre',array('empty'=>'- None -'))?>
 	<?php if ($session->id) {?>
 		<div id="div_OphTrOperationbooking_Operation_Session_date" class="row field-row">
 			<div class="large-2 column">
