@@ -98,6 +98,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			array('event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments,comments_rtt, anaesthetist_required, total_duration, status_id, operation_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id, latest_booking_id, referral_id', 'safe'),
 			array('cancellation_comment', 'length', 'max' => 200),
 			array('procedures', 'required', 'message' => 'At least one procedure must be entered'),
+			array('referral_id', 'validateReferral'),
 			array('eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, total_duration', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
@@ -133,6 +134,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			'booking' => array(self::HAS_ONE, 'OphTrOperationbooking_Operation_Booking', 'element_id', 'condition' => 'booking_cancellation_date is null'),
 			'cancelledBooking' => array(self::HAS_ONE, 'OphTrOperationbooking_Operation_Booking', 'element_id', 'condition' => 'booking_cancellation_date is not null'),
 			'latestBooking' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Booking', 'latest_booking_id'),
+			'allBookings'  => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Booking', 'element_id'),
 			'referral' => array(self::BELONGS_TO, 'Referral', 'referral_id'),
 		);
 	}
@@ -195,6 +197,16 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			$ids[] = $item->value_id;
 		}
 		return $ids;
+	}
+
+	protected $_has_bookings = null;
+	protected $_original_referral_id = null;
+
+	public function afterFind()
+	{
+		parent::afterFind();
+		$this->_has_bookings = ($this->allBookings) ? true : false;
+		$this->_original_referral_id = $this->referral_id;
 	}
 
 	/**
@@ -878,6 +890,10 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			throw new Exception('schedule_op argument required for scheduling');
 		}
 
+		if (Yii::app()->params['ophtroperationbooking_schedulerequiresreferral'] && !$this->referral) {
+			return array(array('Referral required to schedule operation'));
+		}
+
 		// TODO: try passing in the booking object rather than the attributes for it - easier for testing, and cleaner implementation
 		$booking = new OphTrOperationbooking_Operation_Booking;
 		$booking->attributes = $booking_attributes;
@@ -1291,5 +1307,39 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			$total *= 2;
 		}
 		return $total;
+	}
+
+	/**
+	 * Whether the referral for the operation is still changeable - simple wrapper at the moment
+	 *
+	 * @return boolean
+	 */
+	public function canChangeReferral()
+	{
+		return !$this->_has_bookings;
+	}
+
+	/**
+	 * Ensure that referral assigned to the element is for the correct patient.
+	 *
+	 * @param $attribute
+	 * @param $params
+	 * @throws Exception
+	 */
+	public function validateReferral($attribute, $params)
+	{
+
+		if (!$this->canChangeReferral()
+				&& $this->$attribute != $this->_original_referral_id) {
+			$this->addError($attribute, 'Referral cannot be changed after an operation has been scheduled');
+		}
+		elseif ($referral_id = $this->$attribute) {
+			if (!$referral = Referral::model()->findByPk($referral_id)) {
+				throw new Exception('Invalid referral id set on ' . get_class($this));
+			}
+			if ($referral->patient_id != $this->event->episode->patient_id) {
+				$this->addError($attribute, "Referral must be for the patient of the event");
+			}
+		}
 	}
 }

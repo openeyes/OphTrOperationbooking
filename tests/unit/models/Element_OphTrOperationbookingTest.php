@@ -18,6 +18,9 @@ class Element_OphTrOperationbookingTest extends CDbTestCase
 {
 	public $fixtures = array(
 			'wards' => 'OphTrOperationbooking_Operation_Ward',
+			'patients' => 'Patient',
+			'referral_types' => 'ReferralType',
+			'referrals' => 'Referral'
 	);
 
 	public static function setUpBeforeClass(){
@@ -71,10 +74,10 @@ class Element_OphTrOperationbookingTest extends CDbTestCase
 		return $p;
 	}
 
-	protected function getOperationForPatient($patient) {
+	protected function getOperationForPatient($patient, $methods = null) {
 		$op = $this->getMockBuilder('Element_OphTrOperationbooking_Operation')
 				->disableOriginalConstructor()
-				->setMethods(null)
+				->setMethods($methods)
 				->getMock();
 
 		$op->event = ComponentStubGenerator::generate(
@@ -82,7 +85,7 @@ class Element_OphTrOperationbookingTest extends CDbTestCase
 				array(
 						'episode' => ComponentStubGenerator::generate(
 										'Episode',
-										array('patient' => $patient)
+										array('patient' => $patient, 'patient_id' => $patient->id)
 								)
 				));
 		return $op;
@@ -216,5 +219,116 @@ class Element_OphTrOperationbookingTest extends CDbTestCase
 		$op->eye_id = Eye::BOTH;
 
 		$this->assertEquals($op->getProcedureCount(), 4);
+	}
+
+	public function testSchedule_ReferralRequired()
+	{
+		$curr = Yii::app()->params['ophtroperationbooking_schedulerequiresreferral'];
+		Yii::app()->params['ophtroperationbooking_schedulerequiresreferral'] = true;
+
+		$theatre = ComponentStubGenerator::generate('OphTrOperationbooking_Operation_Theatre',
+				array('site_id' => 1));
+		$session = $this->getSessionForTheatre($theatre);
+		$op = $this->getOperationForPatient($this->getMalePatient());
+		$op_opts = $this->getMockBuilder('Element_OphTrOperationbooking_ScheduleOperation')
+				->disableOriginalConstructor()
+				->setMethods(array('isPatientAvailable'))
+				->getMock();
+
+		$op->referral = null;
+		$res = $op->schedule(array('session' => $session), '', '', '', false, null, $op_opts);
+		$this->assertFalse($res === true);
+		# arrays are error messages
+		$this->assertTrue(gettype($res) == 'array');
+		$this->assertEquals("Referral required to schedule operation", $res[0][0]);
+
+		Yii::app()->params['ophtroperationbooking_schedulerequiresreferral'] = $curr;
+
+	}
+
+	public function testReferralValidatorMustBeCalled()
+	{
+		$op = $this->getOperationForPatient($this->patients('patient1'), array('validateReferral'));
+		$op->referral_id = 1;
+		$op->expects($this->once())
+			->method('validateReferral')
+			->with($this->equalTo('referral_id'), $this->isType('array'));
+
+		$op->validate();
+	}
+
+	public function testReferralMustBelongtoPatient()
+	{
+		$op = $this->getOperationForPatient($this->patients('patient1'), array('addError'));
+
+		$op->referral_id = $this->referrals('referral2')->id;
+
+		$op->expects($this->once())
+			->method('addError')
+			->with($this->equalTo('referral_id'), $this->equalTo('Referral must be for the patient of the event'));
+
+		$op->validateReferral('referral_id', array());
+	}
+
+	public function testWillStoreHasBookingsState()
+	{
+		$op = $this->getOperationForPatient($this->patients('patient1'), array('__get'));
+		// although we don't care about the order, I don't think there's a way to expect
+		// different calls to the same method in an arbitary order
+		$op->expects($this->at(0))
+			->method('__get')
+			->with($this->equalTo('allBookings'))
+			->will($this->returnValue(array(new OphTrOperationbooking_Operation_Booking())));
+
+		$op->expects($this->at(1))
+				->method('__get')
+				->with($this->equalTo('referral_id'))
+				->will($this->returnValue(1));
+
+		$op->afterFind();
+		// TODO: expand this to check storing original referral id as well
+		$r = new ReflectionClass('Element_OphTrOperationbooking_Operation');
+		$hb_prop = $r->getProperty('_has_bookings');
+		$hb_prop->setAccessible(true);
+		$this->assertTrue($hb_prop->getValue($op));
+		$ref_prop = $r->getProperty('_original_referral_id');
+		$ref_prop->setAccessible(true);
+		$this->assertEquals(1,$ref_prop->getValue($op));
+	}
+
+	public function testcanChangeReferral_true()
+	{
+		$op = $this->getMockBuilder('Element_OphTrOperationbooking_Operation')
+				->disableOriginalConstructor()
+				->setMethods(null)
+				->getMock();
+		$r = new ReflectionClass('Element_OphTrOperationbooking_Operation');
+		$hb_prop = $r->getProperty('_has_bookings');
+		$hb_prop->setAccessible(true);
+		$hb_prop->setValue($op, false);
+
+		$this->assertTrue($op->canChangeReferral());
+	}
+
+	public function testvalidateReferral_CannotBeChangedAfterOperationScheduled()
+	{
+		$op = $this->getOperationForPatient($this->patients('patient1'), array('canChangeReferral','addError'));
+
+		$op->expects($this->once())
+			->method('canChangeReferral')
+			->will($this->returnValue(false));
+
+		$r = new ReflectionClass('Element_OphTrOperationbooking_Operation');
+		$ref_prop = $r->getProperty('_original_referral_id');
+		$ref_prop->setAccessible(true);
+		$ref_prop->setValue($op,5);
+
+		$op->referral_id = $this->referrals('referral1')->id;
+
+		$op->expects($this->once())
+			->method('addError')
+			->with($this->equalTo('referral_id'), 'Referral cannot be changed after an operation has been scheduled');
+
+		$op->validateReferral('referral_id', array());
 	}
 }
