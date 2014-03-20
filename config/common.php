@@ -58,5 +58,8 @@ return array(
 			'Operation name rules' => '/OphTrOperationbooking/admin/viewOperationNameRules',
 			'Waiting list contact rules' => '/OphTrOperationbooking/admin/viewWaitingListContactRules',
 		),
+		// Default anaesthetic settings
+		//'ophtroperationbooking_default_anaesthetic_child' => 'GA',
+		//'ophtroperationbooking_default_anaesthetic' => 'GA',
 	)
 );

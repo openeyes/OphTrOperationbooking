@@ -24,12 +24,12 @@ $(document).ready(function() {
 	handleButton($('#waitingList-filter button[type="submit"]'),function(e) {
 		e.preventDefault();
 
-		if ($('#hos_num').val().length <1 || $('#hos_num').val().match(/^[0-9]+$/)) {
-			$('#hos_num_error').hide();
-		} else {
-			$('#hos_num_error').show();
-			enableButtons();
-			return false;
+		if (!validateHosNum()) {
+			//using timeout to mirror the chrome fix in buttons.js for disableButtons()
+			setTimeout(function() {
+				enableButtons();
+			});
+			return;
 		}
 
 		searchLoadingMsg.show();
@@ -41,10 +41,10 @@ $(document).ready(function() {
 			'data': $('#waitingList-filter').serialize(),
 			'success': function(data) {
 				searchResults.html(data);
-				enableButtons();
 			},
 			complete: function() {
 				searchLoadingMsg.hide();
+				enableButtons();
 			}
 		});
 	});
@@ -148,14 +148,16 @@ $(document).ready(function() {
 		});
 	});
 
-	$('#hos_num').bind('keyup',function() {
-		$.ajax({
-			url: baseUrl+'/OphTrOperationbooking/waitingList/filterSetHosNum',
-			type: "POST",
-			data: "hos_num="+$('#hos_num').val()+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
-			success: function(data) {
-			}
-		});
+	$('#hos_num').bind('keyup',function(e) {
+		if (validateHosNum()) {
+			$.ajax({
+				url: baseUrl+'/OphTrOperationbooking/waitingList/filterSetHosNum',
+				type: "POST",
+				data: "hos_num="+$('#hos_num').val()+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
+				success: function(data) {
+				}
+			});
+		}
 	});
 
 	new OpenEyes.UI.StickyElement('.panel.actions', {
@@ -211,5 +213,15 @@ function show_letter_warnings(nogp) {
 		new OpenEyes.UI.Dialog.Alert({
 			content: msg
 		}).open();
+	}
+}
+
+function validateHosNum() {
+	if ($('#hos_num').val().length <1 || $('#hos_num').val().match(/^[0-9]+$/)) {
+		$('#hos_num_error').hide();
+		return true;
+	} else {
+		$('#hos_num_error').show();
+		return false;
 	}
 }

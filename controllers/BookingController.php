@@ -130,13 +130,13 @@ class BookingController extends BaseEventTypeController
 							'reason_id' => @$_POST['cancellation_reason'],
 							'comment' => @$_POST['cancellation_comment']
 						);
-						if ($result = $operation->schedule(
+						if (($result = $operation->schedule(
 								$_POST['Booking'],
 								$_POST['Operation']['comments'],
 								$_POST['Session']['comments'],
 								$_POST['Operation']['comments_rtt'],
 								($this->reschedule !== true),
-								$cancellation_data) !== true) {
+								$cancellation_data)) !== true) {
 							$errors = $result;
 						} else {
 							$transaction->commit();

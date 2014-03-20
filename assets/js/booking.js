@@ -95,7 +95,7 @@ $(document).ready(function() {
 	});
 
 	handleButton($('button#cancel_scheduling'),function(e) {
-		document.location.href = baseUrl + '/patient/episodes/' + OE_patient_id;
+		document.location.href = baseUrl + '/OphTrOperationbooking/default/view/' + OE_event_id;
 		e.preventDefault();
 	});
 

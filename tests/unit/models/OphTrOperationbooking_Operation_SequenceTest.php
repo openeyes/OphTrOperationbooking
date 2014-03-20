@@ -52,6 +52,7 @@ class OphTrOperationbooking_Operation_SequenceTest extends CDbTestCase
 		$this->operationSequence->save();
 		$errors = $this->operationSequence->getErrors();
 		$this->assertGreaterThan(0,count($errors));
+		$this->assertTrue(array_key_exists('start_date' , $errors));
 		$this->assertGreaterThan(0,$errors['start_date']);
 		$this->assertEquals($errors['start_date'][0] , "Start date and weekday must be on the same day of the week");
 
