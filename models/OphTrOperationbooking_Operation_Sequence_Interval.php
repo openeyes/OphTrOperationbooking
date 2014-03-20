@@ -25,7 +25,7 @@
  *
  */
 
-class OphTrOperationbooking_Operation_Sequence_Interval extends BaseActiveRecordVersionedSoftDelete
+class OphTrOperationbooking_Operation_Sequence_Interval extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -42,6 +42,11 @@ class OphTrOperationbooking_Operation_Sequence_Interval extends BaseActiveRecord
 	public function tableName()
 	{
 		return 'ophtroperationbooking_operation_sequence_interval';
+	}
+
+	public function defaultScope()
+	{
+		return array('order' => $this->getTableAlias(true, false) . '.display_order');
 	}
 
 	/**

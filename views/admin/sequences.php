@@ -29,7 +29,7 @@ $sequences = $sequences['data'];
 				<?php echo CHtml::dropDownList('firm_id',@$_GET['firm_id'],Firm::model()->getListWithSpecialtiesAndEmergency(),array('empty'=>'- Firm -'))?>
 			</div>
 			<div class="large-3 column">
-				<?php echo CHtml::dropDownList('theatre_id',@$_GET['theatre_id'],CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->active()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Theatre -'))?>
+				<?php echo CHtml::dropDownList('theatre_id',@$_GET['theatre_id'],CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->active()->findAll(),'id','name'),array('empty'=>'- Theatre -'))?>
 			</div>
 			<div class="large-3 column">
 				<div class="row">
@@ -72,7 +72,7 @@ $sequences = $sequences['data'];
 		</div>
 		<div class="row field-row">
 			<div class="large-2 column">
-				<?php echo CHtml::dropDownList('interval_id',@$_GET['interval_id'],CHtml::listData(OphTrOperationbooking_Operation_Sequence_Interval::model()->notDeleted()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Interval -'))?>
+				<?php echo CHtml::dropDownList('interval_id',@$_GET['interval_id'],CHtml::listData(OphTrOperationbooking_Operation_Sequence_Interval::model()->findAll(array()),'id','name'),array('empty'=>'- Interval -'))?>
 			</div>
 			<div class="large-2 column">
 				<?php echo CHtml::dropDownList('weekday',@$_GET['weekday'],array(1=>'Monday',2=>'Tuesday',3=>'Wednesday',4=>'Thursday',5=>'Friday',6=>'Saturday',7=>'Sunday'),array('empty'=>'- Weekday '))?>
@@ -191,7 +191,7 @@ $sequences = $sequences['data'];
 				<label for="">Theatre:</label>
 			</div>
 			<div class="large-5 column end">
-				<?php echo CHtml::dropDownList('inline_theatre_id','',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->active()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Don\'t change -'))?>
+				<?php echo CHtml::dropDownList('inline_theatre_id','',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->active()->findAll(),'id','name'),array('empty'=>'- Don\'t change -'))?>
 				<span class="error"></span>
 			</div>
 		</div>
@@ -254,7 +254,7 @@ $sequences = $sequences['data'];
 				<label>Interval:</label>
 			</div>
 			<div class="large-5 column end">
-				<?php echo CHtml::dropDownList('inline_interval_id','',CHtml::listData(OphTrOperationbooking_Operation_Sequence_Interval::model()->notDeleted()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Don\'t change -'))?>
+				<?php echo CHtml::dropDownList('inline_interval_id','',CHtml::listData(OphTrOperationbooking_Operation_Sequence_Interval::model()->findAll(array()),'id','name'),array('empty'=>'- Don\'t change -'))?>
 				<span class="error"></span>
 			</div>
 		</div>

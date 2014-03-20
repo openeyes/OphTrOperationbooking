@@ -32,7 +32,7 @@
  * @property User $usermodified
  */
 
-class OphTrOperationbooking_Operation_Priority extends BaseActiveRecordVersionedSoftDelete
+class OphTrOperationbooking_Operation_Priority extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -49,6 +49,11 @@ class OphTrOperationbooking_Operation_Priority extends BaseActiveRecordVersioned
 	public function tableName()
 	{
 		return 'ophtroperationbooking_operation_priority';
+	}
+
+	public function defaultScope()
+	{
+		return array('order' => $this->getTableAlias(true, false) . '.display_order');
 	}
 
 	/**

@@ -31,13 +31,13 @@
 			)
 		))?>
 	<?php echo $form->errorSummary($rule); ?>
-	<?php echo $form->dropDownList($rule,'rule_type_id',CHtml::listData(OphTrOperationbooking_Admission_Letter_Warning_Rule_Type::model()->notDeletedOrPk($rule->rule_type_id)->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Rule type -'))?>
+	<?php echo $form->dropDownList($rule,'rule_type_id','OphTrOperationbooking_Admission_Letter_Warning_Rule_Type',array('empty'=>'- Rule type -'))?>
 	<?php echo $form->dropDownList($rule,'parent_rule_id',CHtml::listData(OphTrOperationbooking_Admission_Letter_Warning_Rule::model()->getListAsTree(),'id','treeName'),array('empty'=>'- None -'))?>
 	<?php echo $form->textField($rule,'rule_order',array(),array(),array('field'=>2))?>
 	<?php echo $form->dropDownList($rule,'site_id',Site::model()->getListForCurrentInstitution('name'),array('empty'=>'- Not set -'))?>
 	<?php echo $form->dropDownList($rule,'firm_id',Firm::model()->getListWithSpecialties(),array('empty'=>'- Not set -'))?>
 	<?php echo $form->dropDownList($rule,'subspecialty_id',CHtml::listData(Subspecialty::model()->findAllByCurrentSpecialty(),'id','name'),array('empty'=>'- Not set -'))?>
-	<?php echo $form->dropDownList($rule,'theatre_id',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->activeOrPk($rule->theatre_id)->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Not set -'))?>
+	<?php echo $form->dropDownList($rule,'theatre_id','OphTrOperationbooking_Operation_Theatre',array('empty'=>'- Not set -'))?>
 	<?php echo $form->dropDownList($rule,'is_child',array(''=>'- Not set -','1'=>'Child','0'=>'Adult'))?>
 	<?php echo $form->radioBoolean($rule,'show_warning')?>
 	<?php echo $form->textArea($rule,'warning_text',array('rows'=>5))?>
