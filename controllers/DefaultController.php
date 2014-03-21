@@ -81,6 +81,10 @@ class DefaultController extends BaseEventTypeController
 				}
 			}
 
+			if ($default_referral = $this->calculateDefaultReferral()) {
+				$element->referral_id = $default_referral->id;
+			}
+
 			$element->site_id = Yii::app()->session['selected_site_id'];
 		}
 	}
@@ -231,14 +235,46 @@ class DefaultController extends BaseEventTypeController
 	 *
 	 * @return Referral[]
 	 */
-	public function getReferralChoices()
+	public function getReferralChoices($element = null)
 	{
 		$criteria = new CdbCriteria();
 		$criteria->addCondition('patient_id = :pid');
 		$criteria->addCondition('closed_date is null');
 		$criteria->params = array('pid' => $this->patient->id);
+
+		// if the referral has been closed but is the selected referral for the event, needs to be part of the list
+		if ($element && $element->referral_id) {
+			$criteria->addCondition('id = :crid', 'OR');
+			$criteria->params[':crid'] = $element->referral_id;
+		}
+
 		$criteria->order = 'received_date DESC';
 		return Referral::model()->findAll($criteria);
+	}
+
+	/**
+	 * Calculate the default referral for the event
+	 *
+	 * @return null|Referral
+	 */
+	public function calculateDefaultReferral()
+	{
+		$referrals = $this->getReferralChoices();
+		$match = null;
+		foreach ($referrals as $referral) {
+			if ($referral->firm_id == $this->firm->id) {
+				return $referral;
+			}
+			else {
+				if (!$match && $referral->service_subspecialty_assignment_id == $this->firm->service_subspecialty_assignment_id) {
+					$match = $referral;
+				}
+			}
+		}
+		if (!$match && !empty($referrals)) {
+			$match = $referrals[0];
+		}
+		return $match;
 	}
 
 	/**
