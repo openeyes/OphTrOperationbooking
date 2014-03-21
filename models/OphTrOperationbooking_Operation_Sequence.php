@@ -75,6 +75,7 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecordVersioned
 			array('end_time', 'date', 'format'=>array('H:mm', 'H:mm:ss')),
 			array('end_date', 'checkDates'),
 			array('end_time', 'checkTimes'),
+			array('start_date','compareStartdateWithWeekday'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, theatre_id, start_date, start_time, end_time, end_date, consultant, paediatric, anaesthetist, interval_id, weekday, week_selection, firm_id, site_id', 'safe', 'on'=>'search'),
@@ -153,6 +154,20 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecordVersioned
 
 		if ($end <= $start) {
 			$this->addError('end_time', 'End time must be after the start time.');
+		}
+	}
+
+	public function compareStartdateWithWeekday()
+	{
+		try{
+			$start_date = new DateTime($this->start_date);
+		}
+		catch(Exception $e){
+			$this->addError('start_date', 'Start date format error');
+		}
+
+		if($this->weekday != $start_date->format('N')){
+			$this->addError('start_date', 'Start date and weekday must be on the same day of the week');
 		}
 	}
 

@@ -467,11 +467,6 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 	{
 		$date = strtotime($this->event->created_date);
 
-		if ($this->schedule_timeframe->schedule_options_id != 1) {
-			$interval = str_replace('After ', '+', $this->getScheduleText());
-			$date = strtotime($interval, $date);
-		}
-
 		$thisMonth = mktime(0, 0, 0, date('m'), 1, date('Y'));
 
 		if ($date < $thisMonth) {
@@ -579,6 +574,9 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			foreach ($dates as $date => $session) {
 				$datelist[$dayn][] = $date;
 				$session_lookup[$date] = $session;
+				if ($date > $max) {
+					$max = $date;
+				}
 			}
 			$day_lookup[$dayn] = $day;
 			$dayn++;
@@ -587,10 +585,10 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		while (1) {
 			$changed = false;
 			$datelist2 = array();
-
 			foreach ($datelist as $day => $dates) {
 				foreach ($dates as $i => $date) {
-					if (isset($datelist[$day+1][$i]) && $date > $datelist[$day+1][$i]) {
+					if ($date < $max && isset($datelist[$day+1][$i]) && $date > $datelist[$day+1][$i]) {
+						// fill in missing day
 						if (!isset($datelist2[$day]) || !in_array(date('Y-m-d',strtotime($date)-(86400*7)),$datelist2[$day])) {
 							$datelist2[$day][] = date('Y-m-d',strtotime($date)-(86400*7));
 							$session_lookup[date('Y-m-d',strtotime($date)-(86400*7))] = array('status' => 'blank');
@@ -979,10 +977,12 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 					$subject = "[OpenEyes] Urgent booking made";
 					$body = "A patient booking was made with a TCI date within the next 24 hours.\n\nDisorder: ".$this->getDisorderText()."\n\nPlease see: http://".@$_SERVER['SERVER_NAME']."/transport\n\nIf you need any assistance you can reply to this email and one of the OpenEyes support personnel will respond.";
 				}
-				$headers = "From: ".Yii::app()->params['urgent_booking_notify_email_from']."\r\n";
+				$from = Yii::app()->params['urgent_booking_notify_email_from'];
 
 				foreach ($targets as $email) {
-					mail($email, $subject, $body, $headers);
+					if(!Mailer::mail($email, $subject, $body, $from)) {
+						Yii::app()->user->setFlash('warning.email-failure','E-mail Failure. Failed to send one or more urgent booking notification E-mails.');
+					}
 				}
 			}
 		}

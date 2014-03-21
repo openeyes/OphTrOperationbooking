@@ -17,3 +17,7 @@
 * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
 */
 ?>
+<section class="element element-data">
+	<h3 class="data-title"><?= $element->elementType->name; ?></h3>
+	<div class="data-value"><?= $element->schedule_options->name; ?></div>
+</section>

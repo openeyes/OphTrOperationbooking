@@ -54,6 +54,7 @@ class OphTrOperationbooking_Operation_EROD_Rule extends BaseActiveRecordVersione
 		return array(
 			array('subspecialty_id', 'safe'),
 			array('subspecialty_id', 'required'),
+			array('items', 'required'),
 			array('subspecialty_id', 'safe', 'on' => 'search'),
 		);
 	}
@@ -125,5 +126,29 @@ class OphTrOperationbooking_Operation_EROD_Rule extends BaseActiveRecordVersione
 		}
 
 		return $string;
+	}
+
+	/**
+	 * Return all the subspecialties that can be selected for this rule (including the current one if it is set already)
+	 *
+	 * @return Subspecialty[]
+	 */
+	public function getSubspecialtyOptions() {
+		$kls = get_class($this);
+
+		if ($this->id) {
+			$all_rules = $kls::model()->findAll('id != ?', $this->id);
+		}
+		else {
+			$all_rules = $kls::model()->findAll();
+		}
+
+		$current_subspecialties = array();
+		foreach ($all_rules as $r) {
+			$current_subspecialties[] = $r->subspecialty_id;
+		}
+		$criteria = new CDbCriteria();
+		$criteria->addNotInCondition('id', $current_subspecialties);
+		return Subspecialty::model()->findAll($criteria);
 	}
 }
