@@ -157,6 +157,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			'decision_date' => 'Decision date',
 			'comments' => 'Add comments',
 			'comments_rtt' => 'Add RTT comments',
+			'referral_id' => 'Referral'
 		);
 	}
 
