@@ -13,19 +13,31 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class DefaultControllerTest extends PHPUnit_Framework_TestCase {
+class DefaultControllerTest extends CDbTestCase {
 
 	static public function setupBeforeClass()
 	{
 		Yii::import('application.modules.OphTrOperationbooking.controllers.*');
 	}
 
+	public $fixtures = array(
+		'patients' => 'Patient',
+		'referral_types' => 'ReferralType',
+		'referrals' => 'Referral'
+	);
+
+	public function getDefaultController($methods = null)
+	{
+		return $this->getMockBuilder('DefaultController')
+				->setConstructorArgs(array('DefaultController', new BaseEventTypeModule('OphTrOperationbooking',null)))
+				->setMethods($methods)
+				->getMock();
+	}
+
 	public function testCalculateDefaultReferral_first()
 	{
-		$test = $this->getMockBuilder('DefaultController')
-				->setConstructorArgs(array('DefaultController', new BaseEventTypeModule('OphTrOperationbooking',null)))
-				->setMethods(array('getReferralChoices'))
-				->getMock();
+		$test = $this->getDefaultController(array('getReferralChoices'));
+
 		$test->firm = ComponentStubGenerator::generate('Firm', array('id' => 3, 'service_subspecialty_assignment_id' => 1));
 
 		$test->expects($this->once())
@@ -41,10 +53,8 @@ class DefaultControllerTest extends PHPUnit_Framework_TestCase {
 
 	public function testCalculateDefaultReferral_firm()
 	{
-		$test = $this->getMockBuilder('DefaultController')
-				->setConstructorArgs(array('DefaultController', new BaseEventTypeModule('OphTrOperationbooking',null)))
-				->setMethods(array('getReferralChoices'))
-				->getMock();
+		$test = $this->getDefaultController(array('getReferralChoices'));
+
 		$firm = ComponentStubGenerator::generate('Firm', array('id' => 3, 'service_subspecialty_assignment_id' => 1));
 		$test->firm = $firm;
 
@@ -61,10 +71,8 @@ class DefaultControllerTest extends PHPUnit_Framework_TestCase {
 
 	public function testCalculateDefaultReferral_ssa()
 	{
-		$test = $this->getMockBuilder('DefaultController')
-				->setConstructorArgs(array('DefaultController', new BaseEventTypeModule('OphTrOperationbooking',null)))
-				->setMethods(array('getReferralChoices'))
-				->getMock();
+		$test = $this->getDefaultController(array('getReferralChoices'));
+
 		$firm = ComponentStubGenerator::generate('Firm', array('id' => 3, 'service_subspecialty_assignment_id' => 1));
 		$test->firm = $firm;
 		$firm2 = ComponentStubGenerator::generate('Firm', array('id' => 9, 'service_subspecialty_assignment_id' => 1));
@@ -73,12 +81,31 @@ class DefaultControllerTest extends PHPUnit_Framework_TestCase {
 				->method('getReferralChoices')
 				->will($this->returnValue(array(
 										ComponentStubGenerator::generate('Referral',array('id' => 5, 'service_subspecialty_assignment_id' => 3)),
-										ComponentStubGenerator::generate('Referral',array('id' => 9, 'service_subspecialty_assignment_id' => 7)),
+										ComponentStubGenerator::generate('Referral',array('id' => 9, 'firm' => $firm2, 'service_subspecialty_assignment_id' => 7)),
 										ComponentStubGenerator::generate('Referral',array('id' => 12, 'service_subspecialty_assignment_id' => 1)),
 								)));
 
 		$res = $test->calculateDefaultReferral();
 		$this->assertEquals(12, $res->id);
 	}
+
+	public function testGetReferralChoices()
+	{
+		$test = $this->getDefaultController();
+		$test->patient = $this->patients('patient1');
+
+		$this->assertEquals(array($this->referrals('referral3'), $this->referrals('referral1')), $test->getReferralChoices());
+	}
+
+	public function testGetReferralChoices_forElement()
+	{
+		$test = $this->getDefaultController();
+		$test->patient = $this->patients('patient1');
+
+		$element = ComponentStubGenerator::generate('Element_OphTrOperationbooking_Operation', array('referral_id' => $this->referrals('referral4')->id, 'referral' => $this->referrals('referral4')));
+
+		$this->assertEquals(array($this->referrals('referral3'), $this->referrals('referral1')), $test->getReferralChoices());
+	}
+
 
 }
