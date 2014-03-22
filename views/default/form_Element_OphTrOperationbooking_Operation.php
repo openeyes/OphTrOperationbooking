@@ -42,7 +42,7 @@
 	<?php echo $form->radioButtons($element, 'priority_id', 'ophtroperationbooking_operation_priority')?>
 	<?php
 		if ($element->canChangeReferral()) {
-			echo $form->dropDownList($element, 'referral_id', CHtml::listData($this->getReferralChoices(),'id','description'),array(),false,array('field'=>2));
+			echo $form->dropDownList($element, 'referral_id', CHtml::listData($this->getReferralChoices(),'id','description'),array('empty' => '- No valid referral available -'),false,array('field'=>2));
 		} else { ?>
 			<div class="row field-row">
 				<div class="large-2 column"><label>Referral:</label></div>

@@ -17,7 +17,7 @@
 * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
 */
 
-class DefaultController extends BaseEventTypeController
+class DefaultController extends OphTrOperationbookingEventController
 {
 	static protected $action_types = array(
 		'cancel' => self::ACTION_TYPE_EDIT,
@@ -228,28 +228,6 @@ class DefaultController extends BaseEventTypeController
 		}
 
 		return $errors;
-	}
-
-	/**
-	 * Return the open referral choices for the patient
-	 *
-	 * @return Referral[]
-	 */
-	public function getReferralChoices($element = null)
-	{
-		$criteria = new CdbCriteria();
-		$criteria->addCondition('patient_id = :pid');
-		$criteria->addCondition('closed_date is null');
-		$criteria->params = array('pid' => $this->patient->id);
-
-		// if the referral has been closed but is the selected referral for the event, needs to be part of the list
-		if ($element && $element->referral_id) {
-			$criteria->addCondition('id = :crid', 'OR');
-			$criteria->params[':crid'] = $element->referral_id;
-		}
-
-		$criteria->order = 'received_date DESC';
-		return Referral::model()->findAll($criteria);
 	}
 
 	/**

@@ -13,7 +13,8 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class DefaultControllerTest extends CDbTestCase {
+class DefaultControllerTest extends CDbTestCase
+{
 
 	static public function setupBeforeClass()
 	{
@@ -87,24 +88,6 @@ class DefaultControllerTest extends CDbTestCase {
 
 		$res = $test->calculateDefaultReferral();
 		$this->assertEquals(12, $res->id);
-	}
-
-	public function testGetReferralChoices()
-	{
-		$test = $this->getDefaultController();
-		$test->patient = $this->patients('patient1');
-
-		$this->assertEquals(array($this->referrals('referral3'), $this->referrals('referral1')), $test->getReferralChoices());
-	}
-
-	public function testGetReferralChoices_forElement()
-	{
-		$test = $this->getDefaultController();
-		$test->patient = $this->patients('patient1');
-
-		$element = ComponentStubGenerator::generate('Element_OphTrOperationbooking_Operation', array('referral_id' => $this->referrals('referral4')->id, 'referral' => $this->referrals('referral4')));
-
-		$this->assertEquals(array($this->referrals('referral3'), $this->referrals('referral1')), $test->getReferralChoices());
 	}
 
 

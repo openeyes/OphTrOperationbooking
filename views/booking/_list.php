@@ -166,6 +166,21 @@ if (!$reschedule) {
 	<div class="eventDetail">
 		<div class="row field-row">
 			<div class="large-2 column">
+				<?php echo CHtml::label('<strong>' . $operation->getAttributeLabel('referral_id') . ':</strong>', 'referral_id'); ?>
+			</div>
+			<div class="large-5 column end">
+				<?php if ($reschedule) {
+					echo $operation->referral->getDescription();
+				} else {
+					echo CHtml::activedropDownList($operation, 'referral_id', CHtml::listData($this->getReferralChoices(),'id','description'),array('empty' => '- No valid referral available -'),false,array('field'=>2));
+				} ?>
+			</div>
+		</div>
+	</div>
+
+	<div class="eventDetail">
+		<div class="row field-row">
+			<div class="large-2 column">
 				<?php echo CHtml::label('<strong>RTT Comments:</strong>', 'rtt_comments'); ?>
 			</div>
 			<div class="large-5 column end">

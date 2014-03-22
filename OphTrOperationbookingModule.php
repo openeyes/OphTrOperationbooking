@@ -41,6 +41,7 @@ class OphTrOperationbookingModule extends BaseEventTypeModule
 			'OphTrOperationbooking.components.*',
 			'OphTrOperationbooking.components.Exceptions',
 			'OphTrOperationbooking.helpers.*',
+			'OphTrOperationbooking.controllers.*',
 		));
 
 		$this->moduleShortSuffix = "operation";

@@ -17,7 +17,7 @@
 * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
 */
 
-class BookingController extends BaseEventTypeController
+class BookingController extends OphTrOperationbookingEventController
 {
 	static protected $action_types = array(
 		'schedule' => self::ACTION_TYPE_EDIT,
@@ -159,6 +159,7 @@ class BookingController extends BaseEventTypeController
 					$_POST['Booking']['admission_time'] = substr($session['default_admission_time'],0,5);
 					$_POST['Booking']['ward_id'] = key($operation->getWardOptions($_session));
 					$_POST['Session']['comments'] = $session['comments'];
+					$_POST['Operation']['referral_id'] = $operation->referral_id;
 					$_POST['Operation']['comments'] = $operation->comments;
 					$_POST['Operation']['comments_rtt'] = $operation->comments_rtt;
 				}
