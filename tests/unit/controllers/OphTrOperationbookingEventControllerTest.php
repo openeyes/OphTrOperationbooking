@@ -42,7 +42,7 @@ class OphTrOperationbookingEventControllerTest  extends CDbTestCase
 
 		$element = ComponentStubGenerator::generate('Element_OphTrOperationbooking_Operation', array('referral_id' => $this->referrals('referral4')->id, 'referral' => $this->referrals('referral4')));
 		$referrals = $test->getReferralChoices($element);
-		
+
 		$this->assertEquals(array($this->referrals('referral3'), $this->referrals('referral1'), $this->referrals('referral4')), $referrals);
 	}
 }

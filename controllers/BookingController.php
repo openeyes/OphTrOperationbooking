@@ -131,8 +131,12 @@ class BookingController extends OphTrOperationbookingEventController
 							'reason_id' => @$_POST['cancellation_reason'],
 							'comment' => @$_POST['cancellation_comment']
 						);
+
+						$booking = new OphTrOperationbooking_Operation_Booking;
+						$booking->attributes = $_POST['Booking'];
+
 						if (($result = $operation->schedule(
-								$_POST['Booking'],
+								$booking,
 								$_POST['Operation']['comments'],
 								$_POST['Session']['comments'],
 								$_POST['Operation']['comments_rtt'],

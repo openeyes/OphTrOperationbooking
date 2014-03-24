@@ -20,7 +20,8 @@ class Element_OphTrOperationbookingTest extends CDbTestCase
 			'wards' => 'OphTrOperationbooking_Operation_Ward',
 			'patients' => 'Patient',
 			'referral_types' => 'ReferralType',
-			'referrals' => 'Referral'
+			'referrals' => 'Referral',
+			'statuses' => 'OphTrOperationbooking_Operation_Status'
 	);
 
 	public static function setUpBeforeClass(){
@@ -189,6 +190,9 @@ class Element_OphTrOperationbookingTest extends CDbTestCase
 		$theatre = ComponentStubGenerator::generate('OphTrOperationbooking_Operation_Theatre',
 				array('site_id' => 1));
 		$session = $this->getSessionForTheatre($theatre);
+
+		$booking = ComponentStubGenerator::generate('OphTrOperationbooking_Operation_Booking', array('session' => $session));
+
 		$op = $this->getOperationForPatient($this->getMalePatient());
 		$op_opts = $this->getMockBuilder('Element_OphTrOperationbooking_ScheduleOperation')
 				->disableOriginalConstructor()
@@ -198,7 +202,7 @@ class Element_OphTrOperationbookingTest extends CDbTestCase
 			->method('isPatientAvailable')
 			->will($this->returnValue(false));
 
-		$res = $op->schedule(array('session' => $session), '', '', '', false, null, $op_opts);
+		$res = $op->schedule($booking, '', '', '', false, null, $op_opts);
 		$this->assertFalse($res === true);
 		# arrays are error messages
 		$this->assertTrue(gettype($res) == 'array');
@@ -221,7 +225,7 @@ class Element_OphTrOperationbookingTest extends CDbTestCase
 		$this->assertEquals($op->getProcedureCount(), 4);
 	}
 
-	public function testSchedule_ReferralRequired()
+	public function testSchedule_ReferralRequiredWhenConfigured()
 	{
 		$curr = Yii::app()->params['ophtroperationbooking_schedulerequiresreferral'];
 		Yii::app()->params['ophtroperationbooking_schedulerequiresreferral'] = true;
@@ -229,6 +233,9 @@ class Element_OphTrOperationbookingTest extends CDbTestCase
 		$theatre = ComponentStubGenerator::generate('OphTrOperationbooking_Operation_Theatre',
 				array('site_id' => 1));
 		$session = $this->getSessionForTheatre($theatre);
+
+		$booking = ComponentStubGenerator::generate('OphTrOperationbooking_Operation_booking', array('session' => $session));
+
 		$op = $this->getOperationForPatient($this->getMalePatient());
 		$op_opts = $this->getMockBuilder('Element_OphTrOperationbooking_ScheduleOperation')
 				->disableOriginalConstructor()
@@ -236,7 +243,7 @@ class Element_OphTrOperationbookingTest extends CDbTestCase
 				->getMock();
 
 		$op->referral = null;
-		$res = $op->schedule(array('session' => $session), '', '', '', false, null, $op_opts);
+		$res = $op->schedule($booking, '', '', '', false, null, $op_opts);
 		$this->assertFalse($res === true);
 		# arrays are error messages
 		$this->assertTrue(gettype($res) == 'array');
@@ -244,6 +251,73 @@ class Element_OphTrOperationbookingTest extends CDbTestCase
 
 		Yii::app()->params['ophtroperationbooking_schedulerequiresreferral'] = $curr;
 
+	}
+
+	public function testSchedule_ReferralNotRequiredWhenConfigured()
+	{
+		$curr = Yii::app()->params['ophtroperationbooking_schedulerequiresreferral'];
+		Yii::app()->params['ophtroperationbooking_schedulerequiresreferral'] = false;
+		$urgent = Yii::app()->params['urgent_booking_notify_hours'];
+		Yii::app()->params['urgent_booking_notify_hours'] = false;
+
+		// a lot of mocking needed as there's a lot of functionality in the schedule method
+		// ... it might be nice to optimise this into a couple of different methods ...
+		$booking = $this->getMockBuilder('OphTrOperationbooking_Operation_Booking')
+				->disableOriginalConstructor()
+				->setMethods(array('save', 'audit'))
+				->getMock();
+
+		$booking->expects($this->once())
+			->method('save')
+			->will($this->returnValue(true));
+
+		$booking->expects($this->once())
+			->method('audit');
+
+		$theatre = ComponentStubGenerator::generate('OphTrOperationbooking_Operation_Theatre',
+				array('site_id' => 1));
+		$session = $this->getSessionForTheatre($theatre);
+
+		$session->expects($this->once())
+			->method('operationBookable')
+			->will($this->returnValue(true));
+
+		// saved for comments
+		$session->expects($this->once())
+			->method('save')
+			->will($this->returnValue(true));
+
+		$booking->session = $session;
+
+		$op = $this->getOperationForPatient($this->getMalePatient(), array('save', 'calculateEROD'));
+		$op->expects($this->once())
+			->method('save')
+			->will($this->returnValue(true));
+
+		$op->event->episode->expects($this->once())
+			->method('save')
+			->will($this->returnValue(true));
+
+		$op_opts = $this->getMockBuilder('Element_OphTrOperationbooking_ScheduleOperation')
+				->disableOriginalConstructor()
+				->setMethods(array('isPatientAvailable'))
+				->getMock();
+
+		$op_opts->expects($this->once())
+			->method('isPatientAvailable')
+			->will($this->returnValue(true));
+
+		$session->expects($this->once())
+			->method('isBookable')
+			->will($this->returnValue(true));
+
+		$op->referral = null;
+		$res = $op->schedule($booking, '', '', '', false, null, $op_opts);
+		$this->assertTrue($res === true);
+
+		// reset params
+		Yii::app()->params['ophtroperationbooking_schedulerequiresreferral'] = $curr;
+		Yii::app()->params['urgent_booking_notify_hours'] = $urgent;
 	}
 
 	public function testReferralValidatorMustBeCalled()
@@ -331,4 +405,41 @@ class Element_OphTrOperationbookingTest extends CDbTestCase
 
 		$op->validateReferral('referral_id', array());
 	}
+
+	public function testsetStatus_noSave()
+	{
+		$op = $this->getOperationForPatient($this->patients('patient1'), array('save'));
+
+		$op->expects($this->never())
+			->method('save');
+
+		$op->setStatus($this->statuses('scheduled')->name, false);
+		$this->assertEquals($this->statuses('scheduled')->id, $op->status_id);
+	}
+
+	public function testsetStatus_save()
+	{
+		$op = $this->getOperationForPatient($this->patients('patient1'), array('save'));
+
+		$op->expects($this->once())
+			->method('save')
+			->will($this->returnValue(true));
+
+		$op->setStatus($this->statuses('scheduled')->name);
+		$this->assertEquals($this->statuses('scheduled')->id, $op->status_id);
+	}
+
+	public function testsetStatus_invalidStatus()
+	{
+		$op = $this->getOperationForPatient($this->patients('patient1'), array('save'));
+
+		$op->expects($this->never())
+				->method('save');
+
+		$this->setExpectedException('Exception', 'Invalid status: Invalid Test Status');
+		$op->setStatus('Invalid Test Status');
+	}
+
+
+
 }

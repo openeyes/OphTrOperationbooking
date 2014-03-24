@@ -31,4 +31,39 @@ class OphTrOperationbooking_Operation_BookingTest  extends CDbTestCase
 
 		$this->assertEquals($test->getProcedureCount(), 3);
 	}
+
+	public function testbeforeValidate_noDisplayOrder()
+	{
+		$test = $this->getMockBuilder('OphTrOperationbooking_Operation_Booking')
+				->disableOriginalConstructor()
+				->setMethods(array('calculateDefaultDisplayOrder'))
+				->getMock();
+
+		$test->expects($this->once())
+			->method('calculateDefaultDisplayOrder')
+			->will($this->returnValue('3'));
+
+		$test->session = new OphTrOperationbooking_Operation_Session();
+
+		$test->validate();
+		$this->assertEquals(3, $test->display_order);
+	}
+
+	public function testbeforeValidate_DisplayOrder()
+	{
+		$test = $this->getMockBuilder('OphTrOperationbooking_Operation_Booking')
+				->disableOriginalConstructor()
+				->setMethods(array('calculateDefaultDisplayOrder'))
+				->getMock();
+
+		$test->expects($this->never())
+				->method('calculateDefaultDisplayOrder');
+
+		$test->session = new OphTrOperationbooking_Operation_Session();
+
+		$test->display_order = 5;
+		$test->validate();
+		$this->assertEquals(5, $test->display_order);
+	}
+
 }

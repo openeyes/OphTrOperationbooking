@@ -884,7 +884,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 	 * @throws RaceConditionException
 	 * @throws Exception
 	 */
-	public function schedule($booking_attributes, $operation_comments, $session_comments, $operation_comments_rtt,
+	public function schedule($booking, $operation_comments, $session_comments, $operation_comments_rtt,
 			$reschedule=false, $cancellation_data = null, $schedule_op = null)
 	{
 		if ($schedule_op == null) {
@@ -894,10 +894,6 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		if (Yii::app()->params['ophtroperationbooking_schedulerequiresreferral'] && !$this->referral) {
 			return array(array('Referral required to schedule operation'));
 		}
-
-		// TODO: try passing in the booking object rather than the attributes for it - easier for testing, and cleaner implementation
-		$booking = new OphTrOperationbooking_Operation_Booking;
-		$booking->attributes = $booking_attributes;
 
 		$session = $booking->session;
 
@@ -911,10 +907,8 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 
 		$reschedule = in_array($this->status_id,array(2,3,4));
 
-		if (preg_match('/(^[0-9]{1,2}).*?([0-9]{2})$/',$booking_attributes['admission_time'],$m)) {
+		if (preg_match('/(^[0-9]{1,2}).*?([0-9]{2})$/',$booking->admission_time,$m)) {
 			$booking->admission_time = $m[1].":".$m[2];
-		} else {
-			$booking->admission_time = $booking_attributes['admission_time'];
 		}
 
 		// parse the cancellation data
@@ -948,24 +942,36 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			$booking->{'session_'.$field} = $booking->session->$field;
 		}
 
-		$criteria = new CDbCriteria;
-		$criteria->compare('session_id',$session->id);
-		$criteria->order = 'display_order desc';
-		$criteria->limit = 1;
 
-		$booking->display_order = ($booking2 = OphTrOperationbooking_Operation_Booking::model()->find($criteria)) ? $booking2->display_order+1 : 1;
 
 		if (!$booking->save()) {
 			return $booking->getErrors();
 		}
 
-		$this->latest_booking_id = $booking->id;
-		if (!$this->save()) {
-			throw new Exception("Unable to set latest booking: ".print_r($this->getErrors(),true));
-		}
-
 		OELog::log("Booking ".($reschedule ? 'rescheduled' : 'made')." $booking->id");
 		$booking->audit('booking',$reschedule ? 'reschedule' : 'create');
+
+		$this->latest_booking_id = $booking->id;
+
+		$this->comments = $operation_comments;
+		$this->comments_rtt = $operation_comments_rtt;
+		$this->site_id = $booking->session->theatre->site_id;
+
+		if ($reschedule) {
+			$this->setStatus('Rescheduled', false);
+		} else {
+			$this->setStatus('Scheduled', false);
+		}
+
+		if (!$this->save()) {
+			throw new Exception('Unable to update operation data: '.print_r($this->getErrors(),true));
+		}
+
+		$session->comments = $session_comments;
+
+		if (!$session->save()) {
+			throw new Exception('Unable to save session comments: '.print_r($session->getErrors(),true));
+		}
 
 		if (!$this->erod) {
 			$this->calculateEROD($session);
@@ -1003,36 +1009,26 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			}
 		}
 
-		if ($reschedule) {
-			$this->setStatus('Rescheduled');
-		} else {
-			$this->setStatus('Scheduled');
-		}
-
-		$this->comments = $operation_comments;
-		$this->comments_rtt = $operation_comments_rtt;
-		$this->site_id = $booking->session->theatre->site_id;
-
-		if (!$this->save()) {
-			throw new Exception('Unable to update operation data: '.print_r($this->getErrors(),true));
-		}
-
-		$session->comments = $session_comments;
-
-		if (!$session->save()) {
-			throw new Exception('Unable to save session comments: '.print_r($session->getErrors(),true));
-		}
 		return true;
 	}
 
-	public function setStatus($name)
+	/**
+	 * Set the status based on the name passed in. If $save is false, we don't save and it is the responsibility
+	 * of the caller to ensure the instance is saved.
+	 *
+	 * @param $name
+	 * @param bool $save
+	 * @throws Exception
+	 */
+	public function setStatus($name, $save = true)
 	{
 		if (!$status = OphTrOperationbooking_Operation_Status::model()->find('name=?',array($name))) {
 			throw new Exception('Invalid status: '.$name);
 		}
 
 		$this->status_id = $status->id;
-		if (!$this->save()) {
+
+		if ($save && !$this->save()) {
 			throw new Exception('Unable to change operation status: '.print_r($this->getErrors(),true));
 		}
 	}

@@ -249,6 +249,36 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecord
 		return $return;
 	}
 
+	/**
+	 * calculate the appropriate default displayorder for this record
+	 *
+	 * @return int
+	 */
+	protected function calculateDefaultDisplayOrder()
+	{
+		$criteria = new CDbCriteria;
+		$criteria->compare('session_id',$this->session->id);
+		$criteria->order = 'display_order desc';
+		$criteria->limit = 1;
+
+		return ($booking2 = OphTrOperationbooking_Operation_Booking::model()->find($criteria)) ? $booking2->display_order+1 : 1;
+
+	}
+
+	/**
+	 * Ensure display_order is set
+	 *
+	 * @return bool
+	 */
+	protected function beforeValidate()
+	{
+		if ($this->session && !$this->display_order) {
+			$this->display_order = $this->calculateDefaultDisplayOrder();
+		}
+
+		return parent::beforeValidate();
+	}
+
 	protected function afterValidate()
 	{
 		if (preg_match('/^([0-9]{1,2}).*?([0-9]{2})$/',$this->admission_time,$m)) {
