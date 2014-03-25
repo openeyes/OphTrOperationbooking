@@ -280,7 +280,7 @@ $criteria->compare('schedule_options_id', $this->schedule_options_id);
 			foreach ($this->patient_unavailables as $unavailable) {
 				$dt = strtotime($unavailable->start_date);
 				while ($dt <= strtotime($unavailable->end_date)) {
-					$this->_unavailable_dates[] = $dt;
+					$this->_unavailable_dates[] = date('Y-m-d', $dt);
 					$dt+=86400;
 				}
 			}
@@ -288,6 +288,6 @@ $criteria->compare('schedule_options_id', $this->schedule_options_id);
 		if (empty($this->_unavailable_dates)) {
 			return true;
 		}
-		return !in_array(strtotime($date), $this->_unavailable_dates);
+		return !in_array($date, $this->_unavailable_dates);
 	}
 }
