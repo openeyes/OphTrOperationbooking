@@ -188,6 +188,36 @@ table.transport .status.Green {
   padding-top: 10px;
 }
 
+/* line 20, ../sass/components/panels/_session-options.scss */
+.panel.session-options {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+  background: #545065;
+  border: 2px solid #602aba;
+}
+/* line 24, ../sass/components/panels/_session-options.scss */
+.theatres-list .panel.session-options {
+  margin-bottom: 0;
+  margin-left: -0.75rem;
+}
+/* line 28, ../sass/components/panels/_session-options.scss */
+.panel.session-options label {
+  color: #ffffde;
+  font-size: 0.6875rem;
+  margin-bottom: 7px;
+}
+/* line 32, ../sass/components/panels/_session-options.scss */
+.panel.session-options label:last-child {
+  margin: 0;
+}
+/* line 35, ../sass/components/panels/_session-options.scss */
+.panel.session-options label input {
+  margin-right: 3px;
+}
+
 /* line 18, ../sass/components/panels/_patient-reminder.scss */
 .panel.patient-reminder {
   background: #fff2d7;

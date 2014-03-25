@@ -14,14 +14,27 @@
 // * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
 // * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
 
-/** Operating booking module admin styles */
+// Theatre booking session options panel
 
-@import "openeyes/module";
-
-.notset {
-	color: #999;
-}
-
-.set {
-	font-weight: bold;
+.panel {
+	&.session-options {
+		@include border-radius(0);
+		background: #545065;
+		border: 2px solid #602aba;
+		.theatres-list & {
+			margin-bottom: 0;
+			margin-left: -1 * $column-gutter / 2;
+		}
+		label {
+			color: #ffffde;
+			font-size: rem-calc(11px);
+			margin-bottom: 7px;
+			&:last-child {
+				margin: 0;
+			}
+			input {
+				margin-right: 3px;
+			}
+		}
+	}
 }
