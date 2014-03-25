@@ -63,5 +63,9 @@ return array(
 		// Default anaesthetic settings
 		//'ophtroperationbooking_default_anaesthetic_child' => 'GA',
 		//'ophtroperationbooking_default_anaesthetic' => 'GA',
+		// How many weeks from DTA should EROD be calculated
+		//'erod_lead_time_weeks' => 3,
+		// How many days ahead of the day an operation is being scheduled should EROD be calculated
+		'erod_lead_current_date_days' => 2,
 	)
 );

@@ -125,4 +125,9 @@ class OphTrOperationbooking_Operation_EROD extends BaseActiveRecord
 	{
 		return date('H:i',strtotime($this->session_start_time)) . ' - ' . date('H:i',strtotime($this->session_end_time));
 	}
+
+	public function getDescription()
+	{
+		return $this->NHSDate('session_date').' '.$this->getTimeSlot() .', '. $this->getFirmName();
+	}
 }

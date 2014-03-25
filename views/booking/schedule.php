@@ -72,6 +72,17 @@
 			</div>
 		<?php }?>
 
+		<?php
+			$initial_erod = ($operation->firstBooking) ? $operation->firstBooking->erod : null;
+			$erod = $operation->calculateEROD($firm);
+
+			if ($initial_erod || $erod) { ?>
+				<div class="eventDetail">
+					<div class="label"><strong>EROD:</strong></div>
+					<div class="data"><?php if ($erod) { echo $erod->getDescription(); } else { echo "N/A"; } if ($initial_erod) { echo ' <span class="initial-erod">Initially: ' . $initial_erod->getDescription();  } ?></div>
+				</div>
+			<?php } ?>
+
 		<div class="edit" id="firmSelect">
 			<div class="element-fields">
 				<div class="field-row">

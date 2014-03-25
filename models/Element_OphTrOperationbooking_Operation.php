@@ -126,7 +126,6 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
 			'priority' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Priority', 'priority_id'),
 			'status' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Status', 'status_id'),
-			'erod' => array(self::HAS_ONE, 'OphTrOperationbooking_Operation_EROD', 'element_id'),
 			'date_letter_sent' => array(self::HAS_ONE, 'OphTrOperationbooking_Operation_Date_Letter_Sent', 'element_id', 'order' => 'date_letter_sent.id DESC'),
 			'cancellation_user' => array(self::BELONGS_TO, 'User', 'cancellation_user_id'),
 			'cancellation_reason' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Cancellation_Reason', 'cancellation_reason_id'),
@@ -134,6 +133,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			'booking' => array(self::HAS_ONE, 'OphTrOperationbooking_Operation_Booking', 'element_id', 'condition' => 'booking_cancellation_date is null'),
 			'cancelledBooking' => array(self::HAS_ONE, 'OphTrOperationbooking_Operation_Booking', 'element_id', 'condition' => 'booking_cancellation_date is not null'),
 			'latestBooking' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Booking', 'latest_booking_id'),
+			'firstBooking' => array(self::HAS_ONE, 'OphTrOperationbooking_Operation_Booking', 'element_id', 'order' => 'created_date ASC'),
 			'allBookings'  => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Booking', 'element_id'),
 			'referral' => array(self::BELONGS_TO, 'Referral', 'referral_id'),
 		);
@@ -678,6 +678,130 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		return $results;
 	}
 
+	/**
+	 * Calculate the EROD for this operation - the firm used to determine the service can be overridden by providing a firm.
+	 * (Note that this handles the emergency list by having a firm placeholder object that does not have an id - at this time,
+	 * no sessions are assigned to A&E firms, having the effect that no EROD can be calculated for emergency bookings)
+	 *
+	 * @param Firm $firm
+	 * @return OphTrOperationbooking_Operation_EROD|null
+	 * @throws Exception
+	 */
+	public function calculateEROD($firm = null)
+	{
+		$criteria = new CDbCriteria;
+
+		$criteria->params[':one'] = 1;
+		//consultant required
+		if ($this->consultant_required) {
+			$criteria->addCondition('`t`.consultant = :one');
+		}
+
+		//anaesthetic requirements
+		if ($this->anaesthetist_required || $this->anaesthetic_type->code == 'GA') {
+			$criteria->addCondition('`t`.anaesthetist = :one and `t`.general_anaesthetic = :one');
+		}
+
+		// child conditions
+		$patient = $this->event->episode->patient;
+		if ($patient->isChild()) {
+			// need to get the point at which patient becomes an adult. All sessions up to that point need the pediatric flag
+			$criteria->params[':adult_date'] = $patient->getBecomesAdultDate();
+			$criteria->addCondition('(`t`.date < :adult_date AND `t`.paediatric = :one) OR `t`.date >= :adult_date');
+		}
+
+		// if their are firms that are set for the subspecialty of the episode, use their sessions
+		if ($rule = OphTrOperationbooking_Operation_EROD_Rule::model()->find('subspecialty_id=?',array($this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty_id))) {
+			$firm_ids = array();
+			foreach ($rule->items as $item) {
+				if ($item->item_type == 'firm') {
+					$firm_ids[] = $item->item_id;
+				}
+			}
+
+			$criteria->addInCondition('firm.id',$firm_ids);
+		} else {
+			// otherwise, use the given firm to define the set of valid sessions by subspecialty
+			if (!$firm) {
+				$firm = $this->event->episode->firm;
+			}
+
+			if (!$firm->id) {
+				// booking into the emergency list
+				if (!$subspecialty = Subspecialty::model()->find('ref_spec=?',array('AE'))) {
+					throw new Exception("A&E subspecialty not found");
+				}
+
+				if (!$service_subspecialty_assignment = ServiceSubspecialtyAssignment::model()->find('subspecialty_id=?',array($subspecialty->id))) {
+					throw new Exception("A&E service_subspecialty_assignment not found");
+				}
+				$service_subspecialty_assignment_id = $service_subspecialty_assignment->id;
+			}
+			else {
+				if (!$service_subspecialty_assignment_id = $firm->service_subspecialty_assignment_id) {
+					throw new Exception('Firm must have service_subspecialty_assignment for EROD calculation');
+				}
+			}
+			$criteria->addCondition('service_subspecialty_assignment_id = :serviceSubspecialtyAssignmentId');
+			$criteria->params[':serviceSubspecialtyAssignmentId'] = $service_subspecialty_assignment_id;
+		}
+
+		// session must be available
+		$criteria->addCondition('`t`.available = :one');
+
+		// work out the lead date
+		$lead_decision_date = strtotime($this->decision_date) + (86400 * 7 * Yii::app()->params['erod_lead_time_weeks']);
+		$lead_current_date = strtotime($this->decision_date) + (86400 * Yii::app()->params['erod_lead_current_date_days']);
+		$lead_time_date = ($lead_decision_date > $lead_current_date) ? date('Y-m-d', $lead_decision_date) : date('Y-m-d', $lead_current_date);
+
+		$criteria->addCondition('`t`.date > :leadTimeDate');
+		$criteria->params[':leadTimeDate'] = $lead_time_date;
+
+		$criteria->order = '`t`.date, `t`.start_time';
+
+		foreach (OphTrOperationbooking_Operation_Session::model()
+								 ->with(array(
+								'firm' => array(
+										'joinType' => 'JOIN',
+								)
+						))
+						 ->findAll($criteria) as $session) {
+
+			$available_time = $session->availableMinutes;
+			if ($available_time < $this->total_duration) {
+				continue;
+			}
+
+			if ($session->max_procedures > 0 && $this->getProcedureCount() > $session->getAvailableProcedureCount()) {
+				continue;
+			}
+
+			$erod = new OphTrOperationbooking_Operation_EROD;
+			$erod->session_id = $session->id;
+			$erod->session_date = $session->date;
+			$erod->session_start_time = $session->start_time;
+			$erod->session_end_time = $session->end_time;
+			$erod->firm_id = $session->firm_id;
+			$erod->consultant = $session->consultant;
+			$erod->paediatric = $session->paediatric;
+			$erod->anaesthetist = $session->anaesthetist;
+			$erod->general_anaesthetic = $session->general_anaesthetic;
+			$erod->session_duration = $session->duration;
+			$erod->total_operations_time = $session->bookedMinutes;
+			// Note that I have not subtracted the duration of this operation from the available time when storing this
+			// as it is now being generated before the booking is made. When the booking is made, it will have been saved
+			// before the EROD is calculated, so the available time will reflect the same value as in the prior calculations
+			$erod->available_time = $available_time;
+
+			return $erod;
+
+		}
+	}
+
+	/*
+	 old EROD calculation process that seems to have been using the session that an operation was booked into to calculate,
+	 which doesn't chime with the given requirements as defined in the RTT specification:
+	https://openeyes.atlassian.net/wiki/display/OP/RTT
 	protected function calculateEROD(OphTrOperationbooking_Operation_Session $booking_session)
 	{
 		$where = '';
@@ -783,6 +907,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			}
 		}
 	}
+	*/
 
 	public function audit($target, $action, $data=null, $log=false, $properties=array())
 	{
@@ -873,16 +998,17 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 
 
 	/**
-	 * @param $booking_attributes
+	 * @param OphTrOperationbooking_Operation_Booking $booking
 	 * @param $operation_comments
 	 * @param $session_comments
 	 * @param $operation_comments_rtt
 	 * @param bool $reschedule
 	 * @param null $cancellation_data
 	 * @param Element_OphTrOperationbooking_ScheduleOperation $schedule_op
-	 * @return array|bool
 	 * @throws RaceConditionException
 	 * @throws Exception
+	 * @internal param $booking_attributes
+	 * @return array|bool
 	 */
 	public function schedule($booking, $operation_comments, $session_comments, $operation_comments_rtt,
 			$reschedule=false, $cancellation_data = null, $schedule_op = null)
@@ -973,8 +1099,12 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			throw new Exception('Unable to save session comments: '.print_r($session->getErrors(),true));
 		}
 
-		if (!$this->erod) {
-			$this->calculateEROD($session);
+		// if the session has no firm, this implies it's an emergency booking so there is no need to calculate EROD
+		if ($booking->session->firm && $erod = $this->calculateEROD($booking->session->firm)) {
+			$erod->booking_id = $booking->id;
+			if (!$erod->save()) {
+				throw new Exception('Unable to save erod: '. print_r($erod->getErrors(), true));
+			}
 		}
 
 		$this->event->episode->episode_status_id = 3;

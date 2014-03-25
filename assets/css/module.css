@@ -269,6 +269,18 @@ table.transport .status.Green {
 .event .cancelled-bookings li:last-child {
   padding: 0;
 }
+/* line 40, ../sass/components/_event.scss */
+.event .cancelled-bookings .erod {
+  color: #888888;
+  font-style: italic;
+  font-size: 0.9em;
+}
+/* line 46, ../sass/components/_event.scss */
+.event .initial-erod {
+  font-style: italic;
+  color: #888888;
+  font-size: 0.9em;
+}
 
 /* FIXME - this is old CSS. This will be refactored when we refactor the scheduling. */
 /* line 21, ../sass/components/_schedule-booking.scss */

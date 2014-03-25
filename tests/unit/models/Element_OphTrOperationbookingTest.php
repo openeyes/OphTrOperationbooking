@@ -290,9 +290,19 @@ class Element_OphTrOperationbookingTest extends CDbTestCase
 		$booking->session = $session;
 
 		$op = $this->getOperationForPatient($this->getMalePatient(), array('save', 'calculateEROD'));
+
 		$op->expects($this->once())
 			->method('save')
 			->will($this->returnValue(true));
+
+		$erod = ComponentStubGenerator::generate('OphTrOperationbooking_Operation_EROD');
+		$erod->expects($this->once())
+			->method('save')
+			->will($this->returnValue(true));
+
+		$op->expects($this->once())
+			->method('calculateEROD')
+			->will($this->returnValue($erod));
 
 		$op->event->episode->expects($this->once())
 			->method('save')
