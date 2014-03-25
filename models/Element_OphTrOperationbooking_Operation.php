@@ -751,7 +751,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 
 		// work out the lead date
 		$lead_decision_date = strtotime($this->decision_date) + (86400 * 7 * Yii::app()->params['erod_lead_time_weeks']);
-		$lead_current_date = strtotime($this->decision_date) + (86400 * Yii::app()->params['erod_lead_current_date_days']);
+		$lead_current_date = time() + (86400 * Yii::app()->params['erod_lead_current_date_days']);
 		$lead_time_date = ($lead_decision_date > $lead_current_date) ? date('Y-m-d', $lead_decision_date) : date('Y-m-d', $lead_current_date);
 
 		$criteria->addCondition('`t`.date > :leadTimeDate');
