@@ -88,10 +88,11 @@ class AdminController extends ModuleAdminController
 						}
 					}
 
-				if (empty($errors)) {
-					$transaction->commit();
-					Audit::add('admin','update',$id,null,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_EROD_Rule'));
-					$this->redirect(array('/OphTrOperationbooking/admin/viewERODRules'));
+					if (empty($errors)) {
+						$transaction->commit();
+						Audit::add('admin','update',$id,null,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_EROD_Rule'));
+						$this->redirect(array('/OphTrOperationbooking/admin/viewERODRules'));
+					}
 				}
 			}
 			catch (Exception $e) {
