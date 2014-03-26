@@ -486,7 +486,13 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		$year = date('Y',$timestamp);
 		$month = date('m',$timestamp);
 
-		$rttDate = date('Y-m-d',strtotime('+6 weeks', strtotime($this->decision_date)));
+		if ($rtt_weeks = Yii::app()->params['ophtroperationboooking_rtt_limit']) {
+			$rttDate = date('Y-m-d',strtotime('+' .$rtt_weeks . ' weeks', strtotime($this->decision_date)));
+		}
+		else {
+			$rttDate = null;
+		}
+
 
 		$criteria = new CDbCriteria;
 		$criteria->compare("firm_id",$firm->id);
@@ -536,7 +542,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 							}
 						}
 
-						if ($date >= $rttDate) {
+						if ($rttDate && $date >= $rttDate) {
 							$status .= ' outside_rtt';
 						}
 					} else {

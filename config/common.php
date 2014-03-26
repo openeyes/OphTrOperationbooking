@@ -67,5 +67,7 @@ return array(
 		//'erod_lead_time_weeks' => 3,
 		// How many days ahead of the day an operation is being scheduled should EROD be calculated
 		'erod_lead_current_date_days' => 2,
+		// number of weeks from decision date that is the RTT limit
+		'ophtroperationboooking_rtt_limit' => 6,
 	)
 );
