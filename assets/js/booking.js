@@ -93,10 +93,14 @@ $(document).ready(function() {
 	});
 
 	$('#calendar table td').click(function() {
-		var day = $(this).text().match(/[0-9]+/);
-		if (day == null) return false;
+		var search = {'day' : $(this).text().match(/[0-9]+/)};
+		if (search.day == null) return false;
+		if ($('#Element_OphTrOperationbooking_Operation_referral_id').length) {
+			search['referral_id'] = $('#Element_OphTrOperationbooking_Operation_referral_id').val();
+		}
 		if (!$(this).hasClass('patient-unavailable')) {
-			window.location.href = URI(window.location.href).setSearch('day',day).removeSearch('session_id');
+			window.onbeforeunload = null;
+			window.location.href = URI(window.location.href).setSearch(search).removeSearch('session_id');
 		}
 		return false;
 	});
@@ -110,11 +114,20 @@ $(document).ready(function() {
 		$('#bookingForm').submit();
 	});
 
+	$(this).undelegate('#Element_OphTrOperationbooking_Operation_referral_id', 'change').delegate('#Element_OphTrOperationbooking_Operation_referral_id', 'change', function() {
+		// maintain the POST value if the drop down is altered.
+		if ($('#Operation_referral_id').length) {
+			$('#Operation_referral_id').val($(this).val());
+		}
+	});
+
 	$(this).undelegate('#firmSelect #firm_id','change').delegate('#firmSelect #firm_id','change',function() {
-		var firm_id = $(this).val();
-		var operation = $('input[id=operation]').val();
+		var search = {'firm_id': $(this).val()};
+		if ($('#Element_OphTrOperationbooking_Operation_referral_id').length) {
+			search['referral_id'] = $('#Element_OphTrOperationbooking_Operation_referral_id').val();
+		}
 		window.onbeforeunload = null;
-		window.location.href = URI(window.location.href).setSearch('firm_id',firm_id).removeSearch(['session_id', 'day']);
+		window.location.href = URI(window.location.href).setSearch(search).removeSearch(['session_id', 'day']);
 	});
 
 	handleButton($('#btn_print-letter'),function() {

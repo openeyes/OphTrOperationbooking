@@ -120,6 +120,9 @@ if (!$reschedule) {
 	}
 	echo CHtml::hiddenField('Booking[element_id]', $operation->id);
 	echo CHtml::hiddenField('Booking[session_id]', $session['id']);
+	if ($operation->canChangeReferral()) {
+		echo CHtml::hiddenField('Operation[referral_id]', $operation->referral_id);
+	}
 	?>
 
 	<?php if ($reschedule) { ?>
@@ -159,26 +162,6 @@ if (!$reschedule) {
 			</div>
 			<div class="large-5 column end">
 				<textarea id="operation_comments" name="Operation[comments]" rows=3 cols=50><?php echo htmlspecialchars($_POST['Operation']['comments'])?></textarea>
-			</div>
-		</div>
-	</div>
-
-	<div class="eventDetail">
-		<div class="row field-row">
-			<div class="large-2 column">
-				<?php echo CHtml::label('<strong>' . $operation->getAttributeLabel('referral_id') . ':</strong>', 'referral_id'); ?>
-			</div>
-			<div class="large-5 column end">
-				<?php if ($reschedule || $operation->allBookings) {
-					if ($operation->referral) {
-						echo $operation->referral->getDescription();
-					}
-					else {
-						echo "No referral was set.";
-					}
-				} else {
-					echo CHtml::activedropDownList($operation, 'referral_id', CHtml::listData($this->getReferralChoices(),'id','description'),array('empty' => '- No valid referral available -'),false,array('field'=>2));
-				} ?>
 			</div>
 		</div>
 	</div>

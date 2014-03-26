@@ -72,16 +72,39 @@
 			</div>
 		<?php }?>
 
+		<div class="eventDetail">
+			<div class="row field-row">
+				<div class="large-2 column">
+					<?php echo CHtml::label('<strong>' . $operation->getAttributeLabel('referral_id') . ':</strong>', 'referral_id'); ?>
+				</div>
+				<div class="large-5 column end">
+					<?php
+						if ($operation->canChangeReferral()) {
+							echo CHtml::activedropDownList($operation, 'referral_id', CHtml::listData($this->getReferralChoices(),'id','description'),array('empty' => '- No valid referral available -'),false,array('field'=>2));
+						}
+						elseif ($operation->referral) {
+							echo $operation->referral->getDescription();
+						}
+						else {
+							echo "No referral was set.";
+						}
+					?>
+				</div>
+			</div>
+		</div>
+
 		<?php
 			$initial_erod = ($operation->firstBooking) ? $operation->firstBooking->erod : null;
 			$erod = $operation->calculateEROD($firm);
 
 			if ($initial_erod || $erod) { ?>
 				<div class="eventDetail">
-					<div class="label"><strong>EROD:</strong></div>
-					<div class="data"><?php if ($erod) { echo $erod->getDescription(); } else { echo "N/A"; } if ($initial_erod) { echo ' <span class="initial-erod">Initially: ' . $initial_erod->getDescription();  } ?></div>
+					<div class="row field-row">
+						<div class="large-2 column label"><strong>EROD:</strong></div>
+						<div class="large-5 column end data"><?php if ($erod) { echo $erod->getDescription(); } else { echo "N/A"; } if ($initial_erod) { echo ' <span class="initial-erod">Initially: ' . $initial_erod->getDescription();  } ?></div>
+					</div>
 				</div>
-			<?php } ?>
+		<?php } ?>
 
 		<div class="edit" id="firmSelect">
 			<div class="element-fields">

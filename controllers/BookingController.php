@@ -91,6 +91,14 @@ class BookingController extends OphTrOperationbookingEventController
 			$firm = $this->firm;
 		}
 
+		// allowing the referral to be updated
+		if (@$_GET['referral_id']) {
+			if ($referral = Referral::model()->findByPk($_GET['referral_id'])) {
+				$operation->referral_id = $_GET['referral_id'];
+				$operation->referral = $referral;
+			}
+		}
+
 		if (preg_match('/^([0-9]{4})([0-9]{2})$/',@$_GET['date'],$m)) {
 			$date = mktime(0,0,0,$m[2],1,$m[1]);
 		} else {
@@ -134,6 +142,12 @@ class BookingController extends OphTrOperationbookingEventController
 
 						$booking = new OphTrOperationbooking_Operation_Booking;
 						$booking->attributes = $_POST['Booking'];
+
+						// referral might have been altered in scheduling form, so should update the operation here
+						// (different from the GET changes above which handle the selection down to the session)
+						if ($operation->canChangeReferral()) {
+							$operation->referral_id = $_POST['Operation']['referral_id'];
+						}
 
 						if (($result = $operation->schedule(
 								$booking,
