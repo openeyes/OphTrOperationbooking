@@ -647,7 +647,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			$criteria->params[':siteId'] = $siteId;
 			$criteria->params[':r1'] = $genderRestrict;
 			$criteria->params[':r2'] = $ageRestrict;
-			$criteria->order = 't.name asc';
+			$criteria->order = 't.display_order asc';
 
 			$results = CHtml::listData(OphTrOperationbooking_Operation_Ward::model()
 				->findAll($criteria),'id','name');
