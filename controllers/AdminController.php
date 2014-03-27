@@ -580,7 +580,7 @@ class AdminController extends ModuleAdminController
 			$rule->attributes = $_POST['OphTrOperationbooking_Operation_Name_Rule'];
 
 			if (!$rule->save()) {
-				$errors = $erod->getErrors();
+				$errors = $rule->getErrors();
 			} else {
 				Audit::add('admin','create',serialize($_POST),false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Name_Rule'));
 				$this->redirect(array('/OphTrOperationbooking/admin/viewOperationNameRules'));

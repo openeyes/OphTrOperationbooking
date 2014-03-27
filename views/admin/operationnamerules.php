@@ -50,6 +50,9 @@
 			</tfoot>
 		</table>
 	</form>
+	<p>
+		The operation name rules allow the system to use specific operation names in admission letters. Any operation that is booked for a specific theatre will use the name assigned in the theatre rule, rather than the generic term &quot;operation&quot;
+	</p>
 </div>
 
 
