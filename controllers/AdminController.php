@@ -581,7 +581,7 @@ class AdminController extends ModuleAdminController
 			$rule->attributes = $_POST['OphTrOperationbooking_Operation_Name_Rule'];
 
 			if (!$rule->save()) {
-				$errors = $erod->getErrors();
+				$errors = $rule->getErrors();
 			} else {
 				Audit::add('admin','create',$rule->id,null,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Name_Rule'));
 				$this->redirect(array('/OphTrOperationbooking/admin/viewOperationNameRules'));
@@ -1540,6 +1540,34 @@ class AdminController extends ModuleAdminController
 			'ward' => $ward,
 			'errors' => $errors,
 		));
+	}
+
+	/**
+	 * Reorder the OphTrOperationbooking_Operation_Ward objects
+	 *
+	 * @throws Exception
+	 */
+	public function actionSortWards()
+	{
+		if (!empty($_POST['order'])) {
+			$transaction = Yii::app()->db->beginTransaction();
+			try {
+				foreach ($_POST['order'] as $i => $id) {
+					if ($ward = OphTrOperationbooking_Operation_Ward::model()->findByPk($id)) {
+						$ward->display_order = $i+1;
+						if (!$ward->save()) {
+							throw new Exception("Unable to save patient unavailable reason: " . print_r($ward->getErrors(),true));
+						}
+					}
+				}
+				Audit::add('admin', 'sort', serialize($_POST), false, array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Ward'));
+				$transaction->commit();
+			}
+			catch (Exception $e) {
+				$transaction->rollback();
+				throw $e;
+			}
+		}
 	}
 
 	public function actionViewSchedulingOptions()

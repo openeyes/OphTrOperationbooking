@@ -30,12 +30,12 @@
 					<th>Restrictions</th>
 				</tr>
 			</thead>
-			<tbody>
+			<tbody class="sortable" data-sort-uri="/OphTrOperationbooking/admin/sortwards">
 				<?php
 				$criteria = new CDbCriteria;
 				$criteria->order = "display_order asc";
 				foreach (OphTrOperationbooking_Operation_Ward::model()->active()->findAll() as $i => $ward) {?>
-					<tr class="clickable sortable <?php if ($i%2 == 0) {?>even<?php } else {?>odd<?php }?>" data-id="<?php echo $ward->id?>" data-uri="OphTrOperationbooking/admin/editWard/<?php echo $ward->id?>">
+					<tr class="clickable <?php if ($i%2 == 0) {?>even<?php } else {?>odd<?php }?>" data-attr-id="<?php echo $ward->id?>" data-uri="OphTrOperationbooking/admin/editWard/<?php echo $ward->id?>">
 						<td><input type="checkbox" name="ward[]" value="<?php echo $ward->id?>" class="wards" /></td>
 						<td><?php echo $ward->site->name?></td>
 						<td><?php echo $ward->name?></td>
@@ -74,6 +74,28 @@
 </div>
 
 <script type="text/javascript">
+	$(document).ready(function() {
+		$('.sortable').sortable({
+			update: function (event, ui) {
+				var ids = [];
+				$('tbody.sortable').children('tr').map(function () {
+					ids.push($(this).data('attr-id'));
+				});
+				$.ajax({
+					'type': 'POST',
+					'url': $('tbody.sortable').data('sort-uri'),
+					'data': {order: ids, YII_CSRF_TOKEN: YII_CSRF_TOKEN},
+					'success': function (data) {
+						new OpenEyes.UI.Dialog.Alert({
+							content: 'Re-ordered'
+						}).open();
+					}
+				});
+
+			}
+		}).disableSelection();
+	});
+
 	handleButton($('#et_delete_ward'),function(e) {
 		e.preventDefault();
 
