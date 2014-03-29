@@ -149,6 +149,7 @@ class Element_OphTrOperationbookingTest extends CDbTestCase
 
 	public function testgetWardOptions_Girl()
 	{
+		$this->markTestSkipped('Needs to be fixed as part of OE-3308');
 		$theatre = ComponentStubGenerator::generate('OphTrOperationbooking_Operation_Theatre',
 				array('site_id' => 1));
 		$session = $this->getSessionForTheatre($theatre);
