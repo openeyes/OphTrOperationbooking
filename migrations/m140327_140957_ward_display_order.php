@@ -6,7 +6,7 @@ class m140327_140957_ward_display_order extends CDbMigration
 	{
 		$this->addColumn('ophtroperationbooking_operation_ward', 'display_order', 'integer');
 		// simple default setting for us
-		Yii::app()->db->createCommand('update ophtroperationbooking_operation_ward set display_order = id')->execute();
+		$this->dbConnection->createCommand('update ophtroperationbooking_operation_ward set display_order = id')->execute();
 	}
 
 	public function down()
