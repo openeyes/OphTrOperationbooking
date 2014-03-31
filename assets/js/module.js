@@ -1,4 +1,3 @@
-<?php
 /**
  * OpenEyes
  *
@@ -17,34 +16,48 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class OphTrOperationbookingEventController extends BaseEventTypeController
-{
-	/**
-	 * Return the open referral choices for the patient
-	 *
-	 * @return Referral[]
-	 */
-	public function getReferralChoices($element = null)
-	{
-		$criteria = new CdbCriteria();
-		$criteria->addCondition('patient_id = :pid');
-		$criteria->addCondition('closed_date is null');
-		$criteria->params = array('pid' => $this->patient->id);
+function updateRTTInfo(el) {
+	var show = false;
+	var cs, b;
 
-		// if the referral has been closed but is the selected referral for the event, needs to be part of the list
-		if ($element && $element->referral_id) {
-			$criteria->addCondition('id = :crid', 'OR');
-			$criteria->params[':crid'] = $element->referral_id;
+	var selectedVal = $(el).val();
+	$(el).find('option').each(function() {
+		if ($(this).attr('value') == selectedVal) {
+			cs = $(this).data('clock-start');
+			b = $(this).data('breach');
+			return false;
 		}
+	});
 
-		$criteria->order = 'received_date DESC';
-		return Referral::model()->findAll($criteria);
+	if (cs) {
+		$('#rtt-clock-start').html(cs);
+		show = true;
 	}
-
-	protected function beforeAction($action)
-	{
-		Yii::app()->clientScript->registerScriptFile($this->assetPath.'/js/module.js');
-
-		return parent::beforeAction($action);
+	else {
+		$('#rtt-clock-start').html('');
+	}
+	if (b) {
+		$('#rtt-breach').html(b);
+		show = true;
+	}
+	else {
+		$('#rtt-breach').html('');
+	}
+	if (show) {
+		$('#rtt-info').show();
+	}
+	else {
+		$('#rtt-info').hide();
 	}
 }
+
+
+
+$(document).ready(function() {
+	updateRTTInfo($('#Element_OphTrOperationbooking_Operation_referral_id'));
+	$('#Element_OphTrOperationbooking_Operation_referral_id').on('change', function() {
+		updateRTTInfo($(this));
+	});
+
+
+});
