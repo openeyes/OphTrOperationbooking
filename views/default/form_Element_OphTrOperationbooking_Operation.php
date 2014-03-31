@@ -51,7 +51,7 @@
 				<div class="large-2 column">
 					<label for="Element_OphTrOperationbooking_Operation_referral_id"><?= $element->getAttributeLabel('referral_id');?></label>
 				</div>
-				<div class="large-2 column">
+				<div class="large-4 column">
 					<?php
 					$html_options = array('options' => array(), 'empty' => '- No valid referral available -', 'nowrapper' => true);
 					$choices = $this->getReferralChoices();

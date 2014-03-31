@@ -80,12 +80,35 @@
 					<div class="large-2 column">
 						<?php echo CHtml::label('<strong>' . $operation->getAttributeLabel('referral_id') . ':</strong>', 'referral_id'); ?>
 					</div>
-					<div class="large-5 column end">
+					<?php
+					if ($operation->canChangeReferral()) {
+					?>
+						<div class="large-4 column ">
 						<?php
-							if ($operation->canChangeReferral()) {
-								echo CHtml::activedropDownList($operation, 'referral_id', CHtml::listData($this->getReferralChoices(),'id','description'),array('empty' => '- No valid referral available -'),false,array('field'=>2));
+							$html_options = array('options' => array(), 'empty' => '- No valid referral available -', 'nowrapper' => true);
+							$choices = $this->getReferralChoices();
+							foreach ($choices as $choice) {
+								if ($active_rtt = $choice->getActiveRTT()) {
+									if (count($active_rtt) == 1) {
+										$html_options['options'][(string) $choice->id] = array(
+												'data-clock-start' => Helper::convertDate2NHS($active_rtt[0]->clock_start),
+												'data-breach' => Helper::convertDate2NHS($active_rtt[0]->breach),
+										);
+									}
+								}
 							}
-							elseif ($operation->referral) {
+							echo CHtml::activedropDownList($operation, 'referral_id', CHtml::listData($this->getReferralChoices(),'id','description'),$html_options,false,array('field' => 2));
+						?>
+						</div>
+						<div class="large-4 column end">
+							<span id="rtt-info" class="rtt-info" style="display: none">Clock start - <span id="rtt-clock-start"></span> Breach - <span id="rtt-breach"></span></span>
+						</div>
+					<?php
+					} else {
+					?>
+						<div class="large-4 column end">
+					<?php
+							if ($operation->referral) {
 								echo $operation->referral->getDescription();
 							}
 							else {
@@ -93,6 +116,7 @@
 							}
 						?>
 					</div>
+					<?php } ?>
 				</div>
 			</div>
 		<?
