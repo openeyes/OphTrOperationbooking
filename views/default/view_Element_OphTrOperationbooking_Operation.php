@@ -80,7 +80,11 @@
 			<div class="large-6 column">
 				<h3 class="data-title">Referral</h3>
 				<div class="data-value"><?php if ($element->referral) { echo $element->referral->getDescription(); } else { echo "No Referral Set"; } ?></div>
+				<?php if ($rtt = $element->getRTT()) {?>
+					<div class="rtt-info">Clock Start - <?= Helper::convertDate2NHS($rtt->clock_start) ?> Breach: <?= Helper::convertDate2NHS($rtt->breach) ?></div>
+				<?php } ?>
 			</div>
+
 		<?php
 		}
 		?>

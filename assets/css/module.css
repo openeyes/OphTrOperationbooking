@@ -281,6 +281,12 @@ table.transport .status.Green {
   color: #888888;
   font-size: 0.9em;
 }
+/* line 51, ../sass/components/_event.scss */
+.event .rtt-info {
+  font-style: italic;
+  color: #888888;
+  font-size: 0.9em;
+}
 
 /* FIXME - this is old CSS. This will be refactored when we refactor the scheduling. */
 /* line 21, ../sass/components/_schedule-booking.scss */

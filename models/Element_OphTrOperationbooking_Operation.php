@@ -1098,6 +1098,14 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			$this->setStatus('Rescheduled', false);
 		} else {
 			$this->setStatus('Scheduled', false);
+			// Lock the RTT for this operation booking
+			if ($ref = $this->referral) {
+				if ($active = $ref->getActiveRTT()) {
+					if (count($active) == 1) {
+						$this->fixed_rtt_id = $active->id;
+					}
+				}
+			}
 		}
 
 		if (!$this->save()) {
@@ -1500,28 +1508,4 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		return null;
 	}
 
-	/**
-	 * Get the start date for this operation's pathway (if available)
-	 * @return null|string
-	 */
-	public function getClockStart()
-	{
-		if ($rtt = $this->getRTT()) {
-			return $rtt->clock_start;
-		}
-		return null;
-	}
-
-	/**
-	 * Get the breach date for this operation's pathway (if available)
-	 *
-	 * @return null|string
-	 */
-	public function getBreachDate()
-	{
-		if ($rtt = $this->getRTT()) {
-			return $rtt->breach_date;
-	}
-
-}
 }
