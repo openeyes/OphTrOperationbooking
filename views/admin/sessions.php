@@ -29,7 +29,7 @@ $sessions = $sessions['data'];
 			<?php echo CHtml::dropDownList('firm_id',@$_GET['firm_id'],Firm::model()->getListWithSpecialtiesAndEmergency(),array('empty'=>'- Firm -'))?>
 		</div>
 		<div class="large-2 column">
-			<?php echo CHtml::dropDownList('theatre_id',@$_GET['theatre_id'],CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->active()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Theatre -'))?>
+			<?php echo CHtml::dropDownList('theatre_id',@$_GET['theatre_id'],CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->active()->findAll(),'id','name'),array('empty'=>'- Theatre -'))?>
 		</div>
 		<div class="large-3 column">
 			<div class="row">
@@ -198,7 +198,7 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 	<div class="large-2 column">
 		<label for="">Theatre:</label>
 	</div>
-	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_theatre_id','',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->active()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Don\'t change -'))?>
+	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_theatre_id','',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->active()->findAll(),'id','name'),array('empty'=>'- Don\'t change -'))?>
 		<span class="error"></span>
 	</div>
 </div>

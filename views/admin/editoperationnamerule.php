@@ -31,7 +31,7 @@
 		)
 	))?>
 	<?php echo $form->errorSummary($rule); ?>
-	<?php echo $form->dropDownList($rule,'theatre_id',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->activeOrPk($rule->theatre_id)->findAll(array('order'=>'name')),'id','name'),array('style'=>'margin-bottom:6px;','empty'=>'- Theatre -'))?>
+	<?php echo $form->dropDownList($rule,'theatre_id','OphTrOperationbooking_Operation_Theatre',array('style'=>'margin-bottom:6px;','empty'=>'- Theatre -'))?>
 	<?php echo $form->textField($rule,'name')?>
 	<?php echo $form->errorSummary($rule); ?>
 	<?php echo $form->formActions();?>

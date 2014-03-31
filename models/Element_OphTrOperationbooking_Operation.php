@@ -499,7 +499,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		$days = array();
 		$sessiondata = array();
 
-		foreach (OphTrOperationbooking_Operation_Session::model()->active()->findAll($criteria) as $session) {
+		foreach (OphTrOperationbooking_Operation_Session::model()->findAll($criteria) as $session) {
 			$day = date('D',strtotime($session->date));
 
 			$sessiondata[$session->date][] = $session;
@@ -672,7 +672,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			$criteria->params[':siteId'] = $siteId;
 			$criteria->params[':r1'] = $genderRestrict;
 			$criteria->params[':r2'] = $ageRestrict;
-			$criteria->order = 't.name asc';
+			$criteria->order = 't.display_order asc';
 
 			$results = CHtml::listData(OphTrOperationbooking_Operation_Ward::model()->active()->findAll($criteria),'id','name');
 		}
@@ -752,7 +752,6 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 					'joinType' => 'JOIN',
 				),
 			))
-			->active()
 			->findAll($criteria) as $session) {
 
 			$available_time = $session->availableMinutes;

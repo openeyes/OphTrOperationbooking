@@ -27,7 +27,7 @@
  *
  */
 
-class OphTrOperationbooking_Operation_Cancellation_Reason extends BaseActiveRecordVersionedSoftDelete
+class OphTrOperationbooking_Operation_Cancellation_Reason extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -87,6 +87,13 @@ class OphTrOperationbooking_Operation_Cancellation_Reason extends BaseActiveReco
 		);
 	}
 
+	public function behaviors()
+	{
+		return array(
+			'LookupTable' => 'LookupTable',
+		);
+	}
+
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
@@ -113,6 +120,6 @@ class OphTrOperationbooking_Operation_Cancellation_Reason extends BaseActiveReco
 		$criteria->params[':listNo'] = $listNo;
 		$criteria->order = 'text asc';
 
-		return CHtml::listData(OphTrOperationbooking_Operation_Cancellation_Reason::model()->notDeleted()->findAll($criteria),'id','text');
+		return CHtml::listData(self::model()->active()->findAll($criteria),'id','text');
 	}
 }

@@ -17,5 +17,5 @@
  */
  ?>
 <fieldset class="element-fields">
-<?php echo $form->radioButtons($element, 'schedule_options_id', CHtml::listData(OphTrOperationbooking_ScheduleOperation_Options::model()->notDeletedOrPk($element->schedule_options_id)->findAll(array('order'=>'display_order asc')),'id','name'))?>
+<?php echo $form->radioButtons($element, 'schedule_options_id', 'OphTrOperationbooking_ScheduleOperation_Options')?>
 </fieldset>

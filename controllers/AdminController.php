@@ -686,7 +686,7 @@ class AdminController extends ModuleAdminController
 			if (!$rule->save()) {
 				$transaction->rollback();
 
-				$errors = $erod->getErrors();
+				$errors = $rule->getErrors();
 			} else {
 				Audit::add('admin','create',$rule->id,null,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Name_Rule'));
 
@@ -872,10 +872,10 @@ class AdminController extends ModuleAdminController
 		$page = @$_REQUEST['page'] ? $_REQUEST['page'] : 1;
 
 		if ($all) {
-			return OphTrOperationbooking_Operation_Sequence::model()->active()->findAll($criteria);
+			return OphTrOperationbooking_Operation_Sequence::model()->findAll($criteria);
 		}
 
-		$count = OphTrOperationbooking_Operation_Sequence::model()->active()->count($criteria);
+		$count = OphTrOperationbooking_Operation_Sequence::model()->count($criteria);
 		$pages = ceil($count/$this->sequences_items_per_page);
 
 		if ($page <1) $page = 1;
@@ -923,8 +923,8 @@ class AdminController extends ModuleAdminController
 		);
 
 		$this->items_per_page = $this->sessions_items_per_page;
-		$pagination = $this->initPagination(OphTrOperationbooking_Operation_Sequence::model()->active()->with($with), $criteria);
-		$data = OphTrOperationbooking_Operation_Sequence::model()->with($with)->active()->findAll($criteria);
+		$pagination = $this->initPagination(OphTrOperationbooking_Operation_Sequence::model()->with($with), $criteria);
+		$data = OphTrOperationbooking_Operation_Sequence::model()->with($with)->findAll($criteria);
 
 		return array(
 			'data' => $data,
@@ -961,7 +961,7 @@ class AdminController extends ModuleAdminController
 		if (!empty($_POST['sequence'])) {
 			$criteria = new CDbCriteria;
 			$criteria->addInCondition('id',$_POST['sequence']);
-			$sequences = OphTrOperationbooking_Operation_Sequence::model()->active()->findAll($criteria);
+			$sequences = OphTrOperationbooking_Operation_Sequence::model()->findAll($criteria);
 		} elseif (@$_POST['use_filters']) {
 			$sequences = $this->getSequences(true);
 		}
@@ -1227,10 +1227,10 @@ class AdminController extends ModuleAdminController
 		$page = @$_REQUEST['page'] ? $_REQUEST['page'] : 1;
 
 		if ($all) {
-			return OphTrOperationbooking_Operation_Session::model()->with('sequence')->active()->findAll($criteria);
+			return OphTrOperationbooking_Operation_Session::model()->with('sequence')->findAll($criteria);
 		}
 
-		$count = OphTrOperationbooking_Operation_Session::model()->with('sequence')->active()->count($criteria);
+		$count = OphTrOperationbooking_Operation_Session::model()->with('sequence')->count($criteria);
 		$pages = ceil($count/$this->sessions_items_per_page);
 
 		if ($page <1) $page = 1;
@@ -1277,8 +1277,8 @@ class AdminController extends ModuleAdminController
 		);
 
 		$this->items_per_page = $this->sessions_items_per_page;
-		$pagination = $this->initPagination(OphTrOperationbooking_Operation_Session::model()->active()->with($with), $criteria);
-		$data = OphTrOperationbooking_Operation_Session::model()->with($with)->active()->findAll($criteria);
+		$pagination = $this->initPagination(OphTrOperationbooking_Operation_Session::model()->with($with), $criteria);
+		$data = OphTrOperationbooking_Operation_Session::model()->with($with)->findAll($criteria);
 
 		return array(
 			'data' => $data,
@@ -1667,7 +1667,8 @@ class AdminController extends ModuleAdminController
 			$transaction = Yii::app()->db->beginTransaction('Delete','Theatres');
 
 			foreach ($theatres as $theatre) {
-				if (!$theatre->delete()) {
+				$theatre->active = false;
+				if (!$theatre->save()) {
 					throw new Exception("Unable to mark theatre deleted: ".print_r($theatre->getErrors(),true));
 				}
 				Audit::add('admin','delete',$_POST['theatre'],null,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Theatre'));
@@ -1774,6 +1775,34 @@ class AdminController extends ModuleAdminController
 		));
 	}
 
+	/**
+	 * Reorder the OphTrOperationbooking_Operation_Ward objects
+	 *
+	 * @throws Exception
+	 */
+	public function actionSortWards()
+	{
+		if (!empty($_POST['order'])) {
+			$transaction = Yii::app()->db->beginTransaction();
+			try {
+				foreach ($_POST['order'] as $i => $id) {
+					if ($ward = OphTrOperationbooking_Operation_Ward::model()->findByPk($id)) {
+						$ward->display_order = $i+1;
+						if (!$ward->save()) {
+							throw new Exception("Unable to save patient unavailable reason: " . print_r($ward->getErrors(),true));
+						}
+					}
+				}
+				Audit::add('admin', 'sort', serialize($_POST), false, array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Ward'));
+				$transaction->commit();
+			}
+			catch (Exception $e) {
+				$transaction->rollback();
+				throw $e;
+			}
+		}
+	}
+
 	public function actionViewSchedulingOptions()
 	{
 		$transaction = Yii::app()->db->beginTransaction('List','Scheduling options');
@@ -1814,7 +1843,8 @@ class AdminController extends ModuleAdminController
 			$transaction = Yii::app()->db->beginTransaction('Delete','Scheduling options');
 
 			foreach ($options as $option) {
-				if (!$option->delete()) {
+				$option->active = false;
+				if (!$option->save()) {
 					throw new Exception("Unable to delete scheduling option: ".print_r($option->getErrors(),true));
 				}
 				Audit::add('admin','delete',$option->id,false,array('module' => 'OphTrOperationbooking','model'=>'OphTrOperationbooking_ScheduleOperation_Options'));

@@ -27,6 +27,7 @@
  * @property string $directions
  * @property integer $restriction
  * @property string $code
+ * @property integer $display_order
  *
  * The followings are the available model relations:
  *
@@ -35,7 +36,7 @@
  *
  */
 
-class OphTrOperationbooking_Operation_Ward extends BaseActiveRecordVersionedSoftDelete
+class OphTrOperationbooking_Operation_Ward extends BaseActiveRecordVersioned
 {
 	const RESTRICTION_MALE = 1;
 	const RESTRICTION_FEMALE = 2;
@@ -60,6 +61,11 @@ class OphTrOperationbooking_Operation_Ward extends BaseActiveRecordVersionedSoft
 		return 'ophtroperationbooking_operation_ward';
 	}
 
+	public function defaultScope()
+	{
+		return array('order' => $this->getTableAlias(true, false) . '.name');
+	}
+
 	/**
 	 * @return array validation rules for model attributes.
 	 */
@@ -68,7 +74,7 @@ class OphTrOperationbooking_Operation_Ward extends BaseActiveRecordVersionedSoft
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('site_id, name, long_name, directions, theatre_id, code, restriction', 'safe'),
+			array('site_id, name, long_name, directions, theatre_id, code, restriction, display_order', 'safe'),
 			array('site_id, name', 'required'),
 			array('restriction', 'numerical', 'integerOnly'=>true),
 			array('site_id', 'length', 'max'=>10),
@@ -110,6 +116,13 @@ class OphTrOperationbooking_Operation_Ward extends BaseActiveRecordVersionedSoft
 			'restriction_child' => 'Children only',
 			'restriction_adult' => 'Adult only',
 			'restriction_observation' => 'Observation only',
+		);
+	}
+
+	public function behaviors()
+	{
+		return array(
+			'LookupTable' => 'LookupTable',
 		);
 	}
 

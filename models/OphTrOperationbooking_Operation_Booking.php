@@ -259,4 +259,24 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecordVersioned
 
 		return parent::afterValidate();
 	}
+
+	protected function afterSave()
+	{
+		Yii::app()->event->dispatch(
+			'OphTrOperationbooking_booking_after_save',
+			array(
+				'patient' => $this->operation->event->episode->patient,
+				'admission_date' => $this->session->date,
+				'admission_time' => $this->admission_time,
+				'firm' => $this->session->firm,
+				'site' => $this->ward->site,
+				'ward_code' => $this->ward->code,
+				'theatre_code' => $this->session->theatre->code,
+				'cancellation_date' => $this->booking_cancellation_date,
+				'new' => $this->isNewRecord,
+			)
+		);
+
+		parent::afterSave();
+	}
 }

@@ -39,7 +39,7 @@
 	<?php echo $form->textField($sequence,'start_time',array(),array(),array('field'=>2))?>
 	<?php echo $form->textField($sequence,'end_time',array(),array(),array('field'=>2))?>
 	<?php echo $form->textField($sequence,'default_admission_time',array(),array(),array('field'=>2))?>
-	<?php echo $form->dropDownList($sequence,'interval_id',CHtml::listData(OphTrOperationbooking_Operation_Sequence_Interval::model()->notDeletedOrPk($sequence->interval_id)->findAll(array('order'=>'name')),'id','name'))?>
+	<?php echo $form->dropDownList($sequence,'interval_id','OphTrOperationbooking_Operation_Sequence_Interval')?>
 	<?php echo $form->radioBoolean($sequence,'consultant')?>
 	<?php echo $form->radioBoolean($sequence,'paediatric')?>
 	<?php echo $form->radioBoolean($sequence,'anaesthetist')?>
@@ -76,7 +76,11 @@
 	<div class="field-row row">
 		<div class="large-10 large-offset-2 column">
 			<?php echo EventAction::button('Save', 'save', array('level'=>'save'))->toHtml()?>
-			<?php echo EventAction::button('Cancel', 'cancel', array('level' => 'cancel'))->toHtml()?>
+			<?php echo EventAction::link('Cancel',
+					Yii::app()->createUrl('OphTrOperationbooking/admin/viewSequences'),
+					array('level' => 'cancel')
+				)->toHtml();
+			?>
 			<?php if ($sequence->id) {?>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<?php echo EventAction::button('View sessions','view_sessions',array(),array('class'=>'button small'))->toHtml()?>

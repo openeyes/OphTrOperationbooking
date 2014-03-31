@@ -36,7 +36,7 @@
 	<?php echo $form->dropDownList($rule,'site_id',Site::model()->getListForCurrentInstitution('name'),array('empty'=>'- Not set -'))?>
 	<?php echo $form->dropDownList($rule,'firm_id',Firm::model()->getListWithSpecialties(),array('empty'=>'- Not set -'))?>
 	<?php echo $form->dropDownList($rule,'subspecialty_id',CHtml::listData(Subspecialty::model()->findAllByCurrentSpecialty(),'id','name'),array('empty'=>'- Not set -'))?>
-	<?php echo $form->dropDownList($rule,'theatre_id',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->activeOrPk($rule->theatre_id)->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Not set -'))?>
+	<?php echo $form->dropDownList($rule,'theatre_id','OphTrOperationbooking_Operation_Theatre',array('empty'=>'- Not set -'))?>
 	<?php echo $form->textField($rule,'refuse_telephone',array('size'=>20))?>
 	<?php echo $form->textField($rule,'refuse_title',array('size'=>90))?>
 	<?php echo $form->textField($rule,'health_telephone',array('size'=>90))?>

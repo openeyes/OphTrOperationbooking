@@ -40,7 +40,7 @@
  *
  */
 
-class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersionedSoftDelete
+class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -307,6 +307,26 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersionedS
 		}
 
 		return parent::beforeSave();
+	}
+
+	/**
+	 * Dissociate the session from cancelled bookings and ERODs before deletion
+	 */
+	protected function beforeDelete()
+	{
+		OphTrOperationbooking_Operation_Booking::model()->updateAll(
+			array('session_id' => null),
+			'session_id = :session_id and booking_cancellation_date is not null',
+			array(':session_id' => $this->id)
+		);
+
+		Ophtroperationbooking_Operation_EROD::model()->updateAll(
+			array('session_id' => null),
+			'session_id = :session_id',
+			array(':session_id' => $this->id)
+		);
+
+		return parent::beforeDelete();
 	}
 
 	/**
