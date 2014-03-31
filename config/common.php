@@ -72,6 +72,6 @@ return array(
 		// whether referrals can be assigned to operation bookings or not (turn off if you don't have referrals imported
 		// or set on the patient record.
 		'ophtroperationbooking_referral_link' => true
-
+		'ophtroperationbooking_schedulerequiresreferral' => true
 	)
 );
