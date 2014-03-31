@@ -69,5 +69,9 @@ return array(
 		'erod_lead_current_date_days' => 2,
 		// number of weeks from decision date that is the RTT limit
 		'ophtroperationboooking_rtt_limit' => 6,
+		// whether referrals can be assigned to operation bookings or not (turn off if you don't have referrals imported
+		// or set on the patient record.
+		'ophtroperationbooking_referral_link' => false
+
 	)
 );

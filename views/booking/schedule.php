@@ -72,27 +72,32 @@
 			</div>
 		<?php }?>
 
-		<div class="eventDetail">
-			<div class="row field-row">
-				<div class="large-2 column">
-					<?php echo CHtml::label('<strong>' . $operation->getAttributeLabel('referral_id') . ':</strong>', 'referral_id'); ?>
-				</div>
-				<div class="large-5 column end">
-					<?php
-						if ($operation->canChangeReferral()) {
-							echo CHtml::activedropDownList($operation, 'referral_id', CHtml::listData($this->getReferralChoices(),'id','description'),array('empty' => '- No valid referral available -'),false,array('field'=>2));
-						}
-						elseif ($operation->referral) {
-							echo $operation->referral->getDescription();
-						}
-						else {
-							echo "No referral was set.";
-						}
-					?>
+		<?php
+		if (Yii::app()->params['ophtroperationbooking_referral_link']) {
+		?>
+			<div class="eventDetail">
+				<div class="row field-row">
+					<div class="large-2 column">
+						<?php echo CHtml::label('<strong>' . $operation->getAttributeLabel('referral_id') . ':</strong>', 'referral_id'); ?>
+					</div>
+					<div class="large-5 column end">
+						<?php
+							if ($operation->canChangeReferral()) {
+								echo CHtml::activedropDownList($operation, 'referral_id', CHtml::listData($this->getReferralChoices(),'id','description'),array('empty' => '- No valid referral available -'),false,array('field'=>2));
+							}
+							elseif ($operation->referral) {
+								echo $operation->referral->getDescription();
+							}
+							else {
+								echo "No referral was set.";
+							}
+						?>
+					</div>
 				</div>
 			</div>
-		</div>
-
+		<?
+		}
+		?>
 		<?php
 			$initial_erod = ($operation->firstBooking) ? $operation->firstBooking->erod : null;
 			$erod = $operation->calculateEROD($firm);

@@ -74,10 +74,16 @@
 
 <section class="element element-data">
 	<div class="row">
-		<div class="large-6 column">
-			<h3 class="data-title">Referral</h3>
-			<div class="data-value"><?php if ($element->referral) { echo $element->referral->getDescription(); } else { echo "No Referral Set"; } ?></div>
-		</div>
+		<?php
+		if (Yii::app()->params['ophtroperationbooking_referral_link']) {
+		?>
+			<div class="large-6 column">
+				<h3 class="data-title">Referral</h3>
+				<div class="data-value"><?php if ($element->referral) { echo $element->referral->getDescription(); } else { echo "No Referral Set"; } ?></div>
+			</div>
+		<?php
+		}
+		?>
 		<div class="large-6 column">
 			<?php if (!empty($element->comments_rtt)) { ?>
 				<h3 class="data-title">Operation RTT Comments</h3>

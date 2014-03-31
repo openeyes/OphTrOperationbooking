@@ -33,6 +33,7 @@
  * @property string $comments
  * @property string $comments_rtt
  * @property integer $referral_id
+ * @property integer $rtt_id
  *
  * The followings are the available model relations:
  *
@@ -46,7 +47,9 @@
  * @property AnaestheticType $anaesthetic_type
  * @property Site $site
  * @property Element_OphTrOperationbooking_Operation_Priority $priority
- * @property Referral $referal
+ * @property Referral $refferal
+ * @property RTT $fixed_rtt - Because the active referral can change over time, we lock the operation booking to a specific RTT at the time of booking.
+ *
  */
 
 class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
@@ -136,6 +139,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			'firstBooking' => array(self::HAS_ONE, 'OphTrOperationbooking_Operation_Booking', 'element_id', 'order' => 'created_date ASC'),
 			'allBookings'  => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Booking', 'element_id'),
 			'referral' => array(self::BELONGS_TO, 'Referral', 'referral_id'),
+			'fixed_rtt' => array(self::BELONGS_TO, 'RTT', 'rtt_id'),
 		);
 	}
 
@@ -157,7 +161,8 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			'decision_date' => 'Decision date',
 			'comments' => 'Add comments',
 			'comments_rtt' => 'Add RTT comments',
-			'referral_id' => 'Referral'
+			'referral_id' => 'Referral',
+			'rtt_id' => 'RTT'
 		);
 	}
 
@@ -1475,4 +1480,48 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			}
 		}
 	}
+
+	/**
+	 * returns the RTT for the operation booking if there is one available
+	 *
+	 * @return RTT|null
+	 */
+	public function getRTT()
+	{
+		if ($this->fixed_rtt) {
+			return $this->fixed_rtt;
+		}
+		elseif ($ref = $this->referral) {
+			$rtts = $ref->getActiveRTT();
+			if (count($rtts) == 1) {
+				return $rtts[0];
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Get the start date for this operation's pathway (if available)
+	 * @return null|string
+	 */
+	public function getClockStart()
+	{
+		if ($rtt = $this->getRTT()) {
+			return $rtt->clock_start;
+		}
+		return null;
+	}
+
+	/**
+	 * Get the breach date for this operation's pathway (if available)
+	 *
+	 * @return null|string
+	 */
+	public function getBreachDate()
+	{
+		if ($rtt = $this->getRTT()) {
+			return $rtt->breach_date;
+	}
+
+}
 }
