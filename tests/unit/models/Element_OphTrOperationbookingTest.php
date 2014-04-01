@@ -450,6 +450,45 @@ class Element_OphTrOperationbookingTest extends CDbTestCase
 		$op->setStatus('Invalid Test Status');
 	}
 
+	public function testgetRTT_fixed()
+	{
+		$test = new Element_OphTrOperationbooking_Operation();
+		$fxd_rtt = new RTT();
 
+		$referral = ComponentStubGenerator::generate('Referral', array(
+						'activeRTT' => array(new RTT())
+				));
+		$test->fixed_rtt = $fxd_rtt;
+		$test->referral = $referral;
 
+		$this->assertSame($fxd_rtt, $test->getRTT());
+	}
+
+	public function testgetRTT_referral1Active()
+	{
+		$test = new Element_OphTrOperationbooking_Operation();
+
+		$active_rtt = array(new RTT());
+
+		$referral = ComponentStubGenerator::generate('Referral', array(
+						'activeRTT' => $active_rtt
+				));
+		$test->referral = $referral;
+
+		$this->assertSame($active_rtt[0], $test->getRTT());
+	}
+
+	public function testgetRTT_referral2Active()
+	{
+		$test = new Element_OphTrOperationbooking_Operation();
+
+		$active_rtt = array(new RTT(), new RTT());
+
+		$referral = ComponentStubGenerator::generate('Referral', array(
+						'activeRTT' => $active_rtt
+				));
+		$test->referral = $referral;
+
+		$this->assertNull($test->getRTT());
+	}
 }
