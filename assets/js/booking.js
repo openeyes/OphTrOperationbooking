@@ -186,7 +186,7 @@ function OphTrOperationbooking_PatientUnavailable_getNextKey() {
 	if (v >= 0) {
 		return v+1;
 	}
-	return 1;
+	return 0;
 }
 
 function OphTrOperationbooking_PatientUnavailable_add() {
