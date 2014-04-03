@@ -28,5 +28,6 @@ return array(
 		'session_start_time' => '08:00:00',
 		'session_end_time' => '13:00:00',
 		'session_theatre_id' => 1,
+		'ward_id' => 1,
 	)
 );

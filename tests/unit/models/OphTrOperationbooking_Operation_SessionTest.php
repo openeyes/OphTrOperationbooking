@@ -20,6 +20,7 @@ class OphTrOperationbooking_Operation_SessionTest extends CDbTestCase
 		'erod' => 'OphTrOperationbooking_Operation_EROD',
 		'op' => 'Element_OphTrOperationbooking_Operation',
 		'session' => 'OphTrOperationbooking_Operation_Session',
+		'ward' => 'OphTrOperationbooking_Operation_Ward',
 	);
 
 	protected function assertPreConditons()
