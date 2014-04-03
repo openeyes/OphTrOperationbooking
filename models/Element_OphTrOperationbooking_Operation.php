@@ -284,6 +284,26 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		return parent::afterValidate();
 	}
 
+	/**
+	 * Wrapper function to get the element patient
+	 *
+	 * @return null|Patient
+	 */
+	public function getPatient()
+	{
+		return $this->event->episode->patient;
+	}
+
+	/**
+	 * Wrapper function to get the element firm
+	 *
+	 * @return Firm
+	 */
+	public function getFirm()
+	{
+		return $this->event->episode->firm;
+	}
+
 	public static function getLetterOptions()
 	{
 		return array(
@@ -309,12 +329,15 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 
 	public function getHas_gp()
 	{
-		return ($this->getDueLetter() != self::LETTER_GP || ($this->event->episode->patient->practice && $this->event->episode->patient->practice->contact->address));
+		return ($this->getDueLetter() != self::LETTER_GP || ($this->getPatient()->practice && $this->getPatient()->practice->contact->address));
 	}
 
 	public function getHas_address()
 	{
-		return (bool) $this->event->episode->patient->contact->correspondAddress;
+		if ($patient = $this->getPatient()) {
+			return (bool) $patient->contact->correspondAddress;
+		}
+		return false;
 	}
 
 	public function getLastLetter()
@@ -668,7 +691,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 
 		if (empty($results)) {
 			// otherwise select by site and patient age/gender
-			$patient = $this->event->episode->patient;
+			$patient = $this->getPatient();
 			$genderRestrict = $ageRestrict = 0;
 			$genderRestrict = ('M' == $patient->gender) ? OphTrOperationbooking_Operation_Ward::RESTRICTION_MALE : OphTrOperationbooking_Operation_Ward::RESTRICTION_FEMALE;
 			$ageRestrict = ($patient->isChild($session->date)) ? OphTrOperationbooking_Operation_Ward::RESTRICTION_CHILD : OphTrOperationbooking_Operation_Ward::RESTRICTION_ADULT;
@@ -714,7 +737,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		}
 
 		// child conditions
-		$patient = $this->event->episode->patient;
+		$patient = $this->getPatient();
 		if ($patient->isChild()) {
 			// need to get the point at which patient becomes an adult. All sessions up to that point need the pediatric flag
 			$criteria->params[':adult_date'] = $patient->getBecomesAdultDate();
@@ -722,7 +745,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		}
 
 		// if their are firms that are set for the subspecialty of the episode, use their sessions
-		if ($rule = OphTrOperationbooking_Operation_EROD_Rule::model()->find('subspecialty_id=?',array($this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty_id))) {
+		if ($rule = OphTrOperationbooking_Operation_EROD_Rule::model()->find('subspecialty_id=?',array($this->getFirm()->getSubspecialtyID()))) {
 			$firm_ids = array();
 			foreach ($rule->items as $item) {
 				if ($item->item_type == 'firm') {
@@ -924,7 +947,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 	{
 		$properties['event_id'] = $this->event_id;
 		$properties['episode_id'] = $this->event->episode_id;
-		$properties['patient_id'] = $this->event->episode->patient_id;
+		$properties['patient_id'] = $this->getPatient()->id;
 
 		return parent::audit($target, $action, $data, $log, $properties);
 	}
@@ -1217,7 +1240,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		$subspecialty_id = $this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty_id;
 		$theatre_id = $this->booking->session->theatre_id;
 		$firm_id = $this->booking->session->firm_id;
-		$is_child = $this->event->episode->patient->isChild($this->booking->session->date);
+		$is_child = $this->getPatient()->isChild($this->booking->session->date);
 
 		$criteria = new CDbCriteria;
 		$criteria->addCondition('parent_rule_id is null');
@@ -1237,7 +1260,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		$site_id = $this->site->id;
 		$service_id = $this->event->episode->firm->serviceSubspecialtyAssignment->service_id;
 		$firm_id = $this->event->episode->firm_id;
-		$is_child = $this->event->episode->patient->isChild();
+		$is_child = $this->getPatient()->isChild();
 
 		$criteria = new CDbCriteria;
 		$criteria->addCondition('parent_rule_id is null');
@@ -1261,14 +1284,14 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 	public function getTextOperationName()
 	{
 		if ($rule = OphTrOperationbooking_Operation_Name_Rule::model()->find('theatre_id=?',array($this->booking->session->theatre_id))) {
-			return $this->event->episode->patient->childPrefix.$rule->name;
+			return $this->getPatient()->childPrefix.$rule->name;
 		}
 
 		if ($rule = OphTrOperationbooking_Operation_Name_Rule::model()->find('theatre_id is null')) {
-			return $this->event->episode->patient->childPrefix.$rule->name;
+			return $this->getPatient()->childPrefix.$rule->name;
 		}
 
-		return $this->event->episode->patient->childPrefix.'operation';
+		return $this->getPatient()->childPrefix.'operation';
 	}
 
 	public function confirmLetterPrinted($confirmto = null, $confirmdate = null)
@@ -1483,7 +1506,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			if (!$referral = Referral::model()->findByPk($referral_id)) {
 				throw new Exception('Invalid referral id set on ' . get_class($this));
 			}
-			if ($referral->patient_id != $this->event->episode->patient_id) {
+			if ($referral->patient_id != $this->getPatient()->id) {
 				$this->addError($attribute, "Referral must be for the patient of the event");
 			}
 		}

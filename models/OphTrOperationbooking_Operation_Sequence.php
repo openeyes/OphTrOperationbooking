@@ -26,7 +26,6 @@
  * @property time $start_time
  * @property time $end_time
  * @property date $end_date
- * @property integer $theatre_id
  *
  * The followings are the available model relations:
  *

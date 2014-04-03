@@ -17,20 +17,20 @@
 class Element_OphTrOperationbookingTest extends CDbTestCase
 {
 	public $fixtures = array(
+			'subspecialties' => 'Subspecialty',
+			'ssa' => 'ServiceSubspecialtyAssignment',
+			'firms' => 'Firm',
 			'wards' => 'OphTrOperationbooking_Operation_Ward',
 			'patients' => 'Patient',
 			'referral_types' => 'ReferralType',
 			'referrals' => 'Referral',
-			'statuses' => 'OphTrOperationbooking_Operation_Status'
+			'statuses' => 'OphTrOperationbooking_Operation_Status',
+			'sequences' => 'OphTrOperationbooking_Operation_Sequence',
+			'sessions' => 'OphTrOperationbooking_Operation_Session',
 	);
 
 	public static function setUpBeforeClass(){
 		date_default_timezone_set('UTC');
-		self::getFixtureManager()->basePath = Yii::getPathOfAlias( 'application.modules.ophtroperationbooking.tests.fixtures' );
-	}
-
-	static function tearDownAfterClass(){
-		self::getFixtureManager()->basePath = Yii::getPathOfAlias( 'application.tests.fixtures' );
 	}
 
 	public function setUp()
@@ -194,6 +194,8 @@ class Element_OphTrOperationbookingTest extends CDbTestCase
 		$booking = ComponentStubGenerator::generate('OphTrOperationbooking_Operation_Booking', array('session' => $session));
 
 		$op = $this->getOperationForPatient($this->getMalePatient());
+		//in case configured to require referral for scheduling
+		$op->referral = new Referral();
 		$op_opts = $this->getMockBuilder('Element_OphTrOperationbooking_ScheduleOperation')
 				->disableOriginalConstructor()
 				->setMethods(array('isPatientAvailable'))
@@ -286,6 +288,8 @@ class Element_OphTrOperationbookingTest extends CDbTestCase
 		$session->expects($this->once())
 			->method('save')
 			->will($this->returnValue(true));
+
+		$session->firm = new Firm();
 
 		$booking->session = $session;
 
@@ -491,4 +495,112 @@ class Element_OphTrOperationbookingTest extends CDbTestCase
 
 		$this->assertNull($test->getRTT());
 	}
+
+	public function getCalculateERODTestCases()
+	{
+		return array(
+			array(array(
+					'consultant_required' => false,
+					'anaesthetist_required' => false,
+					'anaesthetic_type' => ComponentStubGenerator::generate('AnaestheticType', array('code' => 'X')),
+					'decision_date' => date('Y-m-d', strtotime('+5 days'))
+				),
+				$this->getMalePatient(),
+				'firm1',
+				'session4',
+				'Check decision date affects which session is picked'
+			),
+				array(array(
+						'consultant_required' => false,
+						'anaesthetist_required' => false,
+						'anaesthetic_type' => ComponentStubGenerator::generate('AnaestheticType', array('code' => 'X')),
+						'decision_date' => date('Y-m-d', strtotime('-3 weeks'))
+				),
+						$this->getMalePatient(),
+						'firm1',
+						'session2',
+						'Short notice restriction on EROD'
+				),
+				array(array(
+						'consultant_required' => false,
+						'anaesthetist_required' => false,
+						'anaesthetic_type' => ComponentStubGenerator::generate('AnaestheticType', array('code' => 'X')),
+						'decision_date' => date('Y-m-d', strtotime('-3 weeks'))
+				),
+						$this->getMalePatient(),
+						'firm2',
+						'session10',
+						'Short notice different firm'
+				),
+			array(array(
+					'consultant_required' => true,
+					'anaesthetist_required' => false,
+					'anaesthetic_type' => ComponentStubGenerator::generate('AnaestheticType', array('code' => 'X')),
+					'decision_date' => date('Y-m-d', strtotime('-1 day'))
+			),
+					$this->getMalePatient(),
+					'firm1',
+					'session5',
+					'Consultant impacting which session is picked'
+			),
+			array(array(
+					'consultant_required' => false,
+					'anaesthetist_required' => true,
+					'anaesthetic_type' => ComponentStubGenerator::generate('AnaestheticType', array('code' => 'X')),
+					'decision_date' => date('Y-m-d', strtotime('-1 day'))
+			),
+					$this->getMalePatient(),
+					'firm1',
+					'session7',
+					'Anaethetist impacting which session is picked'
+			),
+				array(array(
+						'consultant_required' => false,
+						'anaesthetist_required' => false,
+						'anaesthetic_type' => ComponentStubGenerator::generate('AnaestheticType', array('code' => 'GA')),
+						'decision_date' => date('Y-m-d', strtotime('-1 day'))
+				),
+						$this->getMalePatient(),
+						'firm1',
+						'session7',
+						'GA anaesthetic impacting which session is picked'
+				),
+		);
+	}
+
+	/**
+	 * @dataProvider getCalculateERODTestCases
+	 */
+	public function testcalculateEROD($op_properties, $patient, $firm_key, $expected_erod_session_key, $description)
+	{
+		$test = $this->getMockBuilder('Element_OphTrOperationbooking_Operation')
+				->disableOriginalConstructor()
+				->setMethods(array('getPatient', 'getFirm'))
+				->getMock();
+
+		foreach ($op_properties as $k => $v) {
+			$test->$k = $v;
+		}
+
+		// the element firm is only used for retrieving EROD rules, which we aren't testing at the moment
+		$test->expects($this->any())
+			->method('getFirm')
+			->will($this->returnValue($this->firms($firm_key)));
+
+		$test->expects($this->any())
+			->method('getPatient')
+			->will($this->returnValue($patient));
+
+		$calculated = $test->calculateEROD($this->firms($firm_key));
+
+		if ($expected_erod_session_key) {
+			$this->assertNotNull($calculated, $description . " should return an EROD");
+			$this->assertEquals('OphTrOperationbooking_Operation_EROD', get_class($calculated), $description . " not returning EROD");
+			$this->assertEquals($this->sessions($expected_erod_session_key)->id, $calculated->session_id, $description . " - incorrect session picked for EROD");
+		}
+		else {
+			$this->assertNull($calculated, $description . " should not have an EROD");
+		}
+	}
+
 }
