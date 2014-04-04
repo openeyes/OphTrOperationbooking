@@ -16,6 +16,9 @@
 class OphTrOperationbooking_Operation_SessionTest extends CDbTestCase
 {
 	protected $fixtures = array(
+		'Patient',
+		'Episode',
+		'Event',
 		'booking' => 'OphTrOperationbooking_Operation_Booking',
 		'erod' => 'OphTrOperationbooking_Operation_EROD',
 		'op' => 'Element_OphTrOperationbooking_Operation',
