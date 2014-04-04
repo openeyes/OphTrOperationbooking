@@ -86,7 +86,7 @@
 						<th>Firm:</th>
 						<th>Next letter due:</th>
 						<th>Site:</th>
-						<th>Hospital no:</th>
+						<th><?php echo Patient::model()->getAttributeLabel('hos_num')?>:</th>
 						<th>&nbsp;</th>
 					</tr>
 					</thead>

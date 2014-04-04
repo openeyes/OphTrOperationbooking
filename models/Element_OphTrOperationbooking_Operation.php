@@ -635,9 +635,14 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 
 		if (empty($results)) {
 			// otherwise select by site and patient age/gender
+
+			if (!$patient->gender) {
+				throw new Exception("Unable to set ward restrictions as patient gender is unknown");
+			}
+
 			$patient = $this->event->episode->patient;
 			$genderRestrict = $ageRestrict = 0;
-			$genderRestrict = ('M' == $patient->gender) ? OphTrOperationbooking_Operation_Ward::RESTRICTION_MALE : OphTrOperationbooking_Operation_Ward::RESTRICTION_FEMALE;
+			$genderRestrict = ($patient->gender->name == 'Male') ? OphTrOperationbooking_Operation_Ward::RESTRICTION_MALE : OphTrOperationbooking_Operation_Ward::RESTRICTION_FEMALE;
 			$ageRestrict = ($patient->isChild($session->date)) ? OphTrOperationbooking_Operation_Ward::RESTRICTION_CHILD : OphTrOperationbooking_Operation_Ward::RESTRICTION_ADULT;
 
 			$criteria = new CDbCriteria;

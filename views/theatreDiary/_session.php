@@ -94,7 +94,7 @@
 						<tr>
 							<th>Admit time</th>
 							<th class="th_sort diaryEditMode" data-id="<?php echo $session->id?>" style="display: none;">Sort</th>
-							<th>Hospital #</th>
+							<th><?php echo Patient::model()->getAttributeLabel('hos_num')?></th>
 							<th>Confirmed</th>
 							<th>Patient (Age)</th>
 							<th>[Eye] Operation</th>
@@ -123,10 +123,12 @@
 									<td class="anesthetic"><?php echo $booking->operation->anaesthetic_type->name?></td>
 									<td class="ward"><?php echo $booking->ward ? $booking->ward->name : 'None'?></td>
 									<td class="alerts">
-										<?php if ($booking->operation->event->episode->patient->gender == 'M') {?>
-											<img src="<?php echo $assetPath?>/img/diaryIcons/male.png" alt="male" title="male" width="17" height="17" />
-										<?php } else {?>
-											<img src="<?php echo $assetPath?>/img/diaryIcons/female.png" alt="female" title="female" width="17" height="17" />
+										<?php if ($booking->operation->event->episode->patient->gender) {?>
+											<?php if ($booking->operation->event->episode->patient->gender->name == 'Male') {?>
+												<img src="<?php echo $assetPath?>/img/diaryIcons/male.png" alt="male" title="male" width="17" height="17" />
+											<?php } else {?>
+												<img src="<?php echo $assetPath?>/img/diaryIcons/female.png" alt="female" title="female" width="17" height="17" />
+											<?php }?>
 										<?php }?>
 										<?php if ($warnings = $booking->operation->event->episode->patient->getWarnings()) {
 											$msgs = array();

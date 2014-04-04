@@ -27,6 +27,6 @@
 	<?php if ($patient->nhsnum) { ?><br/> NHS Number: <?php echo $patient->nhsnum; } ?>
 	<?php if (@$patient_ref) { ?>
 	<br /><?php echo $patient->getLetterAddress(array('delimiter' => ', '))?>
-	<br />DOB: <?php echo $patient->NHSDate('dob') ?>, <?php echo ($patient->gender == 'M') ? 'Male' : 'Female'; ?>
+	<br />DOB: <?php echo $patient->NHSDate('dob') ?>, <?php echo ($patient->gender ? $patient->gender->name : 'Gender unknown')?>
 	<?php } ?></strong>
 </p>

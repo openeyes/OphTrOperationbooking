@@ -39,7 +39,7 @@
 					<td><strong><?php echo strtoupper($booking->operation->event->episode->patient->last_name) ?></strong>, <?php echo $booking->operation->event->episode->patient->first_name?></td>
 					<td><?php echo $booking->operation->event->episode->patient->NHSDate('dob')?></td>
 					<td><?php echo $booking->operation->event->episode->patient->age?></td>
-					<td><?php echo $booking->operation->event->episode->patient->gender?></td>
+					<td><?php echo $booking->operation->event->episode->patient->gender ? $booking->operation->event->episode->patient->gender->name : 'Gender unknown'?></td>
 					<td><?php echo $booking->NHSDate('session_date')?></td>
 					<td><?php echo $booking->ward ? $booking->ward->name : 'None'?></td>
 					<td><?php echo $booking->session->firm->pas_code?></td>
