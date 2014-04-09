@@ -265,6 +265,7 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecord
 			'OphTrOperationbooking_booking_after_save',
 			array(
 				'patient' => $this->operation->event->episode->patient,
+				'decision_date' => $this->operation->decision_date,
 				'admission_date' => $this->session->date,
 				'admission_time' => $this->admission_time,
 				'firm' => $this->session->firm,
