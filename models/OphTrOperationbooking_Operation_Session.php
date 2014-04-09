@@ -59,6 +59,11 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 	}
 
 	/**
+	 * @var OphTrOperationbooking_BookingHelper
+	 */
+	public $helper;
+
+	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
@@ -77,6 +82,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 			array('sequence_id, date, start_time, end_time, theatre_id', 'required'),
 			array('sequence_id, theatre_id', 'length', 'max' => 10),
 			array('unavailablereason_id', 'validateRequiredIfAttrMatches', 'match_attr' => 'available', 'match_val' => false, 'message' => 'unavailable reason required if session unavailable.'),
+			array('max_procedures', 'numerical', 'integerOnly' => true, 'min' => 1),
 			array('comments, available, unavailablereason_id, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id, theatre_id, start_time, end_time, deleted, default_admission_time', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
@@ -187,18 +193,17 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 			));
 	}
 
-	protected $_helper;
-
 	/**
 	 * Wrapper for getting the helper class
 	 *
 	 * @return OphTrOperationbooking_BookingHelper
 	 */
-	public function getHelper() {
-		if (!$this->_helper) {
-			$this->_helper = new OphTrOperationbooking_BookingHelper();
+	public function getHelper()
+	{
+		if (!isset($this->helper)) {
+			$this->helper = new OphTrOperationbooking_BookingHelper;
 		}
-		return $this->_helper;
+		return $this->helper;
 	}
 
 	public function getDuration()
@@ -388,6 +393,13 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		}
 
 		return parent::beforeValidate();
+	}
+
+	public function afterValidate()
+	{
+		if ($this->max_procedures && !$this->hasErrors('max_procedures') && $this->max_procedures < $this->getBookedProcedureCount()) {
+			$this->addError('max_procedures', 'Max procedures cannot be lower than existing number of procedures booked into session');
+		}
 	}
 
 	protected function beforeSave()

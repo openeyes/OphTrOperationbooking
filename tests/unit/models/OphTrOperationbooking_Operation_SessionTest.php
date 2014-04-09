@@ -16,8 +16,9 @@
 class OphTrOperationbooking_Operation_SessionTest  extends CDbTestCase
 {
 	public $fixtures = array(
-			'wards' => 'OphTrOperationbooking_Operation_Ward',
-			'theatres' =>  'OphTrOperationbooking_Operation_Theatre'
+		'theatres' =>  'OphTrOperationbooking_Operation_Theatre',
+		'seq' => 'OphTrOperationbooking_Operation_Sequence',
+		'wards' => 'OphTrOperationbooking_Operation_Ward',
 	);
 
 	static public function setupBeforeClass()
@@ -226,5 +227,36 @@ class OphTrOperationbooking_Operation_SessionTest  extends CDbTestCase
 		$this->assertCount(2, $warnings);
 	}
 
+	public function testMaxProceduresCannotBeLessThanExistingBookings()
+	{
+		$sess = new OphTrOperationbooking_Operation_Session;
+		$sess->sequence_id = $this->seq('sequence1')->id;
+		$sess->theatre_id = $this->theatres('th1')->id;
+		$sess->date = date('Y-m-d');
+		$sess->start_time = '10:00:00';
+		$sess->end_time = '11:00:00';
 
+		$sess->helper = $this->getMockBuilder('Ophtroperationbooking_Bookinghelper')->disableOriginalConstructor()->getMock();
+		$sess->helper->expects($this->any())->method('checkSessionCompatibleWithOperation')->will($this->returnValue(array()));
+
+		$bookings = array();
+		for ($n = 1; $n <= 3; $n++) {
+			$bookings[] = ComponentStubGenerator::generate(
+				'OphTrOperationbooking_Operation_Booking',
+				array(
+					'operation' => ComponentStubGenerator::generate('Element_OphTrOperationbooking_Operation'),
+					'procedureCount' => $n,
+				)
+			);
+		}
+		$sess->activeBookings = $bookings;
+
+		$sess->max_procedures = 5;
+
+		$this->assertFalse($sess->save());
+		$this->assertEquals(
+			array('max_procedures' => array('Max procedures cannot be lower than existing number of procedures booked into session')),
+			$sess->getErrors()
+		);
+	}
 }
