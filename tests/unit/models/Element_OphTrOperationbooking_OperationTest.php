@@ -165,8 +165,8 @@ class Element_OphTrOperationbooking_OperationTest extends CDbTestCase
 		$res = $op->getWardOptions($session);
 
 		$expected = array(
-				$this->wards('ward6')->id => $this->wards('ward6')->name,
 				$this->wards('ward3')->id => $this->wards('ward3')->name,
+				$this->wards('ward6')->id => $this->wards('ward6')->name,
 				);
 		$this->assertOrderedAssocArrayEqual($expected,$res);
 	}
