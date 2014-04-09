@@ -27,6 +27,7 @@
  * @property string $directions
  * @property integer $restriction
  * @property string $code
+ * @property integer $display_order
  *
  * The followings are the available model relations:
  *
@@ -68,7 +69,7 @@ class OphTrOperationbooking_Operation_Ward extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('site_id, name, long_name, directions, theatre_id, code, restriction', 'safe'),
+			array('site_id, name, long_name, directions, theatre_id, code, restriction, display_order', 'safe'),
 			array('site_id, name', 'required'),
 			array('restriction', 'numerical', 'integerOnly'=>true),
 			array('site_id', 'length', 'max'=>10),
