@@ -1125,7 +1125,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			if ($ref = $this->referral) {
 				if ($active = $ref->getActiveRTT()) {
 					if (count($active) == 1) {
-						$this->fixed_rtt_id = $active->id;
+						$this->rtt_id = $active[0]->id;
 					}
 				}
 			}

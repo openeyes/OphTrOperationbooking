@@ -13,20 +13,22 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-//TODO: rename this to Element_OphTrOperationbooking_OperationTest
-class Element_OphTrOperationbookingTest extends CDbTestCase
+class Element_OphTrOperationbooking_OperationTest extends CDbTestCase
 {
 	public $fixtures = array(
-			'subspecialties' => 'Subspecialty',
-			'ssa' => 'ServiceSubspecialtyAssignment',
-			'firms' => 'Firm',
-			'wards' => 'OphTrOperationbooking_Operation_Ward',
-			'patients' => 'Patient',
-			'referral_types' => 'ReferralType',
-			'referrals' => 'Referral',
-			'statuses' => 'OphTrOperationbooking_Operation_Status',
-			'sequences' => 'OphTrOperationbooking_Operation_Sequence',
-			'sessions' => 'OphTrOperationbooking_Operation_Session',
+		'episode' => 'Episode',
+		'event' => 'Event',
+		'subspecialties' => 'Subspecialty',
+		'ssa' => 'ServiceSubspecialtyAssignment',
+		'firms' => 'Firm',
+		'wards' => 'OphTrOperationbooking_Operation_Ward',
+		'patients' => 'Patient',
+		'referral_types' => 'ReferralType',
+		'referrals' => 'Referral',
+		'rtt' => 'RTT',
+		'statuses' => 'OphTrOperationbooking_Operation_Status',
+		'sequences' => 'OphTrOperationbooking_Operation_Sequence',
+		'sessions' => 'OphTrOperationbooking_Operation_Session',
 	);
 
 	public static function setUpBeforeClass(){
@@ -332,6 +334,52 @@ class Element_OphTrOperationbookingTest extends CDbTestCase
 		// reset params
 		Yii::app()->params['ophtroperationbooking_schedulerequiresreferral'] = $curr;
 		Yii::app()->params['urgent_booking_notify_hours'] = $urgent;
+	}
+
+	public function testScheduleLocksRtt()
+	{
+		$referral = $this->referrals('referral1');
+
+		$rtt = new RTT;
+		$rtt->referral_id = $referral->id;
+		$rtt->active = 1;
+		$rtt->save();
+
+		$op = new Element_OphTrOperationbooking_Operation;
+		$op->attributes = array(
+			'event_id' => $this->event('event1')->id,
+			'status_id' => 1,
+			'anaesthetic_type_id' => 1,
+			'referral_id' => $referral->id,
+			'decision_date' => date('Y-m-d', strtotime('next week')),
+			'total_duration' => 1,
+		);
+
+		$op->procedures = array(ComponentStubGenerator::generate('Procedure'));
+
+		$schedule_op = ComponentStubGenerator::generate('Element_OphTrOperationbooking_ScheduleOperation');
+		$schedule_op->expects($this->any())->method('isPatientAvailable')->will($this->returnValue(true));
+
+		$booking = ComponentStubGenerator::generate(
+			'OphTrOperationbooking_Operation_Booking',
+			array(
+				'session' => ComponentStubGenerator::generate(
+					'OphTrOperationbooking_Operation_Session',
+					array(
+						'date' => date('Y-m-d', strtotime('next week')),
+						'theatre' => ComponentStubGenerator::generate('OphTrOperationbooking_Operation_Theatre', array('site_id' => 1)),
+					)
+				),
+			)
+		);
+
+		$booking->expects($this->any())->method('save')->will($this->returnValue(true));
+		$booking->session->expects($this->any())->method('operationBookable')->will($this->returnValue(true));
+		$booking->session->expects($this->any())->method('save')->will($this->returnValue(true));
+
+		$op->schedule($booking, '', '', '', false, null, $schedule_op);
+
+		$this->assertEquals($rtt->id, $op->rtt_id);
 	}
 
 	public function testReferralValidatorMustBeCalled()
