@@ -15,6 +15,10 @@
 
 class Element_OphTrOperationbooking_ScheduleOperationTest extends CDbTestCase
 {
+	public $fixtures = array(
+		'OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason',
+	);
+
 	public function testUnavailableDatesCantOverlap()
 	{
 		$unavailable1 = new OphTrOperationbooking_ScheduleOperation_PatientUnavailable();
