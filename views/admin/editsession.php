@@ -51,6 +51,16 @@
 	<?php echo $form->textField($session,'start_time',array(),array(),array('field'=>2))?>
 	<?php echo $form->textField($session,'end_time',array(),array(),array('field'=>2))?>
 	<?php echo $form->textField($session, 'max_procedures', array(), array(), array('field'=>2)); ?>
+	<?php if ($current = $session->getBookedProcedureCount()) { ?>
+		<fieldset id="procedure_count_wrapper" class="row field-row<? if ($session->max_procedures && $current > $session->max_procedures) { echo " warn"; }?>">
+			<div class="large-2 column">
+				<div class="field-label">Current Booked Procedures:</div>
+			</div>
+			<div class="large-5 column end">
+				<div class="field-value" id="current-proc-count"><?php echo $current ?></div>
+			</div>
+		</fieldset>
+	<?php } ?>
 	<?php echo $form->radioBoolean($session,'consultant')?>
 	<?php echo $form->radioBoolean($session,'paediatric')?>
 	<?php echo $form->radioBoolean($session,'anaesthetist')?>
