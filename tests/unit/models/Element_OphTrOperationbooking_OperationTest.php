@@ -340,11 +340,6 @@ class Element_OphTrOperationbooking_OperationTest extends CDbTestCase
 	{
 		$referral = $this->referrals('referral1');
 
-		$rtt = new RTT;
-		$rtt->referral_id = $referral->id;
-		$rtt->active = 1;
-		$rtt->save();
-
 		$op = new Element_OphTrOperationbooking_Operation;
 		$op->attributes = array(
 			'event_id' => $this->event('event1')->id,
@@ -377,9 +372,9 @@ class Element_OphTrOperationbooking_OperationTest extends CDbTestCase
 		$booking->session->expects($this->any())->method('operationBookable')->will($this->returnValue(true));
 		$booking->session->expects($this->any())->method('save')->will($this->returnValue(true));
 
-		$op->schedule($booking, '', '', '', false, null, $schedule_op);
+		$res = $op->schedule($booking, '', '', '', false, null, $schedule_op);
 
-		$this->assertEquals($rtt->id, $op->rtt_id);
+		$this->assertEquals($this->rtt('rtt1')->id, $op->rtt_id);
 	}
 
 	public function testReferralValidatorMustBeCalled()

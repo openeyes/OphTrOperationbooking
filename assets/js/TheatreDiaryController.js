@@ -345,6 +345,8 @@ $(document).ready(function() {
 						return false;
 					}
 
+					var markSessionUnavailable = false;
+
 					$('tr[id^="oprow_"]').attr('style','');
 
 					$('#session_form'+session_id+' span.admitTime_ro').map(function() {
@@ -369,26 +371,45 @@ $(document).ready(function() {
 						// seperator in as well.
 						$('#session_unavailablereason_' + session_id).html(" - " + $('#unavailablereason_id_' + session_id).children(':selected').text());
 						$('#session_unavailable_'+session_id).show();
+						markSessionUnavailable = true;
 					}
 					checkedOrOne($('#consultant_'+session_id)) ? $('#consultant_icon_'+session_id).show() : $('#consultant_icon_'+session_id).hide();
 					checkedOrOne($('#anaesthetist_'+session_id)) ? $('#anaesthetist_icon_'+session_id).show() : $('#anaesthetist_icon_'+session_id).hide();
 					$('#anaesthetist_icon_'+session_id).html(checkedOrOne($('#general_anaesthetic_'+session_id)) ? 'Anaesthetist (GA)' : 'Anaesthetist');
 					checkedOrOne($('#paediatric_'+session_id)) ? $('#paediatric_icon_'+session_id).show() : $('#paediatric_icon_'+session_id).hide();
 					if ($('#max_procedures_'+session_id).val()) {
+						var overbooked = 0;
 						var max = $('#max_procedures_'+session_id).val();
 						$('#max_procedures_icon_'+session_id).find('.max-procedures-val').html(max);
 						$('#max_procedures_icon_'+session_id).show();
 						var avail = max - $('#procedure_count_'+session_id).data('currproccount');
-						if (avail < 0) {
+						if (avail <= 0) {
+							overbooked = Math.abs(avail);
 							avail = 0;
+							markSessionUnavailable = true;
 						}
 						$('#procedure_count_'+session_id).find('.available-val').html(avail);
 						$('#procedure_count_'+session_id).show();
+						if (overbooked > 0) {
+							$('#procedure_count_'+session_id+' .overbooked').find('.overbooked-proc-val').html(overbooked);
+							$('#procedure_count_'+session_id+' .overbooked').show();
+						}
+						else {
+							$('#procedure_count_'+session_id+' .overbooked').hide();
+						}
 					}
 					else {
 						$('#max_procedures_icon_'+session_id).hide();
 						$('#procedure_count_'+session_id).hide();
 					}
+
+					if (markSessionUnavailable) {
+						$('#tfoot_'+session_id).find('td').removeClass('available');
+					}
+					else if (parseInt($('#tfoot_'+session_id).find('td').data('minutes-available')) > 0) {
+						$('#tfoot_'+session_id).find('td').addClass('available');
+					}
+
 					cancel_edit(true);
 					$('#infoBox_'+session_id).show();
 

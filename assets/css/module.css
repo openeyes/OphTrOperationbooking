@@ -146,6 +146,11 @@
   margin-right: 6px;
   margin-top: 3px;
 }
+/* line 63, ../sass/components/tables/_theatre-bookings-table.scss */
+.theatre-bookings .procedure-count .overbooked {
+  font-style: italic;
+  color: #f00;
+}
 
 /* line 20, ../sass/components/tables/_transport-table.scss */
 table.transport .status.Red {

@@ -156,18 +156,24 @@
 								</tr>
 						<?php } ?>
 						</tbody>
-						<tfoot>
+						<tfoot id="tfoot_<?php echo $session->id ?>">
 						<tr>
-							<?php $status = ($session->availableMinutes > 0); ?>
-							<td colspan="10" class="<?php echo ($status) ? 'available' : ''; ?>">
+							<?php
+								$minutes_status = ($session->availableMinutes > 0);
+								$proc_status = (!$session->max_procedures || $session->getAvailableProcedureCount() > 0);
+								$status = ($minutes_status && $proc_status && $session->available);
+							?>
+							<td colspan="10" data-minutes-available="<?=$session->availableMinutes?>" class="<?php echo ($status) ? 'available' : ''; ?>">
 								<div class="session_timeleft time-left <?php echo ($status) ? 'available' : 'full'; ?>">
-									<?php if ($status) {?>
+									<?php if ($minutes_status) {?>
 										<?php echo $session->availableMinutes ?> minutes unallocated
 									<?php } else {?>
 										<?php echo abs($session->availableMinutes) ?> minutes overbooked
 									<?php }?>
 									<span data-currproccount="<?php echo $session->getBookedProcedureCount() ?>" class="procedure-count" id="procedure_count_<?php echo $session->id ?>" <?php if (!$session->max_procedures) {?>style="display: none;"<?php }?>><br />
-										<span class="available-val"><?php if ($session->getAvailableProcedureCount() > 0) { echo $session->getAvailableProcedureCount(); } else { echo "0"; } ?></span> procedures available
+										<span class="available-val"><?php if ($proc_status) { echo $session->getAvailableProcedureCount(); } else { echo "0"; } ?></span> procedure(s) available
+										<span class="overbooked"<?php if ($session->getAvailableProcedureCount() >= 0) {?> style="display: none;"<?php }?>>
+										(Overbooked by <span class="overbooked-proc-val"><?= abs($session->getAvailableProcedureCount()); ?></span>)</span>
 									</span>
 									<span class="session-unavailable" id="session_unavailable_<?php echo $session->id?>" <?php if ($session->available){?>style="display:none;" <?php }?>> - session unavailable
 										<span id="session_unavailablereason_<?php echo $session->id ?>"><?php if ($session->unavailablereason) { echo " - " . $session->unavailablereason->name;  } ?></span>

@@ -395,13 +395,6 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		return parent::beforeValidate();
 	}
 
-	public function afterValidate()
-	{
-		if ($this->max_procedures && !$this->hasErrors('max_procedures') && $this->max_procedures < $this->getBookedProcedureCount()) {
-			$this->addError('max_procedures', 'Max procedures cannot be lower than existing number of procedures booked into session');
-		}
-	}
-
 	protected function beforeSave()
 	{
 		if ($this->date && !preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$this->date)) {
