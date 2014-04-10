@@ -646,4 +646,64 @@ class Element_OphTrOperationbooking_OperationTest extends CDbTestCase
 		}
 	}
 
+	public function testgetRTTBreach_actualRTT()
+	{
+		$test = $this->getMockBuilder('Element_OphTrOperationbooking_Operation')
+				->disableOriginalConstructor()
+				->setMethods(array('getRTT'))
+				->getMock();
+
+		$rtt = new RTT();
+		$rtt->breach = date('Y-m-d', strtotime('+80 days'));
+
+		$test->expects($this->any())
+			->method('getRTT')
+			->will($this->returnValue($rtt));
+
+		$this->assertEquals($rtt->breach, $test->getRTTBreach());
+	}
+
+	public function testgetRTTBreach_configured()
+	{
+		$curr = Yii::app()->params['ophtroperationboooking_rtt_limit'];
+		Yii::app()->params['ophtroperationboooking_rtt_limit'] = 3;
+
+		$test = $this->getMockBuilder('Element_OphTrOperationbooking_Operation')
+				->disableOriginalConstructor()
+				->setMethods(array('getRTT'))
+				->getMock();
+
+		$test->decision_date = date('Y-m-d', strtotime('-1 week'));
+
+
+		$test->expects($this->any())
+				->method('getRTT')
+				->will($this->returnValue(null));
+
+		$this->assertEquals(date('Y-m-d', strtotime('+2 weeks')), $test->getRTTBreach());
+		Yii::app()->params['ophtroperationboooking_rtt_limit'] = $curr;
+	}
+
+	public function testgetRTTBreach_notConfigured()
+	{
+		$curr = Yii::app()->params['ophtroperationboooking_rtt_limit'];
+		Yii::app()->params['ophtroperationboooking_rtt_limit'] = null;
+
+		$test = $this->getMockBuilder('Element_OphTrOperationbooking_Operation')
+				->disableOriginalConstructor()
+				->setMethods(array('getRTT'))
+				->getMock();
+
+		$test->decision_date = date('Y-m-d', strtotime('-1 week'));
+
+
+		$test->expects($this->any())
+				->method('getRTT')
+				->will($this->returnValue(null));
+
+		$this->assertNull($test->getRTTBreach());
+
+		Yii::app()->params['ophtroperationboooking_rtt_limit'] = $curr;
+	}
+
 }
