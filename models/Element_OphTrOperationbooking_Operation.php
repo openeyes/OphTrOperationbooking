@@ -514,13 +514,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		$year = date('Y',$timestamp);
 		$month = date('m',$timestamp);
 
-		if ($rtt_weeks = Yii::app()->params['ophtroperationboooking_rtt_limit']) {
-			$rttDate = date('Y-m-d',strtotime('+' .$rtt_weeks . ' weeks', strtotime($this->decision_date)));
-		}
-		else {
-			$rttDate = null;
-		}
-
+		$rtt_date = $this->getRTTBreach();
 
 		$criteria = new CDbCriteria;
 		$criteria->compare("firm_id",$firm->id);
@@ -570,7 +564,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 							}
 						}
 
-						if ($rttDate && $date >= $rttDate) {
+						if ($rtt_date && $date >= $rtt_date) {
 							$status .= ' outside_rtt';
 						}
 					} else {
@@ -787,8 +781,15 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		$criteria->addCondition('`t`.available = :one');
 
 		// work out the lead date
-		$lead_decision_date = strtotime($this->decision_date) + (86400 * 7 * Yii::app()->params['erod_lead_time_weeks']);
-		$lead_current_date = time() + (86400 * Yii::app()->params['erod_lead_current_date_days']);
+		$lead_decision_date = strtotime($this->decision_date);
+		if ($lead_weeks = Yii::app()->params['erod_lead_time_weeks']) {
+			$lead_decision_date += 86400 * 7 * $lead_weeks;
+		}
+
+		$lead_current_date = time();
+		if ($lead_days = Yii::app()->params['erod_lead_current_date_days']) {
+			$lead_current_date += (86400 * $lead_days);
+		}
 		$lead_time_date = ($lead_decision_date > $lead_current_date) ? date('Y-m-d', $lead_decision_date) : date('Y-m-d', $lead_current_date);
 
 		$criteria->addCondition('`t`.date > :leadTimeDate');
@@ -834,117 +835,6 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 
 		}
 	}
-
-	/*
-	 old EROD calculation process that seems to have been using the session that an operation was booked into to calculate,
-	 which doesn't chime with the given requirements as defined in the RTT specification:
-	https://openeyes.atlassian.net/wiki/display/OP/RTT
-	protected function calculateEROD(OphTrOperationbooking_Operation_Session $booking_session)
-	{
-		$where = '';
-
-		if ($this->cancelledBookings) {
-			OELog::log("We have cancelled bookings so we dont set EROD");
-			return false;
-		} else {
-			OELog::log("No cancelled bookings so we set EROD");
-		}
-		$service_subspecialty_assignment_id = $this->event->episode->firm->service_subspecialty_assignment_id;
-
-		$criteria = new CDbCriteria;
-		$criteria->params[':one'] = 1;
-
-		if ($this->consultant_required) {
-			$criteria->addCondition('`t`.consultant = :one');
-		}
-
-		if ($this->event->episode->patient->isChild($booking_session->date)) {
-			$criteria->addCondition('`t`.paediatric = :one');
-
-			if ($booking_session->firm) {
-				if (!$booking_session->firm->serviceSubspecialtyAssignment) {
-					throw new Exception("Booking session firm must have a subspecialty assignment");
-				}
-				$service_subspecialty_assignment_id = $booking_session->firm->serviceSubspecialtyAssignment->id;
-			} else {
-				if (!$subspecialty = Subspecialty::model()->find('ref_spec=?',array('AE'))) {
-					throw new Exception("A&E subspecialty not found");
-				}
-
-				if (!$service_subspecialty_assignment = ServiceSubspecialtyAssignment::model()->find('subspecialty_id=?',array($subspecialty->id))) {
-					throw new Exception("A&E service_subspecialty_assignment not found");
-				}
-				$service_subspecialty_assignment_id = $service_subspecialty_assignment->id;
-			}
-		}
-
-		if ($this->anaesthetist_required || $this->anaesthetic_type->code == 'GA') {
-			$criteria->addCondition('`t`.anaesthetist = :one and `t`.general_anaesthetic = :one');
-		}
-
-		$lead_time_date = date('Y-m-d',strtotime($this->decision_date) + (86400 * 7 * Yii::app()->params['erod_lead_time_weeks']));
-
-		if ($rule = OphTrOperationbooking_Operation_EROD_Rule::model()->find('subspecialty_id=?',array($this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty_id))) {
-			$firm_ids = array();
-			foreach ($rule->items as $item) {
-				if ($item->item_type == 'firm') {
-					$firm_ids[] = $item->item_id;
-				}
-			}
-
-			$criteria->addInCondition('firm.id',$firm_ids);
-		} else {
-			$criteria->addCondition('service_subspecialty_assignment_id = :serviceSubspecialtyAssignmentId');
-			$criteria->params[':serviceSubspecialtyAssignmentId'] = $service_subspecialty_assignment_id;
-		}
-
-		$criteria->addCondition('`t`.date > :leadTimeDate');
-		$criteria->params[':leadTimeDate'] = $lead_time_date;
-
-		$criteria->addCondition('`t`.available = :one');
-
-		$criteria->order = '`t`.date, `t`.start_time';
-
-		foreach (OphTrOperationbooking_Operation_Session::model()
-			->with(array(
-				'firm' => array(
-					'joinType' => 'JOIN',
-				),
-			))
-			->findAll($criteria) as $session) {
-
-			$available_time = $session->availableMinutes;
-
-			if ($session->id == $booking_session->id) {
-				// this is so that the available_time value saved below is accurate
-				$available_time -= $this->total_duration;
-			}
-
-			if ($available_time >= $this->total_duration) {
-				$erod = new OphTrOperationbooking_Operation_EROD;
-				$erod->element_id = $this->id;
-				$erod->session_id = $session->id;
-				$erod->session_date = $session->date;
-				$erod->session_start_time = $session->start_time;
-				$erod->session_end_time = $session->end_time;
-				$erod->firm_id = $session->firm_id;
-				$erod->consultant = $session->consultant;
-				$erod->paediatric = $session->paediatric;
-				$erod->anaesthetist = $session->anaesthetist;
-				$erod->general_anaesthetic = $session->general_anaesthetic;
-				$erod->session_duration = $session->duration;
-				$erod->total_operations_time = $session->bookedMinutes;
-				$erod->available_time = $available_time;
-
-				if (!$erod->save()) {
-					throw new Exception('Unable to save EROD: '.print_r($erod->getErrors(),true));
-				}
-
-				break;
-			}
-		}
-	}
-	*/
 
 	public function audit($target, $action, $data=null, $log=false, $properties=array())
 	{
@@ -1532,6 +1422,22 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Get the RTT breach for this operation
+	 * (if either an RTT is set, or if there is a psuedo-breach based on a week count from DTA)
+	 *
+	 * @return string 'Y-m-d'|null
+	 */
+	public function getRTTBreach()
+	{
+		if ($rtt = $this->getRTT()) {
+			return $rtt->breach;
+		}
+		elseif ($rtt_weeks = Yii::app()->params['ophtroperationboooking_rtt_limit']) {
+			return date('Y-m-d',strtotime('+' .$rtt_weeks . ' weeks', strtotime($this->decision_date)));
+		}
 	}
 
 }
