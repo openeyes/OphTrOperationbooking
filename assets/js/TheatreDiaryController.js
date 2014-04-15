@@ -168,9 +168,19 @@ $(document).ready(function() {
 	});
 
 	$('#btn_print_diary_list').click(function() {
-		if ($('#site-id').val() == '' || $('#subspecialty-id').val() == '' || $('#date-start').val() == '' || $('#date-end').val() == '') {
+        if(!$('#theatre-filter #emergency_list').prop('checked') && ($('#site-id').val() == '' || $('#subspecialty-id').val() == '' ) ){
+            new OpenEyes.UI.Dialog.Alert({
+                content: 'A site and subspecilaty must be selected when printing a non emergency list.',
+                onClose: function() {
+                    scrollTo(0,0);
+                }
+            }).open();
+            return false;
+        }
+
+        if ( $('#date-start').val() == '' || $('#date-end').val() == '') {
 			new OpenEyes.UI.Dialog.Alert({
-				content: 'To print the booking list you must select a site, a subspecialty and a date range.',
+				content: 'To print the booking list you must select a date range.',
 				onClose: function() {
 					scrollTo(0,0);
 				}
@@ -520,7 +530,7 @@ function printElem(method,options, callback){
 	$.ajax({
 		'url': baseUrl+'/OphTrOperationbooking/theatreDiary/'+method,
 		'type': 'POST',
-		'data': searchData+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN,
+		'data': searchData,
 		'success': function(data) {
 			$('#printable').html(data);
 			$('#printable').printElement(options);
@@ -528,7 +538,16 @@ function printElem(method,options, callback){
 				callback();
 			}
 			return false;
-		}
+		},
+        'error':function(){
+            new OpenEyes.UI.Dialog.Alert({
+                content: 'There was an error when Printing List, please try again or contact support.',
+                onClose: function() {
+                    scrollTo(0,0);
+                }
+            }).open();
+            enableButtons();
+        }
 	});
 }
 

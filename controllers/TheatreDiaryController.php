@@ -251,7 +251,7 @@ class TheatreDiaryController extends BaseEventTypeController
 
 	public function getBookingList()
 	{
-		foreach (array('date-start', 'date-end', 'subspecialty-id', 'site-id') as $required) {
+		foreach (array('date-start', 'date-end') as $required) {
 			if (!isset($_POST[$required])) {
 				throw new CHttpException('invalid request for booking list');
 			}
@@ -268,6 +268,9 @@ class TheatreDiaryController extends BaseEventTypeController
 		if (@$_POST['emergency_list']) {
 			$criteria->addCondition('firm.id IS NULL');
 		} else {
+			if (!isset($_POST['site-id']) || !isset($_POST['subspecialty-id'])) {
+				throw new CHttpException('invalid request for booking list');
+			}
 			$criteria->addCondition('theatre.site_id = :siteId and subspecialty_id = :subspecialtyId');
 			$criteria->params[':siteId'] = $_POST['site-id'];
 			$criteria->params[':subspecialtyId'] = $_POST['subspecialty-id'];
