@@ -394,13 +394,11 @@ function getDiary() {
 		loadingMessage.show();
 		noResultsMessage.hide();
 
-		searchData = $('#theatre-filter').serialize()+"&YII_CSRF_TOKEN="+YII_CSRF_TOKEN;
-
 		$.ajax({
 			'url': baseUrl+'/OphTrOperationbooking/theatreDiary/search',
 			'type': 'POST',
 			'dataType': 'json',
-			'data': searchData,
+			'data': searchData(),
 			'success': function(data) {
 				if (data['status'] == 'success') {
 					theatreList.html(data['data']);
@@ -530,7 +528,7 @@ function printElem(method,options, callback){
 	$.ajax({
 		'url': baseUrl+'/OphTrOperationbooking/theatreDiary/'+method,
 		'type': 'POST',
-		'data': searchData,
+		'data': searchData(),
 		'success': function(data) {
 			$('#printable').html(data);
 			$('#printable').printElement(options);
@@ -632,4 +630,8 @@ function checkRequired(type, session_id) {
 			}
 		}
 	});
+}
+
+function searchData(){
+    return $('#theatre-filter').serialize();
 }
