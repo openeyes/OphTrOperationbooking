@@ -29,6 +29,11 @@
 	<?php $form->widget('application.widgets.ProcedureSelection',array(
 		'element' => $element,
 		'durations' => true,
+		'layoutColumns' => array(
+			'label' => 2,
+			'field' => 4,
+			'procedures' => 6,
+		),
 	))?>
 	<?php echo $form->radioBoolean($element, 'consultant_required')?>
 	<?php echo $form->radioButtons($element, 'anaesthetic_type_id', 'anaesthetic_type')?>
