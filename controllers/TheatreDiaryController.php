@@ -209,7 +209,7 @@ class TheatreDiaryController extends BaseEventTypeController
 
 		Yii::app()->event->dispatch('start_batch_mode');
 
-		return OphTrOperationbooking_Operation_Theatre::model()
+		$opTheatre = OphTrOperationbooking_Operation_Theatre::model()
 			->with(array(
 				'site',
 				'sessions' => array(
@@ -230,6 +230,8 @@ class TheatreDiaryController extends BaseEventTypeController
 				),
 			))
 			->findAll($criteria);
+
+		return $opTheatre;
 	}
 
 	public function getNextSessionDate($firmId)
@@ -260,7 +262,6 @@ class TheatreDiaryController extends BaseEventTypeController
 		$criteria = new CDbCriteria;
 
 		$criteria->addCondition('session.date >= :dateFrom and session.date <= :dateTo');
-		$criteria->addInCondition('operation.status_id',array(2,4));
 
 		$criteria->params[':dateFrom'] = Helper::convertNHS2MySQL($_POST['date-start']);
 		$criteria->params[':dateTo'] = Helper::convertNHS2MySQL($_POST['date-end']);
@@ -292,7 +293,7 @@ class TheatreDiaryController extends BaseEventTypeController
 
 		Yii::app()->event->dispatch('start_batch_mode');
 
-		return OphTrOperationbooking_Operation_Booking::model()
+		$opBooking = OphTrOperationbooking_Operation_Booking::model()
 			->with(array(
 				'session' => array(
 					'with' => array(
@@ -324,6 +325,8 @@ class TheatreDiaryController extends BaseEventTypeController
 				'ward',
 			))
 			->findAll($criteria);
+
+		return $opBooking ;
 	}
 
 	/**

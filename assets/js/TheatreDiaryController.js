@@ -400,17 +400,37 @@ function getDiary() {
 			'dataType': 'json',
 			'data': searchData(),
 			'success': function(data) {
-				if (data['status'] == 'success') {
+				if (data && 'status' in data && data['status'] == 'success') {
 					theatreList.html(data['data']);
 				} else {
-					theatreList.html('<h3>'+data['message']+'</h3>');
+                    if (data && 'message' in data){
+                        theatreList.html('<h3>'+data['message']+'</h3>');
+                    }
+                    else{
+                        new OpenEyes.UI.Dialog.Alert({
+                            content: 'There was an error when Searching, please try again or contact support.',
+                            onClose: function() {
+                                scrollTo(0,0);
+                            }
+                        }).open();
+                        enableButtons();
+                    }
 				}
 				enableButtons();
 				return false;
 			},
 			complete: function() {
 				loadingMessage.hide();
-			}
+			},
+            'error':function(){
+                new OpenEyes.UI.Dialog.Alert({
+                    content: 'There was an error when Searching, please try again or contact support.',
+                    onClose: function() {
+                        scrollTo(0,0);
+                    }
+                }).open();
+                enableButtons();
+            }
 		});
 	}
 
