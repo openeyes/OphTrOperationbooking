@@ -17,10 +17,34 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-return array(
-	'sequence1' => array(
-		'id' => 1,
-		'firm_id' => 1,
-		'theatre_id' => 1,
-	),
-);
+class OphTrOperationbookingEventController extends BaseEventTypeController
+{
+	/**
+	 * Return the open referral choices for the patient
+	 *
+	 * @return Referral[]
+	 */
+	public function getReferralChoices($element = null)
+	{
+		$criteria = new CdbCriteria();
+		$criteria->addCondition('patient_id = :pid');
+		$criteria->addCondition('closed_date is null');
+		$criteria->params = array('pid' => $this->patient->id);
+
+		// if the referral has been closed but is the selected referral for the event, needs to be part of the list
+		if ($element && $element->referral_id) {
+			$criteria->addCondition('id = :crid', 'OR');
+			$criteria->params[':crid'] = $element->referral_id;
+		}
+
+		$criteria->order = 'received_date DESC';
+		return Referral::model()->findAll($criteria);
+	}
+
+	protected function beforeAction($action)
+	{
+		Yii::app()->clientScript->registerScriptFile($this->assetPath.'/js/module.js');
+
+		return parent::beforeAction($action);
+	}
+}

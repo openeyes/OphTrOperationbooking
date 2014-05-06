@@ -1,6 +1,6 @@
 <?php
 
-class m140124_235959_table_versioning extends OEMigration
+class m140401_235959_table_versioning extends OEMigration
 {
 	public function up()
 	{
@@ -37,6 +37,7 @@ class m140124_235959_table_versioning extends OEMigration
 		$this->versionExistingTable('ophtroperationbooking_operation_ward');
 		$this->versionExistingTable('ophtroperationbooking_scheduleope_schedule_options');
 		$this->versionExistingTable('ophtroperationbooking_waiting_list_contact_rule');
+		$this->versionExistingTable('ophtroperationbooking_operation_session_unavailreason');
 
 		$cb = new OECommandBuilder($this->dbConnection->schema);
 
@@ -93,6 +94,7 @@ class m140124_235959_table_versioning extends OEMigration
 		$this->dropTable('ophtroperationbooking_operation_ward_version');
 		$this->dropTable('ophtroperationbooking_scheduleope_schedule_options_version');
 		$this->dropTable('ophtroperationbooking_waiting_list_contact_rule_version');
+		$this->dropTable('ophtroperationbooking_operation_session_unavailreason_version');
 
 		$this->addColumn('ophtroperationbooking_operation_session', 'deleted', "tinyint(1) DEFAULT '0'");
 		$this->update('ophtroperationbooking_operation_session', array('deleted' => new CDbExpression('not(active)')));

@@ -20,5 +20,13 @@
 		.theatre-booking-edit-actions {
 			padding-top: 10px;
 		}
+		.limited-width {
+			font-size: emCalc(11px);
+			margin-bottom: emCalc(10px);
+			width: auto;
+		}
+		.max-procedures-val {
+			color: #f00;
+		}
 	}
 }

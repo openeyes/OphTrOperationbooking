@@ -1,4 +1,5 @@
 <?php
+
 /**
  * OpenEyes
  *
@@ -15,12 +16,28 @@
  * @copyright Copyright (c) 2008-2011, Moorfields Eye Hospital NHS Foundation Trust
  * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
- */
 
+ */
 return array(
-	'sequence1' => array(
-		'id' => 1,
-		'firm_id' => 1,
-		'theatre_id' => 1,
+	'reason1' => array(
+			'id' => 1,
+			'name' => 'Reason 1',
+			'enabled' => true,
+			'display_order' => 1,
+			'last_modified_user_id' => 1,
+			'last_modified_date' => '1901-01-01 00:00:00',
+			'created_user_id' => 1,
+			'created_date' => '1901-01-01 00:00:00',
 	),
+	'inactive_reason' => array(
+			'id' => 2,
+			'name' => 'Inactive Reason',
+			'enabled' => false,
+			'display_order' => 2,
+			'last_modified_user_id' => 1,
+			'last_modified_date' => '1901-01-01 00:00:00',
+			'created_user_id' => 1,
+			'created_date' => '1901-01-01 00:00:00',
+	)
+
 );

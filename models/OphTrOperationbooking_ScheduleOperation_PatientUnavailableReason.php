@@ -17,32 +17,19 @@
  */
 
 /**
- * This is the model class for table "ophtroperationbooking_operation_erod".
+ * This is the model class for table "ophtroperationbooking_scheduleope_patientunavailreason".
  *
  * The followings are the available columns in table:
- * @property integer $id
- * @property integer $element_id
- * @property integer $session_id
- * @property date $session_date
- * @property time $session_start_time
- * @property time $session_end_time
- * @property integer $firm_id
- * @property boolean $consultant
- * @property boolean $paediatric
- * @property boolean $anaesthetist
- * @property boolean $general_anaesthetic
- * @property integer $session_duration
- * @property integer $total_operations_time
- * @property integer $available_time
+ * @property string $id
+ * @property string $name
+ * @property boolean $enabled
+ * @property integer $display_order
  *
  * The followings are the available model relations:
  *
- * @property OphTrOperationbooking_Operation_Sequence $session
- * @property OphTrOperationbooking_Operation_Theatre $theatre
- *
  */
 
-class OphTrOperationbooking_Operation_EROD extends BaseActiveRecordVersioned
+class OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -58,7 +45,28 @@ class OphTrOperationbooking_Operation_EROD extends BaseActiveRecordVersioned
 	 */
 	public function tableName()
 	{
-		return 'ophtroperationbooking_operation_erod';
+		return 'ophtroperationbooking_scheduleope_patientunavailreason';
+	}
+
+	/**
+	 * set a default display order for a new record
+	 */
+	protected function afterConstruct()
+	{
+		parent::afterConstruct();
+		if (!$this->display_order) {
+			$criteria = new CDbCriteria();
+			$criteria->order = "display_order desc";
+			$criteria->limit = 1;
+			$model = get_class($this);
+			$bottom = $model::model()->find($criteria);
+			if ($bottom) {
+				$this->display_order = $bottom->display_order + 1;
+			}
+			else {
+				$this->display_order = 1;
+			}
+		}
 	}
 
 	/**
@@ -69,7 +77,11 @@ class OphTrOperationbooking_Operation_EROD extends BaseActiveRecordVersioned
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('element_id, session_id, session_date, session_start_time, firm_id, consultant, paediatric, anaesthetist, general_anaesthetic, session_duration, total_operations_time, available_time', 'safe'),
+				array('name, enabled, display_order', 'safe'),
+				array('name, enabled, display_order', 'required'),
+			// The following rule is used by search().
+			// Please remove those attributes that should not be searched.
+				array('id, name', 'safe', 'on' => 'search'),
 		);
 	}
 
@@ -81,10 +93,8 @@ class OphTrOperationbooking_Operation_EROD extends BaseActiveRecordVersioned
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'operation' => array(self::BELONGS_TO, 'Element_OphTrOperationbooking_Operation', 'element_id'),
-			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
-			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
-			'firm' => array(self::BELONGS_TO, 'Firm', 'firm_id'),
+				'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
+				'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 		);
 	}
 
@@ -94,6 +104,8 @@ class OphTrOperationbooking_Operation_EROD extends BaseActiveRecordVersioned
 	public function attributeLabels()
 	{
 		return array(
+				'id' => 'ID',
+				'name' => 'Name',
 		);
 	}
 
@@ -113,21 +125,8 @@ class OphTrOperationbooking_Operation_EROD extends BaseActiveRecordVersioned
 
 		return new CActiveDataProvider(get_class($this), array(
 				'criteria' => $criteria,
-			));
-	}
-
-	public function getFirmName()
-	{
-		return $this->firm->name . ' (' . $this->firm->serviceSubspecialtyAssignment->subspecialty->name . ')';
-	}
-
-	public function getTimeSlot()
-	{
-		return date('H:i',strtotime($this->session_start_time)) . ' - ' . date('H:i',strtotime($this->session_end_time));
-	}
-
-	public function getDescription()
-	{
-		return $this->NHSDate('session_date').' '.$this->getTimeSlot() .', '. $this->getFirmName();
+		));
 	}
 }
+
+

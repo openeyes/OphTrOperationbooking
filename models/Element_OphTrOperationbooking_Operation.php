@@ -32,6 +32,8 @@
  * @property string $decision_date
  * @property string $comments
  * @property string $comments_rtt
+ * @property integer $referral_id
+ * @property integer $rtt_id
  *
  * The followings are the available model relations:
  *
@@ -45,6 +47,9 @@
  * @property AnaestheticType $anaesthetic_type
  * @property Site $site
  * @property Element_OphTrOperationbooking_Operation_Priority $priority
+ * @property Referral $refferal
+ * @property RTT $fixed_rtt - Because the active referral can change over time, we lock the operation booking to a specific RTT at the time of booking.
+ *
  */
 
 class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
@@ -93,9 +98,10 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments,comments_rtt, anaesthetist_required, total_duration, status_id, operation_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id, latest_booking_id', 'safe'),
+			array('event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments,comments_rtt, anaesthetist_required, total_duration, status_id, operation_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id, latest_booking_id, referral_id', 'safe'),
 			array('cancellation_comment', 'length', 'max' => 200),
 			array('procedures', 'required', 'message' => 'At least one procedure must be entered'),
+			array('referral_id', 'validateReferral'),
 			array('eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, total_duration', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
@@ -123,7 +129,6 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
 			'priority' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Priority', 'priority_id'),
 			'status' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Status', 'status_id'),
-			'erod' => array(self::HAS_ONE, 'OphTrOperationbooking_Operation_EROD', 'element_id'),
 			'date_letter_sent' => array(self::HAS_ONE, 'OphTrOperationbooking_Operation_Date_Letter_Sent', 'element_id', 'order' => 'date_letter_sent.id DESC'),
 			'cancellation_user' => array(self::BELONGS_TO, 'User', 'cancellation_user_id'),
 			'cancellation_reason' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Cancellation_Reason', 'cancellation_reason_id'),
@@ -131,6 +136,10 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			'booking' => array(self::HAS_ONE, 'OphTrOperationbooking_Operation_Booking', 'element_id', 'condition' => 'booking_cancellation_date is null'),
 			'cancelledBooking' => array(self::HAS_ONE, 'OphTrOperationbooking_Operation_Booking', 'element_id', 'condition' => 'booking_cancellation_date is not null'),
 			'latestBooking' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Booking', 'latest_booking_id'),
+			'firstBooking' => array(self::HAS_ONE, 'OphTrOperationbooking_Operation_Booking', 'element_id', 'order' => 'created_date ASC'),
+			'allBookings'  => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Booking', 'element_id'),
+			'referral' => array(self::BELONGS_TO, 'Referral', 'referral_id'),
+			'fixed_rtt' => array(self::BELONGS_TO, 'RTT', 'rtt_id'),
 		);
 	}
 
@@ -152,6 +161,8 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			'decision_date' => 'Decision date',
 			'comments' => 'Add comments',
 			'comments_rtt' => 'Add RTT comments',
+			'referral_id' => 'Referral',
+			'rtt_id' => 'RTT'
 		);
 	}
 
@@ -216,6 +227,16 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			$ids[] = $item->value_id;
 		}
 		return $ids;
+	}
+
+	protected $_has_bookings = null;
+	protected $_original_referral_id = null;
+
+	public function afterFind()
+	{
+		parent::afterFind();
+		$this->_has_bookings = ($this->allBookings) ? true : false;
+		$this->_original_referral_id = $this->referral_id;
 	}
 
 	/**
@@ -287,6 +308,26 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		return parent::afterValidate();
 	}
 
+	/**
+	 * Wrapper function to get the element patient
+	 *
+	 * @return null|Patient
+	 */
+	public function getPatient()
+	{
+		return $this->event->episode->patient;
+	}
+
+	/**
+	 * Wrapper function to get the element firm
+	 *
+	 * @return Firm
+	 */
+	public function getFirm()
+	{
+		return $this->event->episode->firm;
+	}
+
 	public static function getLetterOptions()
 	{
 		return array(
@@ -312,12 +353,15 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 
 	public function getHas_gp()
 	{
-		return ($this->getDueLetter() != self::LETTER_GP || ($this->event->episode->patient->practice && $this->event->episode->patient->practice->contact->address));
+		return ($this->getDueLetter() != self::LETTER_GP || ($this->getPatient()->practice && $this->getPatient()->practice->contact->address));
 	}
 
 	public function getHas_address()
 	{
-		return (bool) $this->event->episode->patient->contact->correspondAddress;
+		if ($patient = $this->getPatient()) {
+			return (bool) $patient->contact->correspondAddress;
+		}
+		return false;
 	}
 
 	public function getLastLetter()
@@ -481,14 +525,20 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		return Element_OphTrOperationbooking_ScheduleOperation::model()->find('event_id=?',array($this->event_id));
 	}
 
-	public function getFirmCalendarForMonth($firm, $timestamp)
+	/**
+	 * @param $firm
+	 * @param $timestamp
+	 * @param Element_OphTrOperationbooking_ScheduleOperation $schedule_options
+	 * @return array
+	 */
+	public function getFirmCalendarForMonth($firm, $timestamp, $schedule_options = null)
 	{
 		$sessions = array();
 
 		$year = date('Y',$timestamp);
 		$month = date('m',$timestamp);
 
-		$rttDate = date('Y-m-d',strtotime('+6 weeks', strtotime($this->decision_date)));
+		$rtt_date = $this->getRTTBreach();
 
 		$criteria = new CDbCriteria;
 		$criteria->compare("firm_id",$firm->id);
@@ -526,7 +576,10 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 								}
 							}
 
-							if ($full == count($sessiondata[$date])) {
+							if (!$schedule_options->isPatientAvailable($date)) {
+								$status = 'patient-unavailable';
+							}
+							elseif ($full == count($sessiondata[$date])) {
 								$status = 'full';
 							} elseif ($full >0 and $open >0) {
 								$status = 'limited';
@@ -535,7 +588,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 							}
 						}
 
-						if ($date >= $rttDate) {
+						if ($rtt_date && $date >= $rtt_date) {
 							$status .= ' outside_rtt';
 						}
 					} else {
@@ -660,7 +713,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 
 		if (empty($results)) {
 			// otherwise select by site and patient age/gender
-			$patient = $this->event->episode->patient;
+			$patient = $this->getPatient();
 			$genderRestrict = $ageRestrict = 0;
 			$genderRestrict = ('M' == $patient->gender) ? OphTrOperationbooking_Operation_Ward::RESTRICTION_MALE : OphTrOperationbooking_Operation_Ward::RESTRICTION_FEMALE;
 			$ageRestrict = ($patient->isChild($session->date)) ? OphTrOperationbooking_Operation_Ward::RESTRICTION_CHILD : OphTrOperationbooking_Operation_Ward::RESTRICTION_ADULT;
@@ -680,52 +733,40 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		return $results;
 	}
 
-	protected function calculateEROD(OphTrOperationbooking_Operation_Session $booking_session)
+	/**
+	 * Calculate the EROD for this operation - the firm used to determine the service can be overridden by providing a firm.
+	 * (Note that this handles the emergency list by having a firm placeholder object that does not have an id - at this time,
+	 * no sessions are assigned to A&E firms, having the effect that no EROD can be calculated for emergency bookings)
+	 *
+	 * @param Firm $firm
+	 * @return OphTrOperationbooking_Operation_EROD|null
+	 * @throws Exception
+	 */
+	public function calculateEROD($firm = null)
 	{
-		$where = '';
-
-		if ($this->cancelledBookings) {
-			OELog::log("We have cancelled bookings so we dont set EROD");
-			return false;
-		} else {
-			OELog::log("No cancelled bookings so we set EROD");
-		}
-		$service_subspecialty_assignment_id = $this->event->episode->firm->service_subspecialty_assignment_id;
-
 		$criteria = new CDbCriteria;
-		$criteria->params[':one'] = 1;
 
+		$criteria->params[':one'] = 1;
+		//consultant required
 		if ($this->consultant_required) {
 			$criteria->addCondition('`t`.consultant = :one');
 		}
 
-		if ($this->event->episode->patient->isChild($booking_session->date)) {
-			$criteria->addCondition('`t`.paediatric = :one');
-
-			if ($booking_session->firm) {
-				if (!$booking_session->firm->serviceSubspecialtyAssignment) {
-					throw new Exception("Booking session firm must have a subspecialty assignment");
-				}
-				$service_subspecialty_assignment_id = $booking_session->firm->serviceSubspecialtyAssignment->id;
-			} else {
-				if (!$subspecialty = Subspecialty::model()->find('ref_spec=?',array('AE'))) {
-					throw new Exception("A&E subspecialty not found");
-				}
-
-				if (!$service_subspecialty_assignment = ServiceSubspecialtyAssignment::model()->find('subspecialty_id=?',array($subspecialty->id))) {
-					throw new Exception("A&E service_subspecialty_assignment not found");
-				}
-				$service_subspecialty_assignment_id = $service_subspecialty_assignment->id;
-			}
-		}
-
+		//anaesthetic requirements
 		if ($this->anaesthetist_required || $this->anaesthetic_type->code == 'GA') {
 			$criteria->addCondition('`t`.anaesthetist = :one and `t`.general_anaesthetic = :one');
 		}
 
-		$lead_time_date = date('Y-m-d',strtotime($this->decision_date) + (86400 * 7 * Yii::app()->params['erod_lead_time_weeks']));
+		// child conditions
+		$patient = $this->getPatient();
+		if ($patient->isChild()) {
+			// need to get the point at which patient becomes an adult. All sessions up to that point need the pediatric flag
+			$criteria->params[':adult_date'] = $patient->getBecomesAdultDate();
+			$criteria->addCondition('(`t`.date < :adult_date AND `t`.paediatric = :one) OR `t`.date >= :adult_date');
+		}
 
-		if ($rule = OphTrOperationbooking_Operation_EROD_Rule::model()->find('subspecialty_id=?',array($this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty_id))) {
+		// if their are firms that are set for the subspecialty of the episode, use their sessions
+		if ($rule = OphTrOperationbooking_Operation_EROD_Rule::model()->find('subspecialty_id=?',array($this->getFirm()->getSubspecialtyID()))) {
 			$firm_ids = array();
 			foreach ($rule->items as $item) {
 				if ($item->item_type == 'firm') {
@@ -735,54 +776,87 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 
 			$criteria->addInCondition('firm.id',$firm_ids);
 		} else {
+			// otherwise, use the given firm to define the set of valid sessions by subspecialty
+			if (!$firm) {
+				$firm = $this->event->episode->firm;
+			}
+
+			if (!$firm->id) {
+				// booking into the emergency list
+				if (!$subspecialty = Subspecialty::model()->find('ref_spec=?',array('AE'))) {
+					throw new Exception("A&E subspecialty not found");
+				}
+
+				if (!$service_subspecialty_assignment = ServiceSubspecialtyAssignment::model()->find('subspecialty_id=?',array($subspecialty->id))) {
+					throw new Exception("A&E service_subspecialty_assignment not found");
+				}
+				$service_subspecialty_assignment_id = $service_subspecialty_assignment->id;
+			}
+			else {
+				if (!$service_subspecialty_assignment_id = $firm->service_subspecialty_assignment_id) {
+					throw new Exception('Firm must have service_subspecialty_assignment for EROD calculation');
+				}
+			}
 			$criteria->addCondition('service_subspecialty_assignment_id = :serviceSubspecialtyAssignmentId');
 			$criteria->params[':serviceSubspecialtyAssignmentId'] = $service_subspecialty_assignment_id;
 		}
 
+		// session must be available
+		$criteria->addCondition('`t`.available = :one');
+
+		// work out the lead date
+		$lead_decision_date = strtotime($this->decision_date);
+		if ($lead_weeks = Yii::app()->params['erod_lead_time_weeks']) {
+			$lead_decision_date += 86400 * 7 * $lead_weeks;
+		}
+
+		$lead_current_date = time();
+		if ($lead_days = Yii::app()->params['erod_lead_current_date_days']) {
+			$lead_current_date += (86400 * $lead_days);
+		}
+		$lead_time_date = ($lead_decision_date > $lead_current_date) ? date('Y-m-d', $lead_decision_date) : date('Y-m-d', $lead_current_date);
+
 		$criteria->addCondition('`t`.date > :leadTimeDate');
 		$criteria->params[':leadTimeDate'] = $lead_time_date;
-
-		$criteria->addCondition('`t`.available = :one');
 
 		$criteria->order = '`t`.date, `t`.start_time';
 
 		foreach (OphTrOperationbooking_Operation_Session::model()
-			->with(array(
-				'firm' => array(
-					'joinType' => 'JOIN',
-				),
-			))
-			->findAll($criteria) as $session) {
+								 ->with(array(
+								'firm' => array(
+										'joinType' => 'JOIN',
+								)
+						))
+						 ->findAll($criteria) as $session) {
 
 			$available_time = $session->availableMinutes;
-
-			if ($session->id == $booking_session->id) {
-				// this is so that the available_time value saved below is accurate
-				$available_time -= $this->total_duration;
+			if ($available_time < $this->total_duration) {
+				continue;
 			}
 
-			if ($available_time >= $this->total_duration) {
-				$erod = new OphTrOperationbooking_Operation_EROD;
-				$erod->element_id = $this->id;
-				$erod->session_id = $session->id;
-				$erod->session_date = $session->date;
-				$erod->session_start_time = $session->start_time;
-				$erod->session_end_time = $session->end_time;
-				$erod->firm_id = $session->firm_id;
-				$erod->consultant = $session->consultant;
-				$erod->paediatric = $session->paediatric;
-				$erod->anaesthetist = $session->anaesthetist;
-				$erod->general_anaesthetic = $session->general_anaesthetic;
-				$erod->session_duration = $session->duration;
-				$erod->total_operations_time = $session->bookedMinutes;
-				$erod->available_time = $available_time;
-
-				if (!$erod->save()) {
-					throw new Exception('Unable to save EROD: '.print_r($erod->getErrors(),true));
-				}
-
-				break;
+			if ($session->max_procedures > 0 && $this->getProcedureCount() > $session->getAvailableProcedureCount()) {
+				continue;
 			}
+
+			$erod = new OphTrOperationbooking_Operation_EROD;
+			$erod->session_id = $session->id;
+			$erod->session_date = $session->date;
+			$erod->session_start_time = $session->start_time;
+			$erod->session_end_time = $session->end_time;
+			$erod->firm_id = $session->firm_id;
+			$erod->consultant = $session->consultant;
+			$erod->paediatric = $session->paediatric;
+			$erod->anaesthetist = $session->anaesthetist;
+			$erod->general_anaesthetic = $session->general_anaesthetic;
+			$erod->session_duration = $session->duration;
+			$erod->total_operations_time = $session->bookedMinutes;
+			// Note that I have not subtracted the duration of this operation from the available time when storing this
+			// as it is now being generated before the booking is made. When the booking is made, it will have been saved
+			// before the EROD is calculated, so the available time will reflect the same value as in the prior calculations
+			$erod->available_time = $available_time;
+
+			return $erod;
+
 		}
 	}
 
@@ -790,7 +864,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 	{
 		$properties['event_id'] = $this->event_id;
 		$properties['episode_id'] = $this->event->episode_id;
-		$properties['patient_id'] = $this->event->episode->patient_id;
+		$properties['patient_id'] = $this->getPatient()->id;
 
 		return parent::audit($target, $action, $data, $log, $properties);
 	}
@@ -874,28 +948,44 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 	}
 
 
-
-	public function schedule($booking_attributes, $operation_comments, $session_comments, $operation_comments_rtt, $reschedule=false, $cancellation_data = null)
+	/**
+	 * @param OphTrOperationbooking_Operation_Booking $booking
+	 * @param $operation_comments
+	 * @param $session_comments
+	 * @param $operation_comments_rtt
+	 * @param bool $reschedule
+	 * @param null $cancellation_data
+	 * @param Element_OphTrOperationbooking_ScheduleOperation $schedule_op
+	 * @throws RaceConditionException
+	 * @throws Exception
+	 * @internal param $booking_attributes
+	 * @return array|bool
+	 */
+	public function schedule($booking, $operation_comments, $session_comments, $operation_comments_rtt,
+			$reschedule=false, $cancellation_data = null, $schedule_op = null)
 	{
-		$booking = new OphTrOperationbooking_Operation_Booking;
-		$booking->attributes = $booking_attributes;
+		if ($schedule_op == null) {
+			throw new Exception('schedule_op argument required for scheduling');
+		}
+
+		if (Yii::app()->params['ophtroperationbooking_schedulerequiresreferral'] && !$this->referral) {
+			return array(array('Referral required to schedule operation'));
+		}
 
 		$session = $booking->session;
 
-		$helper = new OphTrOperationbooking_BookingHelper;
-		if (($errors = $helper->checkSessionCompatibleWithOperation($session, $this))) {
-			throw new Exception(
-				"Attempted to book operation into incompatible session: " .
-				"operation ID: {$this->id}, session ID: {$session->id}, errors: " . implode(", ", $errors)
-			);
+		if (!$schedule_op->isPatientAvailable($session->date)) {
+			return array(array('Cannot book patient into a session they are not available for.'));
+		}
+
+		if (!$session->operationBookable($this)) {
+			return array(array("Attempted to book operation into incompatible session: " . $session->unbookableReason($this)));
 		}
 
 		$reschedule = in_array($this->status_id,array(2,3,4));
 
-		if (preg_match('/(^[0-9]{1,2}).*?([0-9]{2})$/',$booking_attributes['admission_time'],$m)) {
+		if (preg_match('/(^[0-9]{1,2}).*?([0-9]{2})$/',$booking->admission_time,$m)) {
 			$booking->admission_time = $m[1].":".$m[2];
-		} else {
-			$booking->admission_time = $booking_attributes['admission_time'];
 		}
 
 		// parse the cancellation data
@@ -929,27 +1019,51 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			$booking->{'session_'.$field} = $booking->session->$field;
 		}
 
-		$criteria = new CDbCriteria;
-		$criteria->compare('session_id',$session->id);
-		$criteria->order = 'display_order desc';
-		$criteria->limit = 1;
 
-		$booking->display_order = ($booking2 = OphTrOperationbooking_Operation_Booking::model()->find($criteria)) ? $booking2->display_order+1 : 1;
 
 		if (!$booking->save()) {
 			return $booking->getErrors();
 		}
 
-		$this->latest_booking_id = $booking->id;
-		if (!$this->save()) {
-			throw new Exception("Unable to set latest booking: ".print_r($this->getErrors(),true));
-		}
-
 		OELog::log("Booking ".($reschedule ? 'rescheduled' : 'made')." $booking->id");
 		$booking->audit('booking',$reschedule ? 'reschedule' : 'create');
 
-		if (!$this->erod) {
-			$this->calculateEROD($session);
+		$this->latest_booking_id = $booking->id;
+
+		$this->comments = $operation_comments;
+		$this->comments_rtt = $operation_comments_rtt;
+		$this->site_id = $booking->session->theatre->site_id;
+
+		if ($reschedule) {
+			$this->setStatus('Rescheduled', false);
+		} else {
+			$this->setStatus('Scheduled', false);
+			// Lock the RTT for this operation booking
+			if ($ref = $this->referral) {
+				if ($active = $ref->getActiveRTT()) {
+					if (count($active) == 1) {
+						$this->rtt_id = $active[0]->id;
+					}
+				}
+			}
+		}
+
+		if (!$this->save()) {
+			throw new Exception('Unable to update operation data: '.print_r($this->getErrors(),true));
+		}
+
+		$session->comments = $session_comments;
+
+		if (!$session->save()) {
+			throw new Exception('Unable to save session comments: '.print_r($session->getErrors(),true));
+		}
+
+		// if the session has no firm, this implies it's an emergency booking so there is no need to calculate EROD
+		if ($booking->session->firm && $erod = $this->calculateEROD($booking->session->firm)) {
+			$erod->booking_id = $booking->id;
+			if (!$erod->save()) {
+				throw new Exception('Unable to save erod: '. print_r($erod->getErrors(), true));
+			}
 		}
 
 		$this->event->episode->episode_status_id = 3;
@@ -986,36 +1100,26 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			}
 		}
 
-		if ($reschedule) {
-			$this->setStatus('Rescheduled');
-		} else {
-			$this->setStatus('Scheduled');
-		}
-
-		$this->comments = $operation_comments;
-		$this->comments_rtt = $operation_comments_rtt;
-		$this->site_id = $booking->session->theatre->site_id;
-
-		if (!$this->save()) {
-			throw new Exception('Unable to update operation data: '.print_r($this->getErrors(),true));
-		}
-
-		$session->comments = $session_comments;
-
-		if (!$session->save()) {
-			throw new Exception('Unable to save session comments: '.print_r($session->getErrors(),true));
-		}
 		return true;
 	}
 
-	public function setStatus($name)
+	/**
+	 * Set the status based on the name passed in. If $save is false, we don't save and it is the responsibility
+	 * of the caller to ensure the instance is saved.
+	 *
+	 * @param $name
+	 * @param bool $save
+	 * @throws Exception
+	 */
+	public function setStatus($name, $save = true)
 	{
 		if (!$status = OphTrOperationbooking_Operation_Status::model()->find('name=?',array($name))) {
 			throw new Exception('Invalid status: '.$name);
 		}
 
 		$this->status_id = $status->id;
-		if (!$this->save()) {
+
+		if ($save && !$this->save()) {
 			throw new Exception('Unable to change operation status: '.print_r($this->getErrors(),true));
 		}
 	}
@@ -1055,7 +1159,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		$subspecialty_id = $this->event->episode->firm->serviceSubspecialtyAssignment->subspecialty_id;
 		$theatre_id = $this->booking->session->theatre_id;
 		$firm_id = $this->booking->session->firm_id;
-		$is_child = $this->event->episode->patient->isChild($this->booking->session->date);
+		$is_child = $this->getPatient()->isChild($this->booking->session->date);
 
 		$criteria = new CDbCriteria;
 		$criteria->addCondition('parent_rule_id is null');
@@ -1075,7 +1179,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		$site_id = $this->site->id;
 		$service_id = $this->event->episode->firm->serviceSubspecialtyAssignment->service_id;
 		$firm_id = $this->event->episode->firm_id;
-		$is_child = $this->event->episode->patient->isChild();
+		$is_child = $this->getPatient()->isChild();
 
 		$criteria = new CDbCriteria;
 		$criteria->addCondition('parent_rule_id is null');
@@ -1099,14 +1203,14 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 	public function getTextOperationName()
 	{
 		if ($rule = OphTrOperationbooking_Operation_Name_Rule::model()->find('theatre_id=?',array($this->booking->session->theatre_id))) {
-			return $this->event->episode->patient->childPrefix.$rule->name;
+			return $this->getPatient()->childPrefix.$rule->name;
 		}
 
 		if ($rule = OphTrOperationbooking_Operation_Name_Rule::model()->find('theatre_id is null')) {
-			return $this->event->episode->patient->childPrefix.$rule->name;
+			return $this->getPatient()->childPrefix.$rule->name;
 		}
 
-		return $this->event->episode->patient->childPrefix.'operation';
+		return $this->getPatient()->childPrefix.'operation';
 	}
 
 	public function confirmLetterPrinted($confirmto = null, $confirmdate = null)
@@ -1281,5 +1385,89 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 	public function getContainer_view_view()
 	{
 		return false;
+	}
+
+	/**
+	 * Calculates the total number of procedures this operation requires.
+	 *
+	 * @return int
+	 */
+	public function getProcedureCount()
+	{
+		$total = count($this->procedures);
+
+		if ($this->eye_id == Eye::BOTH) {
+			$total *= 2;
+		}
+		return $total;
+	}
+
+	/**
+	 * Whether the referral for the operation is still changeable - simple wrapper at the moment
+	 *
+	 * @return boolean
+	 */
+	public function canChangeReferral()
+	{
+		return !$this->_has_bookings;
+	}
+
+	/**
+	 * Ensure that referral assigned to the element is for the correct patient.
+	 *
+	 * @param $attribute
+	 * @param $params
+	 * @throws Exception
+	 */
+	public function validateReferral($attribute, $params)
+	{
+
+		if (!$this->canChangeReferral()
+				&& $this->$attribute != $this->_original_referral_id) {
+			$this->addError($attribute, 'Referral cannot be changed after an operation has been scheduled');
+		}
+		elseif ($referral_id = $this->$attribute) {
+			if (!$referral = Referral::model()->findByPk($referral_id)) {
+				throw new Exception('Invalid referral id set on ' . get_class($this));
+			}
+			if ($referral->patient_id != $this->getPatient()->id) {
+				$this->addError($attribute, "Referral must be for the patient of the event");
+			}
+		}
+	}
+
+	/**
+	 * returns the RTT for the operation booking if there is one available
+	 *
+	 * @return RTT|null
+	 */
+	public function getRTT()
+	{
+		if ($this->fixed_rtt) {
+			return $this->fixed_rtt;
+		}
+		elseif ($ref = $this->referral) {
+			$rtts = $ref->getActiveRTT();
+			if (count($rtts) == 1) {
+				return $rtts[0];
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Get the RTT breach for this operation
+	 * (if either an RTT is set, or if there is a psuedo-breach based on a week count from DTA)
+	 *
+	 * @return string 'Y-m-d'|null
+	 */
+	public function getRTTBreach()
+	{
+		if ($rtt = $this->getRTT()) {
+			return $rtt->breach;
+		}
+		elseif ($rtt_weeks = Yii::app()->params['ophtroperationboooking_rtt_limit']) {
+			return date('Y-m-d',strtotime('+' .$rtt_weeks . ' weeks', strtotime($this->decision_date)));
+		}
 	}
 }

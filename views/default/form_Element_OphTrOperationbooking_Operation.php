@@ -27,6 +27,49 @@
 	<?php echo $form->radioBoolean($element, 'overnight_stay')?>
 	<?php echo $form->dropDownList($element, 'site_id', Site::model()->getListForCurrentInstitution(),array(),false,array('field'=>2))?>
 	<?php echo $form->radioButtons($element, 'priority_id', 'OphTrOperationbooking_Operation_Priority')?>
+	<?php
+		if (Yii::app()->params['ophtroperationbooking_referral_link']) {
+	?>
+		<div class="row field-row">
+	<?php
+			if ($element->canChangeReferral()) {
+				?>
+
+				<div class="large-2 column">
+					<label for="Element_OphTrOperationbooking_Operation_referral_id"><?= $element->getAttributeLabel('referral_id');?></label>
+				</div>
+				<div class="large-4 column">
+					<?php
+					$html_options = array('options' => array(), 'empty' => '- No valid referral available -', 'nowrapper' => true);
+					$choices = $this->getReferralChoices();
+					foreach ($choices as $choice) {
+						if ($active_rtt = $choice->getActiveRTT()) {
+							if (count($active_rtt) == 1) {
+								$html_options['options'][(string) $choice->id] = array(
+										'data-clock-start' => Helper::convertDate2NHS($active_rtt[0]->clock_start),
+										'data-breach' => Helper::convertDate2NHS($active_rtt[0]->breach),
+								);
+							}
+						}
+					}
+					echo $form->dropDownList($element, 'referral_id', CHtml::listData($this->getReferralChoices(),'id','description'),$html_options,false,array('field' => 2));
+					?>
+				</div>
+				<div class="large-4 column end">
+					<span id="rtt-info" class="rtt-info" style="display: none">Clock start - <span id="rtt-clock-start"></span> Breach - <span id="rtt-breach"></span></span>
+				</div>
+				<?php
+			} else { ?>
+					<div class="large-2 column"><label>Referral:</label></div>
+					<div class="large-4 column end"><?php if ($element->referral) { echo $element->referral->getDescription(); } else { echo "No Referral Set"; } ?></div>
+	<?php
+			}
+	?>
+		</div>
+	<?php
+		}
+	?>
+
 	<?php echo $form->datePicker($element, 'decision_date', array('maxDate' => 'today'), array(), array_merge($form->layoutColumns, array('field' => 2)))?>
 	<?php echo $form->textArea($element, 'comments', array('rows' => 4), false, array(), array_merge($form->layoutColumns, array('field' => 4)))?>
 	<?php echo $form->textArea($element, 'comments_rtt', array('rows' => 4), false, array(), array_merge($form->layoutColumns, array('field' => 4)))?>

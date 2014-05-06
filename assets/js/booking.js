@@ -42,6 +42,11 @@ $(document).ready(function() {
 
 	handleButton($('#et_canceldelete'));
 
+	$(this).delegate('.addUnavailable', 'click', function(e) {
+		OphTrOperationbooking_PatientUnavailable_add();
+		e.preventDefault();
+	});
+
 	$('select.populate_textarea').unbind('change').change(function() {
 		if ($(this).val() != '') {
 			var cLass = $(this).parent().parent().parent().attr('class').match(/Element.*/);
@@ -88,9 +93,15 @@ $(document).ready(function() {
 	});
 
 	$('#calendar table td').click(function() {
-		var day = $(this).text().match(/[0-9]+/);
-		if (day == null) return false;
-		window.location.href = URI(window.location.href).setSearch('day',day).removeSearch('session_id');
+		var search = {'day' : $(this).text().match(/[0-9]+/)};
+		if (search.day == null) return false;
+		if ($('#Element_OphTrOperationbooking_Operation_referral_id').length) {
+			search['referral_id'] = $('#Element_OphTrOperationbooking_Operation_referral_id').val();
+		}
+		if (!$(this).hasClass('patient-unavailable')) {
+			window.onbeforeunload = null;
+			window.location.href = URI(window.location.href).setSearch(search).removeSearch('session_id');
+		}
 		return false;
 	});
 
@@ -103,11 +114,20 @@ $(document).ready(function() {
 		$('#bookingForm').submit();
 	});
 
+	$(this).undelegate('#Element_OphTrOperationbooking_Operation_referral_id', 'change').delegate('#Element_OphTrOperationbooking_Operation_referral_id', 'change', function() {
+		// maintain the POST value if the drop down is altered.
+		if ($('#Operation_referral_id').length) {
+			$('#Operation_referral_id').val($(this).val());
+		}
+	});
+
 	$(this).undelegate('#firmSelect #firm_id','change').delegate('#firmSelect #firm_id','change',function() {
-		var firm_id = $(this).val();
-		var operation = $('input[id=operation]').val();
+		var search = {'firm_id': $(this).val()};
+		if ($('#Element_OphTrOperationbooking_Operation_referral_id').length) {
+			search['referral_id'] = $('#Element_OphTrOperationbooking_Operation_referral_id').val();
+		}
 		window.onbeforeunload = null;
-		window.location.href = URI(window.location.href).setSearch('firm_id',firm_id).removeSearch(['session_id', 'day']);
+		window.location.href = URI(window.location.href).setSearch(search).removeSearch(['session_id', 'day']);
 	});
 
 	handleButton($('#btn_print-letter'),function() {
@@ -137,4 +157,48 @@ $(document).ready(function() {
 				break;
 		}
 	});
+
+	$(this).delegate('.remove-unavailable', 'click', function(e) {
+		$(this).closest('tr').remove();
+		e.preventDefault();
+	});
+
+	$(this).delegate('.unavailable-start-date', 'change', function(e) {
+		var end = $(this).closest('tr').find('.unavailable-end-date');
+		if ($(this).datepicker('getDate') > end.datepicker('getDate')) {
+			end.val($(this).val());
+		}
+	});
+
+	$(this).delegate('.unavailable-end-date', 'change', function(e) {
+		var start = $(this).closest('tr').find('.unavailable-start-date');
+		if ($(this).datepicker('getDate') < start.datepicker('getDate')) {
+			start.val($(this).val());
+		}
+	});
 });
+
+function OphTrOperationbooking_PatientUnavailable_getNextKey() {
+	var keys = $('#event-content .Element_OphTrOperationbooking_ScheduleOperation .patient-unavailable').map(function(index, el) {
+		return parseInt($(el).attr('data-key'));
+	}).get();
+	var v = Math.max.apply(null, keys);
+	if (v >= 0) {
+		return v+1;
+	}
+	return 0;
+}
+
+function OphTrOperationbooking_PatientUnavailable_add() {
+	var template = $('#intraocularpressure_reading_template').html();
+	var data = {
+		"key" : OphTrOperationbooking_PatientUnavailable_getNextKey()
+	};
+	var form = Mustache.render(template, data);
+	$('.unavailables').append(form);
+	$('.unavailables').find('[id$="date"]').each(function() {
+		$(this).datepicker({
+			'showAnim': 'fold',
+			'dateFormat': nhs_date_format});
+	});
+}

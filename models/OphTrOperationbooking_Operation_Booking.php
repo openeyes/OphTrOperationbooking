@@ -65,7 +65,8 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecordVersioned
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('element_id, session_id, display_order, ward_id, admission_time, confirmed, session_date, session_start_time, session_end_time, session_theatre_id, transport_arranged, transport_arranged_date, booking_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id', 'safe'),
+			//allow session to be set directly here for ease of testing.
+			array('element_id, session_id, session, display_order, ward_id, admission_time, confirmed, session_date, session_start_time, session_end_time, session_theatre_id, transport_arranged, transport_arranged_date, booking_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id', 'safe'),
 			array('element_id', 'required'),
 			array('display_order', 'numerical', 'integerOnly'=>true),
 			array('ward_id', 'numerical', 'integerOnly'=>true),
@@ -97,6 +98,7 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecordVersioned
 			'theatre' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Theatre', 'session_theatre_id'),
 			'cancellationReason' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Cancellation_Reason', 'cancellation_reason_id'),
 			'schedulingOption' => array(self::BELONGS_TO, 'Element_OphTrOperationbooking_ScheduleOperation', 'element_id'),
+			'erod' => array(self::HAS_ONE, 'OphTrOperationbooking_Operation_EROD', 'booking_id'),
 		);
 	}
 
@@ -249,6 +251,36 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecordVersioned
 		return $return;
 	}
 
+	/**
+	 * calculate the appropriate default displayorder for this record
+	 *
+	 * @return int
+	 */
+	protected function calculateDefaultDisplayOrder()
+	{
+		$criteria = new CDbCriteria;
+		$criteria->compare('session_id',$this->session->id);
+		$criteria->order = 'display_order desc';
+		$criteria->limit = 1;
+
+		return ($booking2 = OphTrOperationbooking_Operation_Booking::model()->find($criteria)) ? $booking2->display_order+1 : 1;
+
+	}
+
+	/**
+	 * Ensure display_order is set
+	 *
+	 * @return bool
+	 */
+	protected function beforeValidate()
+	{
+		if ($this->session && !$this->display_order) {
+			$this->display_order = $this->calculateDefaultDisplayOrder();
+		}
+
+		return parent::beforeValidate();
+	}
+
 	protected function afterValidate()
 	{
 		if (preg_match('/^([0-9]{1,2}).*?([0-9]{2})$/',$this->admission_time,$m)) {
@@ -271,12 +303,22 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecordVersioned
 				'firm' => $this->session->firm,
 				'site' => $this->ward->site,
 				'ward_code' => $this->ward->code,
-				'theatre_code' => $this->session->theatre->code,
+				'theatre_code' => $this->session->theatre ? $this->session->theatre->code : null,
 				'cancellation_date' => $this->booking_cancellation_date,
 				'new' => $this->isNewRecord,
 			)
 		);
 
 		parent::afterSave();
+	}
+
+	/**
+	 * Pass through convenience function
+	 *
+	 * @return int
+	 */
+	public function getProcedureCount()
+	{
+		return $this->operation->getProcedureCount();
 	}
 }

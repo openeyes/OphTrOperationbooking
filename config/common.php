@@ -57,9 +57,22 @@ return array(
 			'Letter warning rules' => '/OphTrOperationbooking/admin/viewLetterWarningRules',
 			'Operation name rules' => '/OphTrOperationbooking/admin/viewOperationNameRules',
 			'Waiting list contact rules' => '/OphTrOperationbooking/admin/viewWaitingListContactRules',
+			'Patient unavailable reasons' => '/OphTrOperationbooking/admin/viewPatientUnavailableReasons',
+			'Session unavailable reasons' => '/OphTrOperationbooking/admin/viewSessionUnavailableReasons'
 		),
 		// Default anaesthetic settings
 		//'ophtroperationbooking_default_anaesthetic_child' => 'GA',
 		//'ophtroperationbooking_default_anaesthetic' => 'GA',
+		// How many weeks from DTA should EROD be calculated
+		//'erod_lead_time_weeks' => 3,
+		// How many days ahead of the day an operation is being scheduled should EROD be calculated
+		//'erod_lead_current_date_days' => 2,
+		// number of weeks from decision date that is the RTT limit
+		//'ophtroperationboooking_rtt_limit' => 6,
+		// whether referrals can be assigned to operation bookings or not (turn off if you don't have referrals imported
+		// or set on the patient record.
+		//'ophtroperationbooking_referral_link' => true,
+		// boolean to require a referral on an operation booking for scheduling or not
+		//'ophtroperationbooking_schedulerequiresreferral' => true
 	)
 );

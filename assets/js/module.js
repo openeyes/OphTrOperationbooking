@@ -1,4 +1,3 @@
-<?php
 /**
  * OpenEyes
  *
@@ -17,10 +16,48 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-return array(
-	'sequence1' => array(
-		'id' => 1,
-		'firm_id' => 1,
-		'theatre_id' => 1,
-	),
-);
+function updateRTTInfo(el) {
+	var show = false;
+	var cs, b;
+
+	var selectedVal = $(el).val();
+	$(el).find('option').each(function() {
+		if ($(this).attr('value') == selectedVal) {
+			cs = $(this).data('clock-start');
+			b = $(this).data('breach');
+			return false;
+		}
+	});
+
+	if (cs) {
+		$('#rtt-clock-start').html(cs);
+		show = true;
+	}
+	else {
+		$('#rtt-clock-start').html('');
+	}
+	if (b) {
+		$('#rtt-breach').html(b);
+		show = true;
+	}
+	else {
+		$('#rtt-breach').html('');
+	}
+	if (show) {
+		$('#rtt-info').show();
+	}
+	else {
+		$('#rtt-info').hide();
+	}
+}
+
+
+
+$(document).ready(function() {
+	updateRTTInfo($('#Element_OphTrOperationbooking_Operation_referral_id'));
+	$('#Element_OphTrOperationbooking_Operation_referral_id').on('change', function() {
+		updateRTTInfo($(this));
+	});
+
+
+});

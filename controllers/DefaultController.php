@@ -17,7 +17,7 @@
 * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
 */
 
-class DefaultController extends BaseEventTypeController
+class DefaultController extends OphTrOperationbookingEventController
 {
 	static protected $action_types = array(
 		'cancel' => self::ACTION_TYPE_EDIT,
@@ -38,8 +38,9 @@ class DefaultController extends BaseEventTypeController
 	protected function beforeAction($action)
 	{
 		Yii::app()->clientScript->registerScriptFile($this->assetPath.'/js/booking.js');
-		Yii::app()->assetManager->registerScriptFile('js/jquery.validate.min.js');
-		Yii::app()->assetManager->registerScriptFile('js/additional-validators.js');
+		Yii::app()->clientScript->registerScriptFile('/js/jquery.validate.min.js');
+		Yii::app()->clientScript->registerScriptFile('/js/additional-validators.js');
+		$this->jsVars['nhs_date_format'] = Helper::NHS_DATE_FORMAT_JS;
 		return parent::beforeAction($action);
 	}
 
@@ -78,6 +79,10 @@ class DefaultController extends BaseEventTypeController
 				if ($at = AnaestheticType::model()->find('code=?',array(Yii::app()->params[$key]))) {
 					$element->anaesthetic_type_id = $at->id;
 				}
+			}
+
+			if ($default_referral = $this->calculateDefaultReferral()) {
+				$element->referral_id = $default_referral->id;
 			}
 
 			$element->site_id = Yii::app()->session['selected_site_id'];
@@ -132,38 +137,73 @@ class DefaultController extends BaseEventTypeController
 	}
 
 	/**
+	 * Handle procedures
+	 *
 	 * @see BaseEventTypeController::setElementComplexAttributesFromData($element, $data, $index)
 	 */
-	protected function setElementComplexAttributesFromData($element, $data, $index = null)
+	protected function setComplexAttributes_Element_OphTrOperationbooking_Operation($element, $data, $index = null)
 	{
 		// Using the ProcedureSelection widget, so the field doesn't map directly to the element attribute
-		if (get_class($element) == 'Element_OphTrOperationbooking_Operation') {
-			if (isset($data['Element_OphTrOperationbooking_Operation']['total_duration_procs'])) {
-				$element->total_duration = $data['Element_OphTrOperationbooking_Operation']['total_duration_procs'];
+		if (isset($data['Element_OphTrOperationbooking_Operation']['total_duration_procs'])) {
+			$element->total_duration = $data['Element_OphTrOperationbooking_Operation']['total_duration_procs'];
+		}
+		$procs = array();
+		if (isset($data['Procedures_procs'])) {
+			foreach ($data['Procedures_procs'] as $proc_id) {
+				$procs[] = Procedure::model()->findByPk($proc_id);
 			}
-			$procs = array();
-			if (isset($data['Procedures_procs'])) {
-				foreach ($data['Procedures_procs'] as $proc_id) {
-					$procs[] = Procedure::model()->findByPk($proc_id);
+		}
+		$element->procedures = $procs;
+	}
+
+	/**
+	 * Handle the patient unavailables
+	 *
+	 * @see BaseEventTypeController::setElementComplexAttributesFromData($element, $data, $index)
+	 */
+	protected function setComplexAttributes_Element_OphTrOperationbooking_ScheduleOperation($element, $data, $index)
+	{
+		if (isset($data['Element_OphTrOperationbooking_ScheduleOperation']['patient_unavailables'])) {
+			$puns = array();
+			foreach($data['Element_OphTrOperationbooking_ScheduleOperation']['patient_unavailables'] as $i => $attributes) {
+				if ($id = @$attributes['id']) {
+					$pun = OphTrOperationbooking_ScheduleOperation_PatientUnavailable::model()->findByPk($id);
 				}
+				else {
+					$pun = new OphTrOperationbooking_ScheduleOperation_PatientUnavailable();
+				}
+				$pun->attributes = Helper::convertNHS2MySQL($attributes);
+				$puns[] = $pun;
 			}
-			$element->procedures = $procs;
+			$element->patient_unavailables = $puns;
 		}
 	}
 
 	/**
 	 * Set procedures for Element_OphTrOperationbooking_Operation
 	 *
+	 * @param $element
 	 * @param $data
+	 * @param $index
 	 */
-	protected function saveEventComplexAttributesFromData($data)
+	protected function saveComplexAttributes_Element_OphTrOperationbooking_Operation($element, $data, $index)
 	{
-		foreach ($this->open_elements as $element) {
-			if (get_class($element) == 'Element_OphTrOperationbooking_Operation') {
-				// using the ProcedureSelection widget, so not a direct field on the operation element
-				$element->updateProcedures(isset($data['Procedures_procs']) ? $data['Procedures_procs'] : array());
-			}
-		}
+		// using the ProcedureSelection widget, so not a direct field on the operation element
+		$element->updateProcedures(isset($data['Procedures_procs']) ? $data['Procedures_procs'] : array());
+	}
+
+	/**
+	 * Set the patient unavailable periods for Element_OphTrOperationbooking_ScheduleOperation
+	 *
+	 * @param $element
+	 * @param $data
+	 * @param $index
+	 */
+	protected function saveComplexAttributes_Element_OphTrOperationbooking_ScheduleOperation($element, $data, $index)
+	{
+		// using the ProcedureSelection widget, so not a direct field on the operation element
+		$element->updatePatientUnavailables(isset($data['Element_OphTrOperationbooking_ScheduleOperation']['patient_unavailables']) ?
+				Helper::convertNHS2MySQL($data['Element_OphTrOperationbooking_ScheduleOperation']['patient_unavailables']) : array());
 	}
 
 	/**
@@ -188,6 +228,31 @@ class DefaultController extends BaseEventTypeController
 		}
 
 		return $errors;
+	}
+
+	/**
+	 * Calculate the default referral for the event
+	 *
+	 * @return null|Referral
+	 */
+	public function calculateDefaultReferral()
+	{
+		$referrals = $this->getReferralChoices();
+		$match = null;
+		foreach ($referrals as $referral) {
+			if ($referral->firm_id == $this->firm->id) {
+				return $referral;
+			}
+			else {
+				if (!$match && $referral->service_subspecialty_assignment_id == $this->firm->service_subspecialty_assignment_id) {
+					$match = $referral;
+				}
+			}
+		}
+		if (!$match && !empty($referrals)) {
+			$match = $referrals[0];
+		}
+		return $match;
 	}
 
 	/**
@@ -224,7 +289,7 @@ class DefaultController extends BaseEventTypeController
 			if ($result['result']) {
 				$operation->event->deleteIssues();
 
-				$event->audit('event','cancel');
+				$operation->event->audit('event','cancel');
 
 				die(json_encode(array()));
 			}

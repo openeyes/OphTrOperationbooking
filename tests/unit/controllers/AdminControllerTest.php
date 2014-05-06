@@ -29,13 +29,14 @@ class AdminControllerTest extends CTestCase
 
 	public function setUp()
 	{
+		/*
 		$this->controller = $this->getMockBuilder('AdminController')
 			->disableOriginalConstructor()
 			->setMethods(array('render'))
 			->getMock();
 
 		$this->audit = $this->getMock('Audit');
-
+		*/
 		//Yii::app()->setComponent('audit',$this->audit);
 	}
 

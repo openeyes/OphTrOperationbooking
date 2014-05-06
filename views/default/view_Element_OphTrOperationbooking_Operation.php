@@ -70,10 +70,24 @@
 	</div>
 </section>
 
+
+
 <section class="element element-data">
 	<div class="row">
-		<div class="large-6 column">
-		</div>
+		<?php
+		if (Yii::app()->params['ophtroperationbooking_referral_link']) {
+		?>
+			<div class="large-6 column">
+				<h3 class="data-title">Referral</h3>
+				<div class="data-value"><?php if ($element->referral) { echo $element->referral->getDescription(); } else { echo "No Referral Set"; } ?></div>
+				<?php if ($rtt = $element->getRTT()) {?>
+					<div class="rtt-info">Clock Start - <?= Helper::convertDate2NHS($rtt->clock_start) ?> Breach: <?= Helper::convertDate2NHS($rtt->breach) ?></div>
+				<?php } ?>
+			</div>
+
+		<?php
+		}
+		?>
 		<div class="large-6 column">
 			<?php if (!empty($element->comments_rtt)) { ?>
 				<h3 class="data-title">Operation RTT Comments</h3>
@@ -93,6 +107,13 @@
 					<div class="data-value">
 						<?php $session = $element->booking->session ?>
 						<?php echo $session->NHSDate('date') . ' ' . $session->TimeSlot . ', '.$session->FirmName; ?>
+						<?php if ($warnings = $session->getWarnings()) { ?>
+							<div class="alert-box alert with-icon">Please note:<ul>
+							<?php foreach ($warnings as $warning) {
+								echo "<li>" . $warning . "</li>";
+							}?>
+							</ul></div>
+						<?php } ?>
 					</div>
 				</div>
 				<div class="large-6 column">
@@ -113,6 +134,22 @@
 			</div>
 		</div>
 	</section>
+
+	<?php if ($element->booking->erod) {?>
+		<section class="element">
+			<h3 class="element-title highlight">Earliest reasonable offer date</h3>
+			<div class="element-data">
+				<div class="row">
+					<div class="large-12 column">
+						<div class="data-value">
+							<?php echo $element->booking->erod->getDescription() ?>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	<?php }?>
+
 
 	<div class="row">
 		<div class="large-12 column">
@@ -145,6 +182,9 @@
 						Cancelled on <?php echo $booking->NHSDate('booking_cancellation_date'); ?>
 						by <strong><?php echo $booking->usercancelled->FullName; ?></strong>
 						due to <?php echo $booking->cancellationReasonWithComment; ?>
+						<?php if ($booking->erod) {?>
+							<br /><span class="erod">EROD was <?= $booking->erod->getDescription() ?></span>
+						<?php } ?>
 					</li>
 				<?php }?>
 			</ul>
@@ -180,21 +220,6 @@
 		</section>
 	<?php } ?>
 <?php } ?>
-
-<?php if ($element->erod) {?>
-	<section class="element">
-		<h3 class="element-title highlight">Earliest reasonable offer date</h3>
-		<div class="element-data">
-			<div class="row">
-				<div class="large-12 column">
-					<div class="data-value">
-						<?php echo $element->erod->NHSDate('session_date').' '.$element->erod->timeSlot.', '.$element->erod->FirmName?>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-<?php }?>
 
 <?php
 if ($element->status->name != 'Cancelled' && $this->checkEditAccess()) {

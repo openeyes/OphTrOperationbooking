@@ -17,7 +17,7 @@
 * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
 */
 
-class BookingController extends BaseEventTypeController
+class BookingController extends OphTrOperationbookingEventController
 {
 	static protected $action_types = array(
 		'schedule' => self::ACTION_TYPE_EDIT,
@@ -72,6 +72,7 @@ class BookingController extends BaseEventTypeController
 		}
 
 		$operation = $this->operation;
+		$schedule_options = Element_OphTrOperationbooking_ScheduleOperation::model()->find('event_id = ?', array($this->event->id));
 
 		if ($operation->status->name == 'Cancelled') {
 			return $this->redirect(array('default/view/'.$this->event->id));
@@ -88,6 +89,14 @@ class BookingController extends BaseEventTypeController
 			}
 		} else {
 			$firm = $this->firm;
+		}
+
+		// allowing the referral to be updated
+		if (@$_GET['referral_id']) {
+			if ($referral = Referral::model()->findByPk($_GET['referral_id'])) {
+				$operation->referral_id = $_GET['referral_id'];
+				$operation->referral = $referral;
+			}
 		}
 
 		if (preg_match('/^([0-9]{4})([0-9]{2})$/',@$_GET['date'],$m)) {
@@ -130,13 +139,24 @@ class BookingController extends BaseEventTypeController
 							'reason_id' => @$_POST['cancellation_reason'],
 							'comment' => @$_POST['cancellation_comment']
 						);
+
+						$booking = new OphTrOperationbooking_Operation_Booking;
+						$booking->attributes = $_POST['Booking'];
+
+						// referral might have been altered in scheduling form, so should update the operation here
+						// (different from the GET changes above which handle the selection down to the session)
+						if ($operation->canChangeReferral()) {
+							$operation->referral_id = $_POST['Operation']['referral_id'];
+						}
+
 						if (($result = $operation->schedule(
-								$_POST['Booking'],
+								$booking,
 								$_POST['Operation']['comments'],
 								$_POST['Session']['comments'],
 								$_POST['Operation']['comments_rtt'],
 								($this->reschedule !== true),
-								$cancellation_data)) !== true) {
+								$cancellation_data,
+								$schedule_options)) !== true) {
 							$errors = $result;
 						} else {
 							$transaction->commit();
@@ -157,6 +177,7 @@ class BookingController extends BaseEventTypeController
 					$_POST['Booking']['admission_time'] = substr($session['default_admission_time'],0,5);
 					$_POST['Booking']['ward_id'] = key($operation->getWardOptions($_session));
 					$_POST['Session']['comments'] = $session['comments'];
+					$_POST['Operation']['referral_id'] = $operation->referral_id;
 					$_POST['Operation']['comments'] = $operation->comments;
 					$_POST['Operation']['comments_rtt'] = $operation->comments_rtt;
 				}
@@ -174,7 +195,7 @@ class BookingController extends BaseEventTypeController
 			'firmList' => Firm::model()->listWithSpecialties,
 			'date' => $date,
 			'selectedDate' => @$selectedDate,
-			'sessions' => $operation->getFirmCalendarForMonth($firm, $date),
+			'sessions' => $operation->getFirmCalendarForMonth($firm, $date, $schedule_options),
 			'theatres' => @$theatres,
 			'session' => @$session,
 			'bookings' => @$bookings,

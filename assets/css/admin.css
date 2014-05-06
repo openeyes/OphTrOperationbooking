@@ -25,3 +25,8 @@
 .set {
   font-weight: bold;
 }
+
+/* line 29, ../sass/admin.scss */
+.warn {
+  color: #F00;
+}

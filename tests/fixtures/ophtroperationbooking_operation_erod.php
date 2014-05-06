@@ -17,8 +17,8 @@ return array(
 	'erod1' => array(
 		'element_id' => 1,
 		'session_id' => 1,
-		'session_date' => '2012-01-02',
-		'session_start_time' => '08:00:00',
-		'session_end_time' => '13:00:00',
+		'session_date' => date('Y-m-d', strtotime('-2 weeks')),
+		'session_start_time' => '10:00:00',
+		'session_end_time' => '12:00:00',
 	)
 );

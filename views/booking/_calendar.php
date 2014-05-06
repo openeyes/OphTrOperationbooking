@@ -75,7 +75,8 @@ $nextYear = mktime(0,0,0, date('m'), 1, date('Y')+1);
 					<div class="container" id="full"><div class="color_box"></div><div class="label">Full</div></div>
 					<div class="container" id="closed"><div class="color_box"></div><div class="label">Theatre Closed</div></div>
 					<div class="container" id="selected_date"><div class="color_box"></div><div class="label">Selected Date</div></div>
-					<div class="container" id="outside_rtt"><div class="color_box"></div><div class="label">Outside RTT</div></div>
+					<?php if ($operation->getRTTBreach()) {?><div class="container" id="outside_rtt"><div class="color_box"></div><div class="label">Outside RTT</div></div><?php } ?>
+					<div class="container" id="patient-unavailable"><div class="color_box"></div><div class="label">Patient Unavailable</div></div>
 				</div>
 			</td>
 		</tr>

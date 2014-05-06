@@ -72,6 +72,69 @@
 			</div>
 		<?php }?>
 
+		<?php
+		if (Yii::app()->params['ophtroperationbooking_referral_link']) {
+		?>
+			<div class="eventDetail">
+				<div class="row field-row">
+					<div class="large-2 column">
+						<?php echo CHtml::label('<strong>' . $operation->getAttributeLabel('referral_id') . ':</strong>', 'referral_id'); ?>
+					</div>
+					<?php
+					if ($operation->canChangeReferral()) {
+					?>
+						<div class="large-4 column ">
+						<?php
+							$html_options = array('options' => array(), 'empty' => '- No valid referral available -', 'nowrapper' => true);
+							$choices = $this->getReferralChoices();
+							foreach ($choices as $choice) {
+								if ($active_rtt = $choice->getActiveRTT()) {
+									if (count($active_rtt) == 1) {
+										$html_options['options'][(string) $choice->id] = array(
+												'data-clock-start' => Helper::convertDate2NHS($active_rtt[0]->clock_start),
+												'data-breach' => Helper::convertDate2NHS($active_rtt[0]->breach),
+										);
+									}
+								}
+							}
+							echo CHtml::activedropDownList($operation, 'referral_id', CHtml::listData($this->getReferralChoices(),'id','description'),$html_options,false,array('field' => 2));
+						?>
+						</div>
+						<div class="large-4 column end">
+							<span id="rtt-info" class="rtt-info" style="display: none">Clock start - <span id="rtt-clock-start"></span> Breach - <span id="rtt-breach"></span></span>
+						</div>
+					<?php
+					} else {
+					?>
+						<div class="large-4 column end">
+					<?php
+							if ($operation->referral) {
+								echo $operation->referral->getDescription();
+							}
+							else {
+								echo "No referral was set.";
+							}
+						?>
+					</div>
+					<?php } ?>
+				</div>
+			</div>
+		<?
+		}
+		?>
+		<?php
+			$initial_erod = ($operation->firstBooking) ? $operation->firstBooking->erod : null;
+			$erod = $operation->calculateEROD($firm);
+
+			if ($initial_erod || $erod) { ?>
+				<div class="eventDetail">
+					<div class="row field-row">
+						<div class="large-2 column label"><strong>EROD:</strong></div>
+						<div class="large-5 column end data"><?php if ($erod) { echo $erod->getDescription(); } else { echo "N/A"; } if ($initial_erod) { echo ' <span class="initial-erod">Initially: ' . $initial_erod->getDescription();  } ?></div>
+					</div>
+				</div>
+		<?php } ?>
+
 		<div class="edit" id="firmSelect">
 			<div class="element-fields">
 				<div class="field-row">

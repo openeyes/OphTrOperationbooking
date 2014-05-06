@@ -25,12 +25,6 @@ class OphTrOperationbooking_Operation_EROD_RuleTest extends CDbTestCase
 	public static function setUpBeforeClass()
 	{
 		date_default_timezone_set('UTC');
-		self::getFixtureManager()->basePath = Yii::getPathOfAlias( 'application.modules.ophtroperationbooking.tests.fixtures' );
-	}
-
-	public static function tearDownAfterClass()
-	{
-		self::getFixtureManager()->basePath = Yii::getPathOfAlias( 'application.tests.fixtures' );
 	}
 
 	public function testNoItemsRaisesError()

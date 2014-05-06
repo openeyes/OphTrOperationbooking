@@ -32,6 +32,7 @@
  * @property User $user
  * @property User $usermodified
  * @property Element_OphTrOperationbooking_ScheduleOperation_ScheduleOptions $schedule_options
+ * @property OphTrOperationbooking_ScheduleOperation_PatientUnavailable[] $patient_unavailables
  */
 
 class Element_OphTrOperationbooking_ScheduleOperation extends BaseEventTypeElement
@@ -65,6 +66,8 @@ class Element_OphTrOperationbooking_ScheduleOperation extends BaseEventTypeEleme
 		return array(
 			array('event_id, schedule_options_id, ', 'safe'),
 			array('schedule_options_id, ', 'required'),
+			array('patient_unavailables', 'validateNoDateRangeOverlap'),
+			array('patient_unavailables', 'validateNoBookingCollision'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, event_id, schedule_options_id, ', 'safe', 'on' => 'search'),
@@ -85,6 +88,7 @@ class Element_OphTrOperationbooking_ScheduleOperation extends BaseEventTypeEleme
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 			'schedule_options' => array(self::BELONGS_TO, 'OphTrOperationbooking_ScheduleOperation_Options', 'schedule_options_id'),
+			'patient_unavailables' => array(self::HAS_MANY, 'OphTrOperationbooking_ScheduleOperation_PatientUnavailable', 'element_id')
 		);
 	}
 
@@ -96,7 +100,8 @@ class Element_OphTrOperationbooking_ScheduleOperation extends BaseEventTypeEleme
 		return array(
 			'id' => 'ID',
 			'event_id' => 'Event',
-'schedule_options_id' => 'Schedule options',
+			'schedule_options_id' => 'Schedule options',
+			'patient_unavailables' => 'Patient Unavailable Periods'
 		);
 	}
 
@@ -131,22 +136,159 @@ $criteria->compare('schedule_options_id', $this->schedule_options_id);
 		}
 	}
 
-
-
-	protected function beforeSave()
+	/**
+	 * Get the operation booking for the event
+	 *
+	 * @return OphTrOperationbooking_Operation_Booking
+	 */
+	public function getCurrentBooking()
 	{
-		return parent::beforeSave();
+		if ($this->event_id && ($op = Element_OphTrOperationbooking_Operation::model()->with('booking')->find('event_id = ?', array($this->event_id)))) {
+			return $op->booking;
+		}
 	}
 
-	protected function afterSave()
+	/**
+	 * validate a date is earlier or equal to another
+	 *
+	 * @param $attribute - the element attribute that must be an earlier date
+	 * @param $params - 'later_date' is the attribute to compare it with
+	 */
+	public function validateNoDateRangeOverlap($attribute, $params)
 	{
-
-		return parent::afterSave();
+		$pstart = "start_date";
+		$pend = "end_date";
+		foreach ($this->$attribute as $i => $dr) {
+			for ($j = $i+1; $j < count($this->$attribute); $j++) {
+				if ($dr->$pstart < $this->{$attribute}[$j]->$pend && $dr->$pend > $this->{$attribute}[$j]->$pstart) {
+					$this->addError($attribute, "Data ranges cannot overlap");
+				}
+			}
+		}
 	}
 
-	protected function beforeValidate()
+	/**
+	 * Ensure that if there is a current booking on this event, the patient unavailables dates don't collide with the booking.
+	 *
+	 * @param $attribute
+	 * @param $params
+	 */
+	public function validateNoBookingCollision($attribute, $params)
 	{
-		return parent::beforeValidate();
+		if ($booking = $this->getCurrentBooking()) {
+			if (!$this->isPatientAvailable($booking->session_date)) {
+				$this->addError($attribute, "Cannot set the patient to be unavailable on the day of the current booking.");
+			}
+		}
+	}
+
+
+	/**
+	 * Make sure patient_unavailables are validated
+	 */
+	public function afterValidate()
+	{
+		foreach ($this->patient_unavailables as $i => $unavailable) {
+			if (!$unavailable->validate()) {
+				foreach ($unavailable->getErrors() as $fld => $err) {
+					$this->addError('patient_unavailables', $this->getAttributeLabel('patient_unavailables') .
+							' (' .($i+1) . '): ' . implode(', ', $err) );
+				}
+			}
+		}
+	}
+
+	/**
+	 * Set the patient unavailable objects for this element
+	 *
+	 * @param $unavailables
+	 * @throws Exception
+	 */
+	public function updatePatientUnavailables($unavailables)
+	{
+		$curr_by_id = array();
+		$save = array();
+		$criteria = new CDbCriteria();
+		$criteria->addCondition('element_id = :eid');
+		$criteria->params[':eid'] = $this->id;
+		foreach (OphTrOperationbooking_ScheduleOperation_PatientUnavailable::model()->findAll($criteria) as $c_pun) {
+			$curr_by_id[$c_pun->id] = $c_pun;
+		}
+
+		foreach ($unavailables as $unavailable) {
+			if (@$unavailable['id']) {
+				// it's an existing one
+				$obj = $curr_by_id[$unavailable['id']];
+				unset($curr_by_id[$unavailable['id']]);
+			}
+			else {
+				$obj = new OphTrOperationbooking_ScheduleOperation_PatientUnavailable();
+				$obj->element_id = $this->id;
+			}
+			$dosave = false;
+			foreach (array('start_date', 'end_date', 'reason_id') as $attr) {
+				if ($obj->$attr != $unavailable[$attr]) {
+					$dosave = true;
+					$obj->$attr = $unavailable[$attr];
+				}
+			}
+			if ($dosave) {
+				$save[] = $obj;
+			}
+		}
+		foreach ($save as $s) {
+			if (!$s->save()) {
+				throw new Exception("Unable to save Patient Unavailable " . print_r($s->getErrors(), true));
+			};
+		}
+
+		foreach ($curr_by_id as $id => $d) {
+			if (!$d->delete()) {
+				throw new Exception("Unable to delete Patient Unavailable " . print_r($d->getErrors(), true));
+			}
+		}
+
+	}
+
+	protected $_unavailable_dates;
+
+	/**
+	 * make sure the cached dates array is reset when patient_unavailables is updated
+	 *
+	 * @param string $name
+	 * @param mixed $value
+	 * @return mixed|void
+	 */
+	public function __set($name,$value)
+	{
+		if ($name == 'patient_unavailables') {
+			$this->_unavailable_dates = null;
+		}
+		parent::__set($name, $value);
+	}
+
+	/**
+	 * Given a date (yyyy-mm-dd) check if the patient is available, and return true or false as appropriate.
+	 *
+	 * @param $date
+	 * @return bool
+	 */
+	public function isPatientAvailable($date) {
+		if (!$this->_unavailable_dates) {
+			$this->_unavailable_dates = array();
+			// cache the patient unavailable dates as we don't want to do this every time
+			foreach ($this->patient_unavailables as $unavailable) {
+				$dt = strtotime($unavailable->start_date);
+				while ($dt <= strtotime($unavailable->end_date)) {
+					$this->_unavailable_dates[] = date('Y-m-d', $dt);
+					$dt+=86400;
+				}
+			}
+		}
+		if (empty($this->_unavailable_dates)) {
+			return true;
+		}
+		return !in_array($date, $this->_unavailable_dates);
 	}
 
 	public function getContainer_view_view()

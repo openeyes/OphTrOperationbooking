@@ -18,9 +18,9 @@
  */
 
 return array(
-	'sequence1' => array(
-		'id' => 1,
-		'firm_id' => 1,
-		'theatre_id' => 1,
-	),
+		'scheduled' => array(
+				'name' => 'Scheduled',
+				'created_date' => date('Y-m-d 00:00:00'),
+				'last_modified_date' => date('Y-m-d 00:00:00'),
+		),
 );
