@@ -160,7 +160,7 @@ class WaitingListController extends BaseModuleController
 					'procedures'
 				)
 			)->findAll(array(
-					'condition' => 'event.id IS NOT NULL AND episode.end_date IS NULL AND t.status_id IN (1,3) '.$whereSql,
+					'condition' => 'event.id IS NOT NULL AND episode.end_date IS NULL AND t.status_id IN (1,3) AND patient.deleted = 0'.$whereSql,
 					'params' => $whereParams,
 					'order' => 'decision_date asc',
 				)
