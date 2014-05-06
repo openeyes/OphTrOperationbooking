@@ -17,7 +17,7 @@
  */
  ?>
 	<fieldset class="element-fields">
-		<?php echo $form->radioButtons($element, 'schedule_options_id', 'ophtroperationbooking_scheduleope_schedule_options'); ?>
+		<?php echo $form->radioButtons($element, 'schedule_options_id', 'OphTrOperationbooking_ScheduleOperation_Options'); ?>
 		<div class="row field-row">
 			<legend class="large-2 column">
 				<?php echo $element->getAttributeLabel('patient_unavailables'); ?>:
