@@ -48,7 +48,8 @@ class OphTrOperationbooking_API extends BaseAPI
 	{
 		$criteria = new CDbCriteria;
 		$criteria->order = 't.created_date asc';
-		$criteria->addCondition('episode_id',$episode_id);
+		$criteria->addCondition('episode_id = :episode_id');
+		$criteria->params[':episode_id'] = $episode_id;
 		$criteria->addCondition('booking_cancellation_date is null');
 
 		return OphTrOperationbooking_Operation_Booking::model()
@@ -59,6 +60,18 @@ class OphTrOperationbooking_API extends BaseAPI
 					'with' => 'event'
 				)
 			))
+			->findAll($criteria);
+	}
+
+	public function getOperationsForEpisode($episode_id)
+	{
+		$criteria = new CDbCriteria;
+		$criteria->order = 't.created_date asc';
+		$criteria->addCondition('episode_id = :episode_id');
+		$criteria->params[':episode_id'] = $episode_id;
+
+		return Element_OphTrOperationbooking_Operation::model()
+			->with('event')
 			->findAll($criteria);
 	}
 
