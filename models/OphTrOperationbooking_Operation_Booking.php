@@ -72,6 +72,7 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecordVersioned
 			array('ward_id', 'numerical', 'integerOnly'=>true),
 			array('element_id, session_id', 'length', 'max'=>10),
 			array('admission_time', 'match', 'pattern' => '/^[0-9]{1,2}.*?[0-9]{2}$/'),
+			array('admission_time', 'lessThanSessionEndTimeValidate', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, element_id, session_id, display_order, ward_id, admission_time, confirmed', 'safe', 'on' => 'search'),
@@ -320,5 +321,18 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecordVersioned
 	public function getProcedureCount()
 	{
 		return $this->operation->getProcedureCount();
+	}
+
+	/**
+	 * check if admission time is less than session_end_time
+	 */
+	public function lessThanSessionEndTimeValidate()
+	{
+		if(!isset($this->session->end_time)){
+			$this->addError('admission_time', 'Session End Time required to check Admission Time');
+		}
+		else if ( strtotime($this->session->end_time) <= strtotime($this->admission_time) ){
+			$this->addError('admission_time', 'Admission time cannot be later or equal than Session End Time');
+		}
 	}
 }
