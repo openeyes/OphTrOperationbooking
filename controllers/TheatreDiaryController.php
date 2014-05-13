@@ -121,7 +121,7 @@ class TheatreDiaryController extends BaseModuleController
 			).'/css/module.css'
 		));
 
-		$this->renderPartial('_print_diary', array('diary'=>$this->getDiaryTheatres($_POST)), false, true);
+		$this->renderPartial('_print_diary', array('diary'=>$this->getDiaryTheatres($_POST),'ward_id' => @$_POST['ward-id']), false, true);
 	}
 
 	/**

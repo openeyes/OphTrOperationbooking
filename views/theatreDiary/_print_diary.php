@@ -67,7 +67,7 @@ foreach ($diary as $i => $theatre) {?>
 						<th>PROCEDURES AND COMMENTS</th>
 						<th>ADMISSION TIME</th>
 					</tr>
-					<?php foreach ($session->getActiveBookingsForWard() as $booking) {
+					<?php foreach ($session->getActiveBookingsForWard($ward_id) as $booking) {
 						if ($booking->operation->event) { ?>
 							<tr>
 								<td><?php echo $booking->operation->event->episode->patient->hos_num?></td>
