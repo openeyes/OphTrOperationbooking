@@ -32,10 +32,10 @@
 			</legend>
 			<div class="row field-row">
 				<div class="large-2 column">
-					<?php echo CHtml::dropDownList('lcr_rule_type_id','',CHtml::listData(OphTrOperationbooking_Admission_Letter_Warning_Rule_Type::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Rule -'))?>
+					<?php echo CHtml::dropDownList('lcr_rule_type_id','',CHtml::listData(OphTrOperationbooking_Admission_Letter_Warning_Rule_Type::model()->findAll(),'id','name'),array('empty'=>'- Rule -'))?>
 				</div>
 				<div class="large-2 column">
-					<?php echo CHtml::dropDownList('lcr_site_id','',CHtml::listData(Site::model()->findAll(array('order'=>'name asc','condition'=>'institution_id = 1')),'id','name'),array('empty'=>'- Site -'))?>
+					<?php echo CHtml::dropDownList('lcr_site_id','',Site::model()->getListForCurrentInstitution('name'),array('empty'=>'- Site -'))?>
 				</div>
 				<div class="large-2 column">
 					<?php echo CHtml::dropDownList('lcr_subspecialty_id','',CHtml::listData(Subspecialty::model()->findAllByCurrentSpecialty(),'id','name'),array('empty'=>'- Subspecialty -'))?>

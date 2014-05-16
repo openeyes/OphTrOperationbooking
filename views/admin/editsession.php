@@ -35,7 +35,7 @@
 		<?php echo $form->textField($session,'sequence_id',array(),array(),array('field'=>2))?>
 	<?php }?>
 	<?php echo $form->dropDownList($session,'firm_id',Firm::model()->getListWithSpecialties(),array('empty'=>'- Emergency -'))?>
-	<?php echo $form->dropDownList($session,'theatre_id',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- None -'))?>
+	<?php echo $form->dropDownList($session,'theatre_id','OphTrOperationbooking_Operation_Theatre',array('empty'=>'- None -'))?>
 	<?php if ($session->id) {?>
 		<div id="div_OphTrOperationbooking_Operation_Session_date" class="row field-row">
 			<div class="large-2 column">
@@ -50,11 +50,30 @@
 	<?php }?>
 	<?php echo $form->textField($session,'start_time',array(),array(),array('field'=>2))?>
 	<?php echo $form->textField($session,'end_time',array(),array(),array('field'=>2))?>
+	<?php echo $form->textField($session, 'max_procedures', array(), array(), array('field'=>2)); ?>
+	<?php if ($current = $session->getBookedProcedureCount()) { ?>
+		<fieldset id="procedure_count_wrapper" class="row field-row<? if ($session->max_procedures && $current > $session->max_procedures) { echo " warn"; }?>">
+			<div class="large-2 column">
+				<div class="field-label">Current Booked Procedures:</div>
+			</div>
+			<div class="large-5 column end">
+				<div class="field-value" id="current-proc-count"><?php echo $current ?></div>
+			</div>
+		</fieldset>
+	<?php } ?>
 	<?php echo $form->radioBoolean($session,'consultant')?>
 	<?php echo $form->radioBoolean($session,'paediatric')?>
 	<?php echo $form->radioBoolean($session,'anaesthetist')?>
 	<?php echo $form->radioBoolean($session,'general_anaesthetic')?>
 	<?php echo $form->radioBoolean($session,'available')?>
+	<fieldset id="unavailablereason_id_wrapper" class="row field-row"<?php if ($session->available) {?> style="display: none;"<?php } ?>>
+		<div class="large-2 column">
+			<label for="OphTrOperationbooking_Operation_Session_unavailablereason_id"><?php echo $session->getAttributeLabel('unavailablereason_id'); ?>:</label>
+		</div>
+		<div class="large-5 column end">
+			<?php echo $form->dropDownList($session, 'unavailablereason_id', CHtml::listData($session->getUnavailableReasonList(), 'id', 'name'), array('empty'=> '- Please Select -', 'nowrapper' => true))?>
+		</div>
+	</fieldset>
 	<?php echo $form->errorSummary($session); ?>
 	<?php echo $form->formActions(array(
 		'delete' => $session->id ? 'Delete' : false
@@ -79,6 +98,18 @@
 	</div>
 </div>
 <script type="text/javascript">
+	$('input[name="OphTrOperationbooking_Operation_Session[available]"]').live('change', function() {
+		if ($(this).val() == '1') {
+			$('#unavailablereason_id_wrapper').hide();
+			$('#OphTrOperationbooking_Operation_Session_unavailablereason_id').data('orig', $('#OphTrOperationbooking_Operation_Session_unavailablereason_id').val());
+			$('#OphTrOperationbooking_Operation_Session_unavailablereason_id').val('');
+		}
+		else {
+			$('#OphTrOperationbooking_Operation_Session_unavailablereason_id').val($('#OphTrOperationbooking_Operation_Session_unavailablereason_id').data('orig'));
+			$('#unavailablereason_id_wrapper').show();
+		}
+	});
+
 	handleButton($('#et_cancel'),function(e) {
 		e.preventDefault();
 		window.location.href = baseUrl+'/OphTrOperationbooking/admin/viewSessions';

@@ -34,7 +34,7 @@
 			<?php
 			$criteria = new CDbCriteria;
 			$criteria->order = "display_order asc";
-			foreach (OphTrOperationbooking_Operation_Theatre::model()->findAll() as $i => $theatre) {?>
+			foreach (OphTrOperationbooking_Operation_Theatre::model()->active()->findAll() as $i => $theatre) {?>
 				<tr class="clickable sortable" data-attr-id="<?php echo $theatre->id?>" data-uri="OphTrOperationbooking/admin/editTheatre/<?php echo $theatre->id?>">
 					<td><input type="checkbox" name="theatre[]" value="<?php echo $theatre->id?>" class="theatres" /></td>
 					<td><?php echo $theatre->site->name?></td>

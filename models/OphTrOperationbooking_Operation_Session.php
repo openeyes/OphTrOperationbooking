@@ -32,16 +32,22 @@
  * @property boolean $anaesthetist
  * @property boolean $general_anaesthetic
  * @property integer $theatre_id
+ * @property integer $unavailablereason_id
+ * @property integer $max_procedures
  *
  * The followings are the available model relations:
  *
  * @property OphTrOperationbooking_Operation_Sequence $sequence
  * @property OphTrOperationbooking_Operation_Theatre $theatre
+ * @property OphTrOperationbooking_Operation_Session_UnavailableReason $unavailablereason
  *
  */
 
-class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
+class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 {
+
+	public static $DEFAULT_UNAVAILABLE_REASON = "This session is unavailable at this time";
+	public static $TOO_MANY_PROCEDURES_REASON = "This operation has too many procedures for this session";
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className
@@ -51,6 +57,11 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 	{
 		return parent::model($className);
 	}
+
+	/**
+	 * @var OphTrOperationbooking_BookingHelper
+	 */
+	public $helper;
 
 	/**
 	 * @return string the associated database table name
@@ -70,18 +81,12 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		return array(
 			array('sequence_id, date, start_time, end_time, theatre_id', 'required'),
 			array('sequence_id, theatre_id', 'length', 'max' => 10),
-			array('comments, available, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id, theatre_id, start_time, end_time, deleted, default_admission_time', 'safe'),
+			array('unavailablereason_id', 'validateRequiredIfAttrMatches', 'match_attr' => 'available', 'match_val' => false, 'message' => 'unavailable reason required if session unavailable.'),
+			array('max_procedures', 'numerical', 'integerOnly' => true, 'min' => 1),
+			array('comments, available, unavailablereason_id, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id, theatre_id, start_time, end_time, deleted, default_admission_time', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, sequence_id, theatre_id, date, start_time, end_time, comments, available, firm_id, site_id, weekday, consultant, paediatric, anaesthetist, general_anaesthetic', 'safe', 'on'=>'search'),
-		);
-	}
-
-	public function defaultScope()
-	{
-		$table_alias = $this->getTableAlias(false,false);
-		return array(
-			'condition' => $table_alias.'.deleted = 0',
 		);
 	}
 
@@ -102,6 +107,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 			'theatre' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Theatre', 'theatre_id'),
 			'firm' => array(self::BELONGS_TO, 'Firm', 'firm_id'),
 			'sequence' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Sequence', 'sequence_id'),
+			'unavailablereason' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Session_UnavailableReason', 'unavailablereason_id'),
 			'activeBookings' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Booking', 'session_id',
 				'on' => 'activeBookings.booking_cancellation_date is null',
 				'order' => 'activeBookings.display_order ASC',
@@ -155,6 +161,8 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 			'end_time' => 'End time',
 			'general_anaesthetic' => 'General anaesthetic',
 			'default_admission_time' => 'Default admission time',
+			'unavailablereason_id' => 'Reason unavailable',
+			'max_procedures' => 'Max procedures'
 		);
 	}
 
@@ -175,6 +183,19 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		return new CActiveDataProvider(get_class($this), array(
 				'criteria' => $criteria,
 			));
+	}
+
+	/**
+	 * Wrapper for getting the helper class
+	 *
+	 * @return OphTrOperationbooking_BookingHelper
+	 */
+	public function getHelper()
+	{
+		if (!isset($this->helper)) {
+			$this->helper = new OphTrOperationbooking_BookingHelper;
+		}
+		return $this->helper;
 	}
 
 	public function getDuration()
@@ -231,13 +252,54 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		}
 	}
 
+	/**
+	 * Get the total number of procedures booked into this session across all bookings
+	 *
+	 * @return int
+	 */
+	public function getBookedProcedureCount()
+	{
+		$total = 0;
+
+		foreach ($this->activeBookings as $booking) {
+			$total += $booking->procedureCount;
+		}
+
+		return $total;
+	}
+
+	/**
+	 * Return the remaining number of procedures allowed in this session
+	 *
+	 * @return int
+	 */
+	public function getAvailableProcedureCount()
+	{
+		if (!$this->max_procedures) {
+			return;
+		}
+		return $this->max_procedures - $this->getBookedProcedureCount();
+	}
+
+	/**
+	 * Test whether the given operation can be booked into this session
+	 *
+	 * @param $operation
+	 * @return bool
+	 */
 	public function operationBookable($operation)
 	{
 		if (!$this->available) {
 			return false;
 		}
 
-		$helper = new OphTrOperationbooking_BookingHelper;
+		if ($this->max_procedures) {
+			if ($this->getBookedProcedureCount() + $operation->getProcedureCount() > $this->max_procedures) {
+				return false;
+			}
+		}
+
+		$helper = $this->getHelper();
 		if ($helper->checkSessionCompatibleWithOperation($this, $operation)) {
 			return false;
 		}
@@ -249,13 +311,30 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		return true;
 	}
 
+	/**
+	 * Return the reason an operation cannot be booked into this session
+	 *
+	 * @param $operation
+	 * @return string
+	 */
 	public function unbookableReason($operation)
 	{
 		if (!$this->available) {
-			return "This session is unavailable at this time";
+			if (!$this->unavailablereason) {
+				return self::$DEFAULT_UNAVAILABLE_REASON;
+			}
+			else {
+				return self::$DEFAULT_UNAVAILABLE_REASON . ": " . $this->unavailablereason->name;
+			}
 		}
 
-		$helper = new OphTrOperationbooking_BookingHelper;
+		if ($this->max_procedures) {
+			if ($this->getBookedProcedureCount() + $operation->getProcedureCount() > $this->max_procedures) {
+				return self::$TOO_MANY_PROCEDURES_REASON;
+			}
+		}
+
+		$helper = $this->getHelper();
 		if (($errors = $helper->checkSessionCompatibleWithOperation($this, $operation))) {
 			switch ($errors[0]) {
 				case $helper::ANAESTHETIST_REQUIRED:
@@ -286,7 +365,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		}
 
 		// Ensure we are still compatible with any active bookings
-		$helper = new OphTrOperationbooking_BookingHelper;
+		$helper = $this->getHelper();
 		foreach ($this->activeBookings as $booking) {
 			foreach ($helper->checkSessionCompatibleWithOperation($this, $booking->operation) as $error) {
 				switch ($error) {
@@ -318,6 +397,26 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 	}
 
 	/**
+	 * Dissociate the session from cancelled bookings and ERODs before deletion
+	 */
+	protected function beforeDelete()
+	{
+		OphTrOperationbooking_Operation_Booking::model()->updateAll(
+			array('session_id' => null),
+			'session_id = :session_id and booking_cancellation_date is not null',
+			array(':session_id' => $this->id)
+		);
+
+		Ophtroperationbooking_Operation_EROD::model()->updateAll(
+			array('session_id' => null),
+			'session_id = :session_id',
+			array(':session_id' => $this->id)
+		);
+
+		return parent::beforeDelete();
+	}
+
+	/**
 	 * Get the next session for the given firm id
 	 *
 	 * @param $firm_id
@@ -338,4 +437,78 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 		}
 	}
 
+
+	/**
+	 * The $attribute is required if the $params['match_attr'] is equal to the $params['match_val']
+	 *
+	 * @param $attribute - the element attribute that must be an earlier date
+	 * @param $params - 'later_date' is the attribute to compare it with
+	 */
+	public function validateRequiredIfAttrMatches($attribute, $params)
+	{
+		$match_a = $params['match_attr'];
+		$match_v = $params['match_val'];
+
+ 		if ($this->$match_a == $match_v) {
+			unset($params['match_attr']);
+			unset($params['match_val']);
+			$v = CValidator::createValidator('required', $this, array($attribute), $params);
+			$v->validate($this);
+		}
+	}
+
+	/**
+	 * Retrieves all valid OphTrOperationbooking_Operation_Session_UnavailableReason that can be used for this
+	 * instance (i.e. includes the current value even if its no longer active).
+	 *
+	 * @return OphTrOperationbooking_Operation_Session_UnavailableReason[]
+	 */
+
+	public function getUnavailableReasonList()
+	{
+		$criteria = new CDbCriteria;
+		$criteria->condition = 'enabled = true';
+		$criteria->order = 'display_order asc';
+
+		$reasons = OphTrOperationbooking_Operation_Session_UnavailableReason::model()->findAll($criteria);
+		// just use standard list
+		if (!$this->unavailablereason_id) {
+			return $reasons;
+		}
+
+		$all_reasons = array();
+		$r_ids = array();
+
+		foreach ($reasons as $reason) {
+			$all_reasons[] = $reason;
+			$r_ids[] = $reason->id;
+		}
+
+		if (!in_array($this->unavailablereason_id, $r_ids)) {
+			$all_reasons[] = $this->unavailablereason;
+		}
+
+		return $all_reasons;
+	}
+
+	/**
+	 * Returns an array of warning messages when any limits on the session are exceeded
+	 *
+	 * @return array
+	 */
+	public function getWarnings()
+	{
+		$warnings = array();
+		$mins = $this->getAvailableMinutes();
+		if ($mins < 0) {
+			$warnings[] = "Overbooked by " . abs($mins) . " minutes";
+		}
+
+		$procs = $this->getAvailableProcedureCount();
+		if ($procs < 0) {
+			$warnings[] = "Overbooked by " . abs($procs) . " procedures";
+		}
+
+		return $warnings;
+	}
 }

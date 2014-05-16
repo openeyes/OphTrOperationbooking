@@ -26,7 +26,6 @@
  * @property time $start_time
  * @property time $end_time
  * @property date $end_date
- * @property integer $theatre_id
  *
  * The followings are the available model relations:
  *
@@ -35,7 +34,7 @@
  *
  */
 
-class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
+class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecordVersioned
 {
 	const SELECT_1STWEEK = 1;
 	const SELECT_2NDWEEK = 2;
@@ -69,7 +68,7 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
 		// will receive user inputs.
 		return array(
 			array('theatre_id, start_date, start_time, end_time, interval_id', 'required'),
-			array('end_date, week_selection, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id, theatre_id, start_date, start_time, end_time, interval_id, deleted, weekday, default_admission_time', 'safe'),
+			array('end_date, week_selection, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id, theatre_id, start_date, start_time, end_time, interval_id, weekday, default_admission_time', 'safe'),
 			array('start_date', 'date', 'format'=>'yyyy-MM-dd'),
 			array('start_time', 'date', 'format'=>array('H:mm', 'H:mm:ss')),
 			array('end_time', 'date', 'format'=>array('H:mm', 'H:mm:ss')),
@@ -79,14 +78,6 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecord
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, theatre_id, start_date, start_time, end_time, end_date, consultant, paediatric, anaesthetist, interval_id, weekday, week_selection, firm_id, site_id', 'safe', 'on'=>'search'),
-		);
-	}
-
-	public function defaultScope()
-	{
-		$table_alias = $this->getTableAlias(false,false);
-		return array(
-			'condition' => $table_alias.'.deleted = 0',
 		);
 	}
 

@@ -42,7 +42,7 @@
  *
  */
 
-class OphTrOperationbooking_Operation_EROD extends BaseActiveRecord
+class OphTrOperationbooking_Operation_EROD extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -124,5 +124,10 @@ class OphTrOperationbooking_Operation_EROD extends BaseActiveRecord
 	public function getTimeSlot()
 	{
 		return date('H:i',strtotime($this->session_start_time)) . ' - ' . date('H:i',strtotime($this->session_end_time));
+	}
+
+	public function getDescription()
+	{
+		return $this->NHSDate('session_date').' '.$this->getTimeSlot() .', '. $this->getFirmName();
 	}
 }

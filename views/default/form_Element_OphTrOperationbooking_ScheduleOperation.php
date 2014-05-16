@@ -16,15 +16,58 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
  ?>
-<section class="element <?php echo $element->elementType->class_name?>"
-	data-element-type-id="<?php echo $element->elementType->id?>"
-	data-element-type-class="<?php echo $element->elementType->class_name?>"
-	data-element-type-name="<?php echo $element->elementType->name?>"
-	data-element-display-order="<?php echo $element->elementType->display_order?>">
-	<header class="element-header">
-	<h3 class="element-title"><?php  echo $element->elementType->name; ?></h3>
-	</header>
 	<fieldset class="element-fields">
-	<?php echo $form->radioButtons($element, 'schedule_options_id', 'ophtroperationbooking_scheduleope_schedule_options')?>
+		<?php echo $form->radioButtons($element, 'schedule_options_id', 'OphTrOperationbooking_ScheduleOperation_Options'); ?>
+		<div class="row field-row">
+			<legend class="large-2 column">
+				<?php echo $element->getAttributeLabel('patient_unavailables'); ?>:
+			</legend>
+			<div class="large-10 column">
+				<table class="blank">
+					<thead>
+					<tr>
+						<th>Start Date</th>
+						<th>End Date</th>
+						<th>Reason</th>
+						<th><div class="hide-offscreen">Actions</div></th>
+					</tr>
+					</thead>
+					<tbody class="unavailables">
+					<?php
+					if ($element->patient_unavailables) {
+						foreach ($element->patient_unavailables as $key => $unavailable) {
+							$this->renderPartial('form_OphTrOperationbooking_ScheduleOperation_PatientUnavailable', array(
+											'key' => $key,
+											'unavailable' => $unavailable,
+											'form' => $form,
+											'element_name' => get_class($element)
+									));
+							$key++;
+						}
+					}
+					?>
+					</tbody>
+					<tfoot>
+					<tr>
+						<td colspan="4"><button class="secondary small addUnavailable">Add</button></td>
+					</tr>
+					</tfoot>
+				</table>
+			</div>
+		</div>
 	</fieldset>
-</section>
+<?php
+	$template_unavailable = new OphTrOperationbooking_ScheduleOperation_PatientUnavailable();
+	$template_unavailable->setDefaultOptions();
+?>
+<script id="intraocularpressure_reading_template" type="text/html">
+	<?php
+	$this->renderPartial('form_OphTrOperationbooking_ScheduleOperation_PatientUnavailable', array(
+			'key' => '{{key}}',
+			'unavailable' => $template_unavailable,
+			'form' => $form,
+			'element_name' => get_class($element)
+	));
+	?>
+</script>
+

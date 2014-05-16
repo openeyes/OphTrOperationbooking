@@ -25,7 +25,7 @@
  *
  */
 
-class OphTrOperationbooking_Operation_EROD_Rule extends BaseActiveRecord
+class OphTrOperationbooking_Operation_EROD_Rule extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.

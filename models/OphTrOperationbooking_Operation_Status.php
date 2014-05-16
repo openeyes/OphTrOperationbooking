@@ -27,7 +27,7 @@
  *
  */
 
-class OphTrOperationbooking_Operation_Status extends BaseActiveRecord
+class OphTrOperationbooking_Operation_Status extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.

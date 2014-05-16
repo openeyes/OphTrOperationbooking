@@ -68,7 +68,7 @@ class WaitingListController extends BaseModuleController
 
 			Audit::add('waiting list','view');
 		} else {
-			Audit::add('waiting list','search',serialize($_POST));
+			Audit::add('waiting list','search');
 		}
 
 		$this->render('index');
@@ -79,7 +79,7 @@ class WaitingListController extends BaseModuleController
 	 */
 	public function actionSearch()
 	{
-		Audit::add('waiting list','search',serialize($_POST));
+		Audit::add('waiting list','search');
 
 		if (empty($_POST)) {
 			$operations = array();
@@ -244,6 +244,7 @@ class WaitingListController extends BaseModuleController
 		$criteria->order = '`t`.name asc';
 
 		return CHtml::listData(Firm::model()
+			->active()
 			->with(array('serviceSubspecialtyAssignment'))
 			->findAll($criteria),'id','name');
 	}
@@ -481,7 +482,7 @@ class WaitingListController extends BaseModuleController
 	 */
 	public function actionConfirmPrinted()
 	{
-		Audit::add('waiting list','confirm',serialize($_POST));
+		Audit::add('waiting list','confirm');
 
 		foreach ($_POST['operations'] as $operation_id) {
 			if ($operation = Element_OphTrOperationbooking_Operation::Model()->findByPk($operation_id)) {

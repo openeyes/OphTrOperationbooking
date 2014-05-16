@@ -1,7 +1,0 @@
-element_type_id => element_type.class_name,eye_id,display_order
-Element_OphTrOperationbooking_Diagnosis,1,3
-Element_OphTrOperationbooking_Diagnosis,2,1
-Element_OphTrOperationbooking_Diagnosis,3,2
-Element_OphTrOperationbooking_Operation,1,3
-Element_OphTrOperationbooking_Operation,2,1
-Element_OphTrOperationbooking_Operation,3,2

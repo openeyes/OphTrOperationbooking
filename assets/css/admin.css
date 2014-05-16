@@ -1,5 +1,4 @@
-@charset "UTF-8";
-/** Operating booking module styles */
+/** Operating booking module admin styles */
 /**
  * OpenEyes
  *
@@ -25,4 +24,9 @@
 /* line 25, ../sass/admin.scss */
 .set {
   font-weight: bold;
+}
+
+/* line 29, ../sass/admin.scss */
+.warn {
+  color: #F00;
 }

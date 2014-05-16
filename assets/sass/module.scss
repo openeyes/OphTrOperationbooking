@@ -16,7 +16,7 @@
 
 /** Operating booking module styles */
 
-@import "openeyes";
+@import "openeyes/module";
 @import "components/tables";
 @import "components/panels";
 @import "components/tabs";
@@ -25,3 +25,8 @@
 @import "components/schedule-booking";
 @import "components/print";
 
+.rtt-info {
+	font-style: italic;
+	color: #888888;
+	font-size: 0.9em;
+}

@@ -1,4 +1,5 @@
-<?php /**
+<?php
+/**
  * OpenEyes
  *
  * (C) Moorfields Eye Hospital NHS Foundation Trust, 2008-2011
@@ -15,9 +16,11 @@
  * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
- ?>
-<?php $this->renderPartial(
-		'form_' . get_class($element),
-		array('element' => $element, 'data' => $data, 'form' => $form),
-		false, false
-) ?>
+
+return array(
+	'sequence1' => array(
+		'id' => 1,
+		'firm_id' => 1,
+		'theatre_id' => 1,
+	),
+);

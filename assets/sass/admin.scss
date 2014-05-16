@@ -14,9 +14,9 @@
 // * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
 // * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
 
-/** Operating booking module styles */
+/** Operating booking module admin styles */
 
-@import "openeyes";
+@import "openeyes/module";
 
 .notset {
 	color: #999;
@@ -24,4 +24,8 @@
 
 .set {
 	font-weight: bold;
+}
+
+.warn {
+	color: #F00;
 }

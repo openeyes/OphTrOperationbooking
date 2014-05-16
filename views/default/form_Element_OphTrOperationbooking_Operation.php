@@ -16,16 +16,8 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
  ?>
-<section class="element <?php echo $element->elementType->class_name?>"
-	data-element-type-id="<?php echo $element->elementType->id?>"
-	data-element-type-class="<?php echo $element->elementType->class_name?>"
-	data-element-type-name="<?php echo $element->elementType->name?>"
-	data-element-display-order="<?php echo $element->elementType->display_order?>">
-	<header class="element-header">
-		<h3 class="element-title"><?php  echo $element->elementType->name; ?></h3>
-	</header>
-	<fieldset class="element-fields">
-	<?php echo $form->radioButtons($element, 'eye_id', 'eye')?>
+<fieldset class="element-fields">
+	<?php echo $form->radioButtons($element, 'eye_id', CHtml::listData(Eye::model()->findAll(array('order'=>'display_order asc')),'id','name'))?>
 	<?php $form->widget('application.widgets.ProcedureSelection',array(
 		'element' => $element,
 		'durations' => true,
@@ -36,17 +28,54 @@
 		),
 	))?>
 	<?php echo $form->radioBoolean($element, 'consultant_required')?>
-	<?php echo $form->radioButtons($element, 'anaesthetic_type_id', 'anaesthetic_type')?>
+	<?php echo $form->radioButtons($element, 'anaesthetic_type_id', 'AnaestheticType')?>
 	<?php echo $form->radioBoolean($element, 'overnight_stay')?>
+	<?php echo $form->dropDownList($element, 'site_id', Site::model()->getListForCurrentInstitution(),array(),false,array('field'=>2))?>
+	<?php echo $form->radioButtons($element, 'priority_id', 'OphTrOperationbooking_Operation_Priority')?>
 	<?php
-	$criteria = new CDbCriteria;
-	$criteria->compare('institution_id',1);
-	$criteria->order = 'short_name asc';
+		if (Yii::app()->params['ophtroperationbooking_referral_link']) {
 	?>
-	<?php echo $form->dropDownList($element, 'site_id', CHtml::listData(Site::model()->findAll($criteria),'id','short_name'),array(),false,array('field'=>2))?>
-	<?php echo $form->radioButtons($element, 'priority_id', 'ophtroperationbooking_operation_priority')?>
+		<div class="row field-row">
+	<?php
+			if ($element->canChangeReferral()) {
+				?>
+
+				<div class="large-2 column">
+					<label for="Element_OphTrOperationbooking_Operation_referral_id"><?= $element->getAttributeLabel('referral_id');?></label>
+				</div>
+				<div class="large-4 column">
+					<?php
+					$html_options = array('options' => array(), 'empty' => '- No valid referral available -', 'nowrapper' => true);
+					$choices = $this->getReferralChoices();
+					foreach ($choices as $choice) {
+						if ($active_rtt = $choice->getActiveRTT()) {
+							if (count($active_rtt) == 1) {
+								$html_options['options'][(string) $choice->id] = array(
+										'data-clock-start' => Helper::convertDate2NHS($active_rtt[0]->clock_start),
+										'data-breach' => Helper::convertDate2NHS($active_rtt[0]->breach),
+								);
+							}
+						}
+					}
+					echo $form->dropDownList($element, 'referral_id', CHtml::listData($this->getReferralChoices(),'id','description'),$html_options,false,array('field' => 2));
+					?>
+				</div>
+				<div class="large-4 column end">
+					<span id="rtt-info" class="rtt-info" style="display: none">Clock start - <span id="rtt-clock-start"></span> Breach - <span id="rtt-breach"></span></span>
+				</div>
+				<?php
+			} else { ?>
+					<div class="large-2 column"><label>Referral:</label></div>
+					<div class="large-4 column end"><?php if ($element->referral) { echo $element->referral->getDescription(); } else { echo "No Referral Set"; } ?></div>
+	<?php
+			}
+	?>
+		</div>
+	<?php
+		}
+	?>
+
 	<?php echo $form->datePicker($element, 'decision_date', array('maxDate' => 'today'), array(), array_merge($form->layoutColumns, array('field' => 2)))?>
 	<?php echo $form->textArea($element, 'comments', array('rows' => 4), false, array(), array_merge($form->layoutColumns, array('field' => 4)))?>
 	<?php echo $form->textArea($element, 'comments_rtt', array('rows' => 4), false, array(), array_merge($form->layoutColumns, array('field' => 4)))?>
-	</fieldset>
-</section>
+</fieldset>

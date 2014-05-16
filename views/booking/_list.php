@@ -23,7 +23,7 @@ if (!$reschedule) {
 	echo CHtml::form(Yii::app()->createUrl('/OphTrOperationbooking/booking/reschedule/'.$operation->event->id.'?firm_id='.$_GET['firm_id'].'&date='.$_GET['date'].'&day='.$_GET['day'].'&session_id='.$_GET['session_id']), 'post', array('id' => 'bookingForm'));
 }
 ?>
-	<h4>Other operations in this session: <?php echo abs($session->availableMinutes) . " min {$session->minuteStatus}"; ?></h4>
+	<h4>Other operations in this session: (<?php echo abs($session->availableMinutes) . " min {$session->minuteStatus}"; ?><?php if ($session->max_procedures) { echo ", " . $session->getAvailableProcedureCount() . "/" . $session->max_procedures . " procedures left" ?><?php }?>)</h4>
 	<div class="theatre-sessions">
 	<table id="appointment_list" class="grid">
 		<thead>
@@ -120,6 +120,9 @@ if (!$reschedule) {
 	}
 	echo CHtml::hiddenField('Booking[element_id]', $operation->id);
 	echo CHtml::hiddenField('Booking[session_id]', $session['id']);
+	if ($operation->canChangeReferral()) {
+		echo CHtml::hiddenField('Operation[referral_id]', $operation->referral_id);
+	}
 	?>
 
 	<?php if ($reschedule) { ?>

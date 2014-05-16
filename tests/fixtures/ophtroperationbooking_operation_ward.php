@@ -1,5 +1,4 @@
 <?php
-
 /**
  * OpenEyes
  *
@@ -16,7 +15,6 @@
  * @copyright Copyright (c) 2008-2011, Moorfields Eye Hospital NHS Foundation Trust
  * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
-
  */
 return array(
 		'ward1' => array(
@@ -24,6 +22,7 @@ return array(
 				'site_id' => 1,
 				'name' => 'Male Ward',
 				'restriction' => OphTrOperationbooking_Operation_Ward::RESTRICTION_MALE + OphTrOperationbooking_Operation_Ward::RESTRICTION_ADULT,
+				'display_order' => 1,
 				'last_modified_user_id' => 1,
 				'last_modified_date' => '1901-01-01 00:00:00',
 				'created_user_id' => 1,
@@ -34,6 +33,7 @@ return array(
 				'site_id' => 1,
 				'name' => 'Female Ward',
 				'restriction' => OphTrOperationbooking_Operation_Ward::RESTRICTION_FEMALE + OphTrOperationbooking_Operation_Ward::RESTRICTION_ADULT,
+				'display_order' => 2,
 				'last_modified_user_id' => 1,
 				'last_modified_date' => '1901-01-01 00:00:00',
 				'created_user_id' => 1,
@@ -44,6 +44,7 @@ return array(
 				'site_id' => 1,
 				'name' => 'Girl Ward',
 				'restriction' => OphTrOperationbooking_Operation_Ward::RESTRICTION_FEMALE + OphTrOperationbooking_Operation_Ward::RESTRICTION_CHILD,
+				'display_order' => 3,
 				'last_modified_user_id' => 1,
 				'last_modified_date' => '1901-01-01 00:00:00',
 				'created_user_id' => 1,
@@ -54,6 +55,7 @@ return array(
 				'site_id' => 1,
 				'name' => 'Mixed Ward',
 				'restriction' => OphTrOperationbooking_Operation_Ward::RESTRICTION_MALE + OphTrOperationbooking_Operation_Ward::RESTRICTION_FEMALE + OphTrOperationbooking_Operation_Ward::RESTRICTION_ADULT,
+				'display_order' => 4,
 				'last_modified_user_id' => 1,
 				'last_modified_date' => '1901-01-01 00:00:00',
 				'created_user_id' => 1,
@@ -64,6 +66,7 @@ return array(
 				'site_id' => 1,
 				'name' => 'Boy Ward',
 				'restriction' => OphTrOperationbooking_Operation_Ward::RESTRICTION_MALE + OphTrOperationbooking_Operation_Ward::RESTRICTION_CHILD,
+				'display_order' => 5,
 				'last_modified_user_id' => 1,
 				'last_modified_date' => '1901-01-01 00:00:00',
 				'created_user_id' => 1,
@@ -74,6 +77,7 @@ return array(
 				'site_id' => 1,
 				'name' => 'Child Ward',
 				'restriction' => OphTrOperationbooking_Operation_Ward::RESTRICTION_MALE + OphTrOperationbooking_Operation_Ward::RESTRICTION_FEMALE + OphTrOperationbooking_Operation_Ward::RESTRICTION_CHILD,
+				'display_order' => 6,
 				'last_modified_user_id' => 1,
 				'last_modified_date' => '1901-01-01 00:00:00',
 				'created_user_id' => 1,
@@ -84,6 +88,7 @@ return array(
 				'site_id' => 2,
 				'name' => 'Other Site General Ward',
 				'restriction' => 31,
+				'display_order' => 7,
 				'last_modified_user_id' => 1,
 				'last_modified_date' => '1901-01-01 00:00:00',
 				'created_user_id' => 1,

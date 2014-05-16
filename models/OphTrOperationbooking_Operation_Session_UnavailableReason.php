@@ -17,23 +17,19 @@
  */
 
 /**
- * This is the model class for table "et_ophtroperationbooking_operation_proc_defaults".
+ * This is the model class for table "ophtroperationbooking_operation_session_unavailreason".
  *
  * The followings are the available columns in table:
  * @property string $id
  * @property string $name
+ * @property boolean $enabled
+ * @property integer $display_order
  *
  * The followings are the available model relations:
  *
- * @property ElementType $element_type
- * @property EventType $eventType
- * @property Event $event
- * @property User $user
- * @property User $usermodified
- *
  */
 
-class OphTrOperationbooking_Operation_Defaults extends BaseActiveRecord
+class OphTrOperationbooking_Operation_Session_UnavailableReason extends BaseActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -49,7 +45,28 @@ class OphTrOperationbooking_Operation_Defaults extends BaseActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ophtroperationbooking_operation_proc_defaults';
+		return 'ophtroperationbooking_operation_session_unavailreason';
+	}
+
+	/**
+	 * set a default display order for a new record
+	 */
+	protected function afterConstruct()
+	{
+		parent::afterConstruct();
+		if (!$this->display_order) {
+			$criteria = new CDbCriteria();
+			$criteria->order = "display_order desc";
+			$criteria->limit = 1;
+			$model = get_class($this);
+			$bottom = $model::model()->find($criteria);
+			if ($bottom) {
+				$this->display_order = $bottom->display_order + 1;
+			}
+			else {
+				$this->display_order = 1;
+			}
+		}
 	}
 
 	/**
@@ -60,11 +77,11 @@ class OphTrOperationbooking_Operation_Defaults extends BaseActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('value_id', 'safe'),
-			array('value_id', 'required'),
+				array('name, enabled, display_order', 'safe'),
+				array('name, enabled, display_order', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, name', 'safe', 'on' => 'search'),
+				array('id, name', 'safe', 'on' => 'search'),
 		);
 	}
 
@@ -76,11 +93,8 @@ class OphTrOperationbooking_Operation_Defaults extends BaseActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'element_type' => array(self::HAS_ONE, 'ElementType', 'id','on' => "element_type.class_name='".get_class($this)."'"),
-			'eventType' => array(self::BELONGS_TO, 'EventType', 'event_type_id'),
-			'event' => array(self::BELONGS_TO, 'Event', 'event_id'),
-			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
-			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
+				'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
+				'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 		);
 	}
 
@@ -90,6 +104,8 @@ class OphTrOperationbooking_Operation_Defaults extends BaseActiveRecord
 	public function attributeLabels()
 	{
 		return array(
+				'id' => 'ID',
+				'name' => 'Name',
 		);
 	}
 
@@ -109,28 +125,8 @@ class OphTrOperationbooking_Operation_Defaults extends BaseActiveRecord
 
 		return new CActiveDataProvider(get_class($this), array(
 				'criteria' => $criteria,
-			));
-	}
-
-	/**
-	 * Set default values for forms on create
-	 */
-	public function setDefaultOptions()
-	{
-	}
-
-	protected function beforeSave()
-	{
-		return parent::beforeSave();
-	}
-
-	protected function afterSave()
-	{
-		return parent::afterSave();
-	}
-
-	protected function beforeValidate()
-	{
-		return parent::beforeValidate();
+		));
 	}
 }
+
+

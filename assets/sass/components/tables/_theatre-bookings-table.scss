@@ -17,8 +17,8 @@
 .theatre-bookings {
 	margin: 0;
 	input[type="text"] {
-		max-width: emCalc(70px);
-		min-width: emCalc(55px);
+		max-width: 57px;
+		min-width: 45px;
 		text-align: center;
 	}
 	tfoot {
@@ -45,9 +45,9 @@
 		background: white;
 		border: 2px solid #cccccc;
 		float: right;
-		font-size: emCalc(11px);
+		font-size: rem-calc(11px);
 		line-height: 1.2;
-		padding: emCalc(6px) emCalc(8px) emCalc(6px) emCalc(17px);
+		padding: 4px 6px 4px 12px;
 		text-align: right;
 	}
 	.alerts {
@@ -57,6 +57,12 @@
 			margin-bottom: 3px;
 			margin-right: 6px;
 			margin-top: 3px;
+		}
+	}
+	.procedure-count {
+		.overbooked {
+			font-style: italic;
+			color: #f00;
 		}
 	}
 }
