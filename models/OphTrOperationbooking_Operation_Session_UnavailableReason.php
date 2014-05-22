@@ -29,7 +29,7 @@
  *
  */
 
-class OphTrOperationbooking_Operation_Session_UnavailableReason extends BaseActiveRecord
+class OphTrOperationbooking_Operation_Session_UnavailableReason extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.
