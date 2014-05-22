@@ -16,7 +16,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-class OphTrOperationbooking_ScheduleOperation_PatientUnavailable extends BaseActiveRecord
+class OphTrOperationbooking_ScheduleOperation_PatientUnavailable extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.
