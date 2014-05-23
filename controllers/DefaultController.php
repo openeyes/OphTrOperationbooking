@@ -137,26 +137,6 @@ class DefaultController extends OphTrOperationbookingEventController
 	}
 
 	/**
-	 * Handle procedures
-	 *
-	 * @see BaseEventTypeController::setElementComplexAttributesFromData($element, $data, $index)
-	 */
-	protected function setComplexAttributes_Element_OphTrOperationbooking_Operation($element, $data, $index = null)
-	{
-		// Using the ProcedureSelection widget, so the field doesn't map directly to the element attribute
-		if (isset($data['Element_OphTrOperationbooking_Operation']['total_duration_procs'])) {
-			$element->total_duration = $data['Element_OphTrOperationbooking_Operation']['total_duration_procs'];
-		}
-		$procs = array();
-		if (isset($data['Procedures_procs'])) {
-			foreach ($data['Procedures_procs'] as $proc_id) {
-				$procs[] = Procedure::model()->findByPk($proc_id);
-			}
-		}
-		$element->procedures = $procs;
-	}
-
-	/**
 	 * Handle the patient unavailables
 	 *
 	 * @see BaseEventTypeController::setElementComplexAttributesFromData($element, $data, $index)
@@ -177,19 +157,6 @@ class DefaultController extends OphTrOperationbookingEventController
 			}
 			$element->patient_unavailables = $puns;
 		}
-	}
-
-	/**
-	 * Set procedures for Element_OphTrOperationbooking_Operation
-	 *
-	 * @param $element
-	 * @param $data
-	 * @param $index
-	 */
-	protected function saveComplexAttributes_Element_OphTrOperationbooking_Operation($element, $data, $index)
-	{
-		// using the ProcedureSelection widget, so not a direct field on the operation element
-		$element->updateProcedures(isset($data['Procedures_procs']) ? $data['Procedures_procs'] : array());
 	}
 
 	/**

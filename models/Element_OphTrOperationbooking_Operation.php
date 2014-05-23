@@ -55,6 +55,7 @@
 class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 {
 	public $count;
+	protected $auto_update_relations = true;
 
 	const LETTER_INVITE = 0;
 	const LETTER_REMINDER_1 = 1;
@@ -70,8 +71,6 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 	const STATUS_ORANGE = 4; // it's two weeks since 2nd reminder was sent with no further letters going out
 	const STATUS_RED = 5; // it's one week since gp letter was sent and they're still on the list
 	const STATUS_NOTWAITING = null;
-
-	public $service;
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -98,7 +97,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments,comments_rtt, anaesthetist_required, total_duration, status_id, operation_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id, latest_booking_id, referral_id', 'safe'),
+			array('event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments,comments_rtt, anaesthetist_required, total_duration, status_id, operation_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id, latest_booking_id, referral_id, procedures', 'safe'),
 			array('cancellation_comment', 'length', 'max' => 200),
 			array('procedures', 'required', 'message' => 'At least one procedure must be entered'),
 			array('referral_id', 'validateReferral'),
@@ -123,8 +122,8 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			'op_user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'op_usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 			'eye' => array(self::BELONGS_TO, 'Eye', 'eye_id'),
-			'procedureItems' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Procedures', 'element_id'),
-			'procedures' => array(self::MANY_MANY, 'Procedure', 'ophtroperationbooking_operation_procedures_procedures(element_id, proc_id)'),
+			'procedures' => array(self::HAS_MANY, 'Procedure', 'proc_id', 'through' => 'procedure_assignment'),
+			'procedure_assignment' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Procedures', 'element_id'),
 			'anaesthetic_type' => array(self::BELONGS_TO, 'AnaestheticType', 'anaesthetic_type_id'),
 			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
 			'priority' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Priority', 'priority_id'),
@@ -256,38 +255,6 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 
 		return parent::beforeSave();
 	}
-
-	/**
-	 * Stores procedures identified by the given procedure ids against this element
-	 *
-	 * @param array $procedure_ids
-	 * @throws Exception
-	 */
-	public function updateProcedures($procedure_ids)
-	{
-		$existing_ids = array();
-
-		foreach (OphTrOperationbooking_Operation_Procedures::model()->findAll('element_id = :elementId', array(':elementId' => $this->id)) as $item) {
-			$existing_ids[$item->proc_id] = $item->id;
-		}
-		foreach ($procedure_ids as $id) {
-			if (in_array($id,$existing_ids)) {
-				unset($existing_ids[$id]);
-			}
-			else {
-				$item = new OphTrOperationbooking_Operation_Procedures;
-				$item->element_id = $this->id;
-				$item->proc_id = $id;
-
-				if (!$item->save()) {
-					throw new Exception('Unable to save MultiSelect item: '.print_r($item->getErrors(),true));
-				}
-			}
-		}
-
-		OphTrOperationbooking_Operation_Procedures::model()->deleteByPk(array_values($existing_ids));
-	}
-
 
 	protected function afterValidate()
 	{

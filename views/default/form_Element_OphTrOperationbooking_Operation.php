@@ -20,6 +20,7 @@
 	<?php echo $form->radioButtons($element, 'eye_id', CHtml::listData(Eye::model()->findAll(array('order'=>'display_order asc')),'id','name'))?>
 	<?php $form->widget('application.widgets.ProcedureSelection',array(
 		'element' => $element,
+		'field' => 'procedures',
 		'durations' => true,
 		'layoutColumns' => array(
 			'label' => 2,
