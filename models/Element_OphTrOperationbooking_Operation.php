@@ -638,22 +638,25 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 
 			$patient = $this->event->episode->patient;
 
-			if (!$patient->gender) {
+			if (!Yii::app()->params['no_ward_restrictions'] && !$patient->gender) {
 				throw new Exception("Unable to set ward restrictions as patient gender is unknown");
 			}
 
-			$genderRestrict = $ageRestrict = 0;
-			$genderRestrict = ($patient->gender->name == 'Male') ? OphTrOperationbooking_Operation_Ward::RESTRICTION_MALE : OphTrOperationbooking_Operation_Ward::RESTRICTION_FEMALE;
-			$ageRestrict = ($patient->isChild($session->date)) ? OphTrOperationbooking_Operation_Ward::RESTRICTION_CHILD : OphTrOperationbooking_Operation_Ward::RESTRICTION_ADULT;
-
 			$criteria = new CDbCriteria;
 			$criteria->addCondition('`t`.site_id = :siteId');
-			$criteria->addCondition('`t`.restriction & :r1 >0');
-			$criteria->addCondition('`t`.restriction & :r2 >0');
 			$criteria->params[':siteId'] = $siteId;
-			$criteria->params[':r1'] = $genderRestrict;
-			$criteria->params[':r2'] = $ageRestrict;
 			$criteria->order = 't.display_order asc';
+
+			if (!Yii::app()->params['no_ward_restrictions']) {
+				$genderRestrict = $ageRestrict = 0;
+				$genderRestrict = ($patient->gender->name == 'Male') ? OphTrOperationbooking_Operation_Ward::RESTRICTION_MALE : OphTrOperationbooking_Operation_Ward::RESTRICTION_FEMALE;
+				$ageRestrict = ($patient->isChild($session->date)) ? OphTrOperationbooking_Operation_Ward::RESTRICTION_CHILD : OphTrOperationbooking_Operation_Ward::RESTRICTION_ADULT;
+
+				$criteria->addCondition('`t`.restriction & :r1 >0');
+				$criteria->addCondition('`t`.restriction & :r2 >0');
+				$criteria->params[':r1'] = $genderRestrict;
+				$criteria->params[':r2'] = $ageRestrict;
+			}
 
 			$results = CHtml::listData(OphTrOperationbooking_Operation_Ward::model()
 				->findAll($criteria),'id','name');

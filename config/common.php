@@ -61,5 +61,6 @@ return array(
 		// Default anaesthetic settings
 		//'ophtroperationbooking_default_anaesthetic_child' => 'GA',
 		//'ophtroperationbooking_default_anaesthetic' => 'GA',
+		'no_ward_restrictions' => false,
 	)
 );

@@ -29,6 +29,10 @@ class OphTrOperationbooking_BookingHelper
 	{
 		$errors = array();
 
+		if (Yii::app()->params['no_ward_restrictions']) {
+			return $errors;
+		}
+
 		if ($op->anaesthetist_required && !$session->anaesthetist) {
 			$errors[] = self::ANAESTHETIST_REQUIRED;
 		}

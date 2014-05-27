@@ -237,6 +237,10 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecord
 			return false;
 		}
 
+		if (Yii::app()->params['no_ward_restrictions']) {
+			return true;
+		}
+
 		$helper = new OphTrOperationbooking_BookingHelper;
 		if ($helper->checkSessionCompatibleWithOperation($this, $operation)) {
 			return false;
