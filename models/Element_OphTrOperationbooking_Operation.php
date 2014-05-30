@@ -246,7 +246,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 
 	protected function afterValidate()
 	{
-		if ($this->booking) {
+		if ($this->booking && !Yii::app()->params['no_ward_restrictions']) {
 			if ($this->consultant_required && !$this->booking->session->consultant) {
 				$this->addError('consultant', 'The booked session does not have a consultant present, you must change the session or cancel the booking before making this change');
 			}
