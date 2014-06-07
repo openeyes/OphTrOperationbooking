@@ -138,11 +138,11 @@
 										<?php } ?>
 										<img src="<?php echo $assetPath?>/img/diaryIcons/confirmed.png" alt="confirmed" width="17" height="17" class="confirmed" title="confirmed"<?php if (!$booking->confirmed) {?> style="display: none;"<?php }?>>
 										<?php if ($booking->operation->comments && preg_match('/\w/', $booking->operation->comments)) {?>
-											<img src="<?php echo $assetPath?>/img/diaryIcons/comment.png" alt="<?php echo htmlentities($booking->operation->comments, ENT_COMPAT, 'UTF-8') ?>" title="<?php echo htmlentities($booking->operation->comments, ENT_COMPAT, 'UTF-8') ?>" width="17" height="17" />
+											<img src="<?php echo $assetPath?>/img/diaryIcons/comment.png" alt="<?php echo CHtml::encode($booking->operation->comments, ENT_COMPAT, 'UTF-8') ?>" title="<?php echo CHtml::encode($booking->operation->comments, ENT_COMPAT, 'UTF-8') ?>" width="17" height="17" />
 										<?php }?>
 										<?php
 										if ($booking->operation->comments_rtt && preg_match('/\w/', $booking->operation->comments_rtt)) {?>
-											<img src="<?php echo $assetPath?>/img/diaryIcons/comment_rtt.png" alt="<?php echo htmlentities($booking->operation->comments_rtt, ENT_COMPAT, 'UTF-8') ?>" title="<?php echo htmlentities($booking->operation->comments_rtt, ENT_COMPAT, 'UTF-8') ?>" width="17" height="17" />
+											<img src="<?php echo $assetPath?>/img/diaryIcons/comment_rtt.png" alt="<?php echo CHtml::encode($booking->operation->comments_rtt, ENT_COMPAT, 'UTF-8') ?>" title="<?php echo CHtml::encode($booking->operation->comments_rtt, ENT_COMPAT, 'UTF-8') ?>" width="17" height="17" />
 										<?php }?>
 										<?php if ($booking->operation->overnight_stay) {?>
 											<img src="<?php echo $assetPath?>/img/diaryIcons/overnight.png" alt="Overnight stay required" title="Overnight stay required" width="17" height="17" />
@@ -216,13 +216,13 @@
 					<div class="panel comments">
 						<form>
 							<h4>Session Comments</h4>
-							<textarea rows="2" name="comments_<?php echo $session->id?>" class="comments hidden diaryEditMode" data-id="<?php echo $session->id?>"><?php echo $session['comments']?></textarea>
+							<textarea rows="2" name="comments_<?php echo $session->id?>" class="comments hidden diaryEditMode" data-id="<?php echo $session->id?>"><?php echo CHtml::encode($session['comments'])?></textarea>
 							<?php $title = "Modified on ".Helper::convertMySQL2NHS($session->last_modified_date)." at ".substr($session->last_modified_date,13,5)." by ".$session->session_usermodified->fullName;?>
 							<p
 								class="comments diaryViewMode"
 								data-id="<?php echo $session->id?>"
 								title="<?php echo $title;?>">
-								<?php echo strip_tags($session->comments)?>
+								<?php echo CHtml::encode($session->comments)?>
 							</p>
 						</form>
 					</div>
