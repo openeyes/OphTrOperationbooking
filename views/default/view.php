@@ -37,7 +37,7 @@
 
 	<?php if ($operation->event->hasIssue()) {?>
 		<div class="alert-box issue with-icon">
-			<?php echo $operation->event->getIssueText()?>
+			<?php echo CHtml::encode($operation->event->getIssueText())?>
 		</div>
 	<?php }?>
 

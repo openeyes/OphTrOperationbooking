@@ -106,7 +106,7 @@ $sessions = $sessions['data'];
 	</div>
 </form>
 
-<h2>Sessions<?php if (@$_GET['sequence_id']!='') {?> for sequence <?php echo $_GET['sequence_id']?><?php }?></h2>
+<h2>Sessions<?php if (@$_GET['sequence_id']!='') {?> for sequence <?php echo CHtml::encode($_GET['sequence_id'])?><?php }?></h2>
 <form id="admin_sessions">
 
 	<?php if ($pagination->getCurrentPage() !== $pagination->getPageCount()) {?>

@@ -181,7 +181,7 @@
 						in <strong><?php echo $booking->theatre->nameWithSite; ?></strong>.
 						Cancelled on <?php echo $booking->NHSDate('booking_cancellation_date'); ?>
 						by <strong><?php echo $booking->usercancelled->FullName; ?></strong>
-						due to <?php echo $booking->cancellationReasonWithComment; ?>
+						due to <?php echo CHtml::encode($booking->cancellationReasonWithComment)?>
 						<?php if ($booking->erod) {?>
 							<br /><span class="erod">EROD was <?= $booking->erod->getDescription() ?></span>
 						<?php } ?>
@@ -200,7 +200,7 @@
 				<div class="large-6 column">
 					<div class="data-value">
 						Cancelled on
-						<?php echo $element->NHSDate('operation_cancellation_date') . ' by user ' . $element->cancellation_user->username . ' for reason: ' . $element->cancellation_reason->text?>
+						<?php echo $element->NHSDate('operation_cancellation_date') . ' by user ' . $element->cancellation_user->username . ' for reason: ' . CHtml::encode($element->cancellation_reason->text)?>
 					</div>
 				</div>
 			</div>
@@ -213,7 +213,7 @@
 				<div class="large-6 column">
 					<h3 class="data-title">Cancellation comments</h3>
 					<div class="data-value panel comments">
-						<?php echo str_replace("\n","<br/>",$element->cancellation_comment)?>
+						<?php echo CHtml::encode($element->cancellation_comment)?>
 					</div>
 				</div>
 			</div>

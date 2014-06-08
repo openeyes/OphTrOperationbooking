@@ -35,7 +35,7 @@
 						implode('&', array(
 							'firm_id=' . ($firm->id ? $firm->id : 'EMG'),
 							'date='.date('Ym',strtotime($date)),
-							'day='.$_GET['day'],
+							'day='.CHtml::encode($_GET['day']),
 							'session_id='.$session->id,
 							'referral_id='.$operation->referral_id)); ?>#book">
 			<?php }?>
@@ -65,7 +65,7 @@
 
 	<?php if (isset($selectedSession) && !$selectedSession->operationBookable($operation)) {?>
 		<div class="alert-box alert with-icon" style="margin-top: 10px;">
-			<?php echo $selectedSession->unbookableReason($operation)?>
+			<?php echo CHtml::encode($selectedSession->unbookableReason($operation))?>
 		</div>
 	<?php }?>
 
