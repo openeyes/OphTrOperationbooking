@@ -52,7 +52,7 @@
 	<?php echo $form->textField($session,'end_time',array(),array(),array('field'=>2))?>
 	<?php echo $form->textField($session, 'max_procedures', array(), array(), array('field'=>2)); ?>
 	<?php if ($current = $session->getBookedProcedureCount()) { ?>
-		<fieldset id="procedure_count_wrapper" class="row field-row<? if ($session->max_procedures && $current > $session->max_procedures) { echo " warn"; }?>">
+		<fieldset id="procedure_count_wrapper" class="row field-row<?php if ($session->max_procedures && $current > $session->max_procedures) { echo " warn"; }?>">
 			<div class="large-2 column">
 				<div class="field-label">Current Booked Procedures:</div>
 			</div>
