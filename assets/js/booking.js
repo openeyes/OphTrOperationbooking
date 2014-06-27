@@ -79,7 +79,7 @@ $(document).ready(function() {
 				});
 
 				if (n == 0) {
-					window.onbeforeunload ='';
+					$(window).off('beforeunload');
 					window.location.href = window.location.href.replace(/\/cancel\//,'/view/');
 				} else {
 					$('#cancelForm .alert-box').show();
@@ -99,7 +99,7 @@ $(document).ready(function() {
 			search['referral_id'] = $('#Element_OphTrOperationbooking_Operation_referral_id').val();
 		}
 		if (!$(this).hasClass('patient-unavailable')) {
-			window.onbeforeunload = null;
+			$(window).off('beforeunload');
 			window.location.href = URI(window.location.href).setSearch(search).removeSearch('session_id');
 		}
 		return false;
@@ -126,7 +126,7 @@ $(document).ready(function() {
 		if ($('#Element_OphTrOperationbooking_Operation_referral_id').length) {
 			search['referral_id'] = $('#Element_OphTrOperationbooking_Operation_referral_id').val();
 		}
-		window.onbeforeunload = null;
+		$(window).off('beforeunload');
 		window.location.href = URI(window.location.href).setSearch(search).removeSearch(['session_id', 'day']);
 	});
 
