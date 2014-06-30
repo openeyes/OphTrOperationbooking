@@ -549,9 +549,9 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 							foreach ($sessiondata[$date] as $session) {
 
 								// Check if at least one session has enough allocated max_procedures to allow the booking
-								if (!$hasFreeProcedures && $session->getBookedProcedureCount() + $this->getProcedureCount() <= $session->max_procedures) {
-									$hasFreeProcedures = true;
-								}
+								if (!$session->operationBookable($this)) continue;
+
+								$hasFreeProcedures = true;
 
 								if ($session->availableMinutes >= $this->total_duration) {
 									$open++;
