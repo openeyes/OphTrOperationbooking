@@ -1,4 +1,3 @@
-@charset "UTF-8";
 /** Operating booking module styles */
 /**
  * OpenEyes
@@ -288,11 +287,11 @@ table.transport .status.Green {
 }
 /* line 19, ../sass/components/_event.scss */
 .event .event-title {
-  background: url('../img/medium.png?1393408384') no-repeat left center;
+  background: url('../img/medium.png?1383822735') no-repeat left center;
 }
 /* line 22, ../sass/components/_event.scss */
 .event .event-content {
-  background-image: url('../img/watermark.png?1393408384');
+  background-image: url('../img/watermark.png?1392372889');
 }
 /* line 26, ../sass/components/_event.scss */
 .event.schedule .event-title {
@@ -326,24 +325,24 @@ table.transport .status.Green {
 }
 
 /* FIXME - this is old CSS. This will be refactored when we refactor the scheduling. */
-/* line 21, ../sass/components/_schedule-booking.scss */
+/* line 29, ../sass/components/_schedule-booking.scss */
 .ophtroperationbooking .schedule .eventDetail {
   background: #dae6f1;
   padding: 10px;
 }
 
-/* line 29, ../sass/components/_schedule-booking.scss */
+/* line 37, ../sass/components/_schedule-booking.scss */
 #firmSelect .firm-switcher {
   min-width: 300px;
   margin-left: 10px;
 }
 
-/* line 37, ../sass/components/_schedule-booking.scss */
+/* line 44, ../sass/components/_schedule-booking.scss */
 #operation h3 {
   padding: 10px 10px 0 10px;
   margin: 0;
 }
-/* line 41, ../sass/components/_schedule-booking.scss */
+/* line 48, ../sass/components/_schedule-booking.scss */
 #operation h4 {
   color: #56a7f1;
   font-size: 13px;
@@ -351,7 +350,7 @@ table.transport .status.Green {
   margin-bottom: 5px;
   font-weight: bold;
 }
-/* line 49, ../sass/components/_schedule-booking.scss */
+/* line 56, ../sass/components/_schedule-booking.scss */
 #operation form h4 {
   color: #56a7f1;
   font-size: 13px;
@@ -360,13 +359,13 @@ table.transport .status.Green {
   padding: 10px 10px 0 10px;
   margin-bottom: 10px;
 }
-/* line 58, ../sass/components/_schedule-booking.scss */
+/* line 65, ../sass/components/_schedule-booking.scss */
 #operation #dates {
   background: #dae6f1;
   width: 100%;
   padding: 5px 0;
 }
-/* line 62, ../sass/components/_schedule-booking.scss */
+/* line 69, ../sass/components/_schedule-booking.scss */
 #operation #dates #current_month {
   text-align: center;
   font-size: 19px;
@@ -374,173 +373,170 @@ table.transport .status.Green {
   position: relative;
   top: 15px;
 }
-/* line 69, ../sass/components/_schedule-booking.scss */
+/* line 76, ../sass/components/_schedule-booking.scss */
 #operation #dates #month_back {
   float: left;
   margin-left: 10px;
   position: relative;
   top: -5px;
 }
-/* line 75, ../sass/components/_schedule-booking.scss */
+/* line 82, ../sass/components/_schedule-booking.scss */
 #operation #dates #month_forward {
   float: right;
   margin-right: 10px;
   position: relative;
   top: -5px;
 }
-/* line 82, ../sass/components/_schedule-booking.scss */
+/* line 89, ../sass/components/_schedule-booking.scss */
 #operation table {
   width: 100%;
 }
-/* line 85, ../sass/components/_schedule-booking.scss */
+/* line 92, ../sass/components/_schedule-booking.scss */
 #operation table tbody th, #operation table tbody td {
   padding: 15px 25px 12px 25px;
   background: #eee;
   border: 1px solid #fff;
   text-align: center;
 }
-/* line 91, ../sass/components/_schedule-booking.scss */
+/* line 98, ../sass/components/_schedule-booking.scss */
 #operation table tbody th {
   width: 50px;
   background: #666;
   color: #fff;
 }
-/* line 96, ../sass/components/_schedule-booking.scss */
+/* line 103, ../sass/components/_schedule-booking.scss */
 #operation table tbody td {
   width: 140px;
 }
-/* line 98, ../sass/components/_schedule-booking.scss */
+/* line 105, ../sass/components/_schedule-booking.scss */
 #operation table tbody td.invalid {
   color: #999;
   width: auto;
 }
-/* line 104, ../sass/components/_schedule-booking.scss */
+/* line 111, ../sass/components/_schedule-booking.scss */
 #operation table tfoot td {
   padding: 10px 0;
   background: #dae6f1;
   text-align: center;
 }
-/* line 110, ../sass/components/_schedule-booking.scss */
-#operation table tbody td.available {
-  background: #69bd51;
-  font-size: 16px;
-}
-/* line 114, ../sass/components/_schedule-booking.scss */
-#operation table tbody td.limited {
-  background: #8dbd7f;
+/* line 116, ../sass/components/_schedule-booking.scss */
+#operation table tbody td {
   font-size: 16px;
 }
 /* line 118, ../sass/components/_schedule-booking.scss */
-#operation table tbody td.full {
-  background: #427633;
-  font-size: 16px;
+#operation table tbody td.available {
+  background: #c9fcbb;
 }
-/* line 122, ../sass/components/_schedule-booking.scss */
+/* line 121, ../sass/components/_schedule-booking.scss */
+#operation table tbody td.limited {
+  background: #30cf02;
+}
+/* line 124, ../sass/components/_schedule-booking.scss */
+#operation table tbody td.full {
+  background: #4f6648;
+}
+/* line 127, ../sass/components/_schedule-booking.scss */
 #operation table tbody td.closed {
   background: #828282;
-  font-size: 16px;
 }
-/* line 126, ../sass/components/_schedule-booking.scss */
+/* line 130, ../sass/components/_schedule-booking.scss */
 #operation table tbody td.selected_date {
   background: #3665ff;
-  font-size: 16px;
   color: #fff;
 }
-/* line 131, ../sass/components/_schedule-booking.scss */
+/* line 134, ../sass/components/_schedule-booking.scss */
 #operation table tbody td.outside_rtt {
-  background-image: url('../img/bookingIcons/RTT-warning.png?1393408384');
+  background-image: url('../img/bookingIcons/RTT-warning.png?1383822735');
   background-position: bottom right;
   background-repeat: no-repeat;
 }
-/* line 136, ../sass/components/_schedule-booking.scss */
+/* line 139, ../sass/components/_schedule-booking.scss */
 #operation table tbody td.inthepast {
   background: #828282;
-  font-size: 16px;
 }
-/* line 140, ../sass/components/_schedule-booking.scss */
+/* line 142, ../sass/components/_schedule-booking.scss */
 #operation table tbody td.patient-unavailable {
   background: #990000;
-  font-size: 16px;
 }
-/* line 147, ../sass/components/_schedule-booking.scss */
+/* line 148, ../sass/components/_schedule-booking.scss */
 #operation td.available:hover, #operation td.limited:hover, #operation td.full:hover {
   background-color: #3665ff;
   color: #fff;
   cursor: pointer;
 }
-/* line 152, ../sass/components/_schedule-booking.scss */
+/* line 153, ../sass/components/_schedule-booking.scss */
 #operation td.inthepast:hover, #operation td.closed:hover {
   background-color: #C2C2C2;
   color: #fff;
   cursor: pointer;
 }
-/* line 159, ../sass/components/_schedule-booking.scss */
+/* line 160, ../sass/components/_schedule-booking.scss */
 #operation #key .color_box {
   display: inline-block;
   height: 10px;
   width: 10px;
 }
-/* line 164, ../sass/components/_schedule-booking.scss */
+/* line 165, ../sass/components/_schedule-booking.scss */
 #operation #key .container {
   display: inline-block;
   margin: 0 8px 0 5px;
   width: auto;
 }
-/* line 169, ../sass/components/_schedule-booking.scss */
+/* line 170, ../sass/components/_schedule-booking.scss */
 #operation #key .label {
   display: inline-block;
   margin-left: 4px;
 }
-/* line 173, ../sass/components/_schedule-booking.scss */
+/* line 174, ../sass/components/_schedule-booking.scss */
 #operation #key #day .color_box {
   background: #666;
 }
-/* line 176, ../sass/components/_schedule-booking.scss */
+/* line 177, ../sass/components/_schedule-booking.scss */
 #operation #key #available .color_box {
-  background: #69bd51;
+  background: #c9fcbb;
 }
-/* line 179, ../sass/components/_schedule-booking.scss */
+/* line 180, ../sass/components/_schedule-booking.scss */
 #operation #key #limited .color_box {
-  background: #8dbd7f;
+  background: #30cf02;
 }
-/* line 182, ../sass/components/_schedule-booking.scss */
+/* line 183, ../sass/components/_schedule-booking.scss */
 #operation #key #full .color_box {
-  background: #427633;
+  background: #4f6648;
 }
-/* line 185, ../sass/components/_schedule-booking.scss */
+/* line 186, ../sass/components/_schedule-booking.scss */
 #operation #key #closed .color_box {
   background: #828282;
 }
-/* line 188, ../sass/components/_schedule-booking.scss */
+/* line 189, ../sass/components/_schedule-booking.scss */
 #operation #key #selected_date .color_box {
   background: #3665ff;
 }
-/* line 191, ../sass/components/_schedule-booking.scss */
+/* line 192, ../sass/components/_schedule-booking.scss */
 #operation #key #outside_rtt .color_box {
-  background: transparent url('../img/bookingIcons/RTT-warning_tiny.png?1393408384') top left no-repeat;
+  background: transparent url('../img/bookingIcons/RTT-warning_tiny.png?1383822735') top left no-repeat;
 }
-/* line 194, ../sass/components/_schedule-booking.scss */
+/* line 195, ../sass/components/_schedule-booking.scss */
 #operation #key #patient-unavailable .color_box {
   background: #990000;
 }
 
 /* theatres */
-/* line 202, ../sass/components/_schedule-booking.scss */
+/* line 203, ../sass/components/_schedule-booking.scss */
 #theatres {
   margin-top: 10px;
 }
-/* line 204, ../sass/components/_schedule-booking.scss */
+/* line 205, ../sass/components/_schedule-booking.scss */
 #theatres > h4 {
   font-weight: bold;
 }
 
-/* line 210, ../sass/components/_schedule-booking.scss */
+/* line 211, ../sass/components/_schedule-booking.scss */
 #theatre-times h5 {
   margin: 20px 0 5px 10px;
   padding: 0;
   font-size: 16px;
 }
-/* line 215, ../sass/components/_schedule-booking.scss */
+/* line 216, ../sass/components/_schedule-booking.scss */
 #theatre-times .sessionTimes .timeBlock {
   display: inline-block;
   width: 370px;
@@ -551,36 +547,36 @@ table.transport .status.Green {
   text-align: center;
   position: relative;
 }
-/* line 224, ../sass/components/_schedule-booking.scss */
+/* line 225, ../sass/components/_schedule-booking.scss */
 #theatre-times .sessionTimes .timeBlock.bookable {
   background: #69bd51;
   color: #000;
 }
-/* line 227, ../sass/components/_schedule-booking.scss */
+/* line 228, ../sass/components/_schedule-booking.scss */
 #theatre-times .sessionTimes .timeBlock.bookable:hover {
   background: #3665ff;
   color: #fff;
   cursor: pointer;
 }
-/* line 232, ../sass/components/_schedule-booking.scss */
+/* line 233, ../sass/components/_schedule-booking.scss */
 #theatre-times .sessionTimes .timeBlock.bookable.full {
   background: #ffda56;
   color: #000;
 }
-/* line 237, ../sass/components/_schedule-booking.scss */
+/* line 238, ../sass/components/_schedule-booking.scss */
 #theatre-times .sessionTimes .timeBlock.selected_session {
   background: #3665ff;
   color: #fff;
 }
-/* line 241, ../sass/components/_schedule-booking.scss */
+/* line 242, ../sass/components/_schedule-booking.scss */
 #theatre-times .sessionTimes .timeBlock .time {
   font-size: 16px;
 }
-/* line 244, ../sass/components/_schedule-booking.scss */
+/* line 245, ../sass/components/_schedule-booking.scss */
 #theatre-times .sessionTimes .timeBlock .session_id {
   display: none;
 }
-/* line 247, ../sass/components/_schedule-booking.scss */
+/* line 248, ../sass/components/_schedule-booking.scss */
 #theatre-times .sessionTimes .timeBlock .metadata {
   position: absolute;
   bottom: 6px;
@@ -595,16 +591,16 @@ table.transport .status.Green {
   margin: 0;
   border: 0;
 }
-/* line 260, ../sass/components/_schedule-booking.scss */
+/* line 261, ../sass/components/_schedule-booking.scss */
 #theatre-times .sessionTimes .timeBlock .metadata div {
   opacity: 1;
 }
-/* line 264, ../sass/components/_schedule-booking.scss */
+/* line 265, ../sass/components/_schedule-booking.scss */
 #theatre-times .sessionTimes .timeBlock.inthepast {
   background: #828282;
   color: #000;
 }
-/* line 267, ../sass/components/_schedule-booking.scss */
+/* line 268, ../sass/components/_schedule-booking.scss */
 #theatre-times .sessionTimes .timeBlock.inthepast:hover {
   background: #C2C2C2;
   color: #fff;
@@ -612,16 +608,16 @@ table.transport .status.Green {
 }
 
 /* session details */
-/* line 278, ../sass/components/_schedule-booking.scss */
+/* line 279, ../sass/components/_schedule-booking.scss */
 #session_details {
   margin-top: 20px;
 }
-/* line 280, ../sass/components/_schedule-booking.scss */
+/* line 281, ../sass/components/_schedule-booking.scss */
 #session_details > h4 {
   font-weight: bold;
   margin-bottom: 20px;
 }
-/* line 284, ../sass/components/_schedule-booking.scss */
+/* line 285, ../sass/components/_schedule-booking.scss */
 #session_details #siteSelected {
   display: block;
   padding: 10px;
@@ -629,7 +625,7 @@ table.transport .status.Green {
   font-size: 15px;
   margin-top: 10px;
 }
-/* line 291, ../sass/components/_schedule-booking.scss */
+/* line 292, ../sass/components/_schedule-booking.scss */
 #session_details #dateSelected {
   display: block;
   padding: 10px;
@@ -638,7 +634,7 @@ table.transport .status.Green {
   margin-top: 3px;
 }
 
-/* line 300, ../sass/components/_schedule-booking.scss */
+/* line 301, ../sass/components/_schedule-booking.scss */
 #siteSelected > .highlighted, #dateSelected > .highlighted {
   font-weight: bold;
 }
