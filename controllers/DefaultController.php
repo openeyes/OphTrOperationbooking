@@ -311,7 +311,13 @@ class DefaultController extends OphTrOperationbookingEventController
 		if ($eye && count($procs)) {
 			$matched_procedures = array();
 			// get all the operation elements for this patient from booking events that have not been cancelled
-			foreach ($this->patient->episodes as $ep)
+			if (Yii::app()->params['OphTrOperationbooking_duplicate_proc_warn_all_eps']) {
+				$episodes = $this->patient->episodes;
+			}
+			else {
+				$episodes = array($this->getEpisode());
+			}
+			foreach ($episodes as $ep)
 			{
 				$events = $ep->getAllEventsByType($this->event_type->id);
 				foreach ($events as $ev) {
