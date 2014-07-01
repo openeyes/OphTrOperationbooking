@@ -287,11 +287,11 @@ table.transport .status.Green {
 }
 /* line 19, ../sass/components/_event.scss */
 .event .event-title {
-  background: url('../img/medium.png?1383822735') no-repeat left center;
+  background: url('../img/medium.png?1393408384') no-repeat left center;
 }
 /* line 22, ../sass/components/_event.scss */
 .event .event-content {
-  background-image: url('../img/watermark.png?1392372889');
+  background-image: url('../img/watermark.png?1393408384');
 }
 /* line 26, ../sass/components/_event.scss */
 .event.schedule .event-title {
@@ -446,7 +446,7 @@ table.transport .status.Green {
 }
 /* line 134, ../sass/components/_schedule-booking.scss */
 #operation table tbody td.outside_rtt {
-  background-image: url('../img/bookingIcons/RTT-warning.png?1383822735');
+  background-image: url('../img/bookingIcons/RTT-warning.png?1393408384');
   background-position: bottom right;
   background-repeat: no-repeat;
 }
@@ -513,7 +513,7 @@ table.transport .status.Green {
 }
 /* line 192, ../sass/components/_schedule-booking.scss */
 #operation #key #outside_rtt .color_box {
-  background: transparent url('../img/bookingIcons/RTT-warning_tiny.png?1383822735') top left no-repeat;
+  background: transparent url('../img/bookingIcons/RTT-warning_tiny.png?1393408384') top left no-repeat;
 }
 /* line 195, ../sass/components/_schedule-booking.scss */
 #operation #key #patient-unavailable .color_box {
@@ -705,4 +705,17 @@ table.transport .status.Green {
   font-style: italic;
   color: #888888;
   font-size: 0.9em;
+}
+
+/* line 34, ../sass/module.scss */
+ul.duplicate-procedures {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  list-style: none;
+}
+
+/* line 40, ../sass/module.scss */
+.duplicate-procedures li {
+  padding-left: 10px;
+  font-style: italic;
 }

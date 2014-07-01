@@ -29,7 +29,10 @@ class OphTrOperationbookingModule extends BaseEventTypeModule
 	// this property is really only relevant to gii auto-generation, specifically
 	// for updates to the module through gii
 	public $moduleShortSuffix;
-
+	public $default_parameter_settings = array(
+			'OphTrOperationbooking_duplicate_proc_warn' => true,
+			'OphTrOperationbooking_duplicate_proc_warn_all_eps' => true,
+	);
 	public function init()
 	{
 		// this method is called when the module is being created
@@ -45,6 +48,12 @@ class OphTrOperationbookingModule extends BaseEventTypeModule
 		));
 
 		$this->moduleShortSuffix = "operation";
+
+		foreach ($this->default_parameter_settings as $k => $v) {
+			if (!isset(Yii::app()->params[$k])) {
+				Yii::app()->params[$k] = $v;
+			}
+		}
 	}
 
 	public function beforeControllerAction($controller, $action)

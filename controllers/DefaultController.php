@@ -22,6 +22,7 @@ class DefaultController extends OphTrOperationbookingEventController
 	static protected $action_types = array(
 		'cancel' => self::ACTION_TYPE_EDIT,
 		'admissionLetter' => self::ACTION_TYPE_PRINT,
+		'verifyProcedures' => self::ACTION_TYPE_CREATE,
 	);
 
 	public $eventIssueCreate = 'Operation requires scheduling';
@@ -108,6 +109,15 @@ class DefaultController extends OphTrOperationbookingEventController
 	}
 
 	/**
+	 * Sets up some JS vars for the procedure confirmation checking
+	 */
+	protected function initActionEdit()
+	{
+		$this->jsVars['OE_confirmProcedures'] = Yii::app()->params['OphTrOperationbooking_duplicate_proc_warn'];
+		$this->jsVars['OE_patientId'] = $this->patient->id;
+	}
+
+	/**
 	 * Checks whether schedule now has been requested
 	 *
 	 * (non-phpdoc)
@@ -116,11 +126,23 @@ class DefaultController extends OphTrOperationbookingEventController
 	protected function initActionCreate()
 	{
 		parent::initActionCreate();
+		$this->initActionEdit();
 		if (@$_POST['schedule_now']) {
 			$this->successUri = 'booking/schedule/';
 		}
 	}
 
+	/**
+	 * Call to edit init
+	 *
+	 * (non-phpdoc)
+	 * @see BaseEventTypeController::initActionUpdate()
+	 */
+	protected function initActionUpdate()
+	{
+		parent::initActionUpdate();
+		$this->initActionEdit();
+	}
 	/**
 	 * Make the operation element directly available for templates
 	 *
@@ -262,6 +284,67 @@ class DefaultController extends OphTrOperationbookingEventController
 	{
 		$this->operation_required = true;
 		$this->initWithEventId(@$_GET['id']);
+	}
+
+	public function actionVerifyProcedures()
+	{
+		$this->setPatient($_REQUEST['patient_id']);
+
+		$resp = array(
+				'previousProcedures' => false,
+		);
+
+		$procs = array();
+		$procs_by_id = array();
+
+		if (isset($_POST['Procedures_procs'])) {
+			foreach ($_POST['Procedures_procs'] as $proc_id) {
+				if ($p = Procedure::model()->findByPk((int)$proc_id)) {
+					$procs[] = $p;
+					$procs_by_id[$p->id] = $p;
+				}
+			}
+		}
+
+		$eye = Eye::model()->findByPk((int) @$_POST['Element_OphTrOperationbooking_Operation']['eye_id']);
+
+		if ($eye && count($procs)) {
+			$matched_procedures = array();
+			// get all the operation elements for this patient from booking events that have not been cancelled
+			foreach ($this->patient->episodes as $ep)
+			{
+				$events = $ep->getAllEventsByType($this->event_type->id);
+				foreach ($events as $ev) {
+					$op = Element_OphTrOperationbooking_Operation::model()->findByAttributes(array('event_id' => $ev->id));
+
+					// check operation still valid, and that it is for a matching eye.
+					if (!$op->operation_cancellation_date &&
+							($op->eye_id == Eye::BOTH || $eye->id == Eye::BOTH || $op->eye_id == $eye->id)) {
+
+						foreach ($op->procedures as $existing_proc) {
+							if (in_array($existing_proc->id, array_keys($procs_by_id))) {
+								if (!isset($matched_procedures[$existing_proc->id])) {
+									$matched_procedures[$existing_proc->id] = array();
+								}
+								$matched_procedures[$existing_proc->id][] = $op;
+							}
+						}
+					}
+				}
+			}
+
+			// if procedure matches
+			if (count($matched_procedures)) {
+				$resp['previousProcedures'] = true;
+				$resp['message'] = $this->renderPartial('previous_procedures', array(
+					'matched_procedures' => $matched_procedures,
+					'eye' => $eye,
+					'procs_by_id' => $procs_by_id
+				), true);
+			}
+		}
+
+		echo \CJSON::encode($resp);
 	}
 
 	/**
