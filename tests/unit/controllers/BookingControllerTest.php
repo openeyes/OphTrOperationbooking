@@ -22,11 +22,6 @@ Yii::import('application.modules.OphTrOperationbooking.helpers.*');
  */
 class BookingControllerTest extends CDbTestCase
 {
-	static public function setupBeforeClass()
-	{
-		self::getFixtureManager()->basePath = Yii::getPathOfAlias('application.modules.OphTrOperationbooking.tests.fixtures');
-	}
-
 	private $controller;
 	private $audit;
 	public $fixtures = array(
@@ -69,10 +64,6 @@ class BookingControllerTest extends CDbTestCase
 	{
 		$_GET = array();
 		unset(Yii::app()->session['selected_firm_id']);
-	}
-
-	static function tearDownAfterClass() {
-		self::getFixtureManager()->basePath = Yii::getPathOfAlias('application.tests.fixtures');
 	}
 
 	public function testActionScheduleCancelledOperation()
@@ -399,7 +390,7 @@ class _WrapperBookingController extends BookingController
 		return parent::initAction($action);
 	}
 
-	public function render($template, $params)
+	public function render($template, $params = null, $return = false)
 	{
 		$this->renderParams = $params;
 	}

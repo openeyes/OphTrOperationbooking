@@ -119,7 +119,7 @@
 							<?php echo CHtml::dropDownList('site_id',@$_POST['site_id'],Site::model()->getListForCurrentInstitution(),array('empty'=>'All sites'))?>
 						</td>
 						<td>
-							<input type="text" size="12" name="hos_num" id="hos_num" value="<?php echo @$_POST['hos_num']?>" />
+							<?php echo CHtml::textField('hos_num',@$_POST['hos_num'],array('size' => 12))?>
 							<span id="hos_num_error" class="red"<?php if (!@$_POST['hos_num'] || ctype_digit($_POST['hos_num'])) {?> style="display: none;"<?php }?>>Invalid hospital number</span>
 						</td>
 						<td class="text-right">

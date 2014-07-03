@@ -1,10 +1,9 @@
 <?php
 
-class m140220_162303_add_patient_unavailable extends CDbMigration
+class m140220_162303_add_patient_unavailable extends OEMigration
 {
 	public function up()
 	{
-		//FIXME: not using abstract integer type as clashes with previous create table statements
 		$this->createTable('ophtroperationbooking_scheduleope_patientunavailreason', array(
 						'id' => 'pk',
 						'name' => 'string NOT NULL',
@@ -48,7 +47,8 @@ class m140220_162303_add_patient_unavailable extends CDbMigration
 				'ophtroperationbooking_scheduleope_patientunavail',
 				'element_id', 'et_ophtroperationbooking_scheduleope', 'id');
 
-
+		$migrations_path = dirname(__FILE__);
+		$this->initialiseData($migrations_path);
 	}
 
 	public function down()

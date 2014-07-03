@@ -16,6 +16,14 @@
 
 /* FIXME - this is old CSS. This will be refactored when we refactor the scheduling. */
 
+$available: #c9fcbb;
+$limited: #30cf02;
+$full: #4f6648;
+$closed: #828282;
+$selected_date: #3665ff;
+$inthepast: #828282;
+$patient-unavailable: #990000;
+
 .ophtroperationbooking {
 	.schedule {
 		.eventDetail {
@@ -33,7 +41,6 @@
 }
 
 #operation {
-
 	h3 {
 		padding: 10px 10px 0 10px;
 		margin: 0;
@@ -107,25 +114,21 @@
 			text-align: center;
 		}
 		tbody td {
+			font-size: 16px;
 			&.available {
-				background: #69bd51;
-				font-size: 16px;
+				background: $available;
 			}
 			&.limited {
-				background: #8dbd7f;
-				font-size: 16px;
+				background: $limited;
 			}
 			&.full {
-				background: #427633;
-				font-size: 16px;
+				background: $full;
 			}
 			&.closed {
-				background: #828282;
-				font-size: 16px;
+				background: $closed;
 			}
 			&.selected_date {
-				background: #3665ff;
-				font-size: 16px;
+				background: $selected_date;
 				color: #fff;
 			}
 			&.outside_rtt {
@@ -134,12 +137,10 @@
 				background-repeat: no-repeat;
 			}
 			&.inthepast {
-				background: #828282;
-				font-size: 16px;
+				background: $inthepast;
 			}
 			&.patient-unavailable {
-				background: #990000;
-				font-size: 16px;
+				background: $patient-unavailable;
 			}
 		}
 	}
@@ -174,25 +175,25 @@
 			background: #666;
 		}
 		#available .color_box {
-			background: #69bd51;
+			background: $available;
 		}
 		#limited .color_box {
-			background: #8dbd7f;
+			background: $limited;
 		}
 		#full .color_box {
-			background: #427633;
+			background: $full;
 		}
 		#closed .color_box {
-			background: #828282;
+			background: $closed;
 		}
 		#selected_date .color_box {
-			background: #3665ff;
+			background: $selected_date;
 		}
 		#outside_rtt .color_box {
 			background: transparent image-url("bookingIcons/RTT-warning_tiny.png") top left no-repeat;
 		}
 		#patient-unavailable .color_box {
-			background: #990000;
+			background: $patient-unavailable;
 		}
 	}
 }
@@ -262,7 +263,7 @@
 			}
 		}
 		&.inthepast {
-			background: #828282;
+			background: $inthepast;
 			color: #000;
 			&:hover {
 				background: #C2C2C2;

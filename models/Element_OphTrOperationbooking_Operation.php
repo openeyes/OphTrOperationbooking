@@ -535,7 +535,15 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 						if (strtotime($date) < strtotime(date('Y-m-d'))) {
 							$status = 'inthepast';
 						} else {
+
+							$hasFreeProcedures = false;
 							foreach ($sessiondata[$date] as $session) {
+
+								// Check if at least one session has enough allocated max_procedures to allow the booking
+								if (!$session->operationBookable($this)) continue;
+
+								$hasFreeProcedures = true;
+
 								if ($session->availableMinutes >= $this->total_duration) {
 									$open++;
 								} else {
@@ -545,8 +553,9 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 
 							if (!$schedule_options->isPatientAvailable($date)) {
 								$status = 'patient-unavailable';
-							}
-							elseif ($full == count($sessiondata[$date])) {
+							}	elseif (!$hasFreeProcedures) {
+								$status = 'full';
+							}	elseif ($full == count($sessiondata[$date])) {
 								$status = 'full';
 							} elseif ($full >0 and $open >0) {
 								$status = 'limited';

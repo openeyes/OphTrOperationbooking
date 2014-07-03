@@ -48,6 +48,11 @@ class OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason extends B
 		return 'ophtroperationbooking_scheduleope_patientunavailreason';
 	}
 
+	public function defaultScope()
+	{
+		return array('order' => $this->getTableAlias(true, false) . '.display_order');
+	}
+
 	/**
 	 * set a default display order for a new record
 	 */
