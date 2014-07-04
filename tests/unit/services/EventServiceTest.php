@@ -25,6 +25,7 @@ class EventServiceTest extends \CDbTestCase
 		'el_diagnosis' => 'Element_OphTrOperationbooking_Diagnosis',
 		'el_operation' => 'Element_OphTrOperationbooking_Operation',
 		'el_schedule' => 'Element_OphTrOperationbooking_ScheduleOperation',
+		'procassign' => 'OphTrOperationbooking_Operation_Procedures',
 	);
 
 	public function testModelToResource()
