@@ -24,5 +24,12 @@ return array(
 		'disorder_id' => 1,
 		'created_date' => date('Y-m-d 00:00:00'),
 		'last_modified_date' => date('Y-m-d 00:00:00'),
+	),
+	'di2' => array(
+		'event_id' => 6,
+		'eye_id' => 2,
+		'disorder_id' => 2,
+		'created_date' => date('Y-m-d 00:00:00'),
+		'last_modified_date' => date('Y-m-d 00:00:00'),
 	)
 );
