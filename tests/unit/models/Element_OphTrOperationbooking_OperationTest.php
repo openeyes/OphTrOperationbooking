@@ -54,25 +54,25 @@ class Element_OphTrOperationbooking_OperationTest extends CDbTestCase
 	}
 
 	protected function getMalePatient() {
-		$p = ComponentStubGenerator::generate('Patient', array('gender' => 'M'));
+		$p = ComponentStubGenerator::generate('Patient', array('gender_id' => Gender::model()->find('name=?',array('Male'))->id,'gender' => Gender::model()->find('name=?',array('Male'))));
 		$p->expects( $this->any() )->method('isChild')->will($this->returnValue(false));
 		return $p;
 	}
 
 	protected function getFemalePatient() {
-		$p = ComponentStubGenerator::generate('Patient', array('gender' => 'F'));
+		$p = ComponentStubGenerator::generate('Patient', array('gender_id' => Gender::model()->find('name=?',array('Female'))->id,'gender' => Gender::model()->find('name=?',array('Female'))));
 		$p->expects( $this->any() )->method('isChild')->will($this->returnValue(false));
 		return $p;
 	}
 
 	protected function getBoyPatient() {
-		$p = ComponentStubGenerator::generate('Patient', array('gender' => 'M'));
+		$p = ComponentStubGenerator::generate('Patient', array('gender_id' => Gender::model()->find('name=?',array('Male'))->id,'gender' => Gender::model()->find('name=?',array('Male'))));
 		$p->expects( $this->any() )->method('isChild')->will($this->returnValue(true));
 		return $p;
 	}
 
 	protected function getGirlPatient() {
-		$p = ComponentStubGenerator::generate('Patient', array('gender' => 'F'));
+		$p = ComponentStubGenerator::generate('Patient', array('gender_id' => Gender::model()->find('name=?',array('Female'))->id,'gender' => Gender::model()->find('name=?',array('Female'))));
 		$p->expects( $this->any() )->method('isChild')->will($this->returnValue(true));
 		return $p;
 	}
@@ -84,13 +84,14 @@ class Element_OphTrOperationbooking_OperationTest extends CDbTestCase
 				->getMock();
 
 		$op->event = ComponentStubGenerator::generate(
-				'Event',
-				array(
-						'episode' => ComponentStubGenerator::generate(
-										'Episode',
-										array('patient' => $patient, 'patient_id' => $patient->id)
-								)
-				));
+			'Event',
+			array(
+				'episode' => ComponentStubGenerator::generate(
+					'Episode',
+					array('patient' => $patient, 'patient_id' => $patient->id)
+				)
+		));
+
 		return $op;
 	}
 
@@ -101,7 +102,8 @@ class Element_OphTrOperationbooking_OperationTest extends CDbTestCase
 				'id' => 1,
 				'theatre' => $theatre,
 				'date' => $dt,
-			));
+		));
+
 		return $session;
 	}
 
@@ -350,7 +352,7 @@ class Element_OphTrOperationbooking_OperationTest extends CDbTestCase
 			'total_duration' => 1,
 		);
 
-		$op->procedures = array(ComponentStubGenerator::generate('Procedure'));
+		$op->procedures = array(Procedure::model()->find());
 
 		$schedule_op = ComponentStubGenerator::generate('Element_OphTrOperationbooking_ScheduleOperation');
 		$schedule_op->expects($this->any())->method('isPatientAvailable')->will($this->returnValue(true));
