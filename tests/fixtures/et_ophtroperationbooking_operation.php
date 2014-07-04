@@ -119,5 +119,9 @@ return array(
 		'operation_cancellation_date' => null,
 		'created_date' => date('Y-m-d 00:00:00'),
 		'last_modified_date' => date('Y-m-d 00:00:00'),
+		'rtt_id' => 1,
+		'comments_rtt' => 'these are RTT comments',
+		'referral_id' => 1,
+		'latest_booking_id' => 2,
 	),
 );

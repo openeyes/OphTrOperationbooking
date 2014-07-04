@@ -18,46 +18,9 @@
  */
 
 return array(
-	'b1' => array(
-		'element_id' => 1,
-		'session_id' => 5,
-		'display_order' => 1,
-		'admission_time' => '08:00:00',
-		'confirmed' => 1,
-		'session_date' => '2012-01-02',
-		'session_start_time' => '08:00:00',
-		'session_end_time' => '13:00:00',
-		'session_theatre_id' => 1,
-		'ward_id' => 1,
-	),
-	'b2' => array(
-		'element_id' => 6,
-		'session_id' => 5,
-		'display_order' => 1,
-		'admission_time' => '08:00:00',
-		'confirmed' => 1,
-		'session_date' => '2012-01-02',
-		'session_start_time' => '08:00:00',
-		'session_end_time' => '13:00:00',
-		'session_theatre_id' => 1,
-		'ward_id' => 1,
-	),
-	'b3' => array(
-		'element_id' => 6,
-		'session_id' => 3,
-		'display_order' => 2,
-		'admission_time' => '08:00:00',
-		'confirmed' => 1,
-		'session_date' => '2012-01-02',
-		'session_start_time' => '08:00:00',
-		'session_end_time' => '13:00:00',
-		'session_theatre_id' => 3,
-		'ward_id' => 2,
-		'transport_arranged' => 1,
-		'transport_arranged_date' => '2011-11-02',
-		'booking_cancellation_date' => '2012-04-04 13:33:37',
-		'cancellation_reason_id' => 1,
-		'cancellation_comment' => 'cancelled due to biro shortage',
-		'cancellation_user_id' => 1,
-	),
+	'cr1' => array(
+		'text' => 'ran out of biros',
+		'list_no' => 1,
+		'active' => 1,
+	)
 );

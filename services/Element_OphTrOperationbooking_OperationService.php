@@ -32,7 +32,7 @@ class Element_OphTrOperationbooking_OperationService extends \services\Declarati
 				'anaesthetic_type' => array('anaesthetic_type_id', 'AnaestheticType', array('name')),
 				'priority' => array('priority_id', 'Priority', array('name')),
 				'status' => array('status_id', 'OphTrOperationbooking_Operation_Status', array('name')),
-				'cancellation_reason' => array('cancellation_reason_id', 'OphTrOperationbooking_Operation_Cancellation_Reason', array('name')),
+				'cancellation_reason' => array('cancellation_reason_id', 'OphTrOperationbooking_Operation_Cancellation_Reason', array('text')),
 			),
 			'fields' => array(
 				'event_ref' => array(self::TYPE_REF, 'event_id', 'Event'),
@@ -49,7 +49,7 @@ class Element_OphTrOperationbooking_OperationService extends \services\Declarati
 				'anaesthetist_required' => 'anaesthetist_required',
 				'operation_cancellation_date' => array(self::TYPE_SIMPLEOBJECT, 'operation_cancellation_date', 'Date'),
 				'cancellation_user' => array(self::TYPE_REF, 'cancellation_user_id', 'User'),
-				'cancellation_reason' => 'cancellation_reason.name',
+				'cancellation_reason' => 'cancellation_reason.text',
 				'cancellation_comment' => 'cancellation_comment',
 				'latest_booking_ref' => array(self::TYPE_REF, 'latest_booking_id', 'OphTrOperationbooking_Operation_Booking'),
 				'comments_rtt' => 'comments_rtt',
@@ -76,7 +76,7 @@ class Element_OphTrOperationbooking_OperationService extends \services\Declarati
 				'element' => array('element_id', 'Element_OphTrOperationbooking_Operation'),
 			),
 			'reference_objects' => array(
-				'cancellationReason' => array('cancellation_reason_id', 'OphTrOperationbooking_Operation_Cancellation_Reason', array('name')),
+				'cancellationReason' => array('cancellation_reason_id', 'OphTrOperationbooking_Operation_Cancellation_Reason', array('text')),
 			),
 			'fields' => array(
 				'session_ref' => array(self::TYPE_REF, 'session_id', 'OphTrOperationbooking_Operation_Session'),
@@ -91,7 +91,7 @@ class Element_OphTrOperationbooking_OperationService extends \services\Declarati
 				'transport_arranged' => 'transport_arranged',
 				'transport_arranged_date' => array(self::TYPE_SIMPLEOBJECT, 'transport_arranged_date', 'Date'),
 				'booking_cancellation_date' => array(self::TYPE_SIMPLEOBJECT, 'booking_cancellation_date', 'DateTime'),
-				'cancellation_reason' => 'cancellationReason.name',
+				'cancellation_reason' => 'cancellationReason.text',
 				'cancellation_comment' => 'cancellation_comment',
 				'cancellation_user' => array(self::TYPE_REF, 'cancellation_user_id', 'User'),
 			),

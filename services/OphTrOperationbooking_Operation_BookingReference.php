@@ -15,21 +15,6 @@
 
 namespace OEModule\OphTrOperationbooking\services;
 
-class OphTrOperationbooking_Operation_Booking extends \services\Resource
+class OphTrOperationbooking_Operation_BookingReference extends \services\ModelReference
 {
-	public $session_ref;
-	public $display_order;
-	public $ward_ref;
-	public $admission_time;
-	public $confirmed;
-	public $session_date;
-	public $session_start_time;
-	public $session_end_time;
-	public $theatre_ref;
-	public $transport_arranged;
-	public $transport_arranged_date;
-	public $booking_cancellation_date;
-	public $cancellation_reason;
-	public $cancellation_comment;
-	public $cancellation_user;
 }
