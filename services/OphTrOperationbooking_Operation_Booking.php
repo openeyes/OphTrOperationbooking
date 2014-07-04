@@ -15,28 +15,21 @@
 
 namespace OEModule\OphTrOperationbooking\services;
 
-class Element_OphTrOperationbooking_Operation extends \services\Resource
+class OphTrOperationbooking_Operation_Booking extends \services\DataObject
 {
-	public $event_ref;
-	public $eye;
-	public $consultant_required;
-	public $anaesthetic_type;
-	public $overnight_stay;
-	public $site_ref;
-	public $priority;
-	public $decision_date;
-	public $comments;
-	public $total_duration;
-	public $status;
-	public $anaesthetist_required;
-	public $operation_cancellation_date;
-	public $cancellation_user;
+	public $session_ref;
+	public $display_order;
+	public $ward_ref;
+	public $admission_time;
+	public $confirmed;
+	public $session_date;
+	public $session_start_time;
+	public $session_end_time;
+	public $theatre_ref;
+	public $transport_arranged;
+	public $transport_arranged_date;
+	public $booking_cancellation_date;
 	public $cancellation_reason;
 	public $cancellation_comment;
-	public $latest_booking_ref;
-	public $comments_rtt;
-	public $referral_ref;
-	public $rtt_ref;
-	public $procedures;
-	public $bookings;
+	public $cancellation_user;
 }

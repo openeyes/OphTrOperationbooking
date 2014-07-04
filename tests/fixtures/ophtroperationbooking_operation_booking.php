@@ -29,5 +29,17 @@ return array(
 		'session_end_time' => '13:00:00',
 		'session_theatre_id' => 1,
 		'ward_id' => 1,
-	)
+	),
+	'b2' => array(
+		'element_id' => 6,
+		'session_id' => 5,
+		'display_order' => 1,
+		'admission_time' => '08:00:00',
+		'confirmed' => 1,
+		'session_date' => '2012-01-02',
+		'session_start_time' => '08:00:00',
+		'session_end_time' => '13:00:00',
+		'session_theatre_id' => 1,
+		'ward_id' => 1,
+	),
 );

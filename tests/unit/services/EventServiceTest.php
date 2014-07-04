@@ -26,6 +26,7 @@ class EventServiceTest extends \CDbTestCase
 		'el_operation' => 'Element_OphTrOperationbooking_Operation',
 		'el_schedule' => 'Element_OphTrOperationbooking_ScheduleOperation',
 		'procassign' => 'OphTrOperationbooking_Operation_Procedures',
+		'bookings' => 'OphTrOperationbooking_Operation_Booking',
 	);
 
 	public function testModelToResource()
@@ -79,10 +80,32 @@ class EventServiceTest extends \CDbTestCase
 		$this->assertNull($resource->elements[1]->comments_rtt);
 		$this->assertNull($resource->elements[1]->referral_ref);
 		$this->assertNull($resource->elements[1]->rtt_ref);
+
 		$this->assertCount(1,$resource->elements[1]->procedures);
 		$this->assertInstanceOf('OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_Procedures',$resource->elements[1]->procedures[0]);
 		$this->assertEquals('Foobar Procedure',$resource->elements[1]->procedures[0]->procedure);
 		$this->assertEquals(0,$resource->elements[1]->procedures[0]->display_order);
+
+		$this->assertCount(1,$resource->elements[1]->bookings);
+		$this->assertInstanceOf('OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_Booking',$resource->elements[1]->bookings[0]);
+		$this->assertInstanceOf('OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_SessionReference',$resource->elements[1]->bookings[0]->session_ref);
+		$this->assertEquals(5,$resource->elements[1]->bookings[0]->session_ref->getId());
+		$this->assertEquals(1,$resource->elements[1]->bookings[0]->display_order);
+		$this->assertInstanceOf('OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_WardReference',$resource->elements[1]->bookings[0]->ward_ref);
+		$this->assertEquals(1,$resource->elements[1]->bookings[0]->ward_ref->getId());
+		$this->assertEquals('08:00:00',$resource->elements[1]->bookings[0]->admission_time);
+		$this->assertEquals(1,$resource->elements[1]->bookings[0]->confirmed);
+		$this->assertInstanceOf('services\Date',$resource->elements[1]->bookings[0]->session_date);
+		$this->assertEquals('08:00:00',$resource->elements[1]->bookings[0]->session_start_time);
+		$this->assertEquals('13:00:00',$resource->elements[1]->bookings[0]->session_end_time);
+		$this->assertInstanceOf('OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_TheatreReference',$resource->elements[1]->bookings[0]->theatre_ref);
+		$this->assertEquals(1,$resource->elements[1]->bookings[0]->theatre_ref->getId());
+		$this->assertEquals(0,$resource->elements[1]->bookings[0]->transport_arranged);
+		$this->assertNull($resource->elements[1]->bookings[0]->transport_arranged_date);
+		$this->assertNull($resource->elements[1]->bookings[0]->booking_cancellation_date);
+		$this->assertFalse($resource->elements[1]->bookings[0]->cancellation_reason);
+		$this->assertEquals('',$resource->elements[1]->bookings[0]->cancellation_comment);
+		$this->assertNull($resource->elements[1]->bookings[0]->cancellation_user);
 
 		$this->assertInstanceOf('OEModule\OphTrOperationbooking\services\Element_OphTrOperationbooking_ScheduleOperation',$resource->elements[2]);
 		$this->assertInstanceOf('services\EventReference',$resource->elements[2]->event_ref);

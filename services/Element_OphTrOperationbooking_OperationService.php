@@ -56,6 +56,7 @@ class Element_OphTrOperationbooking_OperationService extends \services\Declarati
 				'referral_ref' => array(self::TYPE_REF, 'referral_id', 'Referral'),
 				'rtt_ref' => array(self::TYPE_REF, 'rtt_id', 'RTT'),
 				'procedures' => array(self::TYPE_LIST, 'procedure_assignment', '\OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_Procedures', 'OphTrOperationbooking_Operation_Procedures', array('element_id' => 'primaryKey')),
+				'bookings' => array(self::TYPE_LIST, 'allBookings', '\OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_Booking', 'OphTrOperationbooking_Operation_Booking', array('element_id' => 'primaryKey')),
 			),
 		),
 		'\OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_Procedures' => array(
@@ -68,6 +69,31 @@ class Element_OphTrOperationbooking_OperationService extends \services\Declarati
 			'fields' => array(
 				'procedure' => 'procedure.term',
 				'display_order' => 'display_order',
+			),
+		),
+		'\OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_Booking' => array(
+			'related_objects' => array(
+				'element' => array('element_id', 'Element_OphTrOperationbooking_Operation'),
+			),
+			'reference_objects' => array(
+				'cancellationReason' => array('cancellation_reason_id', 'OphTrOperationbooking_Operation_Cancellation_Reason', array('name')),
+			),
+			'fields' => array(
+				'session_ref' => array(self::TYPE_REF, 'session_id', 'OphTrOperationbooking_Operation_Session'),
+				'display_order' => 'display_order',
+				'ward_ref' => array(self::TYPE_REF, 'ward_id', 'OphTrOperationbooking_Operation_Ward'),
+				'admission_time' => 'admission_time',
+				'confirmed' => 'confirmed',
+				'session_date' => array(self::TYPE_SIMPLEOBJECT, 'session_date', 'Date'),
+				'session_start_time' => 'session_start_time',
+				'session_end_time' => 'session_end_time',
+				'theatre_ref' => array(self::TYPE_REF, 'session_theatre_id', 'OphTrOperationbooking_Operation_Theatre'),
+				'transport_arranged' => 'transport_arranged',
+				'transport_arranged_date' => array(self::TYPE_SIMPLEOBJECT, 'transport_arranged_date', 'Date'),
+				'booking_cancellation_date' => array(self::TYPE_SIMPLEOBJECT, 'booking_cancellation_date', 'DateTime'),
+				'cancellation_reason' => 'cancellationReason.name',
+				'cancellation_comment' => 'cancellation_comment',
+				'cancellation_user' => array(self::TYPE_REF, 'cancellation_user_id', 'User'),
 			),
 		),
 	);

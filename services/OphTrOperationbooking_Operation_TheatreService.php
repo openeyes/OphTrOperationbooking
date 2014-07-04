@@ -15,28 +15,29 @@
 
 namespace OEModule\OphTrOperationbooking\services;
 
-class Element_OphTrOperationbooking_Operation extends \services\Resource
+class OphTrOperationbooking_Operation_TheatreService extends \services\DeclarativeModelService
 {
-	public $event_ref;
-	public $eye;
-	public $consultant_required;
-	public $anaesthetic_type;
-	public $overnight_stay;
-	public $site_ref;
-	public $priority;
-	public $decision_date;
-	public $comments;
-	public $total_duration;
-	public $status;
-	public $anaesthetist_required;
-	public $operation_cancellation_date;
-	public $cancellation_user;
-	public $cancellation_reason;
-	public $cancellation_comment;
-	public $latest_booking_ref;
-	public $comments_rtt;
-	public $referral_ref;
-	public $rtt_ref;
-	public $procedures;
-	public $bookings;
+	static protected $operations = array(self::OP_READ, self::OP_UPDATE, self::OP_CREATE, self::OP_SEARCH);
+
+	static protected $search_params = array(
+		'id' => self::TYPE_TOKEN,
+	);
+
+	static protected $primary_model = 'OphTrOperationbooking_Operation_Theatre';
+
+	static protected $model_map = array(
+		'OphTrOperationbooking_Operation_Theatre' => array(
+			'fields' => array(
+				'name' => 'name',
+				'site_ref' => array(self::TYPE_REF, 'site_id', 'Site'),
+				'code' => 'code',
+				'ward_ref' => array(self::TYPE_REF, 'ward_id', 'OphTrOperationbooking_Operation_Ward'),
+				'active' => 'active',
+			),
+		),
+	);
+
+	public function search(array $params)
+	{
+	}
 }

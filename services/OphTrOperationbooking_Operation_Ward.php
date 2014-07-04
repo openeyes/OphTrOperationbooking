@@ -15,28 +15,14 @@
 
 namespace OEModule\OphTrOperationbooking\services;
 
-class Element_OphTrOperationbooking_Operation extends \services\Resource
+class OphTrOperationbooking_Operation_Ward extends \services\Resource
 {
-	public $event_ref;
-	public $eye;
-	public $consultant_required;
-	public $anaesthetic_type;
-	public $overnight_stay;
 	public $site_ref;
-	public $priority;
-	public $decision_date;
-	public $comments;
-	public $total_duration;
-	public $status;
-	public $anaesthetist_required;
-	public $operation_cancellation_date;
-	public $cancellation_user;
-	public $cancellation_reason;
-	public $cancellation_comment;
-	public $latest_booking_ref;
-	public $comments_rtt;
-	public $referral_ref;
-	public $rtt_ref;
-	public $procedures;
-	public $bookings;
+	public $name;
+	public $long_name;
+	public $directions;
+	public $restriction;
+	public $code;
+	public $display_order;
+	public $active;
 }
