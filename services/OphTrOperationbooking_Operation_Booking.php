@@ -15,27 +15,38 @@
 
 namespace OEModule\OphTrOperationbooking\services;
 
-class OphTrOperationbooking_Operation_Booking extends \services\DataObject
+class OphTrOperationbooking_Operation_Booking extends \services\ElementDataObject
 {
-	public $fields = array(
-		'display_order',
-		'admission_time',
-		'confirmed',
-		'session_date',
-		'session_start_time',
-		'session_end_time',
-		'transport_arranged',
-		'transport_arranged_date',
-		'booking_cancellation_date',
-		'cancellation_comment',
-	);
-	public $references = array(
-		'session',
-		'ward',
-		'session_theatre',
-		'cancellation_user',
-	);
-	public $relations = array(
-		'cancellationReason',
-	);
+	public function fields()
+	{
+		return array(
+			'display_order',
+			'admission_time',
+			'confirmed',
+			'session_date',
+			'session_start_time',
+			'session_end_time',
+			'transport_arranged',
+			'transport_arranged_date',
+			'booking_cancellation_date',
+			'cancellation_comment',
+		);
+	}
+
+	public function references()
+	{
+		return array(
+			'session',
+			'ward',
+			'session_theatre',
+			'cancellation_user',
+		);
+	}
+
+	public function relations()
+	{
+		return array(
+			'cancellationReason',
+		);
+	}
 }

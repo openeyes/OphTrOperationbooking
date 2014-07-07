@@ -15,34 +15,45 @@
 
 namespace OEModule\OphTrOperationbooking\services;
 
-class Element_OphTrOperationbooking_Operation extends \services\DataObject
+class Element_OphTrOperationbooking_Operation extends \services\ElementDataObject
 {
-	public $fields = array(
-		'consultant_required',
-		'overnight_stay',
-		'decision_date',
-		'comments',
-		'total_duration',
-		'anaesthetist_required',
-		'operation_cancellation_date',
-		'cancellation_comment',
-		'comments_rtt',
-		'latest_booking_id',
-	);
-	public $relations = array(
-		'eye',
-		'anaesthetic_type',
-		'priority',
-		'status',
-		'cancellation_reason',
-		'procedure_assignment',
-		'allBookings',
-		'procedure_assignment',
-	);
-	public $references = array(
-		'site',
-		'cancellation_user',
-		'referral',
-		'rtt',
-	);
+	public function fields()
+	{
+		return array(
+			'consultant_required',
+			'overnight_stay',
+			'decision_date',
+			'comments',
+			'total_duration',
+			'anaesthetist_required',
+			'operation_cancellation_date',
+			'cancellation_comment',
+			'comments_rtt',
+			'latest_booking_id',
+		);
+	}
+
+	public function relations()
+	{
+		return array(
+			'eye',
+			'anaesthetic_type',
+			'priority',
+			'status',
+			'cancellation_reason',
+			'procedure_assignment',
+			'allBookings',
+			'procedure_assignment',
+		);
+	}
+
+	public function references()
+	{
+		return array(
+			'site',
+			'cancellation_user',
+			'referral',
+			'rtt',
+		);
+	}
 }

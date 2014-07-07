@@ -137,85 +137,12 @@ class EventServiceTest extends \CDbTestCase
 	}
 
 /*
-	public function testModelToResource_ContactsWithLocations()
-	{
-		$patient = $this->patients('patient2');
-
-		$ps = new PatientAssociatedContactsService;
-
-		$resource = $ps->modelToResource($patient);
-
-		$this->assertInstanceOf('services\PatientAssociatedContacts',$resource);
-		$this->assertCount(3,$resource->contacts);
-
-		$this->assertInstanceOf('services\PatientAssociatedContact',$resource->contacts[0]);
-		$this->assertEquals('Dr',$resource->contacts[0]->title);
-		$this->assertEquals('Zhivago',$resource->contacts[0]->family_name);
-		$this->assertEquals('Yuri',$resource->contacts[0]->given_name);
-		$this->assertEquals('999',$resource->contacts[0]->primary_phone);
-		$this->assertInstanceOf('services\SiteReference',$resource->contacts[0]->site_ref);
-		$this->assertEquals(1,$resource->contacts[0]->site_ref->getId());
-		$this->assertNull($resource->contacts[0]->institution_ref);
-
-		$this->assertInstanceOf('services\PatientAssociatedContact',$resource->contacts[1]);
-		$this->assertEquals('Mr',$resource->contacts[1]->title);
-		$this->assertEquals('Inc',$resource->contacts[1]->family_name);
-		$this->assertEquals('Apple',$resource->contacts[1]->given_name);
-		$this->assertEquals('01010101',$resource->contacts[1]->primary_phone);
-		$this->assertInstanceOf('services\SiteReference',$resource->contacts[1]->site_ref);
-		$this->assertEquals(2,$resource->contacts[1]->site_ref->getId());
-		$this->assertNull($resource->contacts[1]->institution_ref);
-
-		$this->assertInstanceOf('services\PatientAssociatedContact',$resource->contacts[2]);
-		$this->assertEquals('Ti',$resource->contacts[2]->title);
-		$this->assertEquals('Tiss',$resource->contacts[2]->family_name);
-		$this->assertEquals('Prac',$resource->contacts[2]->given_name);
-		$this->assertEquals('0303032332',$resource->contacts[2]->primary_phone);
-		$this->assertInstanceOf('services\InstitutionReference',$resource->contacts[2]->institution_ref);
-		$this->assertEquals(2,$resource->contacts[2]->institution_ref->getId());
-		$this->assertNull($resource->contacts[2]->site_ref);
-	}
-
-	public function testModelToResource_JustContacts_and_ContactsWithLocations()
-	{
-		$patient = $this->patients('patient3');
-
-		$ps = new PatientAssociatedContactsService;
-
-		$resource = $ps->modelToResource($patient);
-
-		$this->assertInstanceOf('services\PatientAssociatedContacts',$resource);
-		$this->assertCount(3,$resource->contacts);
-
-		$this->assertInstanceOf('services\PatientAssociatedContact',$resource->contacts[0]);
-		$this->assertEquals('Dr',$resource->contacts[0]->title);
-		$this->assertEquals('Zhivago',$resource->contacts[0]->family_name);
-		$this->assertEquals('Yuri',$resource->contacts[0]->given_name);
-		$this->assertEquals('999',$resource->contacts[0]->primary_phone);
-		$this->assertNull($resource->contacts[0]->site_ref);
-		$this->assertNull($resource->contacts[0]->institution_ref);
-
-		$this->assertInstanceOf('services\PatientAssociatedContact',$resource->contacts[1]);
-		$this->assertEquals('Mr',$resource->contacts[1]->title);
-		$this->assertEquals('Inc',$resource->contacts[1]->family_name);
-		$this->assertEquals('Apple',$resource->contacts[1]->given_name);
-		$this->assertEquals('01010101',$resource->contacts[1]->primary_phone);
-		$this->assertInstanceOf('services\SiteReference',$resource->contacts[1]->site_ref);
-		$this->assertEquals(2,$resource->contacts[1]->site_ref->getId());
-		$this->assertNull($resource->contacts[1]->institution_ref);
-
-		$this->assertInstanceOf('services\PatientAssociatedContact',$resource->contacts[2]);
-		$this->assertEquals('Ti',$resource->contacts[2]->title);
-		$this->assertEquals('Tiss',$resource->contacts[2]->family_name);
-		$this->assertEquals('Prac',$resource->contacts[2]->given_name);
-		$this->assertEquals('0303032332',$resource->contacts[2]->primary_phone);
-		$this->assertInstanceOf('services\InstitutionReference',$resource->contacts[2]->institution_ref);
-		$this->assertEquals(2,$resource->contacts[2]->institution_ref->getId());
-		$this->assertNull($resource->contacts[2]->site_ref);
-	}
-
 	public function getResource()
 	{
+		$resource = \Yii::app()->service->Event(6)->fetch();
+
+		print_r($resource);exit;
+
 		$resource = new PatientAssociatedContacts(1);
 
 		$contact1 = new PatientAssociatedContact;
@@ -257,6 +184,8 @@ class EventServiceTest extends \CDbTestCase
 		$this->assertEquals($total_contacts, count(\Contact::model()->findAll()));
 	}
 
+*/
+/*
 	public function testResourceToModel_NoSave_ModelIsCorrect()
 	{
 		$resource = $this->getResource();

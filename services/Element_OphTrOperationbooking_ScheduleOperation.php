@@ -15,9 +15,12 @@
 
 namespace OEModule\OphTrOperationbooking\services;
 
-class Element_OphTrOperationbooking_ScheduleOperation extends \services\DataObject
+class Element_OphTrOperationbooking_ScheduleOperation extends \services\ElementDataObject
 {
-	public $relations = array(
-		'schedule_options',
-	);
+	public function references()
+	{
+		return array (
+			'schedule_options',
+		);
+	}
 }

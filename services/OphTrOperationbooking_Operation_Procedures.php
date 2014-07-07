@@ -15,12 +15,19 @@
 
 namespace OEModule\OphTrOperationbooking\services;
 
-class OphTrOperationbooking_Operation_Procedures extends \services\DataObject
+class OphTrOperationbooking_Operation_Procedures extends \services\ElementDataObject
 {
-	public $fields = array(
-		'display_order',
-	);
-	public $references = array(
-		'proc',
-	);
+	public function fields()
+	{
+		return array(
+			'display_order',
+		);
+	}
+
+	public function references()
+	{
+		return array(
+			'proc',
+		);
+	}
 }
