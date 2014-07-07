@@ -25,7 +25,7 @@ class OphTrOperationbooking_Operation_SessionService extends \services\Declarati
 
 	static protected $primary_model = 'OphTrOperationbooking_Operation_Session';
 
-	static protected $model_map = array(
+	static public $model_map = array(
 		'OphTrOperationbooking_Operation_Session' => array(
 			'reference_objects' => array(
 				'unavailablereason' => array('unavailablereason_id', 'OphTrOperationbooking_Operation_Session_UnavailableReason', array('name')),

@@ -15,7 +15,7 @@
 
 namespace OEModule\OphTrOperationbooking\services;
 
-class OphTrOperationbooking_Operation_TheatreService extends \services\DeclarativeModelService
+class OphTrOperationbooking_ScheduleOperation_OptionsService extends \services\DeclarativeModelService
 {
 	static protected $operations = array(self::OP_READ, self::OP_UPDATE, self::OP_CREATE, self::OP_SEARCH);
 
@@ -23,16 +23,13 @@ class OphTrOperationbooking_Operation_TheatreService extends \services\Declarati
 		'id' => self::TYPE_TOKEN,
 	);
 
-	static protected $primary_model = 'OphTrOperationbooking_Operation_Theatre';
+	static protected $primary_model = 'OphTrOperationbooking_ScheduleOperation_Options';
 
 	static public $model_map = array(
-		'OphTrOperationbooking_Operation_Theatre' => array(
+		'OphTrOperationbooking_ScheduleOperation_Options' => array(
 			'fields' => array(
 				'name' => 'name',
-				'site_ref' => array(self::TYPE_REF, 'site_id', 'Site'),
-				'code' => 'code',
-				'ward_ref' => array(self::TYPE_REF, 'ward_id', 'OphTrOperationbooking_Operation_Ward'),
-				'active' => 'active',
+				'display_order' => 'display_order',
 			),
 		),
 	);

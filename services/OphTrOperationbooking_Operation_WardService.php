@@ -25,7 +25,7 @@ class OphTrOperationbooking_Operation_WardService extends \services\DeclarativeM
 
 	static protected $primary_model = 'OphTrOperationbooking_Operation_Ward';
 
-	static protected $model_map = array(
+	static public $model_map = array(
 		'OphTrOperationbooking_Operation_Ward' => array(
 			'fields' => array(
 				'site_ref' => array(self::TYPE_REF, 'site_id', 'Site'),

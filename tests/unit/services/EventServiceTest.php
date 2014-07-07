@@ -133,7 +133,8 @@ class EventServiceTest extends \CDbTestCase
 		$this->assertEquals(1,$resource->elements[1]->allBookings[1]->cancellation_user_ref->getId());
 
 		$this->assertInstanceOf('OEModule\OphTrOperationbooking\services\Element_OphTrOperationbooking_ScheduleOperation',$resource->elements[2]);
-		$this->assertEquals('As soon as possible',$resource->elements[2]->schedule_options);
+		$this->assertInstanceOf('OEModule\OphTrOperationbooking\services\OphTrOperationbooking_ScheduleOperation_OptionsReference',$resource->elements[2]->schedule_options_ref);
+		$this->assertEquals('As soon as possible',$resource->elements[2]->schedule_options_ref->fetch()->name);
 	}
 
 /*
