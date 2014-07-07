@@ -51,7 +51,7 @@ return array(
 		'session_date' => '2012-01-02',
 		'session_start_time' => '08:00:00',
 		'session_end_time' => '13:00:00',
-		'session_theatre_id' => 3,
+		'session_theatre_id' => 1,
 		'ward_id' => 2,
 		'transport_arranged' => 1,
 		'transport_arranged_date' => '2011-11-02',

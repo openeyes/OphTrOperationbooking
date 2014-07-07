@@ -123,7 +123,7 @@ class EventServiceTest extends \CDbTestCase
 		$this->assertEquals('08:00:00',$resource->elements[1]->allBookings[1]->session_start_time);
 		$this->assertEquals('13:00:00',$resource->elements[1]->allBookings[1]->session_end_time);
 		$this->assertInstanceOf('OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_TheatreReference',$resource->elements[1]->allBookings[1]->session_theatre_ref);
-		$this->assertEquals(3,$resource->elements[1]->allBookings[1]->session_theatre_ref->getId());
+		$this->assertEquals(1,$resource->elements[1]->allBookings[1]->session_theatre_ref->getId());
 		$this->assertEquals(1,$resource->elements[1]->allBookings[1]->transport_arranged);
 		$this->assertInstanceOf('services\Date',$resource->elements[1]->allBookings[1]->transport_arranged_date);
 		$this->assertInstanceOf('services\DateTime',$resource->elements[1]->allBookings[1]->booking_cancellation_date);
@@ -137,106 +137,163 @@ class EventServiceTest extends \CDbTestCase
 		$this->assertEquals('As soon as possible',$resource->elements[2]->schedule_options_ref->fetch()->name);
 	}
 
-/*
 	public function getResource()
 	{
-		$resource = \Yii::app()->service->Event(6)->fetch();
-
-		print_r($resource);exit;
-
-		$resource = new PatientAssociatedContacts(1);
-
-		$contact1 = new PatientAssociatedContact;
-		$contact1->title = 'Dr';
-		$contact1->given_name = 'Hunter';
-		$contact1->family_name = 'Thompson';
-		$contact1->primary_phone = '02223321145';
-		$contact1->site_ref = \Yii::app()->service->Site(1);
-
-		$contact2 = new PatientAssociatedContact;
-		$contact2->title = 'Dr';
-		$contact2->given_name = 'Hughie';
-		$contact2->family_name = 'Louie';
-		$contact2->primary_phone = '3024302149';
-		$contact2->institution_ref = \Yii::app()->service->Institution(1);
-
-		$contact3 = new PatientAssociatedContact;
-		$contact3->title = 'Dr';
-		$contact3->given_name = 'Ted';
-		$contact3->family_name = 'Baker';
-		$contact3->primary_phone = '123123123';
-
-		$resource->contacts = array($contact1,$contact2,$contact3);
-
-		return $resource;
+		return \Yii::app()->service->Event(6)->fetch();
 	}
 
 	public function testResourceToModel_NoSave_NoNewRecords()
 	{
 		$resource = $this->getResource();
 
-		$total_pcas = count(\PatientContactAssignment::model()->findAll());
-		$total_contacts = count(\Contact::model()->findAll());
+		$total_events = count(\Event::model()->findAll());
+		$total_eo = count(\Element_OphTrOperationbooking_Operation::model()->findAll());
+		$total_di = count(\Element_OphTrOperationbooking_Diagnosis::model()->findAll());
+		$total_sh = count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll());
 
-		$ps = new PatientAssociatedContactsService;
-		$patient = $ps->resourceToModel($resource, $this->patients('patient1'), false);
+		$ps = new EventService;
+		$patient = $ps->resourceToModel($resource, new \Event, false);
 
-		$this->assertEquals($total_pcas, count(\PatientContactAssignment::model()->findAll()));
-		$this->assertEquals($total_contacts, count(\Contact::model()->findAll()));
+		$this->assertEquals($total_events, count(\Event::model()->findAll()));
+		$this->assertEquals($total_eo, count(\Element_OphTrOperationbooking_Operation::model()->findAll()));
+		$this->assertEquals($total_di, count(\Element_OphTrOperationbooking_Diagnosis::model()->findAll()));
+		$this->assertEquals($total_sh, count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll()));
 	}
 
-*/
-/*
 	public function testResourceToModel_NoSave_ModelIsCorrect()
 	{
 		$resource = $this->getResource();
 
-		$ps = new PatientAssociatedContactsService;
-		$patient = $ps->resourceToModel($resource, new \Patient, false);
+		$ps = new EventService;
+		$event = $ps->resourceToModel($resource, new \Event, false);
 
-		$this->assertInstanceOf('Patient',$patient);
-		$this->assertCount(3,$patient->contactAssignments);
+		$this->assertInstanceOf('Event',$event);
 
-		$this->assertNull($patient->contactAssignments[0]->contact);
-		$this->assertInstanceOf('ContactLocation',$patient->contactAssignments[0]->location);
-		$this->assertInstanceOf('Contact',$patient->contactAssignments[0]->location->contact);
-		$this->assertEquals('Dr',$patient->contactAssignments[0]->location->contact->title);
-		$this->assertEquals('Hunter',$patient->contactAssignments[0]->location->contact->first_name);
-		$this->assertEquals('Thompson',$patient->contactAssignments[0]->location->contact->last_name);
-		$this->assertEquals(1,$patient->contactAssignments[0]->location->site_id);
-		$this->assertNull($patient->contactAssignments[0]->location->institution_id);
+		$this->assertCount(3,$event->elements);
 
-		$this->assertNull($patient->contactAssignments[1]->contact);
-		$this->assertInstanceOf('ContactLocation',$patient->contactAssignments[1]->location);
-		$this->assertInstanceOf('Contact',$patient->contactAssignments[1]->location->contact);
-		$this->assertEquals('Dr',$patient->contactAssignments[1]->location->contact->title);
-		$this->assertEquals('Hughie',$patient->contactAssignments[1]->location->contact->first_name);
-		$this->assertEquals('Louie',$patient->contactAssignments[1]->location->contact->last_name);
-		$this->assertInstanceOf('ContactLocation',$patient->contactAssignments[1]->location);
-		$this->assertEquals(1,$patient->contactAssignments[1]->location->institution_id);
-		$this->assertNull($patient->contactAssignments[1]->location->site_id);
+		$this->assertInstanceOf('Element_OphTrOperationbooking_Diagnosis',$event->elements[0]);
+		$this->assertEquals(\Eye::model()->find('name=?',array('Right'))->id,$event->elements[0]->eye_id);
+		$this->assertInstanceOf('Eye',$event->elements[0]->eye);
+		$this->assertEquals('Right',$event->elements[0]->eye->name);
+		$this->assertEquals(\Disorder::model()->find('term=?',array('Retinal lattice degeneration'))->id,$event->elements[0]->disorder_id);
+		$this->assertInstanceOf('Disorder',$event->elements[0]->disorder);
+		$this->assertEquals('Retinal lattice degeneration',$event->elements[0]->disorder->term);
 
-		$this->assertNull($patient->contactAssignments[2]->location);
-		$this->assertInstanceOf('Contact',$patient->contactAssignments[2]->contact);
-		$this->assertEquals('Dr',$patient->contactAssignments[2]->contact->title);
-		$this->assertEquals('Ted',$patient->contactAssignments[2]->contact->first_name);
-		$this->assertEquals('Baker',$patient->contactAssignments[2]->contact->last_name);
+		$this->assertInstanceOf('Element_OphTrOperationbooking_Operation',$event->elements[1]);
+		$this->assertEquals(\Eye::model()->find('name=?',array('Left'))->id,$event->elements[1]->eye_id);
+		$this->assertInstanceOf('Eye',$event->elements[1]->eye);
+		$this->assertEquals('Left',$event->elements[1]->eye->name);
+		$this->assertEquals(1,$event->elements[1]->consultant_required);
+		$this->assertEquals(\AnaestheticType::model()->find('name=?',array('GA'))->id,$event->elements[1]->anaesthetic_type_id);
+		$this->assertInstanceOf('AnaestheticType',$event->elements[1]->anaesthetic_type);
+		$this->assertEquals('GA',$event->elements[1]->anaesthetic_type->name);
+		$this->assertEquals(0,$event->elements[1]->overnight_stay);
+		$this->assertEquals(1,$event->elements[1]->site_id);
+		$this->assertInstanceOf('Site',$event->elements[1]->site);
+		$this->assertEquals(1,$event->elements[1]->site->id);
+		$this->assertEquals(\OphTrOperationbooking_Operation_Priority::model()->find('name=?',array('Routine'))->id,$event->elements[1]->priority_id);
+		$this->assertInstanceOf('OphTrOperationbooking_Operation_Priority',$event->elements[1]->priority);
+		$this->assertEquals('Routine',$event->elements[1]->priority->name);
+		$this->assertRegExp('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$event->elements[1]->decision_date);
+		$this->assertEquals('Test comments',$event->elements[1]->comments);
+		$this->assertEquals(100,$event->elements[1]->total_duration);
+		$this->assertEquals(\OphTrOperationbooking_Operation_Status::model()->find('name=?',array('Scheduled'))->id,$event->elements[1]->status_id);
+		$this->assertInstanceOf('OphTrOperationbooking_Operation_Status',$event->elements[1]->status);
+		$this->assertEquals('Scheduled',$event->elements[1]->status->name);
+		$this->assertEquals(1,$event->elements[1]->anaesthetist_required);
+		$this->assertNull($event->elements[1]->operation_cancellation_date);
+		$this->assertNull($event->elements[1]->cancellation_user);
+		$this->assertNull($event->elements[1]->cancellation_reason);
+		$this->assertEquals('',$event->elements[1]->cancellation_comment);
+		$this->assertEquals(2,$event->elements[1]->latest_booking_id);
+		$this->assertEquals('these are RTT comments',$event->elements[1]->comments_rtt);
+		$this->assertInstanceOf('Referral',$event->elements[1]->referral);
+		$this->assertEquals(1,$event->elements[1]->referral->id);
+		$this->assertInstanceOf('RTT',$event->elements[1]->rtt);
+		$this->assertEquals(1,$event->elements[1]->rtt->id);
+
+		$this->assertCount(1,$event->elements[1]->procedure_assignment);
+		$this->assertInstanceOf('OphTrOperationbooking_Operation_Procedures',$event->elements[1]->procedure_assignment[0]);
+		$this->assertEquals(\Procedure::model()->find('term=?',array('Foobar Procedure'))->id,$event->elements[1]->procedure_assignment[0]->proc_id);
+		$this->assertEquals('Foobar Procedure',$event->elements[1]->procedure_assignment[0]->proc->term);
+		$this->assertEquals(0,$event->elements[1]->procedure_assignment[0]->display_order);
+
+		$this->assertCount(2,$event->elements[1]->allBookings);
+
+		$this->assertInstanceOf('OphTrOperationbooking_Operation_Booking',$event->elements[1]->allBookings[0]);
+		$this->assertEquals(5,$event->elements[1]->allBookings[0]->session_id);
+		$this->assertInstanceOf('OphTrOperationbooking_Operation_Session',$event->elements[1]->allBookings[0]->session);
+		$this->assertEquals(5,$event->elements[1]->allBookings[0]->session->id);
+		$this->assertEquals(1,$event->elements[1]->allBookings[0]->display_order);
+		$this->assertEquals(1,$event->elements[1]->allBookings[0]->ward_id);
+		$this->assertInstanceOf('OphTrOperationbooking_Operation_Ward',$event->elements[1]->allBookings[0]->ward);
+		$this->assertEquals(1,$event->elements[1]->allBookings[0]->ward->id);
+		$this->assertEquals('08:00:00',$event->elements[1]->allBookings[0]->admission_time);
+		$this->assertEquals(1,$event->elements[1]->allBookings[0]->confirmed);
+		$this->assertRegExp('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$event->elements[1]->allBookings[0]->session_date);
+		$this->assertEquals('08:00:00',$event->elements[1]->allBookings[0]->session_start_time);
+		$this->assertEquals('13:00:00',$event->elements[1]->allBookings[0]->session_end_time);
+		$this->assertEquals(1,$event->elements[1]->allBookings[0]->session_theatre_id);
+		$this->assertInstanceOf('OphTrOperationbooking_Operation_Theatre',$event->elements[1]->allBookings[0]->session_theatre);
+		$this->assertEquals(1,$event->elements[1]->allBookings[0]->session_theatre->id);
+		$this->assertEquals(0,$event->elements[1]->allBookings[0]->transport_arranged);
+		$this->assertNull($event->elements[1]->allBookings[0]->transport_arranged_date);
+		$this->assertNull($event->elements[1]->allBookings[0]->booking_cancellation_date);
+		$this->assertNull($event->elements[1]->allBookings[0]->cancellationReason);
+		$this->assertEquals('',$event->elements[1]->allBookings[0]->cancellation_comment);
+		$this->assertNull($event->elements[1]->allBookings[0]->cancellation_user_id);
+
+		$this->assertInstanceOf('OphTrOperationbooking_Operation_Booking',$event->elements[1]->allBookings[1]);
+		$this->assertInstanceOf('OphTrOperationbooking_Operation_Session',$event->elements[1]->allBookings[1]->session);
+		$this->assertEquals(3,$event->elements[1]->allBookings[1]->session_id);
+		$this->assertEquals(3,$event->elements[1]->allBookings[1]->session->id);
+		$this->assertEquals(2,$event->elements[1]->allBookings[1]->display_order);
+		$this->assertInstanceOf('OphTrOperationbooking_Operation_Ward',$event->elements[1]->allBookings[1]->ward);
+		$this->assertEquals(2,$event->elements[1]->allBookings[1]->ward_id);
+		$this->assertEquals(2,$event->elements[1]->allBookings[1]->ward->id);
+		$this->assertEquals('08:00:00',$event->elements[1]->allBookings[1]->admission_time);
+		$this->assertEquals(1,$event->elements[1]->allBookings[1]->confirmed);
+		$this->assertRegExp('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$event->elements[1]->allBookings[1]->session_date);
+		$this->assertEquals('08:00:00',$event->elements[1]->allBookings[1]->session_start_time);
+		$this->assertEquals('13:00:00',$event->elements[1]->allBookings[1]->session_end_time);
+		$this->assertInstanceOf('OphTrOperationbooking_Operation_Theatre',$event->elements[1]->allBookings[1]->session_theatre);
+		$this->assertEquals(1,$event->elements[1]->allBookings[1]->session_theatre_id);
+		$this->assertEquals(1,$event->elements[1]->allBookings[1]->session_theatre->id);
+		$this->assertEquals(1,$event->elements[1]->allBookings[1]->transport_arranged);
+		$this->assertRegExp('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$event->elements[1]->allBookings[1]->transport_arranged_date);
+		$this->assertRegExp('/^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$/',$event->elements[1]->allBookings[1]->booking_cancellation_date);
+		$this->assertInstanceOf('OphTrOperationbooking_Operation_Cancellation_Reason',$event->elements[1]->allBookings[1]->cancellationReason);
+		$this->assertEquals('ran out of biros',$event->elements[1]->allBookings[1]->cancellationReason->name);
+		$this->assertEquals('cancelled due to biro shortage',$event->elements[1]->allBookings[1]->cancellation_comment);
+		$this->assertInstanceOf('User',$event->elements[1]->allBookings[1]->cancellation_user);
+		$this->assertEquals(1,$event->elements[1]->allBookings[1]->cancellation_user_id);
+		$this->assertEquals(1,$event->elements[1]->allBookings[1]->cancellation_user->id);
+
+		$this->assertInstanceOf('Element_OphTrOperationbooking_ScheduleOperation',$event->elements[2]);
+		$this->assertInstanceOf('OphTrOperationbooking_ScheduleOperation_Options',$event->elements[2]->schedule_options);
+		$this->assertEquals('As soon as possible',$event->elements[2]->schedule_options->name);
 	}
 
 	public function testResourceToModel_Save_Create_ModelCountsCorrect()
 	{
 		$resource = $this->getResource();
+		$resource->elements[1]->referral_ref = null;
 
-		$total_pcas = count(\PatientContactAssignment::model()->findAll());
-		$total_contacts = count(\Contact::model()->findAll());
+		$total_events = count(\Event::model()->findAll());
+		$total_eo = count(\Element_OphTrOperationbooking_Operation::model()->findAll());
+		$total_di = count(\Element_OphTrOperationbooking_Diagnosis::model()->findAll());
+		$total_sh = count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll());
 
-		$ps = new PatientAssociatedContactsService;
-		$patient = $ps->resourceToModel($resource, $this->patients('patient1'));
+		$ps = new EventService;
+		$patient = $ps->resourceToModel($resource, new \Event);
 
-		$this->assertEquals($total_pcas, count(\PatientContactAssignment::model()->findAll()));
-		$this->assertEquals($total_contacts+3, count(\Contact::model()->findAll()));
+		$this->assertEquals($total_events+1, count(\Event::model()->findAll()));
+		$this->assertEquals($total_eo+1, count(\Element_OphTrOperationbooking_Operation::model()->findAll()));
+		$this->assertEquals($total_di+1, count(\Element_OphTrOperationbooking_Diagnosis::model()->findAll()));
+		$this->assertEquals($total_sh+1, count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll()));
 	}
 
+/*
 	public function testResourceToModel_Save_ModelIsCorrect()
 	{
 		$resource = $this->getResource();
