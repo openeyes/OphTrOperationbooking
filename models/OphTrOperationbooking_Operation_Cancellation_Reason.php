@@ -122,4 +122,8 @@ class OphTrOperationbooking_Operation_Cancellation_Reason extends BaseActiveReco
 
 		return CHtml::listData(self::model()->active()->findAll($criteria),'id','text');
 	}
+
+	public function getName() {
+		return $this->text;
+	}
 }

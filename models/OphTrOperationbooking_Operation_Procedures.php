@@ -77,6 +77,7 @@ class OphTrOperationbooking_Operation_Procedures extends BaseActiveRecordVersion
 		return array(
 			'element' => array(self::BELONGS_TO, 'Element_OphTrOperationbooking_Operation', 'element_id'),
 			'procedure' => array(self::BELONGS_TO, 'Procedure', 'proc_id'),
+			'proc' => array(self::BELONGS_TO, 'Procedure', 'proc_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 		);

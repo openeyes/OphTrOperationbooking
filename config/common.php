@@ -38,7 +38,6 @@ return array(
 				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_SessionService',
 				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_WardService',
 				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_TheatreService',
-				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_BookingService',
 			),
 		),
 	),

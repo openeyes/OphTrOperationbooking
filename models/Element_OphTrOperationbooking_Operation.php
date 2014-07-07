@@ -139,6 +139,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			'allBookings'  => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Booking', 'element_id'),
 			'referral' => array(self::BELONGS_TO, 'Referral', 'referral_id'),
 			'fixed_rtt' => array(self::BELONGS_TO, 'RTT', 'rtt_id'),
+			'rtt' => array(self::BELONGS_TO, 'RTT', 'rtt_id'),
 		);
 	}
 

@@ -15,7 +15,9 @@
 
 namespace OEModule\OphTrOperationbooking\services;
 
-class Element_OphTrOperationbooking_ScheduleOperation extends \services\Resource
+class Element_OphTrOperationbooking_ScheduleOperation extends \services\DataObject
 {
-	public $schedule_option;
+	public $relations = array(
+		'schedule_options',
+	);
 }

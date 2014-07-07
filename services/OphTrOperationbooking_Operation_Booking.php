@@ -15,21 +15,27 @@
 
 namespace OEModule\OphTrOperationbooking\services;
 
-class OphTrOperationbooking_Operation_Booking extends \services\Resource
+class OphTrOperationbooking_Operation_Booking extends \services\DataObject
 {
-	public $session_ref;
-	public $display_order;
-	public $ward_ref;
-	public $admission_time;
-	public $confirmed;
-	public $session_date;
-	public $session_start_time;
-	public $session_end_time;
-	public $theatre_ref;
-	public $transport_arranged;
-	public $transport_arranged_date;
-	public $booking_cancellation_date;
-	public $cancellation_reason;
-	public $cancellation_comment;
-	public $cancellation_user;
+	public $fields = array(
+		'display_order',
+		'admission_time',
+		'confirmed',
+		'session_date',
+		'session_start_time',
+		'session_end_time',
+		'transport_arranged',
+		'transport_arranged_date',
+		'booking_cancellation_date',
+		'cancellation_comment',
+	);
+	public $references = array(
+		'session',
+		'ward',
+		'session_theatre',
+		'cancellation_user',
+	);
+	public $relations = array(
+		'cancellationReason',
+	);
 }

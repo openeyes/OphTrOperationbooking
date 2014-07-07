@@ -17,6 +17,10 @@ namespace OEModule\OphTrOperationbooking\services;
 
 class OphTrOperationbooking_Operation_Procedures extends \services\DataObject
 {
-	public $procedure;
-	public $display_order;
+	public $fields = array(
+		'display_order',
+	);
+	public $references = array(
+		'proc',
+	);
 }

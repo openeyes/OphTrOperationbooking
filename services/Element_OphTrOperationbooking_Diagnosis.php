@@ -15,9 +15,13 @@
 
 namespace OEModule\OphTrOperationbooking\services;
 
-class Element_OphTrOperationbooking_Diagnosis extends \services\Resource
+class Element_OphTrOperationbooking_Diagnosis extends \services\DataObject
 {
-	public $event_ref;
-	public $eye;
-	public $disorder;
+	public $fields = array();
+	public $relations = array(
+		'eye',
+	);
+	public $references = array(
+		'disorder',
+	);
 }
