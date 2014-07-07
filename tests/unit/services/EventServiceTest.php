@@ -71,7 +71,7 @@ class EventServiceTest extends \CDbTestCase
 		$this->assertInstanceOf('services\SiteReference',$resource->elements[1]->site_ref);
 		$this->assertEquals(1,$resource->elements[1]->site_ref->getId());
 		$this->assertEquals('Routine',$resource->elements[1]->priority);
-		$this->assertEquals('2014-07-04',$resource->elements[1]->decision_date);
+		$this->assertEquals($this->el_operation('eo6')->decision_date,$resource->elements[1]->decision_date);
 		$this->assertEquals('Test comments',$resource->elements[1]->comments);
 		$this->assertEquals(100,$resource->elements[1]->total_duration);
 		$this->assertEquals('Scheduled',$resource->elements[1]->status);

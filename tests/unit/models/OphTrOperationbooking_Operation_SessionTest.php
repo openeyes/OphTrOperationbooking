@@ -45,6 +45,8 @@ class OphTrOperationbooking_Operation_SessionTest extends CDbTestCase
 		$booking->booking_cancellation_date = date('Y-m-d');
 		$booking->save();
 
+		Yii::app()->db->createCommand("update et_ophtroperationbooking_operation set latest_booking_id = null")->query();
+		Yii::app()->db->createCommand("delete from ophtroperationbooking_operation_booking where session_id = 5 and id != $booking->id")->query();
 		$this->session('session5')->delete();
 
 		$booking->refresh();
