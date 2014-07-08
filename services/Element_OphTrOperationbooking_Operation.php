@@ -41,9 +41,8 @@ class Element_OphTrOperationbooking_Operation extends \services\ElementDataObjec
 			'priority',
 			'status',
 			'cancellation_reason',
-			'procedure_assignment',
+			'procedures',
 			'allBookings',
-			'procedure_assignment' => array('procedures','proc'),
 		);
 	}
 
