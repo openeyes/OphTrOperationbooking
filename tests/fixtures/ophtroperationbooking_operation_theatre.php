@@ -24,5 +24,12 @@ return array(
 		'code' => 'T1',
 		'created_date' => date('Y-m-d 00:00:00'),
 		'last_modified_date' => date('Y-m-d 00:00:00'),
-	)
+	),
+	'th2' => array(
+		'name' => 'Theatre 2',
+		'site_id' => 1,
+		'code' => 'T1',
+		'created_date' => date('Y-m-d 00:00:00'),
+		'last_modified_date' => date('Y-m-d 00:00:00'),
+	),
 );

@@ -35,6 +35,7 @@ return array(
 		'service' => array(
 			'class' => 'services\ServiceManager',
 			'internal_services' => array(
+				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_EventService',
 				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_SessionService',
 				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_WardService',
 				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_TheatreService',

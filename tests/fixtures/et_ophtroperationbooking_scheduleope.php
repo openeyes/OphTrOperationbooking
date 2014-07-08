@@ -30,4 +30,10 @@ return array(
 		'created_date' => date('Y-m-d 00:00:00'),
 		'last_modified_date' => date('Y-m-d 00:00:00'),
 	),
+	'so4' => array(
+		'event_id' => 7,
+		'schedule_options_id' => 1,
+		'created_date' => date('Y-m-d 00:00:00'),
+		'last_modified_date' => date('Y-m-d 00:00:00'),
+	),
 );
