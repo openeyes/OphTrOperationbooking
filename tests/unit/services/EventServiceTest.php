@@ -563,8 +563,41 @@ class EventServiceTest extends \CDbTestCase
 
 		$event = \Yii::app()->service->OphTrOperationbooking_Event(7);
 
-		$event = $event->schedule($resource);
+		$this->schedule_assertions($event->schedule($resource));
+	}
 
+	public function testSchedule_DBIsCorrect()
+	{
+		$resource = \Yii::app()->service->OphTrOperationbooking_Event(7)->fetch();
+
+		$resource->elements[1]->status = 'Scheduled';
+
+		$resource->elements[1]->allBookings[0] = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_Booking;
+		$resource->elements[1]->allBookings[0]->_class_name = 'OphTrOperationbooking_Operation_Booking';
+		$resource->elements[1]->allBookings[0]->display_order = 1;
+		$resource->elements[1]->allBookings[0]->admission_time = '07:00:00';
+		$resource->elements[1]->allBookings[0]->confirmed = 1;
+		$resource->elements[1]->allBookings[0]->session_date = '2014-01-01';
+		$resource->elements[1]->allBookings[0]->session_start_time = '14:00:00';
+		$resource->elements[1]->allBookings[0]->session_end_time = '18:00:00';
+		$resource->elements[1]->allBookings[0]->transport_arranged = 0;
+		$resource->elements[1]->allBookings[0]->transport_arranged_date = null;
+		$resource->elements[1]->allBookings[0]->booking_cancellation_date = null;
+		$resource->elements[1]->allBookings[0]->session_ref = \Yii::app()->service->OphTrOperationbooking_Operation_Session(10);
+		$resource->elements[1]->allBookings[0]->session_theatre_ref = \Yii::app()->service->OphTrOperationbooking_Operation_Theatre(1);
+		$resource->elements[1]->allBookings[0]->ward_ref = \Yii::app()->service->OphTrOperationbooking_Operation_Ward(1);
+		$resource->elements[1]->allBookings[0]->cancellation_user_ref = null;
+		$resource->elements[1]->allBookings[0]->cancellation_comment = '';
+		$resource->elements[1]->allBookings[0]->cancellationReason = null;
+
+		$event = \Yii::app()->service->OphTrOperationbooking_Event(7);
+
+		$event = $event->schedule($resource);
+		$this->schedule_assertions(\Event::model()->findByPk($event->id));
+	}
+
+	public function schedule_assertions($event)
+	{
 		$this->assertInstanceOf('Event',$event);
 
 		$this->assertCount(3,$event->elements);
