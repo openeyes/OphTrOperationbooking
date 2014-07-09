@@ -286,6 +286,9 @@ class DefaultController extends OphTrOperationbookingEventController
 		$this->initWithEventId(@$_GET['id']);
 	}
 
+	/**
+	 * AJAX method to check for any duplicate procedure bookings
+	 */
 	public function actionVerifyProcedures()
 	{
 		$this->setPatient($_REQUEST['patient_id']);
@@ -321,6 +324,10 @@ class DefaultController extends OphTrOperationbookingEventController
 			{
 				$events = $ep->getAllEventsByType($this->event_type->id);
 				foreach ($events as $ev) {
+					if ($ev->id == @$_POST['event_id']) {
+						// if we're editing, then don't want to check against that event
+						continue;
+					}
 					$op = Element_OphTrOperationbooking_Operation::model()->findByAttributes(array('event_id' => $ev->id));
 
 					// check operation still valid, and that it is for a matching eye.

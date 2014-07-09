@@ -40,6 +40,9 @@
 			)
 		);
 		?>
+		<?php if (Yii::app()->params['OphTrOperationbooking_duplicate_proc_warn']) {?>
+			<input type="hidden" name="event_id" value="<?= $this->event->id ?>" />
+		<?php } ?>
 		<?php  $this->displayErrors($errors)?>
 		<?php  $this->renderOpenElements($this->action->id, $form); ?>
 		<?php  $this->renderOptionalElements($this->action->id, $form); ?>
