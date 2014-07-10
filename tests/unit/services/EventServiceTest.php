@@ -619,6 +619,16 @@ class EventServiceTest extends \CDbTestCase
 		$this->assertEquals($total_b-1, count(\OphTrOperationbooking_Operation_Booking::model()->findAll()));
 	}
 
+	public function testResourceToModel_Save_Update_ModelIsCorrect()
+	{
+		$resource = $this->getModifiedResource();
+
+		$ps = new EventService;
+		$event = $ps->resourceToModel($resource, $this->events('event6'));
+
+		$this->modified_event_assertions($resource, $event);
+	}
+
 	public function testResourceToModel_Save_Update_DBIsCorrect()
 	{
 		$resource = $this->getModifiedResource();
@@ -627,11 +637,16 @@ class EventServiceTest extends \CDbTestCase
 		$event = $ps->resourceToModel($resource, $this->events('event6'));
 		$event = \Event::model()->findByPk($event->id);
 
-		$this->assertInstanceOf('Event',$event);
+		$this->modified_event_assertions($resource, $event);
+	}
 
+	public function modified_event_assertions($resource, $event)
+	{
+		$this->assertInstanceOf('Event',$event);
 		$this->assertCount(3,$event->elements);
 
 		$this->assertInstanceOf('Element_OphTrOperationbooking_Diagnosis',$event->elements[0]);
+		$this->assertEquals($resource->elements[0]->getId(),$event->elements[0]->id);
 		$this->assertEquals(\Eye::model()->find('name=?',array('Left'))->id,$event->elements[0]->eye_id);
 		$this->assertInstanceOf('Eye',$event->elements[0]->eye);
 		$this->assertEquals('Left',$event->elements[0]->eye->name);
@@ -640,6 +655,7 @@ class EventServiceTest extends \CDbTestCase
 		$this->assertEquals('Myocardial infarction',$event->elements[0]->disorder->term);
 
 		$this->assertInstanceOf('Element_OphTrOperationbooking_Operation',$event->elements[1]);
+		$this->assertEquals($resource->elements[1]->getId(),$event->elements[1]->id);
 		$this->assertEquals(\Eye::model()->find('name=?',array('Right'))->id,$event->elements[1]->eye_id);
 		$this->assertInstanceOf('Eye',$event->elements[1]->eye);
 		$this->assertEquals('Right',$event->elements[1]->eye->name);
@@ -686,6 +702,7 @@ class EventServiceTest extends \CDbTestCase
 		$this->assertCount(1,$event->elements[1]->allBookings);
 
 		$this->assertInstanceOf('OphTrOperationbooking_Operation_Booking',$event->elements[1]->allBookings[0]);
+		$this->assertEquals($resource->elements[1]->allBookings[0]->getId(),$event->elements[1]->allBookings[0]->id);
 		$this->assertEquals(10,$event->elements[1]->allBookings[0]->session_id);
 		$this->assertInstanceOf('OphTrOperationbooking_Operation_Session',$event->elements[1]->allBookings[0]->session);
 		$this->assertEquals(10,$event->elements[1]->allBookings[0]->session->id);
@@ -709,6 +726,7 @@ class EventServiceTest extends \CDbTestCase
 		$this->assertNull($event->elements[1]->allBookings[0]->cancellation_user_id);
 
 		$this->assertInstanceOf('Element_OphTrOperationbooking_ScheduleOperation',$event->elements[2]);
+		$this->assertEquals($resource->elements[2]->getId(),$event->elements[2]->id);
 		$this->assertInstanceOf('OphTrOperationbooking_ScheduleOperation_Options',$event->elements[2]->schedule_options);
 		$this->assertEquals('As soon as possible',$event->elements[2]->schedule_options->name);
 	}
