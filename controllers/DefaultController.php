@@ -39,8 +39,8 @@ class DefaultController extends OphTrOperationbookingEventController
 	protected function beforeAction($action)
 	{
 		Yii::app()->clientScript->registerScriptFile($this->assetPath.'/js/booking.js');
-		Yii::app()->clientScript->registerScriptFile('/js/jquery.validate.min.js');
-		Yii::app()->clientScript->registerScriptFile('/js/additional-validators.js');
+		Yii::app()->assetManager->registerScriptFile('js/jquery.validate.min.js');
+		Yii::app()->assetManager->registerScriptFile('js/additional-validators.js');
 		$this->jsVars['nhs_date_format'] = Helper::NHS_DATE_FORMAT_JS;
 		return parent::beforeAction($action);
 	}

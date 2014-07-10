@@ -66,7 +66,8 @@
 			'key' => '{{key}}',
 			'unavailable' => $template_unavailable,
 			'form' => $form,
-			'element_name' => get_class($element)
+			'element_name' => get_class($element),
+			'dateFieldWidget' => 'TextField'
 	));
 	?>
 </script>
