@@ -18,9 +18,34 @@
  */
 
 return array(
-		'scheduled' => array(
-				'name' => 'Scheduled',
-				'created_date' => date('Y-m-d 00:00:00'),
-				'last_modified_date' => date('Y-m-d 00:00:00'),
-		),
+	0 => array(
+		'name' => 'Requires scheduling',
+		'created_date' => date('Y-m-d 00:00:00'),
+		'last_modified_date' => date('Y-m-d 00:00:00'),
+	),
+	1 => array(
+		'name' => 'Scheduled',
+		'created_date' => date('Y-m-d 00:00:00'),
+		'last_modified_date' => date('Y-m-d 00:00:00'),
+	),
+	2 => array(
+		'name' => 'Requires rescheduling',
+		'created_date' => date('Y-m-d 00:00:00'),
+		'last_modified_date' => date('Y-m-d 00:00:00'),
+	),
+	3 => array(
+		'name' => 'Rescheduled',
+		'created_date' => date('Y-m-d 00:00:00'),
+		'last_modified_date' => date('Y-m-d 00:00:00'),
+	),
+	4 => array(
+		'name' => 'Cancelled',
+		'created_date' => date('Y-m-d 00:00:00'),
+		'last_modified_date' => date('Y-m-d 00:00:00'),
+	),
+	5 => array(
+		'name' => 'Completed',
+		'created_date' => date('Y-m-d 00:00:00'),
+		'last_modified_date' => date('Y-m-d 00:00:00'),
+	),
 );

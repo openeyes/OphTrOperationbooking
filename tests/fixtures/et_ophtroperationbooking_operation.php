@@ -114,7 +114,7 @@ return array(
 		'decision_date' => date('Y-m-d'),
 		'comments' => 'Test comments',
 		'total_duration' => 100,
-		'status_id' => 1,
+		'status_id' => 2,
 		'anaesthetist_required' => 1,
 		'operation_cancellation_date' => null,
 		'created_date' => date('Y-m-d 00:00:00'),

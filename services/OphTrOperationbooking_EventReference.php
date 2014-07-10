@@ -17,48 +17,4 @@ namespace OEModule\OphTrOperationbooking\services;
 
 class OphTrOperationbooking_EventReference extends \services\EventReference
 {
-	public function schedule($resource)
-	{
-		foreach ($resource->elements[1]->allBookings as $_booking) {
-			if ($_booking->booking_cancellation_date === null) {
-				if (isset($activeBooking)) {
-					throw new \Exception("Multiple active bookings passed in resource to schedule()");
-				}
-				$activeBooking = $_booking;
-			}
-		}
-
-		if (!isset($resource)) {
-			throw new \Exception("Schedule called with a resource that contains no active booking");
-		}
-
-		// Save the operation event
-		$event = \Event::model()->findByPk($this->getId());
-
-		$es = new OphTrOperationbooking_EventService;
-		$event = $es->resourceToModel($resource, $event);
-
-		$booking = new \OphTrOperationbooking_Operation_Booking;
-		$parser = new \services\DeclarativeTypeParser_Elements(new \services\ModelConverter($es));
-
-		$parser->resourceToModelParse_Fields($booking, $activeBooking);
-		$parser->resourceToModelParse_Relations($booking, $activeBooking, null, null);
-		$parser->resourceToModelParse_References($booking, $activeBooking);
-
-		$operation = $event->elements[1];
-
-		$booking->element_id = $operation->id;
-
-		if (!$booking->save()) {
-			throw new \Exception("Unable to save schedule operation: ".print_r($booking->getErrors(),true));
-		}
-
-		$operation->latest_booking_id = $booking->id;
-
-		if (!$operation->save()) {
-			throw new \Exception("Unable to set latest_booking_id on operation element: ".print_r($operation->getErrors(),true));
-		}
-
-		return $event;
-	}
 }

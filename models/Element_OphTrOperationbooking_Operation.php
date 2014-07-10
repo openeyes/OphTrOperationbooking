@@ -97,7 +97,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments,comments_rtt, anaesthetist_required, total_duration, status_id, operation_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id, latest_booking_id, referral_id, procedures', 'safe'),
+			array('event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments,comments_rtt, anaesthetist_required, total_duration, status_id, operation_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id, latest_booking_id, referral_id, procedures, allBookings', 'safe'),
 			array('cancellation_comment', 'length', 'max' => 200),
 			array('procedures', 'required', 'message' => 'At least one procedure must be entered'),
 			array('referral_id', 'validateReferral'),

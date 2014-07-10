@@ -168,4 +168,19 @@ return array(
 				'unavailable_reason_id' => null,
 				'max_procedures' => null,
 		),
+		'session11' => array(
+				'id' => 11,
+				'sequence_id' => 1, // am not worrying about consistency with sequences at this point.
+				'firm_id' => 2,
+				'date' => date('Y-m-d', strtotime('+2 weeks +6 days')),
+				'start_time' => '10:00',
+				'end_time' => '12:00',
+				'available' => 1,
+				'consultant' => 1,
+				'paediatric' => 1,
+				'anaesthetist' => 1,
+				'general_anaesthetic' => 1,
+				'unavailable_reason_id' => null,
+				'max_procedures' => null,
+		),
 );
