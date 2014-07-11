@@ -31,5 +31,5 @@ class OphTrOperationbooking_Operation_Session extends \services\Resource
 	public $theatre_ref;
 	public $default_admission_time;
 	public $unavailable_reason;
-	public $max_procedure;
+	public $max_procedures;
 }

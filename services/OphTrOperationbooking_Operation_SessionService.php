@@ -46,11 +46,27 @@ class OphTrOperationbooking_Operation_SessionService extends \services\Declarati
 				'default_admission_time' => 'default_admission_time',
 				'unavailable_reason' => 'unavailablereason.name',
 				'max_procedures' => 'max_procedures',
+				'bookings' => array(self::TYPE_REF_LIST, 'activeBookingEvents', 'id', 'Event'),
 			),
 		),
 	);
 
 	public function search(array $params)
 	{
+	}
+
+	public function setReferenceListForRelation_activeBookingEvents(&$model, $ref_list)
+	{
+		$booking_list = array();
+
+		foreach ($ref_list as $i => $event_ref) {
+			if (!$booking = \OphTrOperationbooking_Operation_Booking::model()->with(array('operation' => array('with' => 'event')))->find('event.id=?',array($event_ref->getId()))) {
+				throw new \Exception("Booking not found for event_id: ".$event_ref->getId());
+			}
+
+			$booking_list[] = $booking;
+		}
+
+		$model->setAttribute('activeBookings',$booking_list);
 	}
 }

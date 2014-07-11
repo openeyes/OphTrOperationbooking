@@ -117,6 +117,8 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 					'operation.event.episode' => array('joinType' => 'join')
 				),
 			),
+			'activeBookingOperations' => array(self::HAS_MANY, 'Element_OphTrOperationbooking_Operation', 'element_id', 'through' => 'activeBookings', 'order' => 'activeBookings.display_order'),
+			'activeBookingEvents' => array(self::HAS_MANY, 'Event', 'event_id', 'through' => 'activeBookingOperations', 'order' => 'activeBookings.display_order'),
 		);
 	}
 
@@ -147,6 +149,17 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 		}
 		return $this->activeBookings($criteria);
 	}
+
+	/*public function getActiveBookingEvents()
+	{
+		$events = array();
+
+		foreach ($this->activeBookings as $booking) {
+			$events[] = $booking->operation->event;
+		}
+
+		return $events;
+	}*/
 
 	/**
 	 * @return array customized attribute labels (name=>label)
