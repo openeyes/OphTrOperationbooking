@@ -20,7 +20,6 @@ class OphTrOperationbooking_Operation_Booking extends \services\ElementDataObjec
 	public function fields()
 	{
 		return array(
-			'display_order',
 			'admission_time',
 			'confirmed',
 			'session_date',
