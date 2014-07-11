@@ -50,6 +50,11 @@ class EventServiceTest extends \CDbTestCase
 
 		$resource = $ps->modelToResource($event);
 
+		$this->verifyResource($resource, $event);
+	}
+
+	public function verifyResource($resource, $event)
+	{
 		$this->assertInstanceOf('services\Event',$resource);
 		$this->assertInstanceOf('services\EpisodeReference',$resource->episode_ref);
 		$this->assertEquals(4,$resource->episode_ref->getId());
@@ -180,6 +185,11 @@ class EventServiceTest extends \CDbTestCase
 		$ps = new EventService;
 		$event = $ps->resourceToModel($resource, new \Event, false);
 
+		$this->verifyUnchangedEvent($event, $resource);
+	}
+
+	public function verifyUnchangedEvent($event, $resource)
+	{
 		$this->assertInstanceOf('Event',$event);
 
 		$this->assertCount(3,$event->elements);
@@ -333,6 +343,11 @@ class EventServiceTest extends \CDbTestCase
 		$ps = new EventService;
 		$event = $ps->resourceToModel($resource, new \Event);
 
+		$this->verifyNewEvent($event);
+	}
+
+	public function verifyNewEvent($event)
+	{
 		$this->assertInstanceOf('Event',$event);
 
 		$this->assertCount(3,$event->elements);
@@ -599,7 +614,7 @@ class EventServiceTest extends \CDbTestCase
 		return $resource;
 	}
 
-	public function testResourceToModel_Save_Update_Modified_ModelCountsCorrect_3847238956934()
+	public function testResourceToModel_Save_Update_Modified_ModelCountsCorrect()
 	{
 		$resource = $this->getModifiedResource();
 
@@ -731,229 +746,166 @@ class EventServiceTest extends \CDbTestCase
 		$this->assertEquals('As soon as possible',$event->elements[2]->schedule_options->name);
 	}
 
-/*
 	public function testJsonToResource()
 	{
-		$json = '{"contacts":[{"title":"Dr","family_name":"Zhivago","given_name":"Yuri","primary_phone":"999","institution_ref":null,"site_ref":null,"id":null,"last_modified":null},{"title":"Mr","family_name":"Inc","given_name":"Apple","primary_phone":"01010101","institution_ref":null,"site_ref":{"service":"Site","id":"2"},"id":null,"last_modified":null},{"title":"Ti","family_name":"Tiss","given_name":"Prac","primary_phone":"0303032332","institution_ref":{"service":"Institution","id":"2"},"site_ref":null,"id":null,"last_modified":null}],"id":null,"last_modified":null,"patient_id":{"id":"3","last_modified":-2208988800}}';
+		$event = \Event::model()->findByPk(6);
+		$resource = \Yii::app()->service->OphTrOperationbooking_Event($event->id)->fetch();
 
-		$ps = new PatientAssociatedContactsService;
+		$json = $resource->serialise();
+
+		$ps = new EventService;
 		$resource = $ps->jsonToResource($json);
 
-		$this->assertInstanceOf('services\PatientAssociatedContacts',$resource);
-		$this->assertCount(3,$resource->contacts);
-
-		$this->assertInstanceOf('services\PatientAssociatedContact',$resource->contacts[0]);
-		$this->assertEquals('Dr',$resource->contacts[0]->title);
-		$this->assertEquals('Zhivago',$resource->contacts[0]->family_name);
-		$this->assertEquals('Yuri',$resource->contacts[0]->given_name);
-		$this->assertEquals('999',$resource->contacts[0]->primary_phone);
-		$this->assertNull($resource->contacts[0]->site_ref);
-		$this->assertNull($resource->contacts[0]->institution_ref);
-
-		$this->assertInstanceOf('services\PatientAssociatedContact',$resource->contacts[1]);
-		$this->assertEquals('Mr',$resource->contacts[1]->title);
-		$this->assertEquals('Inc',$resource->contacts[1]->family_name);
-		$this->assertEquals('Apple',$resource->contacts[1]->given_name);
-		$this->assertEquals('01010101',$resource->contacts[1]->primary_phone);
-		$this->assertNull($resource->contacts[1]->institution_ref);
-		$this->assertInstanceOf('services\SiteReference',$resource->contacts[1]->site_ref);
-		$this->assertEquals(2,$resource->contacts[1]->site_ref->getId());
-
-		$this->assertInstanceOf('services\PatientAssociatedContact',$resource->contacts[2]);
-		$this->assertEquals('Ti',$resource->contacts[2]->title);
-		$this->assertEquals('Tiss',$resource->contacts[2]->family_name);
-		$this->assertEquals('Prac',$resource->contacts[2]->given_name);
-		$this->assertEquals('0303032332',$resource->contacts[2]->primary_phone);
-		$this->assertNull($resource->contacts[2]->site_ref);
-		$this->assertInstanceOf('services\InstitutionReference',$resource->contacts[2]->institution_ref);
-		$this->assertEquals(2,$resource->contacts[2]->institution_ref->getId());
+		$this->verifyResource($resource, $event);
 	}
 
 	public function testJsonToModel_NoSave_NoNewRows()
 	{
-		$json = '{"contacts":[{"title":"Dr","family_name":"Zhivago","given_name":"Yuri","primary_phone":"999","institution_ref":null,"site_ref":null,"id":null,"last_modified":null},{"title":"Mr","family_name":"Inc","given_name":"Apple","primary_phone":"01010101","institution_ref":null,"site_ref":{"service":"Site","id":"2"},"id":null,"last_modified":null},{"title":"Ti","family_name":"Tiss","given_name":"Prac","primary_phone":"0303032332","institution_ref":{"service":"Institution","id":"2"},"site_ref":null,"id":null,"last_modified":null}],"id":null,"last_modified":null,"patient_id":{"id":"3","last_modified":-2208988800}}';
+		$event = \Event::model()->findByPk(6);
+		$resource = \Yii::app()->service->OphTrOperationbooking_Event($event->id)->fetch();
 
-		$total_patients = count(\Patient::model()->findAll());
-		$total_contacts = count(\Contact::model()->findAll());
-		$total_pcas = count(\PatientContactAssignment::model()->findAll());
-		$total_sites = count(\Site::model()->findAll());
-		$total_institutions = count(\Institution::model()->findAll());
+		$json = $resource->serialise();
 
-		$ps = new PatientAssociatedContactsService;
-		$patient = $ps->jsonToModel($json, new \Patient, false);
+		$total_events = count(\Event::model()->findAll());
+		$total_eo = count(\Element_OphTrOperationbooking_Operation::model()->findAll());
+		$total_di = count(\Element_OphTrOperationbooking_Diagnosis::model()->findAll());
+		$total_sh = count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll());
 
-		$this->assertEquals($total_patients, count(\Patient::model()->findAll()));
-		$this->assertEquals($total_contacts, count(\Contact::model()->findAll()));
-		$this->assertEquals($total_pcas, count(\PatientContactAssignment::model()->findAll()));
-		$this->assertEquals($total_sites, count(\Site::model()->findAll()));
-		$this->assertEquals($total_institutions, count(\Institution::model()->findAll()));
+		$ps = new EventService;
+		$patient = $ps->jsonToModel($json, new \Event, false);
+
+		$this->assertEquals($total_events, count(\Event::model()->findAll()));
+		$this->assertEquals($total_eo, count(\Element_OphTrOperationbooking_Operation::model()->findAll()));
+		$this->assertEquals($total_di, count(\Element_OphTrOperationbooking_Diagnosis::model()->findAll()));
+		$this->assertEquals($total_sh, count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll()));
 	}
 
 	public function testJsonToModel_NoSave_ModelIsCorrect()
 	{
-		$json = '{"contacts":[{"title":"Dr","family_name":"Zhivago","given_name":"Yuri","primary_phone":"999","institution_ref":null,"site_ref":null,"id":null,"last_modified":null},{"title":"Mr","family_name":"Inc","given_name":"Apple","primary_phone":"01010101","institution_ref":null,"site_ref":{"service":"Site","id":"2"},"id":null,"last_modified":null},{"title":"Ti","family_name":"Tiss","given_name":"Prac","primary_phone":"0303032332","institution_ref":{"service":"Institution","id":"2"},"site_ref":null,"id":null,"last_modified":null}],"id":null,"last_modified":null,"patient_id":{"id":"3","last_modified":-2208988800}}';
+		$resource = $this->getResource();
+		$json = $resource->serialise();
 
-		$ps = new PatientAssociatedContactsService;
-		$patient = $ps->jsonToModel($json, new \Patient, false);
+		$ps = new EventService;
+		$event = $ps->jsonToModel($json, new \Event, false);
 
-		$this->assertInstanceOf('Patient',$patient);
-		$this->assertCount(3,$patient->contactAssignments);
-
-		$this->assertInstanceOf('PatientContactAssignment',$patient->contactAssignments[0]);
-		$this->assertInstanceOf('Contact',$patient->contactAssignments[0]->contact);
-		$this->assertEquals('Dr',$patient->contactAssignments[0]->contact->title);
-		$this->assertEquals('Zhivago',$patient->contactAssignments[0]->contact->last_name);
-		$this->assertEquals('Yuri',$patient->contactAssignments[0]->contact->first_name);
-		$this->assertEquals('999',$patient->contactAssignments[0]->contact->primary_phone);
-		$this->assertNull($patient->contactAssignments[0]->location);
-
-		$this->assertInstanceOf('PatientContactAssignment',$patient->contactAssignments[1]);
-		$this->assertInstanceOf('ContactLocation',$patient->contactAssignments[1]->location);
-		$this->assertInstanceOf('Contact',$patient->contactAssignments[1]->location->contact);
-		$this->assertEquals('Mr',$patient->contactAssignments[1]->location->contact->title);
-		$this->assertEquals('Inc',$patient->contactAssignments[1]->location->contact->last_name);
-		$this->assertEquals('Apple',$patient->contactAssignments[1]->location->contact->first_name);
-		$this->assertEquals('01010101',$patient->contactAssignments[1]->location->contact->primary_phone);
-		$this->assertEquals(2,$patient->contactAssignments[1]->location->site_id);
-		$this->assertNull($patient->contactAssignments[1]->location->institution_id);
-		$this->assertNull($patient->contactAssignments[1]->contact);
-
-		$this->assertInstanceOf('PatientContactAssignment',$patient->contactAssignments[2]);
-		$this->assertInstanceOf('ContactLocation',$patient->contactAssignments[2]->location);
-		$this->assertInstanceOf('Contact',$patient->contactAssignments[2]->location->contact);
-		$this->assertEquals('Ti',$patient->contactAssignments[2]->location->contact->title);
-		$this->assertEquals('Tiss',$patient->contactAssignments[2]->location->contact->last_name);
-		$this->assertEquals('Prac',$patient->contactAssignments[2]->location->contact->first_name);
-		$this->assertEquals('0303032332',$patient->contactAssignments[2]->location->contact->primary_phone);
-		$this->assertNull($patient->contactAssignments[2]->location->site_id);
-		$this->assertEquals(2,$patient->contactAssignments[2]->location->institution_id);
-		$this->assertNull($patient->contactAssignments[2]->contact);
+		$this->verifyUnchangedEvent($event, $resource);
 	}
 
 	public function testJsonToModel_Save_Create_ModelCountsCorrect()
 	{
-		$json = '{"contacts":[{"title":"Dr","family_name":"Zhivago2","given_name":"Yuri2","primary_phone":"999","institution_ref":null,"site_ref":null,"id":null,"last_modified":null},{"title":"Mr","family_name":"Inc","given_name":"Apple","primary_phone":"01010101","institution_ref":null,"site_ref":{"service":"Site","id":"2"},"id":null,"last_modified":null},{"title":"Ti","family_name":"Tiss","given_name":"Prac","primary_phone":"0303032332","institution_ref":{"service":"Institution","id":"1"},"site_ref":null,"id":null,"last_modified":null}],"id":null,"last_modified":null,"patient_id":{"id":"3","last_modified":-2208988800}}';
+		$resource = $this->getResource();
 
-		$total_patients = count(\Patient::model()->findAll());
-		$total_contacts = count(\Contact::model()->findAll());
-		$total_pcas = count(\PatientContactAssignment::model()->findAll());
-		$total_sites = count(\Site::model()->findAll());
-		$total_institutions = count(\Institution::model()->findAll());
+		$resource->elements[0]->setId(null);
+		$resource->elements[1]->setId(null);
+		$resource->elements[2]->setId(null);
 
-		$ps = new PatientAssociatedContactsService;
-		$patient = $ps->jsonToModel($json, $this->patients('patient4'));
-		$patient = \Patient::model()->findByPk($patient->id);
+		$resource->elements[1]->allBookings[0]->setId(null);
+		$resource->elements[1]->allBookings[1]->setId(null);
 
-		$this->assertEquals($total_patients, count(\Patient::model()->findAll()));
-		$this->assertEquals($total_contacts+3, count(\Contact::model()->findAll()));
-		$this->assertEquals($total_pcas+3, count(\PatientContactAssignment::model()->findAll()));
-		$this->assertEquals($total_sites, count(\Site::model()->findAll()));
-		$this->assertEquals($total_institutions, count(\Institution::model()->findAll()));
+		$resource->elements[1]->anaesthetic_type = 'Topical';
+
+		$json = $resource->serialise();
+
+		$total_events = count(\Event::model()->findAll());
+		$total_eo = count(\Element_OphTrOperationbooking_Operation::model()->findAll());
+		$total_di = count(\Element_OphTrOperationbooking_Diagnosis::model()->findAll());
+		$total_sh = count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll());
+		$total_b = count(\OphTrOperationbooking_Operation_Booking::model()->findAll());
+
+		$ps = new EventService;
+		$event = $ps->jsonToModel($json, new \Event);
+
+		$this->assertEquals($total_events+1, count(\Event::model()->findAll()));
+		$this->assertEquals($total_eo+1, count(\Element_OphTrOperationbooking_Operation::model()->findAll()));
+		$this->assertEquals($total_di+1, count(\Element_OphTrOperationbooking_Diagnosis::model()->findAll()));
+		$this->assertEquals($total_sh+1, count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll()));
+		$this->assertEquals($total_b+2, count(\OphTrOperationbooking_Operation_Booking::model()->findAll()));
+	}
+
+	public function testJsonToModel_Save_Create_ModelIsCorrect()
+	{
+		$resource = $this->getResource();
+
+		$resource->elements[0]->setId(null);
+		$resource->elements[1]->setId(null);
+		$resource->elements[2]->setId(null);
+
+		$resource->elements[1]->allBookings[0]->setId(null);
+		$resource->elements[1]->allBookings[1]->setId(null);
+
+		$resource->elements[1]->anaesthetic_type = 'Topical';
+
+		$json = $resource->serialise();
+
+		$ps = new EventService;
+		$event = $ps->jsonToModel($json, new \Event);
+
+		$this->verifyNewEvent($event);
 	}
 
 	public function testJsonToModel_Save_Create_DBIsCorrect()
 	{
-		$json = '{"contacts":[{"title":"Dr","family_name":"Zhivago2","given_name":"Yuri2","primary_phone":"999","institution_ref":null,"site_ref":null,"id":null,"last_modified":null},{"title":"Mr","family_name":"Inc","given_name":"Apple","primary_phone":"01010101","institution_ref":null,"site_ref":{"service":"Site","id":"2"},"id":null,"last_modified":null},{"title":"Ti","family_name":"Tiss","given_name":"Prac","primary_phone":"0303032332","institution_ref":{"service":"Institution","id":"1"},"site_ref":null,"id":null,"last_modified":null}],"id":null,"last_modified":null,"patient_id":{"id":"3","last_modified":-2208988800}}';
+		$resource = $this->getResource();
 
-		$ps = new PatientAssociatedContactsService;
-		$patient = $ps->jsonToModel($json, $this->patients('patient4'));
-		$patient = \Patient::model()->findByPk($patient->id);
+		$resource->elements[0]->setId(null);
+		$resource->elements[1]->setId(null);
+		$resource->elements[2]->setId(null);
 
-		$this->assertInstanceOf('Patient',$patient);
-		$this->assertCount(3,$patient->contactAssignments);
+		$resource->elements[1]->allBookings[0]->setId(null);
+		$resource->elements[1]->allBookings[1]->setId(null);
 
-		$this->assertInstanceOf('PatientContactAssignment',$patient->contactAssignments[0]);
-		$this->assertInstanceOf('Contact',$patient->contactAssignments[0]->contact);
-		$this->assertEquals('Dr',$patient->contactAssignments[0]->contact->title);
-		$this->assertEquals('Zhivago2',$patient->contactAssignments[0]->contact->last_name);
-		$this->assertEquals('Yuri2',$patient->contactAssignments[0]->contact->first_name);
-		$this->assertEquals('999',$patient->contactAssignments[0]->contact->primary_phone);
-		$this->assertNull($patient->contactAssignments[0]->location);
+		$resource->elements[1]->anaesthetic_type = 'Topical';
 
-		$this->assertInstanceOf('PatientContactAssignment',$patient->contactAssignments[1]);
-		$this->assertInstanceOf('ContactLocation',$patient->contactAssignments[1]->location);
-		$this->assertInstanceOf('Contact',$patient->contactAssignments[1]->location->contact);
-		$this->assertEquals('Mr',$patient->contactAssignments[1]->location->contact->title);
-		$this->assertEquals('Inc',$patient->contactAssignments[1]->location->contact->last_name);
-		$this->assertEquals('Apple',$patient->contactAssignments[1]->location->contact->first_name);
-		$this->assertEquals('01010101',$patient->contactAssignments[1]->location->contact->primary_phone);
-		$this->assertEquals(2,$patient->contactAssignments[1]->location->site_id);
-		$this->assertNull($patient->contactAssignments[1]->location->institution_id);
-		$this->assertNull($patient->contactAssignments[1]->contact);
+		$json = $resource->serialise();
 
-		$this->assertInstanceOf('PatientContactAssignment',$patient->contactAssignments[2]);
-		$this->assertInstanceOf('ContactLocation',$patient->contactAssignments[2]->location);
-		$this->assertInstanceOf('Contact',$patient->contactAssignments[2]->location->contact);
-		$this->assertEquals('Ti',$patient->contactAssignments[2]->location->contact->title);
-		$this->assertEquals('Tiss',$patient->contactAssignments[2]->location->contact->last_name);
-		$this->assertEquals('Prac',$patient->contactAssignments[2]->location->contact->first_name);
-		$this->assertEquals('0303032332',$patient->contactAssignments[2]->location->contact->primary_phone);
-		$this->assertNull($patient->contactAssignments[2]->location->site_id);
-		$this->assertEquals(1,$patient->contactAssignments[2]->location->institution_id);
-		$this->assertNull($patient->contactAssignments[2]->contact);
+		$ps = new EventService;
+		$event = $ps->jsonToModel($json, new \Event);
+		$event = \Event::model()->findByPk($event->id);
+
+		$this->verifyNewEvent($event);
 	}
 
-	public function testJsonToModel_Save_Update_ModelCountsCorrect()
+	public function testJsonToModel_Save_Update_Modified_ModelCountsCorrect()
 	{
-		$json = '{"contacts":[{"title":"Dr","family_name":"Zhivago","given_name":"Yuri","primary_phone":"999","institution_ref":null,"site_ref":null,"id":null,"last_modified":null},{"title":"Mr","family_name":"Inc","given_name":"Apple","primary_phone":"01010101","institution_ref":null,"site_ref":{"service":"Site","id":"2"},"id":null,"last_modified":null},{"title":"Ti","family_name":"Tiss","given_name":"Prac","primary_phone":"0303032332","institution_ref":{"service":"Institution","id":"1"},"site_ref":null,"id":null,"last_modified":null}],"id":null,"last_modified":null,"patient_id":{"id":"3","last_modified":-2208988800}}';
+		$resource = $this->getModifiedResource();
+		$json = $resource->serialise();
 
-		$total_patients = count(\Patient::model()->findAll());
-		$total_contacts = count(\Contact::model()->findAll());
-		$total_pcas = count(\PatientContactAssignment::model()->findAll());
-		$total_sites = count(\Site::model()->findAll());
-		$total_institutions = count(\Institution::model()->findAll());
+		$total_events = count(\Event::model()->findAll());
+		$total_eo = count(\Element_OphTrOperationbooking_Operation::model()->findAll());
+		$total_di = count(\Element_OphTrOperationbooking_Diagnosis::model()->findAll());
+		$total_sh = count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll());
+		$total_b = count(\OphTrOperationbooking_Operation_Booking::model()->findAll());
 
-		$ps = new PatientAssociatedContactsService;
-		$patient = $ps->jsonToModel($json, $this->patients('patient1'));
-		$patient = \Patient::model()->findByPk($patient->id);
+		$ps = new EventService;
+		$event = $ps->jsonToModel($json, $this->events('event6'));
 
-		$this->assertEquals($total_patients, count(\Patient::model()->findAll()));
-		$this->assertEquals($total_contacts+2, count(\Contact::model()->findAll()));
-		$this->assertEquals($total_pcas, count(\PatientContactAssignment::model()->findAll()));
-		$this->assertEquals($total_sites, count(\Site::model()->findAll()));
-		$this->assertEquals($total_institutions, count(\Institution::model()->findAll()));
+		$this->assertEquals($total_events, count(\Event::model()->findAll()));
+		$this->assertEquals($total_eo, count(\Element_OphTrOperationbooking_Operation::model()->findAll()));
+		$this->assertEquals($total_di, count(\Element_OphTrOperationbooking_Diagnosis::model()->findAll()));
+		$this->assertEquals($total_sh, count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll()));
+		$this->assertEquals($total_b-1, count(\OphTrOperationbooking_Operation_Booking::model()->findAll()));
+	}
+
+	public function testJsonToModel_Save_Update_ModelIsCorrect()
+	{
+		$resource = $this->getModifiedResource();
+		$json = $resource->serialise();
+
+		$ps = new EventService;
+		$event = $ps->jsonToModel($json, $this->events('event6'));
+
+		$this->modified_event_assertions($resource, $event);
 	}
 
 	public function testJsonToModel_Save_Update_DBIsCorrect()
 	{
-		$json = '{"contacts":[{"title":"Dr","family_name":"Zhivago","given_name":"Yuri","primary_phone":"999","institution_ref":null,"site_ref":null,"id":null,"last_modified":null},{"title":"Mr","family_name":"Inc","given_name":"Apple","primary_phone":"01010101","institution_ref":null,"site_ref":{"service":"Site","id":"2"},"id":null,"last_modified":null},{"title":"Ti","family_name":"Tiss","given_name":"Prac","primary_phone":"0303032332","institution_ref":{"service":"Institution","id":"1"},"site_ref":null,"id":null,"last_modified":null}],"id":null,"last_modified":null,"patient_id":{"id":"3","last_modified":-2208988800}}';
+		$resource = $this->getModifiedResource();
+		$json = $resource->serialise();
 
-		$ps = new PatientAssociatedContactsService;
-		$patient = $ps->jsonToModel($json, $this->patients('patient1'));
-		$patient = \Patient::model()->findByPk($patient->id);
+		$ps = new EventService;
+		$event = $ps->jsonToModel($json, $this->events('event6'));
+		$event = \Event::model()->findByPk($event->id);
 
-		$this->assertInstanceOf('Patient',$patient);
-		$this->assertCount(3,$patient->contactAssignments);
-
-		$this->assertInstanceOf('PatientContactAssignment',$patient->contactAssignments[0]);
-		$this->assertInstanceOf('Contact',$patient->contactAssignments[0]->contact);
-		$this->assertEquals('Dr',$patient->contactAssignments[0]->contact->title);
-		$this->assertEquals('Zhivago',$patient->contactAssignments[0]->contact->last_name);
-		$this->assertEquals('Yuri',$patient->contactAssignments[0]->contact->first_name);
-		$this->assertEquals('999',$patient->contactAssignments[0]->contact->primary_phone);
-		$this->assertNull($patient->contactAssignments[0]->location);
-
-		$this->assertInstanceOf('PatientContactAssignment',$patient->contactAssignments[1]);
-		$this->assertInstanceOf('ContactLocation',$patient->contactAssignments[1]->location);
-		$this->assertInstanceOf('Contact',$patient->contactAssignments[1]->location->contact);
-		$this->assertEquals('Mr',$patient->contactAssignments[1]->location->contact->title);
-		$this->assertEquals('Inc',$patient->contactAssignments[1]->location->contact->last_name);
-		$this->assertEquals('Apple',$patient->contactAssignments[1]->location->contact->first_name);
-		$this->assertEquals('01010101',$patient->contactAssignments[1]->location->contact->primary_phone);
-		$this->assertEquals(2,$patient->contactAssignments[1]->location->site_id);
-		$this->assertNull($patient->contactAssignments[1]->location->institution_id);
-		$this->assertNull($patient->contactAssignments[1]->contact);
-
-		$this->assertInstanceOf('PatientContactAssignment',$patient->contactAssignments[2]);
-		$this->assertInstanceOf('ContactLocation',$patient->contactAssignments[2]->location);
-		$this->assertInstanceOf('Contact',$patient->contactAssignments[2]->location->contact);
-		$this->assertEquals('Ti',$patient->contactAssignments[2]->location->contact->title);
-		$this->assertEquals('Tiss',$patient->contactAssignments[2]->location->contact->last_name);
-		$this->assertEquals('Prac',$patient->contactAssignments[2]->location->contact->first_name);
-		$this->assertEquals('0303032332',$patient->contactAssignments[2]->location->contact->primary_phone);
-		$this->assertNull($patient->contactAssignments[2]->location->site_id);
-		$this->assertEquals(1,$patient->contactAssignments[2]->location->institution_id);
-		$this->assertNull($patient->contactAssignments[2]->contact);
+		$this->modified_event_assertions($resource, $event);
 	}
-	*/
 }
