@@ -372,4 +372,15 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecordVersioned
 
 		return parent::beforeSave();
 	}
+
+	public function getWeekSelectionText()
+	{
+		$weeks = array();
+
+		foreach (array(1,2,4,8,16) as $i => $n) {
+			($this->week_selection & $n) && $weeks[] = $i+1;
+		}
+
+		return implode(',',$weeks);
+	}
 }

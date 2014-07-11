@@ -40,6 +40,7 @@ return array(
 				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_WardService',
 				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_TheatreService',
 				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_ScheduleOperation_OptionsService',
+				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_SequenceService',
 			),
 		),
 	),
