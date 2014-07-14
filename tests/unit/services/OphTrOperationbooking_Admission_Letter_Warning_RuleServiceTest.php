@@ -19,7 +19,6 @@ class OphTrOperationbooking_Admission_Letter_Warning_RuleServiceTest extends \CD
 {
 	public $fixtures = array(
 		'rules' => 'OphTrOperationbooking_Admission_Letter_Warning_Rule',
-		'rules' => 'OphTrOperationbooking_Admission_Letter_Warning_Rule',
 		'sites' => 'Site',
 		'theatres' => 'OphTrOperationbooking_Operation_Theatre',
 		'subspecialties' => 'Subspecialty',
