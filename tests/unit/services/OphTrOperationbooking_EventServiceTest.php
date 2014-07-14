@@ -40,6 +40,8 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		'rtts' => 'RTT',
 		'rf_type' => 'ReferralType',
 		'rf' => 'Referral',
+		'options' => 'OphTrOperationbooking_ScheduleOperation_Options',
+		'dls' => 'OphTrOperationbooking_Operation_Date_Letter_Sent',
 	);
 
 	public function testModelToResource()
@@ -99,6 +101,11 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$this->assertEquals(5,$resource->elements[1]->referral_ref->getId());
 		$this->assertInstanceOf('services\RTTReference',$resource->elements[1]->rtt_ref);
 		$this->assertEquals(1,$resource->elements[1]->rtt_ref->getId());
+		$this->assertEquals('2012-01-01 12:00:00',$resource->elements[1]->date_invitation_letter_sent);
+		$this->assertEquals('2012-02-02 12:00:00',$resource->elements[1]->date_1st_reminder_letter_sent);
+		$this->assertEquals('2012-03-02 12:00:00',$resource->elements[1]->date_2nd_reminder_letter_sent);
+		$this->assertEquals('2012-04-02 12:00:00',$resource->elements[1]->date_gp_letter_sent);
+		$this->assertEquals('2012-05-02 12:00:00',$resource->elements[1]->date_scheduling_letter_sent);
 
 		$this->assertCount(1,$resource->elements[1]->procedures);
 		$this->assertInstanceOf('services\ProcedureReference',$resource->elements[1]->procedures[0]);
@@ -236,6 +243,12 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$this->assertEquals(5,$event->elements[1]->referral->id);
 		$this->assertInstanceOf('RTT',$event->elements[1]->rtt);
 		$this->assertEquals(1,$event->elements[1]->rtt->id);
+		$this->assertInstanceOf('OphTrOperationbooking_Operation_Date_Letter_Sent',$event->elements[1]->date_letter_sent);
+		$this->assertEquals('2012-01-01 12:00:00',$event->elements[1]->date_letter_sent->date_invitation_letter_sent);
+		$this->assertEquals('2012-02-02 12:00:00',$event->elements[1]->date_letter_sent->date_1st_reminder_letter_sent);
+		$this->assertEquals('2012-03-02 12:00:00',$event->elements[1]->date_letter_sent->date_2nd_reminder_letter_sent);
+		$this->assertEquals('2012-04-02 12:00:00',$event->elements[1]->date_letter_sent->date_gp_letter_sent);
+		$this->assertEquals('2012-05-02 12:00:00',$event->elements[1]->date_letter_sent->date_scheduling_letter_sent);
 
 		$this->assertCount(1,$event->elements[1]->procedures);
 		$this->assertInstanceOf('Procedure',$event->elements[1]->procedures[0]);
@@ -392,6 +405,12 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$this->assertEquals(5,$event->elements[1]->referral->id);
 		$this->assertInstanceOf('RTT',$event->elements[1]->rtt);
 		$this->assertEquals(1,$event->elements[1]->rtt->id);
+		$this->assertInstanceOf('OphTrOperationbooking_Operation_Date_Letter_Sent',$event->elements[1]->date_letter_sent);
+		$this->assertEquals('2012-01-01 12:00:00',$event->elements[1]->date_letter_sent->date_invitation_letter_sent);
+		$this->assertEquals('2012-02-02 12:00:00',$event->elements[1]->date_letter_sent->date_1st_reminder_letter_sent);
+		$this->assertEquals('2012-03-02 12:00:00',$event->elements[1]->date_letter_sent->date_2nd_reminder_letter_sent);
+		$this->assertEquals('2012-04-02 12:00:00',$event->elements[1]->date_letter_sent->date_gp_letter_sent);
+		$this->assertEquals('2012-05-02 12:00:00',$event->elements[1]->date_letter_sent->date_scheduling_letter_sent);
 
 		$this->assertCount(1,$event->elements[1]->procedure_assignment);
 		$this->assertInstanceOf('OphTrOperationbooking_Operation_Procedures',$event->elements[1]->procedure_assignment[0]);
@@ -514,6 +533,12 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$this->assertEquals(5,$event->elements[1]->referral->id);
 		$this->assertInstanceOf('RTT',$event->elements[1]->rtt);
 		$this->assertEquals(1,$event->elements[1]->rtt->id);
+		$this->assertInstanceOf('OphTrOperationbooking_Operation_Date_Letter_Sent',$event->elements[1]->date_letter_sent);
+		$this->assertEquals('2012-01-01 12:00:00',$event->elements[1]->date_letter_sent->date_invitation_letter_sent);
+		$this->assertEquals('2012-02-02 12:00:00',$event->elements[1]->date_letter_sent->date_1st_reminder_letter_sent);
+		$this->assertEquals('2012-03-02 12:00:00',$event->elements[1]->date_letter_sent->date_2nd_reminder_letter_sent);
+		$this->assertEquals('2012-04-02 12:00:00',$event->elements[1]->date_letter_sent->date_gp_letter_sent);
+		$this->assertEquals('2012-05-02 12:00:00',$event->elements[1]->date_letter_sent->date_scheduling_letter_sent);
 
 		$this->assertCount(1,$event->elements[1]->procedure_assignment);
 		$this->assertInstanceOf('OphTrOperationbooking_Operation_Procedures',$event->elements[1]->procedure_assignment[0]);
@@ -597,6 +622,11 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$resource->elements[1]->priority = 'Urgent';
 		$resource->elements[1]->status = 'Rescheduled';
 		$resource->elements[1]->latest_booking_id = 3;
+		$resource->elements[1]->date_invitation_letter_sent = '2013-01-01 12:00:00';
+		$resource->elements[1]->date_1st_reminder_letter_sent = '2013-02-02 12:00:00';
+		$resource->elements[1]->date_2nd_reminder_letter_sent = '2013-03-02 12:00:00';
+		$resource->elements[1]->date_gp_letter_sent = '2013-04-02 12:00:00';
+		$resource->elements[1]->date_scheduling_letter_sent = '2013-05-02 12:00:00';
 		$resource->elements[1]->procedures[0] = \Yii::app()->service->Procedure(2);
 		$resource->elements[1]->procedures[1] = \Yii::app()->service->Procedure(1);
 		$resource->elements[1]->allBookings[0]->session_ref = \Yii::app()->service->OphTrOperationbooking_Operation_Session(10);
@@ -709,6 +739,12 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$this->assertEquals(5,$event->elements[1]->referral->id);
 		$this->assertInstanceOf('RTT',$event->elements[1]->rtt);
 		$this->assertEquals(1,$event->elements[1]->rtt->id);
+		$this->assertInstanceOf('OphTrOperationbooking_Operation_Date_Letter_Sent',$event->elements[1]->date_letter_sent);
+		$this->assertEquals('2013-01-01 12:00:00',$event->elements[1]->date_letter_sent->date_invitation_letter_sent);
+		$this->assertEquals('2013-02-02 12:00:00',$event->elements[1]->date_letter_sent->date_1st_reminder_letter_sent);
+		$this->assertEquals('2013-03-02 12:00:00',$event->elements[1]->date_letter_sent->date_2nd_reminder_letter_sent);
+		$this->assertEquals('2013-04-02 12:00:00',$event->elements[1]->date_letter_sent->date_gp_letter_sent);
+		$this->assertEquals('2013-05-02 12:00:00',$event->elements[1]->date_letter_sent->date_scheduling_letter_sent);
 
 		$this->assertCount(2,$event->elements[1]->procedure_assignment);
 		$this->assertInstanceOf('OphTrOperationbooking_Operation_Procedures',$event->elements[1]->procedure_assignment[0]);

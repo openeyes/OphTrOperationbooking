@@ -19,6 +19,7 @@
 
 return array(
 	'eo1' => array(
+		'id' => 1,
 		'event_id' => 1,
 		'eye_id' => 1,
 		'consultant_required' => 1,
@@ -36,6 +37,7 @@ return array(
 		'last_modified_date' => date('Y-m-d 00:00:00'),
 	),
 	'eo2' => array(
+		'id' => 2,
 		'event_id' => 2,
 		'eye_id' => 1,
 		'consultant_required' => 1,
@@ -53,6 +55,7 @@ return array(
 		'last_modified_date' => date('Y-m-d 00:00:00'),
 	),
 	'eo3' => array(
+		'id' => 3,
 		'event_id' => 3,
 		'eye_id' => 1,
 		'consultant_required' => 1,
@@ -70,6 +73,7 @@ return array(
 		'last_modified_date' => date('Y-m-d 00:00:00'),
 	),
 	'eo4' => array(
+		'id' => 4,
 		'event_id' => 4,
 		'eye_id' => 1,
 		'consultant_required' => 1,
@@ -87,6 +91,7 @@ return array(
 		'last_modified_date' => date('Y-m-d 00:00:00'),
 	),
 	'eo5' => array(
+		'id' => 5,
 		'event_id' => 5,
 		'eye_id' => 1,
 		'consultant_required' => 1,
@@ -104,6 +109,7 @@ return array(
 		'last_modified_date' => date('Y-m-d 00:00:00'),
 	),
 	'eo6' => array(
+		'id' => 6,
 		'event_id' => 6,
 		'eye_id' => 1,
 		'consultant_required' => 1,
@@ -125,6 +131,7 @@ return array(
 		'latest_booking_id' => 2,
 	),
 	'eo7' => array(
+		'id' => 7,
 		'event_id' => 7,
 		'eye_id' => 1,
 		'consultant_required' => 1,

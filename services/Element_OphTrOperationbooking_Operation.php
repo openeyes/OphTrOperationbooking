@@ -46,6 +46,19 @@ class Element_OphTrOperationbooking_Operation extends \services\ElementDataObjec
 		);
 	}
 
+	public function relation_fields()
+	{
+		return array(
+			'date_letter_sent' => array(
+				'date_invitation_letter_sent',
+				'date_1st_reminder_letter_sent',
+				'date_2nd_reminder_letter_sent',
+				'date_gp_letter_sent',
+				'date_scheduling_letter_sent',
+			)
+		);
+	}
+
 	public function references()
 	{
 		return array(
