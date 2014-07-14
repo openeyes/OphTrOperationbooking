@@ -45,6 +45,7 @@ return array(
 				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Admission_Letter_Warning_RuleService',
 				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Letter_Contact_RuleService',
 				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_Cancellation_ReasonService',
+				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_EROD_RuleService',
 			),
 		),
 	),
