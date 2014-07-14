@@ -15,7 +15,7 @@
 
 namespace services;
 
-class EventServiceTest extends \CDbTestCase
+class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 {
 	public $fixtures = array(
 		'patients' => 'Patient',
