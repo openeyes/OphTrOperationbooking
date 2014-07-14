@@ -60,13 +60,26 @@ class OphTrOperationbooking_Operation_SessionService extends \services\Declarati
 		$booking_list = array();
 
 		foreach ($ref_list as $i => $event_ref) {
-			if (!$booking = \OphTrOperationbooking_Operation_Booking::model()->with(array('operation' => array('with' => 'event')))->find('event.id=?',array($event_ref->getId()))) {
-				throw new \Exception("Booking not found for event_id: ".$event_ref->getId());
+			$id = method_exists($event_ref,'getId') ? $event_ref->getId() : $event_ref->id;
+
+			if (!$booking = \OphTrOperationbooking_Operation_Booking::model()->with(array('operation' => array('with' => 'event')))->find('event.id=?',array($id))) {
+				throw new \Exception("Booking not found for event_id: $id");
 			}
+
+			$booking->display_order = $i+1;
 
 			$booking_list[] = $booking;
 		}
 
 		$model->setAttribute('activeBookings',$booking_list);
+	}
+
+	public function resourceToModel_AfterSave($model)
+	{
+		foreach ($model->expandAttribute('activeBookings') as $i => $booking) {
+			if (!$booking->save()) {
+				throw new \Exception("Unable to update booking display_order: ".print_r($booking->getErrors(),true));
+			}
+		}
 	}
 }

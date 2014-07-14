@@ -43,6 +43,14 @@ class OphTrOperationbooking_Operation_SessionServiceTest extends \CDbTestCase
 		'rf' => 'Referral',
 	);
 
+	public function setup()
+	{
+		$path = preg_replace('/protected\/.*$/','/protected/',getcwd());
+		require_once($path."modules/OphTrOperationbooking/helpers/OphTrOperationbooking_BookingHelper.php");
+
+		parent::setup();
+	}
+
 	public function testModelToResource()
 	{
 		$session = $this->sessions('session5');
@@ -143,13 +151,22 @@ class OphTrOperationbooking_Operation_SessionServiceTest extends \CDbTestCase
 		}
 	}
 
-/*
 	public function getNewResource()
 	{
 		$resource = $this->getResource();
-		$resource->start_time = '01:00:00';
-		$resource->end_time = '05:00:00';
-		$resource->weekday = 'Thursday';
+
+		$resource->sequence_ref = \Yii::app()->service->OphTrOperationbooking_Operation_Sequence(2);
+		$resource->firm_ref = \Yii::app()->service->Firm(2);
+		$resource->date = new Date('2012-01-01');
+		$resource->start_time = '13:30:00';
+		$resource->end_time = '18:00:00';
+		$resource->comments = 'testing 123';
+		$resource->paediatric = 1;
+		$resource->anaesthetist = 1;
+		$resource->general_anaesthetic = 1;
+		$resource->theatre_ref = \Yii::app()->service->OphTrOperationbooking_Operation_Theatre(1);
+		$resource->default_admission_time = '13:00:00';
+		$resource->max_procedures = 20;
 
 		return $resource;
 	}
@@ -158,13 +175,32 @@ class OphTrOperationbooking_Operation_SessionServiceTest extends \CDbTestCase
 	{
 		$resource = $this->getNewResource();
 
-		$total_seqs = count(\OphTrOperationbooking_Operation_Session::model()->findAll());
+		$ts = count(\OphTrOperationbooking_Operation_Session::model()->findAll());
+		$tb = count(\OphTrOperationbooking_Operation_Booking::model()->findAll());
 
 		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_SessionService;
 		$sequence = $ps->resourceToModel($resource, new \OphTrOperationbooking_Operation_Session);
 
-		// ooer!
-		$this->assertEquals($total_seqs+1, count(\OphTrOperationbooking_Operation_Session::model()->findAll()));
+		$this->assertEquals($ts+1, count(\OphTrOperationbooking_Operation_Session::model()->findAll()));
+		$this->assertEquals($tb, count(\OphTrOperationbooking_Operation_Booking::model()->findAll()));
+	}
+
+	public function verifyNewSession($session)
+	{
+		$this->assertInstanceOf('OphTrOperationbooking_Operation_Session',$session);
+
+		$this->assertEquals(2,$session->sequence_id);
+		$this->assertEquals(2,$session->firm_id);
+		$this->assertEquals('2012-01-01',$session->date);
+		$this->assertEquals('13:30:00',$session->start_time);
+		$this->assertEquals('18:00:00',$session->end_time);
+		$this->assertEquals('testing 123',$session->comments);
+		$this->assertEquals(1,$session->paediatric);
+		$this->assertEquals(1,$session->anaesthetist);
+		$this->assertEquals(1,$session->general_anaesthetic);
+		$this->assertEquals(1,$session->theatre_id);
+		$this->assertEquals('13:00:00',$session->default_admission_time);
+		$this->assertEquals(20,$session->max_procedures);
 	}
 
 	public function testResourceToModel_Save_Create_ModelIsCorrect()
@@ -172,13 +208,14 @@ class OphTrOperationbooking_Operation_SessionServiceTest extends \CDbTestCase
 		$resource = $this->getNewResource();
 
 		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_SessionService;
-		$sequence = $ps->resourceToModel($resource, new \OphTrOperationbooking_Operation_Session);
+		$session = $ps->resourceToModel($resource, new \OphTrOperationbooking_Operation_Session);
 
-		$this->verifySession($sequence, $resource, array(
-			'start_time' => '01:00:00',
-			'end_time' => '05:00:00',
-			'weekday' => 4,
+		$this->verifyNewSession($session, $resource, array(
+			'start_time' => '13:30:00',
+			'end_time' => '18:00:00',
 		));
+
+		$this->assertEquals(0,count($session->activeBookingEvents));
 	}
 
 	public function testResourceToModel_Save_Create_DBIsCorrect()
@@ -186,31 +223,25 @@ class OphTrOperationbooking_Operation_SessionServiceTest extends \CDbTestCase
 		$resource = $this->getNewResource();
 
 		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_SessionService;
-		$sequence = $ps->resourceToModel($resource, new \OphTrOperationbooking_Operation_Session);
-		$sequence = \OphTrOperationbooking_Operation_Session::model()->findByPk($sequence->id);
+		$session = $ps->resourceToModel($resource, new \OphTrOperationbooking_Operation_Session);
+		$session = \OphTrOperationbooking_Operation_Session::model()->findByPk($session->id);
 
-		$this->verifySession($sequence, $resource, array(
-			'start_time' => '01:00:00',
-			'end_time' => '05:00:00',
-			'weekday' => 4,
+		$this->verifyNewSession($session, $resource, array(
+			'start_time' => '13:30:00',
+			'end_time' => '18:00:00',
 		));
+
+		$this->assertEquals(0,count($session->activeBookingEvents));
 	}
 
 	public function getModifiedResource()
 	{
 		$resource = $this->getNewResource();
 
-		$resource->firm_ref = \Yii::app()->service->Firm(2);
-		$resource->theatre_ref = \Yii::app()->service->OphTrOperationbooking_Operation_Theatre(2);
-		$resource->start_time = '03:00:00';
-		$resource->end_time = '04:00:00';
-		$resource->interval = '1 Week';
-		$resource->week_selection = '1,3,4';
-		$resource->consultant = 0;
-		$resource->paediatric = 1;
-		$resource->anaesthetist = 1;
-		$resource->general_anaesthetic = 1;
-		$resource->default_admission_time = '02:00:00';
+		$resource->bookings = array(
+			\Yii::app()->service->OphTrOperationbooking_Event(6),
+			\Yii::app()->service->OphTrOperationbooking_Event(1),
+		);
 
 		return $resource;
 	}
@@ -219,29 +250,24 @@ class OphTrOperationbooking_Operation_SessionServiceTest extends \CDbTestCase
 	{
 		$resource = $this->getModifiedResource();
 
-		$total_seqs = count(\OphTrOperationbooking_Operation_Session::model()->findAll());
+		$ts = count(\OphTrOperationbooking_Operation_Session::model()->findAll());
+		$tb = count(\OphTrOperationbooking_Operation_Booking::model()->findAll());
 
 		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_SessionService;
-		$sequence = $ps->resourceToModel($resource, $this->sequences('sequence1'));
+		$sequence = $ps->resourceToModel($resource, $this->sessions('session5'));
 
-		$this->assertEquals($total_seqs, count(\OphTrOperationbooking_Operation_Session::model()->findAll()));
+		$this->assertEquals($ts, count(\OphTrOperationbooking_Operation_Session::model()->findAll()));
+		$this->assertEquals($tb, count(\OphTrOperationbooking_Operation_Booking::model()->findAll()));
 	}
 
-	public function verifyModifiedSession($sequence, $resource)
+	public function verifyModifiedSession($session)
 	{
-		$this->verifySession($sequence, $resource, array(
-			'firm_id' => 2,
-			'theatre_id' => 2,
-			'start_time' => '03:00:00',
-			'end_time' => '04:00:00',
-			'interval_id' => \OphTrOperationbooking_Operation_Session_Interval::model()->find('name=?',array('1 Week'))->id,
-			'week_selection' => 13,
-			'consultant' => 0,
-			'paediatric' => 1,
-			'anaesthetist' => 1,
-			'general_anaesthetic' => 1,
-			'default_admission_time' => '02:00:00',
-		));
+		$this->assertEquals($this->sessions('session5')->id, $session->id);
+
+		$this->verifyNewSession($session);
+
+		$this->assertEquals(6,$session->activeBookings[0]->operation->event_id);
+		$this->assertEquals(1,$session->activeBookings[1]->operation->event_id);
 	}
 
 	public function testResourceToModel_Save_Update_ModelIsCorrect()
@@ -249,11 +275,11 @@ class OphTrOperationbooking_Operation_SessionServiceTest extends \CDbTestCase
 		$resource = $this->getModifiedResource();
 
 		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_SessionService;
-		$sequence = $ps->resourceToModel($resource, $this->sequences('sequence1'));
+		$session = $ps->resourceToModel($resource, $this->sessions('session5'));
 
-		$this->assertEquals(1,$sequence->id);
+		$this->assertEquals(5,$session->id);
 
-		$this->verifyModifiedSession($sequence, $resource);
+		$this->verifyModifiedSession($session, $resource);
 	}
 
 	public function testResourceToModel_Save_Update_DBIsCorrect()
@@ -261,40 +287,37 @@ class OphTrOperationbooking_Operation_SessionServiceTest extends \CDbTestCase
 		$resource = $this->getModifiedResource();
 
 		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_SessionService;
-		$sequence = $ps->resourceToModel($resource, $this->sequences('sequence1'));
-		$sequence = \OphTrOperationbooking_Operation_Session::model()->findByPk($sequence->id);
+		$session = $ps->resourceToModel($resource, $this->sessions('session5'));
+		$session = \OphTrOperationbooking_Operation_Session::model()->findByPk($session->id);
 
-		$this->assertEquals(1,$sequence->id);
+		$this->assertEquals(5,$session->id);
 
-		$this->verifyModifiedSession($sequence, $resource);
+		$this->verifyModifiedSession($session, $resource);
 	}
 
 	public function testJsonToResource()
 	{
-		$sequence = \OphTrOperationbooking_Operation_Session::model()->findByPk(1);
-		$resource = \Yii::app()->service->OphTrOperationbooking_Operation_Session($sequence->id)->fetch();
-
-		$json = $resource->serialise();
+		$session = $this->sessions('session5');
+		$json = \Yii::app()->service->OphTrOperationbooking_Operation_Session($session->id)->fetch()->serialise();
 
 		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_SessionService;
+
 		$resource = $ps->jsonToResource($json);
 
-		$this->verifyResource($resource, $sequence);
+		$this->verifyResource($resource, $session);
 	}
 
-	public function testJsonToModel_NoSave_NoNewRows()
+	public function testJsonToModel_NoSave_NoNewRecords()
 	{
-		$sequence = \OphTrOperationbooking_Operation_Session::model()->findByPk(1);
-		$resource = \Yii::app()->service->OphTrOperationbooking_Operation_Session($sequence->id)->fetch();
-
+		$resource = $this->getResource();
 		$json = $resource->serialise();
 
-		$total_seqs = count(\OphTrOperationbooking_Operation_Session::model()->findAll());
+		$total_s = count(\OphTrOperationbooking_Operation_Session::model()->findAll());
 
 		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_SessionService;
-		$sequence = $ps->jsonToModel($json, new \OphTrOperationbooking_Operation_Session, false);
+		$session = $ps->jsonToModel($json, new \OphTrOperationbooking_Operation_Session, false);
 
-		$this->assertEquals($total_seqs, count(\OphTrOperationbooking_Operation_Session::model()->findAll()));
+		$this->assertEquals($total_s, count(\OphTrOperationbooking_Operation_Session::model()->findAll()));
 	}
 
 	public function testJsonToModel_NoSave_ModelIsCorrect()
@@ -303,9 +326,9 @@ class OphTrOperationbooking_Operation_SessionServiceTest extends \CDbTestCase
 		$json = $resource->serialise();
 
 		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_SessionService;
-		$sequence = $ps->jsonToModel($json, new \OphTrOperationbooking_Operation_Session, false);
+		$session = $ps->jsonToModel($json, new \OphTrOperationbooking_Operation_Session, false);
 
-		$this->verifySession($sequence, $resource);
+		$this->verifySession($session, $resource);
 	}
 
 	public function testJsonToModel_Save_Create_ModelCountsCorrect()
@@ -313,13 +336,12 @@ class OphTrOperationbooking_Operation_SessionServiceTest extends \CDbTestCase
 		$resource = $this->getNewResource();
 		$json = $resource->serialise();
 
-		$total_seqs = count(\OphTrOperationbooking_Operation_Session::model()->findAll());
+		$total_s = count(\OphTrOperationbooking_Operation_Session::model()->findAll());
 
 		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_SessionService;
-		$sequence = $ps->jsonToModel($json, new \OphTrOperationbooking_Operation_Session);
+		$session = $ps->jsonToModel($json, new \OphTrOperationbooking_Operation_Session);
 
-		// ooer!
-		$this->assertEquals($total_seqs+1, count(\OphTrOperationbooking_Operation_Session::model()->findAll()));
+		$this->assertEquals($total_s+1, count(\OphTrOperationbooking_Operation_Session::model()->findAll()));
 	}
 
 	public function testJsonToModel_Save_Create_ModelIsCorrect()
@@ -328,13 +350,14 @@ class OphTrOperationbooking_Operation_SessionServiceTest extends \CDbTestCase
 		$json = $resource->serialise();
 
 		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_SessionService;
-		$sequence = $ps->jsonToModel($json, new \OphTrOperationbooking_Operation_Session);
+		$session = $ps->jsonToModel($json, new \OphTrOperationbooking_Operation_Session);
 
-		$this->verifySession($sequence, $resource, array(
-			'start_time' => '01:00:00',
-			'end_time' => '05:00:00',
-			'weekday' => 4,
+		$this->verifyNewSession($session, $resource, array(
+			'start_time' => '13:30:00',
+			'end_time' => '18:00:00',
 		));
+
+		$this->assertEquals(0,count($session->activeBookingEvents));
 	}
 
 	public function testJsonToModel_Save_Create_DBIsCorrect()
@@ -343,14 +366,15 @@ class OphTrOperationbooking_Operation_SessionServiceTest extends \CDbTestCase
 		$json = $resource->serialise();
 
 		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_SessionService;
-		$sequence = $ps->jsonToModel($json, new \OphTrOperationbooking_Operation_Session);
-		$sequence = \OphTrOperationbooking_Operation_Session::model()->findByPk($sequence->id);
+		$session = $ps->jsonToModel($json, new \OphTrOperationbooking_Operation_Session);
+		$session = \OphTrOperationbooking_Operation_Session::model()->findByPk($session->id);
 
-		$this->verifySession($sequence, $resource, array(
-			'start_time' => '01:00:00',
-			'end_time' => '05:00:00',
-			'weekday' => 4,
+		$this->verifyNewSession($session, $resource, array(
+			'start_time' => '13:30:00',
+			'end_time' => '18:00:00',
 		));
+
+		$this->assertEquals(0,count($session->activeBookingEvents));
 	}
 
 	public function testJsonToModel_Save_Update_Modified_ModelCountsCorrect()
@@ -358,12 +382,12 @@ class OphTrOperationbooking_Operation_SessionServiceTest extends \CDbTestCase
 		$resource = $this->getModifiedResource();
 		$json = $resource->serialise();
 
-		$total_seqs = count(\OphTrOperationbooking_Operation_Session::model()->findAll());
+		$total_s = count(\OphTrOperationbooking_Operation_Session::model()->findAll());
 
 		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_SessionService;
-		$sequence = $ps->jsonToModel($json, $this->sequences('sequence1'));
+		$session = $ps->jsonToModel($json, $this->sessions('session5'));
 
-		$this->assertEquals($total_seqs, count(\OphTrOperationbooking_Operation_Session::model()->findAll()));
+		$this->assertEquals($total_s, count(\OphTrOperationbooking_Operation_Session::model()->findAll()));
 	}
 
 	public function testJsonToModel_Save_Update_ModelIsCorrect()
@@ -372,11 +396,11 @@ class OphTrOperationbooking_Operation_SessionServiceTest extends \CDbTestCase
 		$json = $resource->serialise();
 
 		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_SessionService;
-		$sequence = $ps->jsonToModel($json, $this->sequences('sequence1'));
+		$session = $ps->jsonToModel($json, $this->sessions('session5'));
 
-		$this->assertEquals(1,$sequence->id);
+		$this->assertEquals(5,$session->id);
 
-		$this->verifyModifiedSession($sequence, $resource);
+		$this->verifyModifiedSession($session);
 	}
 
 	public function testJsonToModel_Save_Update_DBIsCorrect()
@@ -385,12 +409,11 @@ class OphTrOperationbooking_Operation_SessionServiceTest extends \CDbTestCase
 		$json = $resource->serialise();
 
 		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_SessionService;
-		$sequence = $ps->jsonToModel($json, $this->sequences('sequence1'));
-		$sequence = \OphTrOperationbooking_Operation_Session::model()->findByPk($sequence->id);
+		$session = $ps->jsonToModel($json, $this->sessions('session5'));
+		$session = \OphTrOperationbooking_Operation_Session::model()->findByPk($session->id);
 
-		$this->assertEquals(1,$sequence->id);
+		$this->assertEquals(5,$session->id);
 
-		$this->verifyModifiedSession($sequence, $resource);
+		$this->verifyModifiedSession($session);
 	}
-	*/
 }
