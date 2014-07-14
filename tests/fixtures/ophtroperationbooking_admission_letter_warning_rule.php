@@ -19,15 +19,16 @@
 
 return array(
 	0 => array(
-		'id' => 1,
-		'name' => 'Type 1',
-	),
-	1 => array(
-		'id' => 2,
-		'name' => 'Type 2',
-	),
-	2 => array(
-		'id' => 3,
-		'name' => 'Type 3',
+		'parent_rule_id' => null,
+		'rule_order' => 0,
+		'site_id' => 1,
+		'theatre_id' => 1,
+		'subspecialty_id' => 1,
+		'is_child' => 0,
+		'show_warning' => 1,
+		'warning_text' => 'DANGER! WILL ROBINSON!',
+		'emphasis' => 1,
+		'strong' => 1,
+		'firm_id' => 1,
 	),
 );

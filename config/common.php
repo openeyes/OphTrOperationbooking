@@ -42,6 +42,7 @@ return array(
 				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_ScheduleOperation_OptionsService',
 				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_SequenceService',
 				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Admission_Letter_Warning_Rule_TypeService',
+				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Admission_Letter_Warning_RuleService',
 			),
 		),
 	),
