@@ -348,7 +348,7 @@ class Element_OphTrOperationbooking_OperationTest extends CDbTestCase
 			'status_id' => 1,
 			'anaesthetic_type_id' => 1,
 			'referral_id' => $referral->id,
-			'decision_date' => date('Y-m-d', strtotime('next week')),
+			'decision_date' => date('Y-m-d', strtotime('last week')),
 			'total_duration' => 1,
 		);
 
@@ -472,8 +472,8 @@ class Element_OphTrOperationbooking_OperationTest extends CDbTestCase
 		$op->expects($this->never())
 			->method('save');
 
-		$op->setStatus($this->statuses('scheduled')->name, false);
-		$this->assertEquals($this->statuses('scheduled')->id, $op->status_id);
+		$op->setStatus($this->statuses(1)->name, false);
+		$this->assertEquals($this->statuses(1)->id, $op->status_id);
 	}
 
 	public function testsetStatus_save()
@@ -484,8 +484,8 @@ class Element_OphTrOperationbooking_OperationTest extends CDbTestCase
 			->method('save')
 			->will($this->returnValue(true));
 
-		$op->setStatus($this->statuses('scheduled')->name);
-		$this->assertEquals($this->statuses('scheduled')->id, $op->status_id);
+		$op->setStatus($this->statuses(1)->name);
+		$this->assertEquals($this->statuses(1)->id, $op->status_id);
 	}
 
 	public function testsetStatus_invalidStatus()
@@ -618,6 +618,9 @@ class Element_OphTrOperationbooking_OperationTest extends CDbTestCase
 	 */
 	public function testcalculateEROD($op_properties, $patient, $firm_key, $expected_erod_session_key, $description)
 	{
+		Yii::app()->db->createCommand("delete from ophtroperationbooking_operation_erod_rule_item")->query();
+		Yii::app()->db->createCommand("delete from ophtroperationbooking_operation_erod_rule")->query();
+
 		$test = $this->getMockBuilder('Element_OphTrOperationbooking_Operation')
 				->disableOriginalConstructor()
 				->setMethods(array('getPatient', 'getFirm'))
