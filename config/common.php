@@ -49,6 +49,7 @@ return array(
 				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_Name_RuleService',
 				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_PriorityService',
 				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_ScheduleOperation_PatientUnavailableReasonService',
+				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Waiting_List_Contact_RuleService',
 			),
 		),
 	),
