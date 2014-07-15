@@ -16,37 +16,20 @@
  * @copyright Copyright (c) 2008-2011, Moorfields Eye Hospital NHS Foundation Trust
  * @copyright Copyright (c) 2011-2013, OpenEyes Foundation
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
-
  */
 return array(
-	'reason1' => array(
-			'id' => 1,
-			'name' => 'Reason 1',
-			'enabled' => true,
-			'display_order' => 1,
-			'last_modified_user_id' => 1,
-			'last_modified_date' => '1901-01-01 00:00:00',
-			'created_user_id' => 1,
-			'created_date' => '1901-01-01 00:00:00',
+	0 => array(
+		'id' => 1,
+		'start_date' => '2013-01-01',
+		'end_date' => '2013-12-31',
+		'reason_id' => 1,
+		'element_id' => 2,
 	),
-	'inactive_reason' => array(
-			'id' => 2,
-			'name' => 'Inactive Reason',
-			'enabled' => false,
-			'display_order' => 2,
-			'last_modified_user_id' => 1,
-			'last_modified_date' => '1901-01-01 00:00:00',
-			'created_user_id' => 1,
-			'created_date' => '1901-01-01 00:00:00',
-	),
-	'reason3' => array(
-			'id' => 3,
-			'name' => 'Reason 3',
-			'enabled' => true,
-			'display_order' => 3,
-			'last_modified_user_id' => 1,
-			'last_modified_date' => '1901-01-01 00:00:00',
-			'created_user_id' => 1,
-			'created_date' => '1901-01-01 00:00:00',
+	1 => array(
+		'id' => 2,
+		'start_date' => '2014-01-01',
+		'end_date' => '2014-10-01',
+		'reason_id' => 1,
+		'element_id' => 2,
 	),
 );

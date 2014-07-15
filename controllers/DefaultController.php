@@ -182,20 +182,6 @@ class DefaultController extends OphTrOperationbookingEventController
 	}
 
 	/**
-	 * Set the patient unavailable periods for Element_OphTrOperationbooking_ScheduleOperation
-	 *
-	 * @param $element
-	 * @param $data
-	 * @param $index
-	 */
-	protected function saveComplexAttributes_Element_OphTrOperationbooking_ScheduleOperation($element, $data, $index)
-	{
-		// using the ProcedureSelection widget, so not a direct field on the operation element
-		$element->updatePatientUnavailables(isset($data['Element_OphTrOperationbooking_ScheduleOperation']['patient_unavailables']) ?
-				Helper::convertNHS2MySQL($data['Element_OphTrOperationbooking_ScheduleOperation']['patient_unavailables']) : array());
-	}
-
-	/**
 	 * Extend standard behaviour to perform validation of elements across the event
 	 *
 	 * @param array $data

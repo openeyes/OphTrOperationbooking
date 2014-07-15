@@ -48,6 +48,7 @@ return array(
 				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_EROD_RuleService',
 				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_Name_RuleService',
 				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_PriorityService',
+				'OEModule\OphTrOperationbooking\services\OphTrOperationbooking_ScheduleOperation_PatientUnavailableReasonService',
 			),
 		),
 	),

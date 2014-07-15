@@ -15,19 +15,6 @@
 
 namespace OEModule\OphTrOperationbooking\services;
 
-class Element_OphTrOperationbooking_ScheduleOperation extends \services\ElementDataObject
+class OphTrOperationbooking_ScheduleOperation_PatientUnavailableReasonReference extends \services\ModelReference
 {
-	public function relations()
-	{
-		return array(
-			'patient_unavailables',
-		);
-	}
-
-	public function references()
-	{
-		return array(
-			'schedule_options',
-		);
-	}
 }

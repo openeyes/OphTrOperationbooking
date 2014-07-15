@@ -15,19 +15,27 @@
 
 namespace OEModule\OphTrOperationbooking\services;
 
-class Element_OphTrOperationbooking_ScheduleOperation extends \services\ElementDataObject
+class OphTrOperationbooking_ScheduleOperation_PatientUnavailableReasonService extends \services\DeclarativeModelService
 {
-	public function relations()
-	{
-		return array(
-			'patient_unavailables',
-		);
-	}
+	static protected $operations = array(self::OP_READ, self::OP_UPDATE, self::OP_CREATE, self::OP_SEARCH);
 
-	public function references()
+	static protected $search_params = array(
+		'id' => self::TYPE_TOKEN,
+	);
+
+	static protected $primary_model = 'OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason';
+
+	static public $model_map = array(
+		'OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason' => array(
+			'fields' => array(
+				'name' => 'name',
+				'display_order' => 'display_order',
+				'enabled' => 'enabled',
+			),
+		),
+	);
+
+	public function search(array $params)
 	{
-		return array(
-			'schedule_options',
-		);
 	}
 }

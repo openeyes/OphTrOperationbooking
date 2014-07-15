@@ -37,7 +37,7 @@
 
 class Element_OphTrOperationbooking_ScheduleOperation extends BaseEventTypeElement
 {
-	public $service;
+	public $auto_update_relations = true;
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -64,7 +64,7 @@ class Element_OphTrOperationbooking_ScheduleOperation extends BaseEventTypeEleme
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('event_id, schedule_options_id, ', 'safe'),
+			array('event_id, schedule_options_id, patient_unavailables', 'safe'),
 			array('schedule_options_id, ', 'required'),
 			array('patient_unavailables', 'validateNoDateRangeOverlap'),
 			array('patient_unavailables', 'validateNoBookingCollision'),
@@ -196,58 +196,6 @@ $criteria->compare('schedule_options_id', $this->schedule_options_id);
 				}
 			}
 		}
-	}
-
-	/**
-	 * Set the patient unavailable objects for this element
-	 *
-	 * @param $unavailables
-	 * @throws Exception
-	 */
-	public function updatePatientUnavailables($unavailables)
-	{
-		$curr_by_id = array();
-		$save = array();
-		$criteria = new CDbCriteria();
-		$criteria->addCondition('element_id = :eid');
-		$criteria->params[':eid'] = $this->id;
-		foreach (OphTrOperationbooking_ScheduleOperation_PatientUnavailable::model()->findAll($criteria) as $c_pun) {
-			$curr_by_id[$c_pun->id] = $c_pun;
-		}
-
-		foreach ($unavailables as $unavailable) {
-			if (@$unavailable['id']) {
-				// it's an existing one
-				$obj = $curr_by_id[$unavailable['id']];
-				unset($curr_by_id[$unavailable['id']]);
-			}
-			else {
-				$obj = new OphTrOperationbooking_ScheduleOperation_PatientUnavailable();
-				$obj->element_id = $this->id;
-			}
-			$dosave = false;
-			foreach (array('start_date', 'end_date', 'reason_id') as $attr) {
-				if ($obj->$attr != $unavailable[$attr]) {
-					$dosave = true;
-					$obj->$attr = $unavailable[$attr];
-				}
-			}
-			if ($dosave) {
-				$save[] = $obj;
-			}
-		}
-		foreach ($save as $s) {
-			if (!$s->save()) {
-				throw new Exception("Unable to save Patient Unavailable " . print_r($s->getErrors(), true));
-			};
-		}
-
-		foreach ($curr_by_id as $id => $d) {
-			if (!$d->delete()) {
-				throw new Exception("Unable to delete Patient Unavailable " . print_r($d->getErrors(), true));
-			}
-		}
-
 	}
 
 	protected $_unavailable_dates;
