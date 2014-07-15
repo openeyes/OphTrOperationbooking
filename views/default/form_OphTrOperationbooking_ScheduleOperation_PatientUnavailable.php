@@ -16,12 +16,15 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
+<?php
+$dateFieldWidget = @$dateFieldWidget ?: 'DatePicker';
+?>
 <tr class="patient-unavailable" data-key="<?php echo $key ?>">
 	<td>
 		<?php if (isset($unavailable) && $unavailable->id) { ?>
 			<input type="hidden" name="<?php echo $element_name; ?>[patient_unavailables][<?php echo $key ?>][id]" value="<?php echo $unavailable->id?>" />
 		<?php } ?>
-		<?php $form->widget('application.widgets.DatePicker',array(
+		<?php $form->widget("application.widgets.{$dateFieldWidget}",array(
 						'element' => $unavailable,
 						'name' => $element_name . '[patient_unavailables]['.$key.'][start_date]',
 						'field' => 'start_date',
@@ -33,7 +36,7 @@
 		?>
 	</td>
 	<td>
-		<?php $form->widget('application.widgets.DatePicker',array(
+		<?php $form->widget("application.widgets.{$dateFieldWidget}",array(
 						'element' => $unavailable,
 						'name' => $element_name . '[patient_unavailables]['.$key.'][end_date]',
 						'field' => 'end_date',

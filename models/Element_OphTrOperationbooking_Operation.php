@@ -101,6 +101,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			array('cancellation_comment', 'length', 'max' => 200),
 			array('procedures', 'required', 'message' => 'At least one procedure must be entered'),
 			array('referral_id', 'validateReferral'),
+			array('decision_date', 'OEDateValidatorNotFuture'),
 			array('eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, total_duration', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
