@@ -62,10 +62,10 @@ class OphTrOperationbooking_ScheduleOperation_PatientUnavailable extends BaseAct
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-				'element' => array(self::BELONGS_TO, 'Element_OphTrOperationbooking_ScheduleOperation', 'element_id'),
-				'reason' => array(self::BELONGS_TO, 'OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason', 'reason_id'),
-				'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
-				'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
+			'element' => array(self::BELONGS_TO, 'Element_OphTrOperationbooking_ScheduleOperation', 'element_id'),
+			'reason' => array(self::BELONGS_TO, 'OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason', 'reason_id'),
+			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
+			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 		);
 	}
 
@@ -75,9 +75,9 @@ class OphTrOperationbooking_ScheduleOperation_PatientUnavailable extends BaseAct
 	public function attributeLabels()
 	{
 		return array(
-				'reason_id' => 'Reason',
-				'start_date' => 'Start Date',
-				'end_date' => 'End Date',
+			'reason_id' => 'Reason',
+			'start_date' => 'Start Date',
+			'end_date' => 'End Date',
 		);
 	}
 
