@@ -88,7 +88,6 @@ class Element_OphTrOperationbooking_ScheduleOperation extends BaseEventTypeEleme
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 			'schedule_options' => array(self::BELONGS_TO, 'OphTrOperationbooking_ScheduleOperation_Options', 'schedule_options_id'),
-			'schedule_options' => array(self::BELONGS_TO, 'OphTrOperationbooking_ScheduleOperation_Options', 'schedule_options_id'),
 			'patient_unavailables' => array(self::HAS_MANY, 'OphTrOperationbooking_ScheduleOperation_PatientUnavailable', 'element_id')
 		);
 	}
