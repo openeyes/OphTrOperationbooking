@@ -189,6 +189,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$total_eo = count(\Element_OphTrOperationbooking_Operation::model()->findAll());
 		$total_di = count(\Element_OphTrOperationbooking_Diagnosis::model()->findAll());
 		$total_sh = count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll());
+		$total_dls = count(\OphTrOperationbooking_Operation_Date_Letter_Sent::model()->findAll());
 
 		$ps = new EventService;
 		$patient = $ps->resourceToModel($resource, new \Event, false);
@@ -197,6 +198,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$this->assertEquals($total_eo, count(\Element_OphTrOperationbooking_Operation::model()->findAll()));
 		$this->assertEquals($total_di, count(\Element_OphTrOperationbooking_Diagnosis::model()->findAll()));
 		$this->assertEquals($total_sh, count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll()));
+		$this->assertEquals($total_dls, count(\OphTrOperationbooking_Operation_Date_Letter_Sent::model()->findAll()));
 	}
 
 	public function testResourceToModel_NoSave_ModelIsCorrect()
@@ -369,6 +371,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$total_di = count(\Element_OphTrOperationbooking_Diagnosis::model()->findAll());
 		$total_sh = count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll());
 		$total_b = count(\OphTrOperationbooking_Operation_Booking::model()->findAll());
+		$total_dls = count(\OphTrOperationbooking_Operation_Date_Letter_Sent::model()->findAll());
 
 		$ps = new EventService;
 		$event = $ps->resourceToModel($resource, new \Event);
@@ -378,6 +381,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$this->assertEquals($total_di+1, count(\Element_OphTrOperationbooking_Diagnosis::model()->findAll()));
 		$this->assertEquals($total_sh+1, count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll()));
 		$this->assertEquals($total_b+2, count(\OphTrOperationbooking_Operation_Booking::model()->findAll()));
+		$this->assertEquals($total_dls+1, count(\OphTrOperationbooking_Operation_Date_Letter_Sent::model()->findAll()));
 	}
 
 	public function testResourceToModel_Save_Create_ModelIsCorrect()
@@ -570,6 +574,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$total_di = count(\Element_OphTrOperationbooking_Diagnosis::model()->findAll());
 		$total_sh = count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll());
 		$total_b = count(\OphTrOperationbooking_Operation_Booking::model()->findAll());
+		$total_dls = count(\OphTrOperationbooking_Operation_Date_Letter_Sent::model()->findAll());
 
 		$ps = new EventService;
 		$event = $ps->resourceToModel($resource, $this->events('event6'));
@@ -579,6 +584,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$this->assertEquals($total_di, count(\Element_OphTrOperationbooking_Diagnosis::model()->findAll()));
 		$this->assertEquals($total_sh, count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll()));
 		$this->assertEquals($total_b-1, count(\OphTrOperationbooking_Operation_Booking::model()->findAll()));
+		$this->assertEquals($total_dls, count(\OphTrOperationbooking_Operation_Date_Letter_Sent::model()->findAll()));
 	}
 
 	public function testResourceToModel_Save_Update_ModelIsCorrect()
@@ -734,6 +740,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$total_eo = count(\Element_OphTrOperationbooking_Operation::model()->findAll());
 		$total_di = count(\Element_OphTrOperationbooking_Diagnosis::model()->findAll());
 		$total_sh = count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll());
+		$total_dls  = count(\OphTrOperationbooking_Operation_Date_Letter_Sent::model()->findAll());
 
 		$ps = new EventService;
 		$patient = $ps->jsonToModel($json, new \Event, false);
@@ -742,6 +749,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$this->assertEquals($total_eo, count(\Element_OphTrOperationbooking_Operation::model()->findAll()));
 		$this->assertEquals($total_di, count(\Element_OphTrOperationbooking_Diagnosis::model()->findAll()));
 		$this->assertEquals($total_sh, count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll()));
+		$this->assertEquals($total_dls, count(\OphTrOperationbooking_Operation_Date_Letter_Sent::model()->findAll()));
 	}
 
 	public function testJsonToModel_NoSave_ModelIsCorrect()
@@ -775,6 +783,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$total_di = count(\Element_OphTrOperationbooking_Diagnosis::model()->findAll());
 		$total_sh = count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll());
 		$total_b = count(\OphTrOperationbooking_Operation_Booking::model()->findAll());
+		$total_dls = count(\OphTrOperationbooking_Operation_Date_Letter_Sent::model()->findAll());
 
 		$ps = new EventService;
 		$event = $ps->jsonToModel($json, new \Event);
@@ -784,6 +793,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$this->assertEquals($total_di+1, count(\Element_OphTrOperationbooking_Diagnosis::model()->findAll()));
 		$this->assertEquals($total_sh+1, count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll()));
 		$this->assertEquals($total_b+2, count(\OphTrOperationbooking_Operation_Booking::model()->findAll()));
+		$this->assertEquals($total_dls+1, count(\OphTrOperationbooking_Operation_Date_Letter_Sent::model()->findAll()));
 	}
 
 	public function testJsonToModel_Save_Create_ModelIsCorrect()
@@ -819,6 +829,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$total_di = count(\Element_OphTrOperationbooking_Diagnosis::model()->findAll());
 		$total_sh = count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll());
 		$total_b = count(\OphTrOperationbooking_Operation_Booking::model()->findAll());
+		$total_dls = count(\OphTrOperationbooking_Operation_Date_Letter_Sent::model()->findAll());
 
 		$ps = new EventService;
 		$event = $ps->jsonToModel($json, $this->events('event6'));
@@ -828,6 +839,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$this->assertEquals($total_di, count(\Element_OphTrOperationbooking_Diagnosis::model()->findAll()));
 		$this->assertEquals($total_sh, count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll()));
 		$this->assertEquals($total_b-1, count(\OphTrOperationbooking_Operation_Booking::model()->findAll()));
+		$this->assertEquals($total_dls, count(\OphTrOperationbooking_Operation_Date_Letter_Sent::model()->findAll()));
 	}
 
 	public function testJsonToModel_Save_Update_ModelIsCorrect()
