@@ -275,7 +275,7 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecordVersioned
 	 */
 	protected function beforeValidate()
 	{
-		if ($this->session && !$this->display_order) {
+		if ($this->session && !isset($this->display_order)) {
 			$this->display_order = $this->calculateDefaultDisplayOrder();
 		}
 
