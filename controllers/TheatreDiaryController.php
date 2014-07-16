@@ -19,7 +19,6 @@
 
 class TheatreDiaryController extends BaseModuleController
 {
-	public $layout='//layouts/main';
 	public $renderPatientPanel = false;
 
 	public function accessRules()

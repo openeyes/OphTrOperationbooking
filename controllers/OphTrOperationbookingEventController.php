@@ -40,11 +40,4 @@ class OphTrOperationbookingEventController extends BaseEventTypeController
 		$criteria->order = 'received_date DESC';
 		return Referral::model()->findAll($criteria);
 	}
-
-	protected function beforeAction($action)
-	{
-		Yii::app()->clientScript->registerScriptFile($this->assetPath.'/js/module.js');
-
-		return parent::beforeAction($action);
-	}
 }

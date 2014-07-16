@@ -30,12 +30,10 @@ class BookingController extends OphTrOperationbookingEventController
 	/** @var Element_OphTrOperation_Operation $operation */
 	protected $operation = null;
 
-	protected function beforeAction($action)
+	protected function registerAssets()
 	{
-		Yii::app()->clientScript->registerScriptFile($this->assetPath.'/js/booking.js');
-		Yii::app()->assetManager->registerScriptFile('js/jquery.validate.min.js');
-		Yii::app()->assetManager->registerScriptFile('js/additional-validators.js');
-		return parent::beforeAction($action);
+		parent::registerAssets();
+		Yii::app()->clientScript->registerPackage('booking');
 	}
 
 	/**

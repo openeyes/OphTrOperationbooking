@@ -32,6 +32,15 @@ return array(
 				),
 			),
 		),
+		'clientScript' => array(
+			'packages' => array(
+				'booking' => array(
+					'js' => array('js/booking.js'),
+					'basePath' => 'application.modules.OphTrOperationbooking.assets',
+					'depends' => array('jquery.validation')
+				)
+			)
+		)
 	),
 	'params' => array(
 		'menu_bar_items' => array(
