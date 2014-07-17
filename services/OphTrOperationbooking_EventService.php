@@ -17,4 +17,13 @@ namespace OEModule\OphTrOperationbooking\services;
 
 class OphTrOperationbooking_EventService extends \services\EventService
 {
+	public function resourceToModel_AfterSave_Element_OphTrOperationbooking_Operation($element)
+	{
+		foreach ($element->allBookings as $i => $booking) {
+			if ($erod = $booking->erod) {
+				$erod->booking_id = $booking->id;
+				$this->saveModel($erod);
+			}
+		}
+	}
 }

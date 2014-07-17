@@ -17,7 +17,7 @@ namespace OEModule\OphTrOperationbooking\services;
 
 class Element_OphTrOperationbooking_ScheduleOperation extends \services\ElementDataObject
 {
-	public function relations()
+	public function dataobject_relations()
 	{
 		return array(
 			'patient_unavailables',

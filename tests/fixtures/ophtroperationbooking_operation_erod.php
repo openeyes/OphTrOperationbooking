@@ -15,10 +15,18 @@
 
 return array(
 	'erod1' => array(
-		'element_id' => 1,
+		'booking_id' => 2,
 		'session_id' => 1,
-		'session_date' => date('Y-m-d', strtotime('-2 weeks')),
+		'session_date' => '2013-01-01',
 		'session_start_time' => '10:00:00',
 		'session_end_time' => '12:00:00',
-	)
+		'firm_id' => 1,
+		'consultant' => 1,
+		'paediatric' => 1,
+		'anaesthetist' => 1,
+		'general_anaesthetic' => 1,
+		'session_duration' => 10000,
+		'total_operations_time' => 1000,
+		'available_time' => 900,
+	),
 );

@@ -45,13 +45,14 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		'reasons' => 'OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason',
 		'unavail' => 'OphTrOperationbooking_ScheduleOperation_PatientUnavailable',
 		'priorities' => 'OphTrOperationbooking_Operation_Priority',
+		'erods' => 'OphTrOperationbooking_Operation_EROD',
 	);
 
 	public function testModelToResource()
 	{
 		$event = $this->events('event6');
 
-		$ps = new EventService;
+		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_EventService;
 
 		$resource = $ps->modelToResource($event);
 
@@ -137,6 +138,22 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$this->assertEquals('',$resource->elements[1]->allBookings[0]->cancellation_comment);
 		$this->assertNull($resource->elements[1]->allBookings[0]->cancellation_user_ref->getId());
 
+		$this->assertInstanceOf('OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_EROD',$resource->elements[1]->allBookings[0]->erod);
+		$this->assertInstanceOf('services\Date',$resource->elements[1]->allBookings[0]->erod->session_date);
+		$this->assertEquals('10:00:00',$resource->elements[1]->allBookings[0]->erod->session_start_time);
+		$this->assertEquals('12:00:00',$resource->elements[1]->allBookings[0]->erod->session_end_time);
+		$this->assertEquals(1,$resource->elements[1]->allBookings[0]->erod->consultant);
+		$this->assertEquals(1,$resource->elements[1]->allBookings[0]->erod->paediatric);
+		$this->assertEquals(1,$resource->elements[1]->allBookings[0]->erod->anaesthetist);
+		$this->assertEquals(1,$resource->elements[1]->allBookings[0]->erod->general_anaesthetic);
+		$this->assertEquals(10000,$resource->elements[1]->allBookings[0]->erod->session_duration);
+		$this->assertEquals(1000,$resource->elements[1]->allBookings[0]->erod->total_operations_time);
+		$this->assertEquals(900,$resource->elements[1]->allBookings[0]->erod->available_time);
+		$this->assertInstanceOf('OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_SessionReference',$resource->elements[1]->allBookings[0]->erod->session_ref);
+		$this->assertEquals(1,$resource->elements[1]->allBookings[0]->erod->session_ref->getId());
+		$this->assertInstanceOf('services\FirmReference',$resource->elements[1]->allBookings[0]->erod->firm_ref);
+		$this->assertEquals(1,$resource->elements[1]->allBookings[0]->erod->firm_ref->getId());
+
 		$this->assertInstanceOf('OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_Booking',$resource->elements[1]->allBookings[1]);
 		$this->assertEquals($event->elements[1]->allBookings[1]->id,$resource->elements[1]->allBookings[1]->getId());
 		$this->assertInstanceOf('OEModule\OphTrOperationbooking\services\OphTrOperationbooking_Operation_SessionReference',$resource->elements[1]->allBookings[1]->session_ref);
@@ -158,6 +175,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$this->assertEquals('cancelled due to biro shortage',$resource->elements[1]->allBookings[1]->cancellation_comment);
 		$this->assertInstanceOf('services\UserReference',$resource->elements[1]->allBookings[1]->cancellation_user_ref);
 		$this->assertEquals(1,$resource->elements[1]->allBookings[1]->cancellation_user_ref->getId());
+		$this->assertNull($resource->elements[1]->allBookings[1]->erod);
 
 		$this->assertInstanceOf('OEModule\OphTrOperationbooking\services\Element_OphTrOperationbooking_ScheduleOperation',$resource->elements[2]);
 		$this->assertEquals($event->elements[2]->id,$resource->elements[2]->getId());
@@ -191,7 +209,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$total_sh = count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll());
 		$total_dls = count(\OphTrOperationbooking_Operation_Date_Letter_Sent::model()->findAll());
 
-		$ps = new EventService;
+		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_EventService;
 		$patient = $ps->resourceToModel($resource, new \Event, false);
 
 		$this->assertEquals($total_events, count(\Event::model()->findAll()));
@@ -205,7 +223,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 	{
 		$resource = $this->getResource();
 
-		$ps = new EventService;
+		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_EventService;
 		$event = $ps->resourceToModel($resource, new \Event, false);
 
 		$this->verifyUnchangedEvent($event, $resource);
@@ -296,6 +314,11 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$this->assertEquals('',$event->elements[1]->allBookings[0]->cancellation_comment);
 		$this->assertNull($event->elements[1]->allBookings[0]->cancellation_user_id);
 
+		$this->assertInstanceOf('OphTrOperationbooking_Operation_EROD',$event->elements[1]->allBookings[0]->erod);
+		foreach ($event->elements[1]->allBookings[0]->erod->getAttributes() as $key => $value) {
+			$this->assertEquals($this->erods('erod1')->$key,$value);
+		}
+
 		$this->assertInstanceOf('OphTrOperationbooking_Operation_Booking',$event->elements[1]->allBookings[1]);
 		$this->assertInstanceOf('OphTrOperationbooking_Operation_Session',$event->elements[1]->allBookings[1]->session);
 		$this->assertEquals(3,$event->elements[1]->allBookings[1]->session_id);
@@ -321,6 +344,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$this->assertInstanceOf('User',$event->elements[1]->allBookings[1]->cancellation_user);
 		$this->assertEquals(1,$event->elements[1]->allBookings[1]->cancellation_user_id);
 		$this->assertEquals(1,$event->elements[1]->allBookings[1]->cancellation_user->id);
+		$this->assertNull($event->elements[1]->allBookings[1]->erod);
 
 		$this->assertInstanceOf('Element_OphTrOperationbooking_ScheduleOperation',$event->elements[2]);
 		$this->assertInstanceOf('OphTrOperationbooking_ScheduleOperation_Options',$event->elements[2]->schedule_options);
@@ -346,8 +370,12 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$resource->elements[1]->setId(null);
 		$resource->elements[2]->setId(null);
 
-		$resource->elements[1]->allBookings[0]->setId(null);
-		$resource->elements[1]->allBookings[1]->setId(null);
+		foreach ($resource->elements[1]->allBookings as $i => $booking) {
+			$resource->elements[1]->allBookings[$i]->setId(null);
+			if ($resource->elements[1]->allBookings[$i]->erod) {
+				$resource->elements[1]->allBookings[$i]->erod->setId(null);
+			}
+		}
 
 		$resource->elements[1]->anaesthetic_type = 'Topical';
 
@@ -373,7 +401,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$total_b = count(\OphTrOperationbooking_Operation_Booking::model()->findAll());
 		$total_dls = count(\OphTrOperationbooking_Operation_Date_Letter_Sent::model()->findAll());
 
-		$ps = new EventService;
+		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_EventService;
 		$event = $ps->resourceToModel($resource, new \Event);
 
 		$this->assertEquals($total_events+1, count(\Event::model()->findAll()));
@@ -388,7 +416,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 	{
 		$resource = $this->getNewResource();
 
-		$ps = new EventService;
+		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_EventService;
 		$event = $ps->resourceToModel($resource, new \Event);
 
 		$this->verifyNewEvent($event);
@@ -477,6 +505,15 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$this->assertEquals('',$event->elements[1]->allBookings[0]->cancellation_comment);
 		$this->assertNull($event->elements[1]->allBookings[0]->cancellation_user_id);
 
+		$this->assertInstanceOf('OphTrOperationbooking_Operation_EROD',$event->elements[1]->allBookings[0]->erod);
+		foreach ($event->elements[1]->allBookings[0]->erod->getAttributes() as $key => $value) {
+			if (!in_array($key,array('id','booking_id','created_date','last_modified_date'))) {
+				$this->assertEquals($this->erods('erod1')->$key,$value);
+			}
+		}
+
+		$this->assertEquals($event->elements[1]->allBookings[0]->id,$event->elements[1]->allBookings[0]->erod->booking_id);
+
 		$this->assertInstanceOf('OphTrOperationbooking_Operation_Booking',$event->elements[1]->allBookings[1]);
 		$this->assertInstanceOf('OphTrOperationbooking_Operation_Session',$event->elements[1]->allBookings[1]->session);
 		$this->assertEquals(3,$event->elements[1]->allBookings[1]->session_id);
@@ -501,6 +538,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$this->assertInstanceOf('User',$event->elements[1]->allBookings[1]->cancellation_user);
 		$this->assertEquals(1,$event->elements[1]->allBookings[1]->cancellation_user_id);
 		$this->assertEquals(1,$event->elements[1]->allBookings[1]->cancellation_user->id);
+		$this->assertNull($event->elements[1]->allBookings[1]->erod);
 
 		$this->assertInstanceOf('Element_OphTrOperationbooking_ScheduleOperation',$event->elements[2]);
 		$this->assertInstanceOf('OphTrOperationbooking_ScheduleOperation_Options',$event->elements[2]->schedule_options);
@@ -516,7 +554,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 	{
 		$resource = $this->getNewResource();
 
-		$ps = new EventService;
+		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_EventService;
 		$event = $ps->resourceToModel($resource, new \Event);
 		$event = \Event::model()->findByPk($event->id);
 
@@ -576,7 +614,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$total_b = count(\OphTrOperationbooking_Operation_Booking::model()->findAll());
 		$total_dls = count(\OphTrOperationbooking_Operation_Date_Letter_Sent::model()->findAll());
 
-		$ps = new EventService;
+		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_EventService;
 		$event = $ps->resourceToModel($resource, $this->events('event6'));
 
 		$this->assertEquals($total_events, count(\Event::model()->findAll()));
@@ -596,7 +634,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$booking->save();
 		$resource = $this->getModifiedResource();
 
-		$ps = new EventService;
+		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_EventService;
 		$event = $ps->resourceToModel($resource, $this->events('event6'));
 
 		$this->modified_event_assertions($resource, $event);
@@ -612,7 +650,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 
 		$resource = $this->getModifiedResource();
 
-		$ps = new EventService;
+		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_EventService;
 		$event = $ps->resourceToModel($resource, $this->events('event6'));
 		$event = \Event::model()->findByPk($event->id);
 
@@ -723,7 +761,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 
 		$json = $resource->serialise();
 
-		$ps = new EventService;
+		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_EventService;
 		$resource = $ps->jsonToResource($json);
 
 		$this->verifyResource($resource, $event);
@@ -740,9 +778,9 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$total_eo = count(\Element_OphTrOperationbooking_Operation::model()->findAll());
 		$total_di = count(\Element_OphTrOperationbooking_Diagnosis::model()->findAll());
 		$total_sh = count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll());
-		$total_dls  = count(\OphTrOperationbooking_Operation_Date_Letter_Sent::model()->findAll());
+		$total_dls	= count(\OphTrOperationbooking_Operation_Date_Letter_Sent::model()->findAll());
 
-		$ps = new EventService;
+		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_EventService;
 		$patient = $ps->jsonToModel($json, new \Event, false);
 
 		$this->assertEquals($total_events, count(\Event::model()->findAll()));
@@ -757,7 +795,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$resource = $this->getResource();
 		$json = $resource->serialise();
 
-		$ps = new EventService;
+		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_EventService;
 		$event = $ps->jsonToModel($json, new \Event, false);
 
 		$this->verifyUnchangedEvent($event, $resource);
@@ -765,16 +803,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 
 	public function testJsonToModel_Save_Create_ModelCountsCorrect()
 	{
-		$resource = $this->getResource();
-
-		$resource->elements[0]->setId(null);
-		$resource->elements[1]->setId(null);
-		$resource->elements[2]->setId(null);
-
-		$resource->elements[1]->allBookings[0]->setId(null);
-		$resource->elements[1]->allBookings[1]->setId(null);
-
-		$resource->elements[1]->anaesthetic_type = 'Topical';
+		$resource = $this->getNewResource();
 
 		$json = $resource->serialise();
 
@@ -784,8 +813,9 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$total_sh = count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll());
 		$total_b = count(\OphTrOperationbooking_Operation_Booking::model()->findAll());
 		$total_dls = count(\OphTrOperationbooking_Operation_Date_Letter_Sent::model()->findAll());
+		$total_e = count(\OphTrOperationbooking_Operation_EROD::model()->findAll());
 
-		$ps = new EventService;
+		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_EventService;
 		$event = $ps->jsonToModel($json, new \Event);
 
 		$this->assertEquals($total_events+1, count(\Event::model()->findAll()));
@@ -794,6 +824,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$this->assertEquals($total_sh+1, count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll()));
 		$this->assertEquals($total_b+2, count(\OphTrOperationbooking_Operation_Booking::model()->findAll()));
 		$this->assertEquals($total_dls+1, count(\OphTrOperationbooking_Operation_Date_Letter_Sent::model()->findAll()));
+		$this->assertEquals($total_e+1, count(\OphTrOperationbooking_Operation_EROD::model()->findAll()));
 	}
 
 	public function testJsonToModel_Save_Create_ModelIsCorrect()
@@ -801,7 +832,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$resource = $this->getNewResource();
 		$json = $resource->serialise();
 
-		$ps = new EventService;
+		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_EventService;
 		$event = $ps->jsonToModel($json, new \Event);
 
 		$this->verifyNewEvent($event);
@@ -812,7 +843,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$resource = $this->getNewResource();
 		$json = $resource->serialise();
 
-		$ps = new EventService;
+		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_EventService;
 		$event = $ps->jsonToModel($json, new \Event);
 		$event = \Event::model()->findByPk($event->id);
 
@@ -830,8 +861,9 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$total_sh = count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll());
 		$total_b = count(\OphTrOperationbooking_Operation_Booking::model()->findAll());
 		$total_dls = count(\OphTrOperationbooking_Operation_Date_Letter_Sent::model()->findAll());
+		$total_e = count(\OphTrOperationbooking_Operation_EROD::model()->findAll());
 
-		$ps = new EventService;
+		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_EventService;
 		$event = $ps->jsonToModel($json, $this->events('event6'));
 
 		$this->assertEquals($total_events, count(\Event::model()->findAll()));
@@ -840,6 +872,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$this->assertEquals($total_sh, count(\Element_OphTrOperationbooking_ScheduleOperation::model()->findAll()));
 		$this->assertEquals($total_b-1, count(\OphTrOperationbooking_Operation_Booking::model()->findAll()));
 		$this->assertEquals($total_dls, count(\OphTrOperationbooking_Operation_Date_Letter_Sent::model()->findAll()));
+		$this->assertEquals($total_e, count(\OphTrOperationbooking_Operation_EROD::model()->findAll()));
 	}
 
 	public function testJsonToModel_Save_Update_ModelIsCorrect()
@@ -853,7 +886,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$resource = $this->getModifiedResource();
 		$json = $resource->serialise();
 
-		$ps = new EventService;
+		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_EventService;
 		$event = $ps->jsonToModel($json, $this->events('event6'));
 
 		$this->modified_event_assertions($resource, $event);
@@ -870,7 +903,7 @@ class OphTrOperationbooking_EventServiceTest extends \CDbTestCase
 		$resource = $this->getModifiedResource();
 		$json = $resource->serialise();
 
-		$ps = new EventService;
+		$ps = new \OEModule\OphTrOperationbooking\services\OphTrOperationbooking_EventService;
 		$event = $ps->jsonToModel($json, $this->events('event6'));
 		$event = \Event::model()->findByPk($event->id);
 

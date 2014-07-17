@@ -42,7 +42,14 @@ class OphTrOperationbooking_Operation_Booking extends \services\ElementDataObjec
 		);
 	}
 
-	public function relations()
+	public function dataobject_relations()
+	{
+		return array(
+			'erod',
+		);
+	}
+
+	public function lookup_relations()
 	{
 		return array(
 			'cancellationReason',

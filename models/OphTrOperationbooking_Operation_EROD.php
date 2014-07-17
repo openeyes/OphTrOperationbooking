@@ -85,6 +85,7 @@ class OphTrOperationbooking_Operation_EROD extends BaseActiveRecordVersioned
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 			'firm' => array(self::BELONGS_TO, 'Firm', 'firm_id'),
+			'session' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Session', 'session_id'),
 		);
 	}
 

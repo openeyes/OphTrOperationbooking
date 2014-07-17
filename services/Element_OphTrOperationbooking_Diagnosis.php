@@ -17,7 +17,7 @@ namespace OEModule\OphTrOperationbooking\services;
 
 class Element_OphTrOperationbooking_Diagnosis extends \services\ElementDataObject
 {
-	public function relations()
+	public function lookup_relations()
 	{
 		return array('eye');
 	}

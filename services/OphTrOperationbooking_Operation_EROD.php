@@ -15,63 +15,29 @@
 
 namespace OEModule\OphTrOperationbooking\services;
 
-class Element_OphTrOperationbooking_Operation extends \services\ElementDataObject
+class OphTrOperationbooking_Operation_EROD extends \services\ElementDataObject
 {
 	public function fields()
 	{
 		return array(
-			'consultant_required',
-			'overnight_stay',
-			'decision_date',
-			'comments',
-			'total_duration',
-			'anaesthetist_required',
-			'operation_cancellation_date',
-			'cancellation_comment',
-			'comments_rtt',
-			'latest_booking_id',
-		);
-	}
-
-	public function lookup_relations()
-	{
-		return array(
-			'eye',
-			'anaesthetic_type',
-			'priority',
-			'status',
-			'cancellation_reason',
-		);
-	}
-
-	public function dataobject_relations()
-	{
-		return array(
-			'procedures',
-			'allBookings',
-		);
-	}
-
-	public function relation_fields()
-	{
-		return array(
-			'date_letter_sent' => array(
-				'date_invitation_letter_sent',
-				'date_1st_reminder_letter_sent',
-				'date_2nd_reminder_letter_sent',
-				'date_gp_letter_sent',
-				'date_scheduling_letter_sent',
-			)
+			'session_date',
+			'session_start_time',
+			'session_end_time',
+			'consultant',
+			'paediatric',
+			'anaesthetist',
+			'general_anaesthetic',
+			'session_duration',
+			'total_operations_time',
+			'available_time',
 		);
 	}
 
 	public function references()
 	{
 		return array(
-			'site',
-			'cancellation_user',
-			'referral',
-			'rtt',
+			'session',
+			'firm',
 		);
 	}
 }
