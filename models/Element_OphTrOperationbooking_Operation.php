@@ -123,7 +123,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			'op_user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'op_usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
 			'eye' => array(self::BELONGS_TO, 'Eye', 'eye_id'),
-			'procedures' => array(self::HAS_MANY, 'Procedure', 'proc_id', 'through' => 'procedure_assignment', 'order' => 'display_order asc'),
+			'procedures' => array(self::HAS_MANY, 'Procedure', 'proc_id', 'through' => 'procedure_assignment', 'order' => 'procedure_assignment.display_order asc'),
 			'procedure_assignment' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Procedures', 'element_id'),
 			'anaesthetic_type' => array(self::BELONGS_TO, 'AnaestheticType', 'anaesthetic_type_id'),
 			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
