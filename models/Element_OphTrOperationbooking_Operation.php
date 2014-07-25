@@ -1031,6 +1031,9 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			}
 		}
 
+		// If left true this will break horribly
+		$this->auto_update_relations = false;
+
 		if (!$this->save()) {
 			throw new Exception('Unable to update operation data: '.print_r($this->getErrors(),true));
 		}
