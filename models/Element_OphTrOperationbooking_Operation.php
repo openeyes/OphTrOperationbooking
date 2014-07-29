@@ -533,7 +533,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 					$date = "$year-$month-".str_pad($i,2,'0',STR_PAD_LEFT);
 					if (in_array($date,$dates)) {
 						$open = $full = 0;
-
+						$status = "";
 						if (strtotime($date) < strtotime(date('Y-m-d'))) {
 							$status = 'inthepast';
 						} else {
