@@ -22,7 +22,7 @@
 <table>
 	<tr>
 		<th>
-			Hospital Number
+			<?php echo $patient->getAttributeLabel('hos_num')?>
 		</th>
 		<td>
 			<?php echo $patient->hos_num?>
@@ -37,10 +37,10 @@
 
 	<tr>
 		<th>
-			NHS Number
+			<?php echo $patient->getAttributeLabel('nhs_num')?>
 		</th>
 		<td>
-			<?php echo $patient->nhsnum?>
+			<?php echo $patient->nhs_num?>
 		</td>
 		<th rowspan="2">
 			Address
