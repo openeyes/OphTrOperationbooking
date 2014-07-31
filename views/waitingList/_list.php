@@ -35,7 +35,7 @@
 		<tr>
 			<th>Letters sent</th>
 			<th>Patient</th>
-			<th>Hospital number</th>
+			<th><?php echo Patient::model()->getAttributeLabel('hos_num')?></th>
 			<th>Location</th>
 			<th>Procedure</th>
 			<th>Eye</th>
