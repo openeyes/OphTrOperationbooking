@@ -40,7 +40,7 @@
 			<?php echo $patient->getAttributeLabel('nhs_num')?>
 		</th>
 		<td>
-			<?php echo $patient->nhs_num?>
+			<?php echo $patient->nhsnum?>
 		</td>
 		<th rowspan="2">
 			Address

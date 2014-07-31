@@ -24,7 +24,7 @@
 		echo $patient->fullname . ', ';
 	} ?>
 	<strong><?php echo $patient->getAttributeLabel('hos_num')?>: <?php echo $patient->hos_num; ?>
-	<?php if ($patient->nhsnum) { ?><br/> <?php echo $patient->getAttributeLabel('nhs_num')?>: <?php echo $patient->nhs_num; } ?>
+	<?php if ($patient->nhsnum) { ?><br/> <?php echo $patient->getAttributeLabel('nhs_num')?>: <?php echo $patient->nhsnum; } ?>
 	<?php if (@$patient_ref) { ?>
 	<br /><?php echo $patient->getLetterAddress(array('delimiter' => ', '))?>
 	<br />DOB: <?php echo $patient->NHSDate('dob') ?>, <?php echo ($patient->gender ? $patient->gender->name : 'Gender unknown')?>
