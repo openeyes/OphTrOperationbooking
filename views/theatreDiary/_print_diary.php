@@ -58,7 +58,7 @@ foreach ($diary as $i => $theatre) {?>
 			<table class="d_data">
 				<tbody>
 					<tr>
-						<th>HOSPT NO</th>
+						<th><?php echo strtoupper(Patient::model()->getAttributeLabel('hos_num'))?></th>
 						<th>PATIENT</th>
 						<th>AGE</th>
 						<th>WARD</th>
