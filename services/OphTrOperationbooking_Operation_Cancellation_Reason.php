@@ -19,6 +19,6 @@ class OphTrOperationbooking_Operation_Cancellation_Reason extends \services\Reso
 {
 	public $text;
 	public $parent_ref;
-	public $list_no;
+	public $list_id;
 	public $active;
 }

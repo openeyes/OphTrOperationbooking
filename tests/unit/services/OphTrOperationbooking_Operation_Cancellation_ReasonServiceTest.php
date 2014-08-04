@@ -36,7 +36,7 @@ class OphTrOperationbooking_Operation_Cancellation_ReasonServiceTest extends \CD
 	{
 		$this->assertNull($resource->parent_ref);
 
-		foreach (array('text','list_no','active') as $field) {
+		foreach (array('text','list_id','active') as $field) {
 			$this->assertEquals($this->reasons('cr1')->$field,$resource->$field);
 		}
 	}
@@ -72,7 +72,7 @@ class OphTrOperationbooking_Operation_Cancellation_ReasonServiceTest extends \CD
 	{
 		$this->assertInstanceOf('OphTrOperationbooking_Operation_Cancellation_Reason',$reason);
 
-		foreach (array('text','list_no','active') as $field) {
+		foreach (array('text','list_id','active') as $field) {
 			$this->assertEquals($resource->$field,$reason->$field);
 		}
 	}
@@ -82,7 +82,7 @@ class OphTrOperationbooking_Operation_Cancellation_ReasonServiceTest extends \CD
 		$resource = $this->getResource();
 
 		$resource->text = 'wabwabwab';
-		$resource->list_no = 24;
+		$resource->list_id = 24;
 
 		return $resource;
 	}
@@ -104,7 +104,7 @@ class OphTrOperationbooking_Operation_Cancellation_ReasonServiceTest extends \CD
 		$this->assertInstanceOf('OphTrOperationbooking_Operation_Cancellation_Reason',$reason);
 
 		$this->assertEquals('wabwabwab',$reason->text);
-		$this->assertEquals(24,$reason->list_no);
+		$this->assertEquals(24,$reason->list_id);
 	}
 
 	public function testResourceToModel_Save_Create_ModelIsCorrect()

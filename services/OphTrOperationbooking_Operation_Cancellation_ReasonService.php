@@ -30,7 +30,7 @@ class OphTrOperationbooking_Operation_Cancellation_ReasonService extends \servic
 			'fields' => array(
 				'parent_ref' => array(self::TYPE_REF, 'parent_id', 'OphTrOperationbooking_Operation_Cancellation_Reason'),
 				'text' => 'text',
-				'list_no' => 'list_no',
+				'list_id' => 'list_id',
 				'active' => 'active',
 			),
 		),

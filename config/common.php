@@ -78,7 +78,8 @@ return array(
 			'Operation name rules' => '/OphTrOperationbooking/admin/viewOperationNameRules',
 			'Waiting list contact rules' => '/OphTrOperationbooking/admin/viewWaitingListContactRules',
 			'Patient unavailable reasons' => '/OphTrOperationbooking/admin/viewPatientUnavailableReasons',
-			'Session unavailable reasons' => '/OphTrOperationbooking/admin/viewSessionUnavailableReasons'
+			'Session unavailable reasons' => '/OphTrOperationbooking/admin/viewSessionUnavailableReasons',
+			'Cancellation reasons' => '/OphTrOperationbooking/admin/viewCancellationReasons',
 		),
 		// Default anaesthetic settings
 		//'ophtroperationbooking_default_anaesthetic_child' => 'GA',

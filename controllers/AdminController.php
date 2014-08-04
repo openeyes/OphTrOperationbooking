@@ -1921,4 +1921,111 @@ class AdminController extends ModuleAdminController
 
 		Audit::add('admin', $action, serialize($_POST), false, array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Session_UnavailableReason'));
 	}
+
+	public function actionViewCancellationReasons()
+	{
+		Audit::add('admin','list',null,null,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Cancellation_Reason'));
+
+		if (!$list_id = @$_GET['list_id']) {
+			$list_id = 1;
+		}
+
+		if (!$list = OphTrOperationbooking_Operation_Cancellation_Reason_List::model()->findByPk($list_id)) {
+			throw new Exception("List not found: $list_id");
+		}
+
+		$this->render('cancellation_reasons',array(
+			'list' => $list,
+		));
+	}
+
+	public function actionSortCancellationReasons()
+	{
+		if (!empty($_POST['order'])) {
+			foreach ($_POST['order'] as $i => $id) {
+				if ($reason = OphTrOperationbooking_Operation_Cancellation_Reason::model()->findByPk($id)) {
+					$reason->order = $i+1;
+
+					if (!$reason->save()) {
+						throw new Exception("Unable to save cancellation reason: ".print_r($reason->getErrors(),true));
+					}
+				}
+			}
+
+			Audit::add('admin','sort',null,null,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Cancellation_Reason'));
+		}
+	}
+
+	public function actionAddCancellationReason()
+	{
+		$reason = new OphTrOperationbooking_Operation_Cancellation_Reason;
+
+		$errors = array();
+	
+		if (!empty($_POST)) {
+			$reason->attributes = $_POST['OphTrOperationbooking_Operation_Cancellation_Reason'];
+
+			if (!$reason->save()) {
+				$errors = $reason->getErrors();
+			} else {
+				Audit::add('admin','create',$reason->id,null,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Cancellation_Reason'));
+
+				$this->redirect(array('/OphTrOperationbooking/admin/viewCancellationReasons?list_id='.$reason->list_id));
+			}
+		}
+
+		$this->render('edit_cancellation_reason',array(
+			'reason' => $reason,
+			'errors' => $errors,
+		));
+	}
+
+	public function actionEditCancellationReason($id)
+	{
+		if (!$reason = OphTrOperationbooking_Operation_Cancellation_Reason::model()->findByPk($id)) {
+			throw new Exception("Cancellation reason not found: $id");
+		}
+
+		$errors = array();
+
+		if (!empty($_POST)) {
+			$reason->attributes = $_POST['OphTrOperationbooking_Operation_Cancellation_Reason'];
+
+			if (!$reason->save()) {
+				$errors = $reason->getErrors();
+			} else {
+				Audit::add('admin','update',$id,null,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Cancellation_Reason'));
+
+				$this->redirect(array('/OphTrOperationbooking/admin/viewCancellationReasons?list_id='.$reason->list_id));
+			}
+		}
+
+		Audit::add('admin','view',$id,null,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Cancellation_Reason'));
+
+		$this->render('edit_cancellation_reason',array(
+			'reason' => $reason,
+			'errors' => $errors,
+		));
+	}
+
+	public function actionDeleteCancellationReasons()
+	{
+		if (!empty($_POST['reasons'])) {
+			$criteria = new CDbCriteria;
+
+			$criteria->addInCondition('id',$_POST['reasons']);
+
+			foreach (OphTrOperationbooking_Operation_Cancellation_Reason::model()->findAll($criteria) as $reason) {
+				$reason->active = 0;
+
+				if (!$reason->save()) {
+					throw new Exception("Unable to save cancellation reason: ".print_r($reason->getErrors(),true));
+				}
+			}
+
+			Audit::add('admin','delete',implode(',',$_POST['reasons']),null,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_Cancellation_Reason'));
+		}
+
+		echo "1";
+	}
 }

@@ -27,7 +27,7 @@
  *
  */
 
-class OphTrOperationbooking_Operation_Cancellation_Reason extends BaseActiveRecordVersioned
+class OphTrOperationbooking_Operation_Cancellation_Reason_List extends BaseActiveRecordVersioned
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -43,7 +43,7 @@ class OphTrOperationbooking_Operation_Cancellation_Reason extends BaseActiveReco
 	 */
 	public function tableName()
 	{
-		return 'ophtroperationbooking_operation_cancellation_reason';
+		return 'ophtroperationnote_operation_cancellation_reason_list';
 	}
 
 	/**
@@ -54,11 +54,11 @@ class OphTrOperationbooking_Operation_Cancellation_Reason extends BaseActiveReco
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, list_id, active', 'safe'),
-			array('name, list_id', 'required'),
+			array('name', 'safe'),
+			array('name', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, name, parent_id, list_id', 'safe', 'on' => 'search'),
+			array('id, name', 'safe', 'on' => 'search'),
 		);
 	}
 
@@ -75,7 +75,7 @@ class OphTrOperationbooking_Operation_Cancellation_Reason extends BaseActiveReco
 			'event' => array(self::BELONGS_TO, 'Event', 'event_id'),
 			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
 			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
-			'list' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Cancellation_Reason_List', 'list_id'),
+			'reasons' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Cancellation_Reason', 'list_id', 'order' => 'order asc'),
 		);
 	}
 
@@ -85,13 +85,6 @@ class OphTrOperationbooking_Operation_Cancellation_Reason extends BaseActiveReco
 	public function attributeLabels()
 	{
 		return array(
-		);
-	}
-
-	public function behaviors()
-	{
-		return array(
-			'LookupTable' => 'LookupTable',
 		);
 	}
 
@@ -110,17 +103,7 @@ class OphTrOperationbooking_Operation_Cancellation_Reason extends BaseActiveReco
 		$criteria->compare('name', $this->name, true);
 
 		return new CActiveDataProvider(get_class($this), array(
-				'criteria' => $criteria,
-			));
-	}
-
-	public static function getReasonsByListNumber($listNo = 2)
-	{
-		$criteria = new CDbCriteria;
-		$criteria->addCondition('list_id = :listNo');
-		$criteria->params[':listNo'] = $listNo;
-		$criteria->order = 'name asc';
-
-		return CHtml::listData(self::model()->active()->findAll($criteria),'id','name');
+			'criteria' => $criteria,
+		));
 	}
 }

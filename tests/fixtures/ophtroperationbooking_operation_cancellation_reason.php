@@ -20,7 +20,7 @@
 return array(
 	'cr1' => array(
 		'text' => 'ran out of biros',
-		'list_no' => 1,
+		'list_id' => 1,
 		'active' => 1,
 	)
 );
