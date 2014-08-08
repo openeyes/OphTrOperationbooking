@@ -36,7 +36,7 @@ class OphTrOperationbooking_Operation_Cancellation_ReasonServiceTest extends \CD
 	{
 		$this->assertNull($resource->parent_ref);
 
-		foreach (array('text','list_id','active') as $field) {
+		foreach (array('name','list_id','active') as $field) {
 			$this->assertEquals($this->reasons('cr1')->$field,$resource->$field);
 		}
 	}
@@ -72,7 +72,7 @@ class OphTrOperationbooking_Operation_Cancellation_ReasonServiceTest extends \CD
 	{
 		$this->assertInstanceOf('OphTrOperationbooking_Operation_Cancellation_Reason',$reason);
 
-		foreach (array('text','list_id','active') as $field) {
+		foreach (array('name','list_id','active') as $field) {
 			$this->assertEquals($resource->$field,$reason->$field);
 		}
 	}
@@ -81,7 +81,7 @@ class OphTrOperationbooking_Operation_Cancellation_ReasonServiceTest extends \CD
 	{
 		$resource = $this->getResource();
 
-		$resource->text = 'wabwabwab';
+		$resource->name = 'wabwabwab';
 		$resource->list_id = 24;
 
 		return $resource;
@@ -103,7 +103,7 @@ class OphTrOperationbooking_Operation_Cancellation_ReasonServiceTest extends \CD
 	{
 		$this->assertInstanceOf('OphTrOperationbooking_Operation_Cancellation_Reason',$reason);
 
-		$this->assertEquals('wabwabwab',$reason->text);
+		$this->assertEquals('wabwabwab',$reason->name);
 		$this->assertEquals(24,$reason->list_id);
 	}
 

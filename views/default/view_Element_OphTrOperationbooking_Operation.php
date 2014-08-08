@@ -200,7 +200,7 @@
 				<div class="large-6 column">
 					<div class="data-value">
 						Cancelled on
-						<?php echo $element->NHSDate('operation_cancellation_date') . ' by user ' . $element->cancellation_user->username . ' for reason: ' . CHtml::encode($element->cancellation_reason->text)?>
+						<?php echo $element->NHSDate('operation_cancellation_date') . ' by user ' . $element->cancellation_user->username . ' for reason: ' . CHtml::encode($element->cancellation_reason->name)?>
 					</div>
 				</div>
 			</div>

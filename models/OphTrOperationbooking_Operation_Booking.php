@@ -139,7 +139,7 @@ class OphTrOperationbooking_Operation_Booking extends BaseActiveRecordVersioned
 
 	public function getCancellationReasonWithComment()
 	{
-		$return = $this->cancellationReason->text;
+		$return = $this->cancellationReason->name;
 		if ($this->cancellation_comment) {
 			$return .= " ($this->cancellation_comment)";
 		}
