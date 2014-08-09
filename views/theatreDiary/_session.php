@@ -53,7 +53,7 @@
 			</strong>
 			for
 			<?php echo $session->firm ? $session->firm->name : 'Emergency List'?>
-			<?php echo $session->firm ? 'for ('.$session->firm->serviceSubspecialtyAssignment->subspecialty->name.')' : ''?>
+			<?php echo $session->firm && $session->firm->serviceSubspecialtyAssignment ? 'for ('.$session->firm->serviceSubspecialtyAssignment->subspecialty->name.')' : ''?>
 			-
 			<strong><?php echo $theatre->name.' ('.$theatre->site->name.')'?></strong>
 		</h3>
