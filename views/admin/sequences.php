@@ -236,7 +236,7 @@ $sequences = $sequences['data'];
 				<label for="">Start time:</label>
 			</div>
 			<div class="large-2 column end">
-				<?php echo CHtml::textField('inline_start_time','',array('size'=>10))?>
+				<?php echo CHtml::textField('inline_start_time','',array('autocomplete' => Yii::app()->params['html_autocomplete'], 'size'=>10))?>
 				<span class="error"></span>
 			</div>
 		</div>
@@ -245,7 +245,7 @@ $sequences = $sequences['data'];
 				<label>End time:</label>
 			</div>
 			<div class="large-2 column end">
-				<?php echo CHtml::textField('inline_end_time','',array('size'=>10))?>
+				<?php echo CHtml::textField('inline_end_time','',array('autocomplete' => Yii::app()->params['html_autocomplete'], 'size'=>10))?>
 				<span class="error"></span>
 			</div>
 		</div>

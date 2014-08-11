@@ -109,7 +109,7 @@
 						<?php foreach ($session->getActiveBookingsForWard($ward_id) as $booking) { ?>
 								<tr id="oprow_<?php echo $booking->element_id?>">
 									<td class="session">
-										<input style="display: none;" type="text" class="admitTime diaryEditMode" name="admitTime_<?php echo $booking->element_id?>" data-id="<?php echo $session->id?>" data-operation-id="<?php echo $booking->element_id?>" value="<?php echo substr($booking->admission_time,0,5)?>" size="4">
+										<input style="display: none;" type="text" autocomplete="<?php echo Yii::app()->params['html_autocomplete']?>" class="admitTime diaryEditMode" name="admitTime_<?php echo $booking->element_id?>" data-id="<?php echo $session->id?>" data-operation-id="<?php echo $booking->element_id?>" value="<?php echo substr($booking->admission_time,0,5)?>" size="4">
 										<span class="admitTime_ro diaryViewMode" data-id="<?php echo $session->id?>" data-operation-id="<?php echo $booking->element_id?>"><?php echo substr($booking->admission_time,0,5)?></span>
 									</td>
 									<td class="td_sort diaryEditMode" data-id="<?php echo $session->id?>" style="display: none;">
@@ -221,7 +221,7 @@
 							<label <?php if ($session->available) { ?>style="display: none;"<?php } ?>>
 								<?php echo CHtml::dropDownList("unavailablereason_id_" . $session->id, $session->unavailablereason_id, CHtml::listData($session->getUnavailableReasonList(), 'id', 'name'), array('empty' => '- Please Select -', 'class' => 'unavailable-reasons'))?>
 							</label>
-							<input style="display: inline-block;" type="text" class="limited-width" id="max_procedures_<?php echo $session->id?>" maxlength="2" size="2" name="max_procedures_<?php echo $session->id?>" value="<?php echo $session->max_procedures; ?>" />
+							<input style="display: inline-block;" type="text" autocomplete="<?php echo Yii::app()->params['html_autocomplete']?>" class="limited-width" id="max_procedures_<?php echo $session->id?>" maxlength="2" size="2" name="max_procedures_<?php echo $session->id?>" value="<?php echo $session->max_procedures; ?>" />
 							<label style="display: inline-block;">
 								<?php echo $session->getAttributeLabel('max_procedures'); ?>
 							</label>
