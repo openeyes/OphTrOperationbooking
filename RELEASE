@@ -3,6 +3,15 @@ Release History
 
 This document is intended to summarise the changes made for each release. It should be noted that this document was only introduced with version 1.4, and therefore doesn't cover earlier releases.
 
+1.7.0
+-----
++ patient unavailability tracking
++ EROD against every booking
++ max procedures limit for session
++ operation referral functionality
++ RTT limit configurable for scheduling
++ compatibility with 1.7 core
+
 1.6.1
 -----
 + Fix ward filtering on diary print
