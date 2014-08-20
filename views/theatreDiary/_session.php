@@ -106,7 +106,9 @@
 						</tr>
 						</thead>
 						<tbody id="tbody_<?php echo $session->id?>">
-						<?php foreach ($session->getActiveBookingsForWard($ward_id) as $booking) { ?>
+						<?php foreach ($session->getActiveBookingsForWard($ward_id) as $booking) {
+							if (!$booking->operation->event->episode->patient) continue;
+							?>
 								<tr id="oprow_<?php echo $booking->element_id?>">
 									<td class="session">
 										<input style="display: none;" type="text" autocomplete="<?php echo Yii::app()->params['html_autocomplete']?>" class="admitTime diaryEditMode" name="admitTime_<?php echo $booking->element_id?>" data-id="<?php echo $session->id?>" data-operation-id="<?php echo $booking->element_id?>" value="<?php echo substr($booking->admission_time,0,5)?>" size="4">
