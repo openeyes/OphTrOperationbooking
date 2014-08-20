@@ -140,6 +140,8 @@ class TransportController extends BaseModuleController
 
 		$criteria->addCondition('event.deleted = 0 and episode.deleted = 0');
 
+		$criteria->addCondition('patient.id is not null');
+
 		$this->total_items = Element_OphTrOperationbooking_Operation::model()
 			->with(array(
 				'latestBooking' => array(
@@ -158,6 +160,7 @@ class TransportController extends BaseModuleController
 					'with' => array(
 						'episode' => array(
 							'joinType' => 'JOIN',
+							'with' => 'patient',
 						),
 					),
 				),
