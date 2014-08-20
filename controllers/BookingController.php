@@ -115,7 +115,22 @@ class BookingController extends OphTrOperationbookingEventController
 				$criteria->addCondition('event.deleted = 0');
 				$criteria->order = 'display_order ASC';
 				//FIXME: this should be retrieved by a method on the operation
-				$bookings = OphTrOperationbooking_Operation_Booking::model()->with(array('operation'=>array('with'=>'event')))->findAll($criteria);
+				$criteria->addCondition('patient.id is not null');
+				$bookings = OphTrOperationbooking_Operation_Booking::model()
+					->with(array(
+							'operation' => array(
+								'with' => array(
+									'event' => array(
+										'with' => array(
+											'episode' => array(
+												'with' => 'patient'
+											)
+										)
+									)
+								)
+							)
+					))
+					->findAll($criteria);
 
 				foreach ($theatres as $theatre) {
 					foreach ($theatre->sessions as $_session) {
