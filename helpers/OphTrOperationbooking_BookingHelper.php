@@ -37,7 +37,7 @@ class OphTrOperationbooking_BookingHelper
 			$errors[] = self::CONSULTANT_REQUIRED;
 		}
 
-		if ($op->event->episode->patient->isChild($session->date) && !$session->paediatric) {
+		if ($op->event->episode->patient && $op->event->episode->patient->isChild($session->date) && !$session->paediatric) {
 			$errors[] = self::PAEDIATRIC_SESSION_REQUIRED;
 		}
 
