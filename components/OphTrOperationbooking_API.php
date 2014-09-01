@@ -104,6 +104,34 @@ class OphTrOperationbooking_API extends BaseAPI
 	}
 
 	/**
+	 *	Gets all bookings for the specified episode
+	 *
+	 *	@params integer $episode_id
+	 *	@return OphTrOperationbooking_Operation_Booking[]
+	 */
+	public function getOpenAndCompletedBookingsForEpisode($episode_id)
+	{
+		$criteria = new CDbCriteria;
+		$criteria->order = 'event.created_date asc';
+		$criteria->addCondition('episode_id',$episode_id);
+		$criteria->addCondition('`t`.booking_cancellation_date is null');
+
+		$status_scheduled = OphTrOperationbooking_Operation_Status::model()->find('name=?',array('Scheduled'));
+		$status_rescheduled = OphTrOperationbooking_Operation_Status::model()->find('name=?',array('Rescheduled'));
+		$status_completed = OphTrOperationbooking_Operation_Status::model()->find('name=?',array('Completed'));
+
+		return OphTrOperationbooking_Operation_Booking::model()
+			->with('session')
+			->with(array(
+				'operation' => array(
+					'condition' => "episode_id = $episode_id and status_id in ($status_scheduled->id,$status_rescheduled->id,$status_completed->id)",
+					'with' => 'event'
+				)
+			))
+			->findAll($criteria);
+	}
+
+	/**
 	 * Gets future scheduled bookings for the given patient
 	 */
 	public function getOpenBookingsForPatient($patient_id)
