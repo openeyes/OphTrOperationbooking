@@ -95,15 +95,13 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 	 */
 	public function rules()
 	{
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
 		return array(
-			array('event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments,comments_rtt, anaesthetist_required, total_duration, status_id, operation_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id, latest_booking_id, referral_id', 'safe'),
+			array('eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments,comments_rtt, anaesthetist_required, total_duration, status_id, operation_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id, latest_booking_id, referral_id, organising_admission_user_id', 'safe'),
 			array('cancellation_comment', 'length', 'max' => 200),
 			array('procedures', 'required', 'message' => 'At least one procedure must be entered'),
 			array('referral_id', 'validateReferral'),
 			array('decision_date', 'OEDateValidatorNotFuture'),
-			array('eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, total_duration', 'required'),
+			array('eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, total_duration, organising_admission_user_id', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments, comments_rtt', 'safe', 'on' => 'search'),
@@ -141,6 +139,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			'allBookings'  => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Booking', 'element_id'),
 			'referral' => array(self::BELONGS_TO, 'Referral', 'referral_id'),
 			'fixed_rtt' => array(self::BELONGS_TO, 'RTT', 'rtt_id'),
+			'organising_admission_user' => array(self::BELONGS_TO, 'User', 'organising_admission_user_id'),
 		);
 	}
 
@@ -163,7 +162,8 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			'comments' => 'Add comments',
 			'comments_rtt' => 'Add RTT comments',
 			'referral_id' => 'Referral',
-			'rtt_id' => 'RTT'
+			'rtt_id' => 'RTT',
+			'organising_admission_user_id' => 'Doctor organising admission',
 		);
 	}
 

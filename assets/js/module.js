@@ -111,6 +111,8 @@
 			}
 		});
 
-
+		$(this).on('autocompleteselect', '#organising_admission_user_autocomplete', function (e, ui) {
+			$('#Element_OphTrOperationbooking_Operation_organising_admission_user_id').val(ui.item.id);
+		});
 	});
 }());

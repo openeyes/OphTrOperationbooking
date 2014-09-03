@@ -73,4 +73,23 @@
 	<?php echo $form->datePicker($element, 'decision_date', array('maxDate' => 'today'), array(), array_merge($form->layoutColumns, array('field' => 2)))?>
 	<?php echo $form->textArea($element, 'comments', array('rows' => 4), false, array(), array_merge($form->layoutColumns, array('field' => 4)))?>
 	<?php echo $form->textArea($element, 'comments_rtt', array('rows' => 4), false, array(), array_merge($form->layoutColumns, array('field' => 4)))?>
+	<div class="row field-row">
+		<div class="large-2 column">
+			<label for="<?= CHtml::modelName($element) . '[organising_admission_user_id]' ?>"><?= CHtml::encode($element->getAttributeLabel('organising_admission_user_id')) ?>:</label>
+		</div>
+		<div class="large-4 column end">
+			<input type="hidden" id="<?= CHtml::modelName($element) . '_organising_admission_user_id' ?>" name="<?= CHtml::modelName($element) . '[organising_admission_user_id]' ?>">
+			<?php
+				$this->widget(
+					'zii.widgets.jui.CJuiAutoComplete',
+					array(
+						'id' => 'organising_admission_user_autocomplete',
+						'name' => 'organising_admission_user_autocomplete',
+						'source' => $this->createUrl('/user/autoComplete'),
+						'htmlOptions' => array('placeholder' => 'enter name'),
+					)
+				);
+			?>
+		</div>
+	</div>
 </fieldset>
