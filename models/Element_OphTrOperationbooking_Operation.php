@@ -1456,4 +1456,9 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			return date('Y-m-d',strtotime('+' .$rtt_weeks . ' weeks', strtotime($this->decision_date)));
 		}
 	}
+
+	public function disableAutoRelations()
+	{
+		$this->auto_update_relations = false;
+	}
 }

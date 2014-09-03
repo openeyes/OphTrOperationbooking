@@ -259,9 +259,11 @@ class BookingController extends OphTrOperationbookingEventController
 				}
 
 				$booking->cancel($reason,$_POST['cancellation_comment'],false);
+
+				$operation->disableAutoRelations();
 				$operation->setStatus('Requires rescheduling');
 
-				$this->redirect(array('default/view/'.$this->event->id));
+				return $this->redirect(array('default/view/'.$this->event->id));
 			}
 		}
 
