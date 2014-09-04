@@ -159,24 +159,7 @@ $(document).ready(function() {
 	});
 
 	$('input[name="Element_OphTrOperationbooking_Operation[eye_id]"]').change(function() {
-		var eye_id = $('input[name="Element_OphTrOperationbooking_Operation[eye_id]"]:checked').val();
-
-		var duration = 0;
-		$('.procedureList').find('.duration').map(function() {
-			duration += parseInt($(this).text().match(/[0-9]+/));
-		});
-
-		switch (parseInt($(this).val())) {
-			case 1:
-			case 2:
-				$('#Element_OphTrOperationbooking_Operation_total_duration').val(duration);
-				$('td[data-field="procedures"]').text(duration + ' mins');
-				break;
-			case 3:
-				$('#Element_OphTrOperationbooking_Operation_total_duration').val(duration * 2);
-				$('td[data-field="procedures"]').text((duration * 2) + ' mins');
-				break;
-		}
+		updateDurationsBasedOnEye();
 	});
 
 	$(this).delegate('.remove-unavailable', 'click', function(e) {
@@ -222,4 +205,31 @@ function OphTrOperationbooking_PatientUnavailable_add() {
 			'showAnim': 'fold',
 			'dateFormat': nhs_date_format});
 	});
+}
+
+function updateDurationsBasedOnEye()
+{
+	var eye_id = parseInt($('input[name="Element_OphTrOperationbooking_Operation[eye_id]"]:checked').val());
+
+	var duration = 0;
+	$('.procedureList').find('.duration').map(function() {
+		duration += parseInt($(this).text().match(/[0-9]+/));
+	});
+
+	switch (eye_id) {
+		case 1:
+		case 2:
+			$('#Element_OphTrOperationbooking_Operation_total_duration').val(duration);
+			$('td[data-field="procedures"]').text(duration + ' mins');
+			break;
+		case 3:
+			$('#Element_OphTrOperationbooking_Operation_total_duration').val(duration * 2);
+			$('td[data-field="procedures"]').text((duration * 2) + ' mins');
+			break;
+	}
+}
+
+function callbackAddProcedure()
+{
+	updateDurationsBasedOnEye();
 }
