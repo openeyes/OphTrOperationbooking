@@ -22,6 +22,7 @@ class DefaultController extends OphTrOperationbookingEventController
 	static protected $action_types = array(
 		'cancel' => self::ACTION_TYPE_EDIT,
 		'admissionLetter' => self::ACTION_TYPE_PRINT,
+		'admissionForm' => self::ACTION_TYPE_PRINT,
 		'verifyProcedures' => self::ACTION_TYPE_CREATE,
 	);
 
@@ -480,21 +481,38 @@ class DefaultController extends OphTrOperationbookingEventController
 		$oeletter->addBody($body);
 
 		$pdf_print->addLetter($oeletter);
-
-		$body = $this->render('../letters/admission_form', array(
-				'operation' => $operation,
-				'site' => $site,
-				'patient' => $this->event->episode->patient,
-				'firm' => $firm,
-				'emergencyList' => $emergency_list,
-		), true);
-
-		$oeletter = new OELetter;
-		$oeletter->setFont('helvetica','10');
-		$oeletter->setBarcode('E:'.$operation->event_id);
-		$oeletter->addBody($body);
-
-		$pdf_print->addLetter($oeletter);
 		$pdf_print->output();
+	}
+
+	protected function initActionAdmissionForm()
+	{
+		$this->operation_required = true;
+		$this->initWithEventId(@$_GET['id']);
+	}
+
+	public function actionAdmissionForm()
+	{
+		$this->layout = '//layouts/pdf';
+
+		$pdf = new OEPDFPrint('Openeyes', 'Admission form', 'Admission form');
+
+		$letter = new OELetter;
+		$letter->setBarcode('E:' . $this->operation->event_id);
+		$letter->setFont('helvetica', '10');
+		$letter->addBody(
+			$this->render('../letters/admission_form',
+				array(
+					'operation' => $this->operation,
+					'site' => $this->operation->site,
+					'patient' => $this->patient,
+					'firm' => $this->episode->firm,
+					'emergencyList' => false,
+				),
+				true
+			)
+		);
+
+		$pdf->addLetterRender($letter);
+		$pdf->output();
 	}
 }

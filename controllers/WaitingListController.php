@@ -317,7 +317,6 @@ class WaitingListController extends BaseModuleController
 				Yii::log("Printing letter: ".$letter_template, 'trace');
 
 				call_user_func(array($this, 'print_'.$letter_template), $pdf_print, $operation);
-				$this->print_admission_form($pdf_print, $operation);
 
 				if ($auto_confirm) {
 					$operation->confirmLetterPrinted();
@@ -348,33 +347,6 @@ class WaitingListController extends BaseModuleController
 			$from_address .= "\nFax: " . $operation->site->fax;
 		}
 		return $from_address;
-	}
-
-	/**
-	 * @param OEPDFPrint $pdf
-	 * @param Element_OphTrOperationbooking_Operation $operation
-	 */
-	protected function print_admission_form($pdf, $operation)
-	{
-		$patient = $operation->event->episode->patient;
-		$to_address = $patient->getLetterAddress(array(
-			'include_name' => true,
-			'delimiter' => "\n",
-		));
-		$site = $operation->site;
-		$firm = $operation->event->episode->firm;
-		$body = $this->render('../letters/admission_form', array(
-				'operation' => $operation,
-				'site' => $site,
-				'patient' => $patient,
-				'firm' => $firm,
-				'emergencyList' => false,
-		), true);
-		$letter = new OELetter();
-		$letter->setBarcode('E:'.$operation->event_id);
-		$letter->setFont('helvetica','10');
-		$letter->addBody($body);
-		$pdf->addLetterRender($letter);
 	}
 
 	/**
