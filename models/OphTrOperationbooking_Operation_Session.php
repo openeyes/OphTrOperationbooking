@@ -397,6 +397,12 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 			}
 		}
 
+		if ($this->sequence_id) {
+			if (!OphTrOperationbooking_Operation_Sequence::model()->findByPk($this->sequence_id)) {
+				$this->addError('sequence_id','Sequence does not exist');
+			}
+		}
+
 		return parent::beforeValidate();
 	}
 
