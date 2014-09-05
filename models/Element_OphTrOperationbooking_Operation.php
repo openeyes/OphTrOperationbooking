@@ -229,6 +229,8 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 				}
 			}
 		}
+
+		$this->special_equipment = false;
 	}
 
 	public function getproc_defaults()
