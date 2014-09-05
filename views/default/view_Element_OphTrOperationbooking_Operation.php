@@ -296,10 +296,12 @@ if ($element->status->name != 'Cancelled' && $this->checkEditAccess()) {
 			}
 			$this->event_actions[] = EventAction::button("Print ".$element->letterType." letter", 'print-letter', $print_letter_options, array('id' => 'btn_print-letter', 'class'=>'button small'));
 		}
-		$this->event_actions[] = EventAction::link("Schedule now",
-			Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/schedule/'.$element->event_id),
-			array('level'=>'secondary'),
-			array('id' => 'btn_schedule-now', 'class'=>'button small'));
+		if ($this->checkScheduleAccess()) {
+			$this->event_actions[] = EventAction::link("Schedule now",
+				Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/schedule/'.$element->event_id),
+				array('level'=>'secondary'),
+				array('id' => 'btn_schedule-now', 'class'=>'button small'));
+		}
 	} else {
 		if ($this->checkPrintAccess()) {
 			$print_letter_options = null;
@@ -310,10 +312,12 @@ if ($element->status->name != 'Cancelled' && $this->checkEditAccess()) {
 			$this->event_actions[] = EventAction::button("Print admission form", 'print_admission_form', null, array('class' => 'small button'));
 		}
 		if ($element->status->name != 'Completed' && !$this->event->isLocked()) {
-			$this->event_actions[] = EventAction::link("Reschedule now",
-				Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/reschedule/'.$element->event_id),
-				array('level' => 'secondary'),
-				array('id' => 'btn_reschedule-now','class' => 'button small'));
+			if ($this->checkScheduleAccess()) {
+				$this->event_actions[] = EventAction::link("Reschedule now",
+					Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/reschedule/'.$element->event_id),
+					array('level' => 'secondary'),
+					array('id' => 'btn_reschedule-now','class' => 'button small'));
+			}
 			$this->event_actions[] = EventAction::link("Reschedule later",
 				Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/rescheduleLater/'.$element->event_id),
 				array('level' => 'secondary'),
