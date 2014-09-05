@@ -23,6 +23,7 @@
 		'durations' => true,
 	))?>
 	<?php echo $form->radioBoolean($element, 'consultant_required')?>
+	<?php echo $form->radioBoolean($element, 'senior_fellow_to_do')?>
 	<?php echo $form->radioButtons($element, 'anaesthetic_type_id', 'AnaestheticType')?>
 	<?php $form->radioBoolean($element, 'anaesthetist_preop_assessment') ?>
 	<?php $form->radioButtons($element, 'anaesthetic_choice_id', 'OphTrOperationbooking_Anaesthetic_Choice') ?>

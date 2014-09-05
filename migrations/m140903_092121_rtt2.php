@@ -36,6 +36,9 @@ class m140903_092121_rtt2 extends OEMigration
 		$this->addColumn('et_ophtroperationbooking_operation', 'special_equipment_details', 'string');
 		$this->addColumn('et_ophtroperationbooking_operation_version', 'special_equipment_details', 'string');
 
+		$this->addColumn('et_ophtroperationbooking_operation', 'senior_fellow_to_do', 'boolean');
+		$this->addColumn('et_ophtroperationbooking_operation_version', 'senior_fellow_to_do', 'boolean');
+
 		$this->initialiseData(__DIR__);
 	}
 
@@ -63,6 +66,9 @@ class m140903_092121_rtt2 extends OEMigration
 
 		$this->dropColumn('et_ophtroperationbooking_operation', 'special_equipment_details');
 		$this->dropColumn('et_ophtroperationbooking_operation_version', 'special_equipment_details');
+
+		$this->dropColumn('et_ophtroperationbooking_operation', 'senior_fellow_to_do');
+		$this->dropColumn('et_ophtroperationbooking_operation_version', 'senior_fellow_to_do');
 
 		$this->dropOeTable('ophtroperationbooking_anaesthetic_choice');
 	}

@@ -29,32 +29,38 @@
 <section class="element element-data">
 	<div class="row">
 		<div class="large-6 column">
+			<h3 class="data-title">Consultant required?</h3>
+			<div class="data-value"><?php echo $element->consultant_required ? 'Yes Consultant' : 'No Consultant'?></div>
+		</div>
+		<?php if (!is_null($element->senior_fellow_to_do)): ?>
+			<div class="large-6 column">
+				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('senior_fellow_to_do')) ?></h3>
+				<div class="data-value"><?= $element->senior_fellow_to_do ? 'Yes' : 'No' ?></div>
+			</div>
+		<?php endif; ?>
+	</div>
+	<div class="row">
+		<div class="large-6 column">
 			<h3 class="data-title">Anaesthetic</h3>
 			<div class="data-value">
 				<?php echo $element->anaesthetic_type->name?>
 			</div>
 		</div>
 		<div class="large-6 column">
-			<h3 class="data-title">Consultant required?</h3>
-			<div class="data-value"><?php echo $element->consultant_required ? 'Yes Consultant' : 'No Consultant'?></div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="large-6 column">
 			<?php if (!is_null($element->anaesthetist_preop_assessment)): ?>
 				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('anaesthetist_preop_assessment')) ?></h3>
 				<div class="data-value"><?= $element->anaesthetist_preop_assessment ? 'Yes' : 'No' ?></div>
 			<?php endif ?>
 		</div>
+	</div>
+	<div class="row">
 		<div class="large-6 column">
 			<?php if ($element->anaesthetic_choice): ?>
 				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('anaesthetic_choice_id')) ?></h3>
 				<div class="data-value"><?= $element->anaesthetic_choice->name ?></div>
 			<?php endif ?>
 		</div>
-	</div>
-	<div class="row">
-		<div class="large-6 column end">
+		<div class="large-6 column">
 			<?php if (!is_null($element->stop_medication)): ?>
 				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('stop_medication')) ?></h3>
 				<div class="data-value"><?= $element->stop_medication ? 'Yes' : 'No' ?></div>
