@@ -82,13 +82,14 @@
 			<label for="<?= CHtml::modelName($element) . '[organising_admission_user_id]' ?>"><?= CHtml::encode($element->getAttributeLabel('organising_admission_user_id')) ?>:</label>
 		</div>
 		<div class="large-4 column end">
-			<input type="hidden" id="<?= CHtml::modelName($element) . '_organising_admission_user_id' ?>" name="<?= CHtml::modelName($element) . '[organising_admission_user_id]' ?>">
+			<input type="hidden" id="<?= CHtml::modelName($element) . '_organising_admission_user_id' ?>" name="<?= CHtml::modelName($element) . '[organising_admission_user_id]' ?>" value="<?= $element->organising_admission_user_id ?>">
 			<?php
 				$this->widget(
 					'zii.widgets.jui.CJuiAutoComplete',
 					array(
 						'id' => 'organising_admission_user_autocomplete',
 						'name' => 'organising_admission_user_autocomplete',
+						'value' => $element->organising_admission_user ? $element->organising_admission_user->getFullName() : '',
 						'source' => $this->createUrl('/user/autoComplete'),
 						'htmlOptions' => array('placeholder' => 'enter name'),
 					)
