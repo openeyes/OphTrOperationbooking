@@ -75,6 +75,8 @@
 	?>
 
 	<?php echo $form->datePicker($element, 'decision_date', array('maxDate' => 'today'), array(), array_merge($form->layoutColumns, array('field' => 2)))?>
+	<?php $form->radioBoolean($element, 'special_equipment') ?>
+	<?php $form->textArea($element, 'special_equipment_details', array(), true, array(), array_merge($form->layoutColumns, array('field' => 4))) ?>
 	<?php echo $form->textArea($element, 'comments', array('rows' => 4), false, array(), array_merge($form->layoutColumns, array('field' => 4)))?>
 	<?php echo $form->textArea($element, 'comments_rtt', array('rows' => 4), false, array(), array_merge($form->layoutColumns, array('field' => 4)))?>
 	<div class="row field-row">

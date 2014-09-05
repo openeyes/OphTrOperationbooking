@@ -30,6 +30,13 @@ class m140903_092121_rtt2 extends OEMigration
 		$this->addColumn('et_ophtroperationbooking_operation', 'stop_medication_details', 'string');
 		$this->addColumn('et_ophtroperationbooking_operation_version', 'stop_medication_details', 'string');
 
+		$this->addColumn('et_ophtroperationbooking_operation', 'special_equipment', 'boolean default false');
+		$this->addColumn('et_ophtroperationbooking_operation_version', 'special_equipment', 'boolean default false');
+
+		$this->addColumn('et_ophtroperationbooking_operation', 'special_equipment_details', 'string');
+		$this->addColumn('et_ophtroperationbooking_operation_version', 'special_equipment_details', 'string');
+
+
 		$this->initialiseData(__DIR__);
 	}
 
@@ -51,6 +58,12 @@ class m140903_092121_rtt2 extends OEMigration
 
 		$this->dropColumn('et_ophtroperationbooking_operation', 'stop_medication_details');
 		$this->dropColumn('et_ophtroperationbooking_operation_version', 'stop_medication_details');
+
+		$this->dropColumn('et_ophtroperationbooking_operation', 'special_equipment');
+		$this->dropColumn('et_ophtroperationbooking_operation_version', 'special_equipment');
+
+		$this->dropColumn('et_ophtroperationbooking_operation', 'special_equipment_details');
+		$this->dropColumn('et_ophtroperationbooking_operation_version', 'special_equipment_details');
 
 		$this->dropOeTable('ophtroperationbooking_anaesthetic_choice');
 	}

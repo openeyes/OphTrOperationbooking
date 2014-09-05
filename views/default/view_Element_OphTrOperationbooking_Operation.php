@@ -93,6 +93,17 @@
 			<?php } ?>
 		</div>
 	</div>
+	<div class="row">
+		<div class="large-6 column end">
+			<?php if (!is_null($element->special_equipment)): ?>
+				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('special_equipment')) ?></h3>
+				<div class="data-value"><?= $element->special_equipment ? 'Yes' : 'No' ?></div>
+				<?php if ($element->special_equipment): ?>
+					<div class="data-value panel comments"><?= CHtml::encode($element->special_equipment_details) ?></div>
+				<?php endif ?>
+			<?php endif ?>
+		</div>
+	</div>
 </section>
 
 
