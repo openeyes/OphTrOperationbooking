@@ -39,6 +39,12 @@ class m140903_092121_rtt2 extends OEMigration
 		$this->addColumn('et_ophtroperationbooking_operation', 'senior_fellow_to_do', 'boolean');
 		$this->addColumn('et_ophtroperationbooking_operation_version', 'senior_fellow_to_do', 'boolean');
 
+		$this->addColumn('et_ophtroperationbooking_operation', 'fast_track', 'boolean');
+		$this->addColumn('et_ophtroperationbooking_operation_version', 'fast_track', 'boolean');
+
+		$this->addColumn('et_ophtroperationbooking_operation', 'fast_track_discussed_with_patient', 'boolean');
+		$this->addColumn('et_ophtroperationbooking_operation_version', 'fast_track_discussed_with_patient', 'boolean');
+
 		$this->initialiseData(__DIR__);
 	}
 
@@ -69,6 +75,12 @@ class m140903_092121_rtt2 extends OEMigration
 
 		$this->dropColumn('et_ophtroperationbooking_operation', 'senior_fellow_to_do');
 		$this->dropColumn('et_ophtroperationbooking_operation_version', 'senior_fellow_to_do');
+
+		$this->dropColumn('et_ophtroperationbooking_operation', 'fast_track');
+		$this->dropColumn('et_ophtroperationbooking_operation_version', 'fast_track');
+
+		$this->dropColumn('et_ophtroperationbooking_operation', 'fast_track_discussed_with_patient');
+		$this->dropColumn('et_ophtroperationbooking_operation_version', 'fast_track_discussed_with_patient');
 
 		$this->dropOeTable('ophtroperationbooking_anaesthetic_choice');
 	}

@@ -96,14 +96,15 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 	public function rules()
 	{
 		return array(
-			array('eye_id, consultant_required, senior_fellow_to_do, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments,comments_rtt, anaesthetist_required, anaesthetist_preop_assessment, anaesthetic_choice_id, stop_medication, stop_medication_details, total_duration, status_id, operation_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id, latest_booking_id, referral_id, special_equipment, special_equipment_details, organising_admission_user_id', 'safe'),
+			array('eye_id, consultant_required, senior_fellow_to_do, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, fast_track, fast_track_discussed_with_patient, comments,comments_rtt, anaesthetist_required, anaesthetist_preop_assessment, anaesthetic_choice_id, stop_medication, stop_medication_details, total_duration, status_id, operation_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id, latest_booking_id, referral_id, special_equipment, special_equipment_details, organising_admission_user_id', 'safe'),
 			array('cancellation_comment', 'length', 'max' => 200),
 			array('procedures', 'required', 'message' => 'At least one procedure must be entered'),
 			array('referral_id', 'validateReferral'),
 			array('decision_date', 'OEDateValidatorNotFuture'),
 			array('eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, total_duration', 'required'),
-			array('senior_fellow_to_do, anaesthetist_preop_assessment, anaesthetic_choice_id, stop_medication, special_equipment, organising_admission_user_id', 'required', 'on' => 'insert'),
+			array('senior_fellow_to_do, anaesthetist_preop_assessment, anaesthetic_choice_id, stop_medication, fast_track, special_equipment, organising_admission_user_id', 'required', 'on' => 'insert'),
 			array('stop_medication_details', 'RequiredIfFieldValidator', 'field' => 'stop_medication', 'value' => true),
+			array('fast_track_discussed_with_patient', 'RequiredIfFieldValidator', 'field' => 'fast_track', 'value' => true),
 			array('special_equipment_details', 'RequiredIfFieldValidator', 'field' => 'special_equipment', 'value' => true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
@@ -167,6 +168,8 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			'site_id' => 'Site',
 			'priority_id' => 'Priority',
 			'decision_date' => 'Decision date',
+			'fast_track' => 'Suitable for high volume (fast track)',
+			'fast_track_discussed_with_patient' => 'Discussed with patient',
 			'special_equipment' => 'Special equipment required',
 			'special_equipment_details' => 'Please specify',
 			'comments' => 'Add comments',
@@ -232,6 +235,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			}
 		}
 
+		$this->fast_track = false;
 		$this->special_equipment = false;
 	}
 
@@ -270,6 +274,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		}
 
 		if (!$this->stop_medication) $this->stop_medication_details = null;
+		if (!$this->fast_track) $this->fast_track_discussed_with_patient = null;
 		if (!$this->special_equipment) $this->special_equipment_details = null;
 
 		return parent::beforeSave();

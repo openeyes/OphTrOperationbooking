@@ -83,6 +83,21 @@
 			<div class="data-value"><?php echo $element->NHSDate('decision_date') ?></div>
 		</div>
 	</div>
+	<div class="row">
+		<div class="large-6 column">
+			<?php if (!is_null($element->fast_track)): ?>
+				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('fast_track')) ?></h3>
+				<div class="data-value"><?php echo $element->fast_track ? 'Yes' : 'No'?></div>
+			<?php endif ?>
+		</div>
+		<div class="large-6 column">
+			<?php if ($element->fast_track): ?>
+				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('fast_track_discussed_with_patient')) ?></h3>
+				<div class="data-value"><?php echo $element->fast_track_discussed_with_patient ? 'Yes' : 'No'?></div>
+			<?php endif ?>
+		</div>
+	</div>
+
 </section>
 
 <section class="element element-data">

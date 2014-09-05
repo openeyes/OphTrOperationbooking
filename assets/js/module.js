@@ -111,33 +111,23 @@
 			}
 		});
 
-		function showHideStopMedicationDetails() {
-			var details = $('#div_Element_OphTrOperationbooking_Operation_stop_medication_details');
+		function setDependentField(field, dependent_field_selector) {
+			var input_selector = 'input[name=Element_OphTrOperationbooking_Operation\\[' + field + '\\]]';
 
-			if (parseInt($('input[name=Element_OphTrOperationbooking_Operation\\[stop_medication\\]]:checked').val(), 10)) {
-				details.show();
-			} else {
-				details.hide();
+			function showHide() {
+				var div = $(dependent_field_selector);
+				var option = $(input_selector + ':checked');
+
+				div[parseInt(option.val(), 10) ? 'show' : 'hide']();
 			}
-		}
-		showHideStopMedicationDetails();
-		$(this).on('click', 'input[name=Element_OphTrOperationbooking_Operation\\[stop_medication\\]]', function () {
-			showHideStopMedicationDetails();
-		});
 
-		function showHideSpecialEquipmentDetails() {
-			var details = $('#div_Element_OphTrOperationbooking_Operation_special_equipment_details');
-
-			if (parseInt($('input[name=Element_OphTrOperationbooking_Operation\\[special_equipment\\]]:checked').val(), 10)) {
-				details.show();
-			} else {
-				details.hide();
-			}
+			$(document).on('click', input_selector, showHide);
+			showHide();
 		}
-		showHideSpecialEquipmentDetails();
-		$(this).on('click', 'input[name=Element_OphTrOperationbooking_Operation\\[special_equipment\\]]', function () {
-			showHideSpecialEquipmentDetails();
-		});
+
+		setDependentField('stop_medication', '#div_Element_OphTrOperationbooking_Operation_stop_medication_details');
+		setDependentField('fast_track', '#Element_OphTrOperationbooking_Operation_fast_track_discussed_with_patient');
+		setDependentField('special_equipment', '#div_Element_OphTrOperationbooking_Operation_special_equipment_details');
 
 		$(this).on('autocompleteselect', '#organising_admission_user_autocomplete', function (e, ui) {
 			$('#Element_OphTrOperationbooking_Operation_organising_admission_user_id').val(ui.item.id);
