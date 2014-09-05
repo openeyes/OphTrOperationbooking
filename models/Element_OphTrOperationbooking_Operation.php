@@ -161,7 +161,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			'anaesthetist_preop_assessment' => 'Does the patient require pre-op assessment by an anaesthetist',
 			'anaesthetic_choice_id' => 'Anaesthetic choice is',
 			'stop_medication' => 'Patient needs to stop medication',
-			'stop_medication_details' => 'Please provide etails',
+			'stop_medication_details' => 'Please provide details',
 			'overnight_stay' => 'Post operative stay',
 			'site_id' => 'Site',
 			'priority_id' => 'Priority',
