@@ -1570,6 +1570,14 @@ class AdminController extends ModuleAdminController
 		}
 	}
 
+	public function actionOperationPriorities()
+	{
+		$this->render('//admin/generic_admin',array(
+			'title' => 'Operation priorities',
+			'model' => 'OphTrOperationbooking_Operation_Priority',
+		));
+	}
+
 	public function actionViewSchedulingOptions()
 	{
 		Audit::add('admin','list',null,null,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_ScheduleOperation_Options'));
