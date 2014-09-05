@@ -190,6 +190,7 @@ class BookingController extends OphTrOperationbookingEventController
 		$this->render('schedule', array(
 			'event' => $this->event,
 			'operation' => $operation,
+			'schedule_options' => $schedule_options,
 			'firm' => $firm,
 			'firmList' => Firm::model()->listWithSpecialties,
 			'date' => $date,
