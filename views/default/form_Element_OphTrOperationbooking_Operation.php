@@ -24,6 +24,10 @@
 	))?>
 	<?php echo $form->radioBoolean($element, 'consultant_required')?>
 	<?php echo $form->radioButtons($element, 'anaesthetic_type_id', 'AnaestheticType')?>
+	<?php $form->radioBoolean($element, 'anaesthetist_preop_assessment') ?>
+	<?php $form->radioButtons($element, 'anaesthetic_choice_id', 'OphTrOperationbooking_Anaesthetic_Choice') ?>
+	<?php $form->radioBoolean($element, 'stop_medication') ?>
+	<?php $form->textArea($element, 'stop_medication_details', array(), true) ?>
 	<?php echo $form->radioBoolean($element, 'overnight_stay')?>
 	<?php echo $form->dropDownList($element, 'site_id', Site::model()->getListForCurrentInstitution(),array(),false,array('field'=>2))?>
 	<?php echo $form->radioButtons($element, 'priority_id', 'OphTrOperationbooking_Operation_Priority')?>

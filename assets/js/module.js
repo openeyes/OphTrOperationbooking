@@ -111,6 +111,22 @@
 			}
 		});
 
+		function showHideStopMedicationDetails() {
+			var details = $('#div_Element_OphTrOperationbooking_Operation_stop_medication_details');
+
+			if (parseInt($('input[name=Element_OphTrOperationbooking_Operation\\[stop_medication\\]]:checked').val(), 10)) {
+				details.show();
+			} else {
+				details.hide();
+			}
+		}
+
+		showHideStopMedicationDetails();
+
+		$(this).on('click', 'input[name=Element_OphTrOperationbooking_Operation\\[stop_medication\\]]', function () {
+			showHideStopMedicationDetails();
+		});
+
 		$(this).on('autocompleteselect', '#organising_admission_user_autocomplete', function (e, ui) {
 			$('#Element_OphTrOperationbooking_Operation_organising_admission_user_id').val(ui.item.id);
 		});

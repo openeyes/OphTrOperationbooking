@@ -39,6 +39,31 @@
 			<div class="data-value"><?php echo $element->consultant_required ? 'Yes Consultant' : 'No Consultant'?></div>
 		</div>
 	</div>
+	<div class="row">
+		<div class="large-6 column">
+			<?php if (!is_null($element->anaesthetist_preop_assessment)): ?>
+				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('anaesthetist_preop_assessment')) ?></h3>
+				<div class="data-value"><?= $element->anaesthetist_preop_assessment ? 'Yes' : 'No' ?></div>
+			<?php endif ?>
+		</div>
+		<div class="large-6 column">
+			<?php if ($element->anaesthetic_choice): ?>
+				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('anaesthetic_choice_id')) ?></h3>
+				<div class="data-value"><?= $element->anaesthetic_choice->name ?></div>
+			<?php endif ?>
+		</div>
+	</div>
+	<div class="row">
+		<div class="large-6 column end">
+			<?php if (!is_null($element->stop_medication)): ?>
+				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('stop_medication')) ?></h3>
+				<div class="data-value"><?= $element->stop_medication ? 'Yes' : 'No' ?></div>
+				<?php if ($element->stop_medication): ?>
+					<div class="data-value panel comments"><?= CHtml::encode($element->stop_medication_details) ?></div>
+				<?php endif ?>
+			<?php endif ?>
+		</div>
+	</div>
 </section>
 
 <section class="element element-data">

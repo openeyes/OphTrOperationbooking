@@ -96,13 +96,14 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 	public function rules()
 	{
 		return array(
-			array('eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments,comments_rtt, anaesthetist_required, total_duration, status_id, operation_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id, latest_booking_id, referral_id, organising_admission_user_id', 'safe'),
+			array('eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments,comments_rtt, anaesthetist_required, anaesthetist_preop_assessment, anaesthetic_choice_id, stop_medication, stop_medication_details, total_duration, status_id, operation_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id, latest_booking_id, referral_id, organising_admission_user_id', 'safe'),
 			array('cancellation_comment', 'length', 'max' => 200),
 			array('procedures', 'required', 'message' => 'At least one procedure must be entered'),
 			array('referral_id', 'validateReferral'),
 			array('decision_date', 'OEDateValidatorNotFuture'),
 			array('eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, total_duration', 'required'),
-			array('organising_admission_user_id', 'required', 'on' => 'insert'),
+			array('organising_admission_user_id, anaesthetist_preop_assessment, anaesthetic_choice_id, stop_medication', 'required', 'on' => 'insert'),
+			array('stop_medication_details', 'RequiredIfFieldValidator', 'field' => 'stop_medication', 'value' => true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments, comments_rtt', 'safe', 'on' => 'search'),
@@ -126,6 +127,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			'procedureItems' => array(self::HAS_MANY, 'OphTrOperationbooking_Operation_Procedures', 'element_id'),
 			'procedures' => array(self::MANY_MANY, 'Procedure', 'ophtroperationbooking_operation_procedures_procedures(element_id, proc_id)'),
 			'anaesthetic_type' => array(self::BELONGS_TO, 'AnaestheticType', 'anaesthetic_type_id'),
+			'anaesthetic_choice' => array(self::BELONGS_TO, 'OphTrOperationbooking_Anaesthetic_Choice', 'anaesthetic_choice_id'),
 			'site' => array(self::BELONGS_TO, 'Site', 'site_id'),
 			'priority' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Priority', 'priority_id'),
 			'status' => array(self::BELONGS_TO, 'OphTrOperationbooking_Operation_Status', 'status_id'),
@@ -156,6 +158,10 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			'procedures' => 'Operations',
 			'consultant_required' => 'Consultant required',
 			'anaesthetic_type_id' => 'Anaesthetic type',
+			'anaesthetist_preop_assessment' => 'Does the patient require pre-op assessment by an anaesthetist',
+			'anaesthetic_choice_id' => 'Anaesthetic choice is',
+			'stop_medication' => 'Patient needs to stop medication',
+			'stop_medication_details' => 'Please provide etails',
 			'overnight_stay' => 'Post operative stay',
 			'site_id' => 'Site',
 			'priority_id' => 'Priority',
@@ -255,6 +261,8 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		if (!$this->status_id) {
 			$this->status_id = 1;
 		}
+
+		if (!$this->stop_medication) $this->stop_medication_details = null;
 
 		return parent::beforeSave();
 	}
