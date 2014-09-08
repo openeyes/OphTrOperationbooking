@@ -65,7 +65,7 @@
 				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('stop_medication')) ?></h3>
 				<div class="data-value"><?= $element->stop_medication ? 'Yes' : 'No' ?></div>
 				<?php if ($element->stop_medication): ?>
-					<div class="data-value panel comments"><?= CHtml::encode($element->stop_medication_details) ?></div>
+					<div class="data-value panel comments"><?= Yii::app()->format->nText($element->stop_medication_details) ?></div>
 				<?php endif ?>
 			<?php endif ?>
 		</div>
@@ -120,7 +120,7 @@
 				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('special_equipment')) ?></h3>
 				<div class="data-value"><?= $element->special_equipment ? 'Yes' : 'No' ?></div>
 				<?php if ($element->special_equipment): ?>
-					<div class="data-value panel comments"><?= CHtml::encode($element->special_equipment_details) ?></div>
+					<div class="data-value panel comments"><?= Yii::app()->format->nText($element->special_equipment_details) ?></div>
 				<?php endif ?>
 			<?php endif ?>
 		</div>
