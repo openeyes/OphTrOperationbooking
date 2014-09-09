@@ -102,10 +102,13 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			array('referral_id', 'validateReferral'),
 			array('decision_date', 'OEDateValidatorNotFuture'),
 			array('eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, total_duration', 'required'),
-			array('senior_fellow_to_do, anaesthetist_preop_assessment, anaesthetic_choice_id, stop_medication, fast_track, special_equipment, organising_admission_user_id', 'required', 'on' => 'insert'),
+			array('senior_fellow_to_do, anaesthetist_preop_assessment, anaesthetic_choice_id, stop_medication', 'required', 'on' => 'insert'),
 			array('stop_medication_details', 'RequiredIfFieldValidator', 'field' => 'stop_medication', 'value' => true),
+			array('fast_track', 'required', 'on' => 'insert'),
 			array('fast_track_discussed_with_patient', 'RequiredIfFieldValidator', 'field' => 'fast_track', 'value' => true),
+			array('special_equipment', 'required', 'on' => 'insert'),
 			array('special_equipment_details', 'RequiredIfFieldValidator', 'field' => 'special_equipment', 'value' => true),
+			array('organising_admission_user_id', 'required', 'on' => 'insert'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, event_id, eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, comments, comments_rtt', 'safe', 'on' => 'search'),
