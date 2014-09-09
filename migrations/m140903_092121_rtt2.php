@@ -45,11 +45,15 @@ class m140903_092121_rtt2 extends OEMigration
 		$this->addColumn('et_ophtroperationbooking_operation', 'fast_track_discussed_with_patient', 'boolean');
 		$this->addColumn('et_ophtroperationbooking_operation_version', 'fast_track_discussed_with_patient', 'boolean');
 
+		$this->alterColumn('et_ophtroperationbooking_scheduleope', 'schedule_options_id', 'integer unsigned not null');
+
 		$this->initialiseData(__DIR__);
 	}
 
 	public function safeDown()
 	{
+		$this->alterColumn('et_ophtroperationbooking_scheduleope', 'schedule_options_id', "int(10) unsigned NOT NULL DEFAULT '1'");
+
 		$this->dropColumn('et_ophtroperationbooking_operation', 'organising_admission_user_id');
 		$this->dropColumn('et_ophtroperationbooking_operation_version', 'organising_admission_user_id');
 
