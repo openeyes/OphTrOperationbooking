@@ -94,7 +94,7 @@
 					array(
 						'id' => 'organising_admission_user_autocomplete',
 						'name' => 'organising_admission_user_autocomplete',
-						'value' => $element->organising_admission_user ? $element->organising_admission_user->getFullName() : '',
+						'value' => $element->organising_admission_user ? $element->organising_admission_user->getReversedFullName() : '',
 						'source' => $this->createUrl('/user/autoComplete'),
 						'htmlOptions' => array('placeholder' => 'enter name'),
 					)

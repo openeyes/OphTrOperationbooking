@@ -156,7 +156,7 @@
 		<div class="large-6 column">
 			<?php if ($element->organising_admission_user): ?>
 				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('organising_admission_user_id')) ?></h3>
-				<div class="data-value"><?= $element->organising_admission_user->getFullName() ?></div>
+				<div class="data-value"><?= $element->organising_admission_user->getReversedFullName() ?></div>
 			<?php endif ?>
 		</div>
 	</div>
