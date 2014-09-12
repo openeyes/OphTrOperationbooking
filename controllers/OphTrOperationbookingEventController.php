@@ -52,6 +52,6 @@ class OphTrOperationbookingEventController extends BaseEventTypeController
 
 	public function checkScheduleAccess()
 	{
-		return $this->checkAccess('OprnScheduleOperation', $this->firm, $this->event);
+		return $this->checkAccess('OprnScheduleOperation');
 	}
 }

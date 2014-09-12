@@ -1,4 +1,4 @@
-name,type,bizrule
-OprnScheduleOperation,0,canEditEvent
-TaskScheduleOperation,1,null
-"Schedule operation",2,null
+name,type
+OprnScheduleOperation,0
+TaskScheduleOperation,1
+"Schedule operation",2
