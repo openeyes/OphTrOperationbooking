@@ -287,47 +287,48 @@
 <?php } ?>
 
 <?php
-if (empty($element->booking)) {
-	if ($element->letterType && $this->checkPrintAccess()) {
-		$print_letter_options = null;
-		if (!$element->has_gp || !$element->has_address) {
-			$print_letter_options['disabled'] = true;
+if ($element->isEditable()) {
+	if (empty($element->booking)) {
+		if ($element->letterType && $this->checkPrintAccess()) {
+			$print_letter_options = null;
+			if (!$element->has_gp || !$element->has_address) {
+				$print_letter_options['disabled'] = true;
+			}
+			$this->event_actions[] = EventAction::button("Print ".$element->letterType." letter", 'print-letter', $print_letter_options, array('id' => 'btn_print-letter', 'class'=>'button small'));
 		}
-		$this->event_actions[] = EventAction::button("Print ".$element->letterType." letter", 'print-letter', $print_letter_options, array('id' => 'btn_print-letter', 'class'=>'button small'));
-	}
-	if ($this->checkScheduleAccess()) {
-		$this->event_actions[] = EventAction::link("Schedule now",
-			Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/schedule/'.$element->event_id),
-			array('level'=>'secondary'),
-			array('id' => 'btn_schedule-now', 'class'=>'button small'));
-	}
-} else {
-	if ($this->checkPrintAccess()) {
-		$print_letter_options = null;
-		if (!$element->has_address) {
-			$print_letter_options['disabled'] = true;
+		if ($this->checkScheduleAccess()) {
+			$this->event_actions[] = EventAction::link("Schedule now",
+				Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/schedule/'.$element->event_id),
+				array('level'=>'secondary'),
+				array('id' => 'btn_schedule-now', 'class'=>'button small'));
 		}
-		$this->event_actions[] = EventAction::button("Print letter", 'print-letter', $print_letter_options, array('id' => 'btn_print-admissionletter','class'=>'small button'));
-		$this->event_actions[] = EventAction::button("Print admission form", 'print_admission_form', null, array('class' => 'small button'));
-	}
-	if ($this->checkScheduleAccess()) {
-		$this->event_actions[] = EventAction::link("Reschedule now",
-			Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/reschedule/'.$element->event_id),
-			array('level' => 'secondary'),
-			array('id' => 'btn_reschedule-now','class' => 'button small'));
+	} else {
+		if ($this->checkPrintAccess()) {
+			$print_letter_options = null;
+			if (!$element->has_address) {
+				$print_letter_options['disabled'] = true;
+			}
+			$this->event_actions[] = EventAction::button("Print letter", 'print-letter', $print_letter_options, array('id' => 'btn_print-admissionletter','class'=>'small button'));
+			$this->event_actions[] = EventAction::button("Print admission form", 'print_admission_form', null, array('class' => 'small button'));
+		}
+		if ($this->checkScheduleAccess()) {
+			$this->event_actions[] = EventAction::link("Reschedule now",
+				Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/reschedule/'.$element->event_id),
+				array('level' => 'secondary'),
+				array('id' => 'btn_reschedule-now','class' => 'button small'));
+		}
+		if ($this->checkEditAccess()) {
+			$this->event_actions[] = EventAction::link("Reschedule later",
+				Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/rescheduleLater/'.$element->event_id),
+				array('level' => 'secondary'),
+				array('id' => 'btn_reschedule-later','class' => 'button small'));
+		}
 	}
 	if ($this->checkEditAccess()) {
-		$this->event_actions[] = EventAction::link("Reschedule later",
-			Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/rescheduleLater/'.$element->event_id),
-			array('level' => 'secondary'),
-			array('id' => 'btn_reschedule-later','class' => 'button small'));
+		$this->event_actions[] = EventAction::link("Cancel operation",
+			Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/default/cancel/'.$element->event_id),
+			array(),
+			array('id' => 'btn_cancel-operation', 'class'=>'warning button small'));
 	}
 }
-if ($this->checkEditAccess()) {
-	$this->event_actions[] = EventAction::link("Cancel operation",
-		Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/default/cancel/'.$element->event_id),
-		array(),
-		array('id' => 'btn_cancel-operation', 'class'=>'warning button small'));
-}
-
 ?>
