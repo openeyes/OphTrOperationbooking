@@ -240,6 +240,8 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 
 		$this->fast_track = false;
 		$this->special_equipment = false;
+
+		$this->organising_admission_user_id = Yii::app()->user->id;
 	}
 
 	public function getproc_defaults()
