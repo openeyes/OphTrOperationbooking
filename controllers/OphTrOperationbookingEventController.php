@@ -52,7 +52,7 @@ class OphTrOperationbookingEventController extends BaseEventTypeController
 
 	public function checkScheduleAccess()
 	{
-		if ($this->event && !$this->checkEditAccess()) return false;
+		if ($this->event && !$this->event->isNewRecord && !$this->checkEditAccess()) return false;
 		return $this->checkAccess('OprnScheduleOperation');
 	}
 }
