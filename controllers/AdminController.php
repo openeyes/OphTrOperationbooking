@@ -1578,7 +1578,7 @@ class AdminController extends ModuleAdminController
 			'extra_fields' => array(
 				array(
 					'field' => 'schedule_authitem',
-					'type' => 'authitem',
+					'type' => 'authitem_roles',
 					'authitem_type' => 'operations',
 					'empty' => '- Edit rights -',
 				),
