@@ -46,6 +46,7 @@ return array(
 				'position' => 20,
 			),
 		),
+		'future_scheduling_limit' => '3 months',
 		'admin_menu' => array(
 			'Sequences' => '/OphTrOperationbooking/admin/viewSequences',
 			'Sessions' => '/OphTrOperationbooking/admin/viewSessions',
