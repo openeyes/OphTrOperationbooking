@@ -357,7 +357,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 		}
 
 		if (!Yii::app()->user->checkAccess('Super schedule operation') && Yii::app()->params['future_scheduling_limit'] && $this->date > date('Y-m-d',strtotime('+'.Yii::app()->params['future_scheduling_limit']))) {
-			return "This session is outside the RTT window of ".Yii::app()->params['future_scheduling_limit']." and so cannot be booked into.";
+			return "This session is outside the allowed booking window of ".Yii::app()->params['future_scheduling_limit']." and so cannot be booked into.";
 		}
 	}
 
