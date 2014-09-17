@@ -24,6 +24,7 @@ class DefaultController extends OphTrOperationbookingEventController
 		'admissionLetter' => self::ACTION_TYPE_PRINT,
 		'admissionForm' => self::ACTION_TYPE_PRINT,
 		'verifyProcedures' => self::ACTION_TYPE_CREATE,
+		'getCanScheduleForPriority' => self::ACTION_TYPE_FORM,
 	);
 
 	public $eventIssueCreate = 'Operation requires scheduling';
@@ -514,5 +515,18 @@ class DefaultController extends OphTrOperationbookingEventController
 
 		$pdf->addLetterRender($letter);
 		$pdf->output();
+	}
+
+	public function actionGetCanScheduleForPriority()
+	{
+		if (!$priority = OphTrOperationbooking_Operation_Priority::model()->findByPk(@$_GET['priority_id'])) {
+			throw new Exception("Priority not found: ".@$_GET['priority_id']);
+		}
+
+		if ($event = Event::model()->findByPk(@$_GET['event_id'])) {
+			$this->event = $event;
+		}
+
+		echo $this->checkScheduleAccess($priority) ? "1" : "0";
 	}
 }

@@ -137,5 +137,27 @@
 		handleButton($('#et_print_admission_form'),function() {
 			printIFrameUrl(baseUrl + '/OphTrOperationbooking/default/admissionForm/' + OE_event_id);
 		});
+
+		$('input[name="Element_OphTrOperationbooking_Operation[priority_id]"]').click(function(e) {
+			var priority_id = $(this).val();
+
+			$.ajax({
+				'type': 'GET',
+				'url': baseUrl+'/OphTrOperationbooking/default/getCanScheduleForPriority?priority_id=' + priority_id + '&event_id=' + OE_event_id,
+				'success': function(html) {
+					if (html == "0") {
+						$('#et_save').show();
+						$('#et_save_and_schedule_later').hide();
+						$('#et_save_and_schedule').hide();
+					} else {
+						if ($('#et_save_and_schedule_later').length >0) {
+							$('#et_save').hide();
+							$('#et_save_and_schedule_later').show();
+							$('#et_save_and_schedule').show();
+						}
+					}
+				}
+			});
+		});
 	});
 }());

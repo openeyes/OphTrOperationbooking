@@ -96,6 +96,7 @@ class OphTrOperationbooking_Operation_Priority extends BaseActiveRecordVersioned
 		return array(
 			'id' => 'ID',
 			'name' => 'Name',
+			'schedule_authitem' => 'Schedule permission required',
 		);
 	}
 

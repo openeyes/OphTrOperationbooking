@@ -1575,6 +1575,14 @@ class AdminController extends ModuleAdminController
 		$this->render('//admin/generic_admin',array(
 			'title' => 'Operation priorities',
 			'model' => 'OphTrOperationbooking_Operation_Priority',
+			'extra_fields' => array(
+				array(
+					'field' => 'schedule_authitem',
+					'type' => 'authitem',
+					'authitem_type' => 'operations',
+					'empty' => '- Edit rights -',
+				),
+			),
 		));
 	}
 

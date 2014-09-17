@@ -50,9 +50,24 @@ class OphTrOperationbookingEventController extends BaseEventTypeController
 		return parent::beforeAction($action);
 	}
 
-	public function checkScheduleAccess()
+	public function checkScheduleAccess($priority=false)
 	{
 		if ($this->event && !$this->event->isNewRecord && !$this->checkEditAccess()) return false;
-		return $this->checkAccess('OprnScheduleOperation');
+
+		if (!$priority) {
+			if ($eo = $this->getOpenElementByClassName('Element_OphTrOperationbooking_Operation')) {
+				$priority = $eo->priority;
+			}
+		}
+
+		if ($priority && $priority->schedule_authitem) {
+			return $this->checkAccess($priority->schedule_authitem);
+		}
+
+		if ($this->event && $this->event->id) {
+			return $this->checkEditAccess();
+		}
+
+		return $this->checkAccess('Edit');
 	}
 }
