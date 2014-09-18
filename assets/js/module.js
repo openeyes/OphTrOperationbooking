@@ -129,10 +129,12 @@
 		setDependentField('fast_track', '#Element_OphTrOperationbooking_Operation_fast_track_discussed_with_patient');
 		setDependentField('special_equipment', '#div_Element_OphTrOperationbooking_Operation_special_equipment_details');
 
-		$(this).on('autocompleteselect', '#organising_admission_user_autocomplete', function (e, ui) {
-			$('#Element_OphTrOperationbooking_Operation_organising_admission_user_id').val(ui.item.id);
-		});
+		$('.remove_organising_admission_user').live('click',function(e) {
+			e.preventDefault();
 
+			$('#Element_OphTrOperationbooking_Operation_organising_admission_user_id').val('');
+			$(this).parent().html('None');
+		});
 
 		handleButton($('#et_print_admission_form'),function() {
 			printIFrameUrl(baseUrl + '/OphTrOperationbooking/default/admissionForm/' + OE_event_id);

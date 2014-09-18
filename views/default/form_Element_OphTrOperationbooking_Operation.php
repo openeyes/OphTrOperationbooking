@@ -87,16 +87,32 @@
 			<label for="<?= CHtml::modelName($element) . '[organising_admission_user_id]' ?>"><?= CHtml::encode($element->getAttributeLabel('organising_admission_user_id')) ?>:</label>
 		</div>
 		<div class="large-4 column end">
-			<input type="hidden" id="<?= CHtml::modelName($element) . '_organising_admission_user_id' ?>" name="<?= CHtml::modelName($element) . '[organising_admission_user_id]' ?>" value="<?= $element->organising_admission_user_id ?>">
+			<input type="hidden" name="<?php echo CHtml::modelName($element)?>[organising_admission_user_id]" id="<?php echo CHtml::modelName($element)?>_organising_admission_user_id" value="<?php echo $element->organising_admission_user_id?>" />
+			<span class="organising_admission_user"><?php echo $element->organising_admission_user ? $element->organising_admission_user->reversedFullname.' (<a href="#" class="remove_organising_admission_user">remove</a>)' : 'None'?></span>
+		</div>
+	</div>
+	<div class="row field-row">
+		<div class="large-2 column">
+			<label>&nbsp;</label>
+		</div>
+		<div class="large-4 column end">
 			<?php
 				$this->widget(
 					'zii.widgets.jui.CJuiAutoComplete',
 					array(
 						'id' => 'organising_admission_user_autocomplete',
 						'name' => 'organising_admission_user_autocomplete',
-						'value' => $element->organising_admission_user ? $element->organising_admission_user->getReversedFullName() : '',
+						'value' => '',
 						'source' => $this->createUrl('/user/autoComplete'),
-						'htmlOptions' => array('placeholder' => 'enter name'),
+						'htmlOptions' => array('placeholder' => 'search for doctors'),
+						'options' => array(
+							'select' => "js:function(e, ui) {
+								$('#Element_OphTrOperationbooking_Operation_organising_admission_user_id').val(ui.item.id);
+								$('.organising_admission_user').html(ui.item.value + ' (<a href=\"#\" class=\"remove_organising_admission_user\">remove</a>)');
+								$('#organising_admission_user_autocomplete').val('');
+								return false;
+							}"
+						)
 					)
 				);
 			?>
