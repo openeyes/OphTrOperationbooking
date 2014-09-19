@@ -28,7 +28,7 @@
 	<?php $form->radioBoolean($element, 'anaesthetist_preop_assessment') ?>
 	<?php $form->radioButtons($element, 'anaesthetic_choice_id', 'OphTrOperationbooking_Anaesthetic_Choice') ?>
 	<?php $form->radioBoolean($element, 'stop_medication') ?>
-	<?php $form->textArea($element, 'stop_medication_details', array(), true) ?>
+	<?php $form->textArea($element, 'stop_medication_details', array('rows' => 4), true, array(), array_merge($form->layoutColumns, array('field' => 4))) ?>
 	<?php echo $form->radioBoolean($element, 'overnight_stay')?>
 	<?php echo $form->dropDownList($element, 'site_id', Site::model()->getListForCurrentInstitution(),array(),false,array('field'=>2))?>
 	<?php echo $form->radioButtons($element, 'priority_id', CHtml::listData(OphTrOperationbooking_Operation_Priority::model()->findAll(array('order'=>'display_order asc')),'id','name'))?>
@@ -64,9 +64,9 @@
 					<span id="rtt-info" class="rtt-info" style="display: none">Clock start - <span id="rtt-clock-start"></span> Breach - <span id="rtt-breach"></span></span>
 				</div>
 				<?php
-			} else { ?>
+			} else {?>
 					<div class="large-2 column"><label>Referral:</label></div>
-					<div class="large-4 column end"><?php if ($element->referral) { echo $element->referral->getDescription(); } else { echo "No Referral Set"; } ?></div>
+					<div class="large-4 column end"><?php if ($element->referral) { echo $element->referral->getDescription(); } else { echo "No Referral Set"; }?></div>
 	<?php
 			}
 	?>
