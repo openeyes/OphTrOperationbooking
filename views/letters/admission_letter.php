@@ -64,7 +64,7 @@
 
 	<?php if (!$patient->isChild()) {?>
 		<p>
-			If this is not convenient or you no longer wish to proceed with surgery, please contact the <?php echo $firm->serviceSubspecialtyAssignment->subspecialty->name?> Admission Coordinator on <?php echo $operation->refuseContact?> as soon as possible.
+			If this is not convenient or you no longer wish to proceed with surgery, please contact <?php echo $operation->refuseContact?> as soon as possible.
 		</p>
 
 		<?php if (!$operation->overnight_stay) {?>
@@ -82,7 +82,7 @@
 
 	<?php if (!$patient->isChild()) {?>
 		<p>
-			If you are unwell the day before admission, please contact us to ensure that it is still safe and appropriate to do the procedure.  If you do not speak English, please arrange for an English speaking adult to stay with you until you reach the ward and have been seen by a doctor and anaesthetist.
+			If you are unwell the day before admission, please contact us to ensure that it is still safe and appropriate to do the procedure.  If you do not speak English, please arrange for an English speaking adult to stay with you until you reach the ward and have been seen by a doctor and/or an anaesthetist.
 		</p>
 	<?php }?>
 
