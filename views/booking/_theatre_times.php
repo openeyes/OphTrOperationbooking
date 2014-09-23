@@ -17,7 +17,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-if (Yii::app()->params['future_scheduling_limit'] && $date > date('Y-m-d',strtotime('+'.Yii::app()->params['future_scheduling_limit']))) {?>
+if (!Yii::app()->user->checkAccess('Super schedule operation') && Yii::app()->params['future_scheduling_limit'] && $date > date('Y-m-d',strtotime('+'.Yii::app()->params['future_scheduling_limit']))) {?>
 	<div class="alert-box alert with-icon" style="margin-top: 10px;">
 		This date is outside the allowed booking window of <?php echo Yii::app()->params['future_scheduling_limit']?> and so cannot be booked into.
 	</div>
