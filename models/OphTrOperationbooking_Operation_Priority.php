@@ -32,8 +32,10 @@
  * @property User $usermodified
  */
 
-class OphTrOperationbooking_Operation_Priority extends BaseActiveRecordVersioned
+class OphTrOperationbooking_Operation_Priority extends BaseActiveRecordVersionedSoftDelete
 {
+	public $notDeletedField = 'active';
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return the static model class

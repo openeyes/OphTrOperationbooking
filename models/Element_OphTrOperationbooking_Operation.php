@@ -242,6 +242,10 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		$this->special_equipment = false;
 
 		$this->organising_admission_user_id = Yii::app()->user->id;
+
+		if ($priority = OphTrOperationbooking_Operation_Priority::model()->notDeleted()->find('`default`=1')) {
+			$this->priority_id = $priority->id;
+		}
 	}
 
 	public function getproc_defaults()
