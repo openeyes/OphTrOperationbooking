@@ -28,7 +28,7 @@
 		<?php if ($operation->status->name == 'Rescheduled') {?>
 			I am writing to inform you that the date for your <?php echo $operation->textOperationName?> has been changed<?php if (isset($operation->cancelledBookings[0])) {?> from <?php echo date('jS F Y',strtotime($operation->cancelledBookings[0]->session_date));}?>, the new details are:
 		<?php } else {?>
-			I am pleased to confirm the date of your <?php echo $operation->textOperationName?> with <?php echo $firm->consultantName?>, the details are:
+			I am pleased to confirm the date of your <?php echo $operation->textOperationName?> under care of <?php echo $firm->consultantName?>. The details are:
 		<?php }?>
 	</p>
 
@@ -82,7 +82,7 @@
 
 	<?php if (!$patient->isChild()) {?>
 		<p>
-			If you are unwell the day before admission, please contact us to ensure that it is still safe and appropriate to do the procedure.  If you do not speak English, please arrange for an English speaking adult to stay with you until you reach the ward and have been seen by a doctor and anaesthetist.
+			If you are unwell the day before admission, please contact us to ensure that it is still safe and appropriate to do the procedure.  If you do not speak English, please arrange for an English speaking adult to stay with you until you reach the ward and have been seen by a doctor and/or an anaesthetist.
 		</p>
 	<?php }?>
 
