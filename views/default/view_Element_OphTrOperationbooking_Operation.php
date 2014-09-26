@@ -41,6 +41,12 @@
 	</div>
 	<div class="row">
 		<div class="large-6 column">
+			<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('any_grade_of_doctor')) ?>?</h3>
+			<div class="data-value"><?php echo $element->any_grade_of_doctor ? 'Yes' : 'No'?></div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="large-6 column">
 			<h3 class="data-title">Anaesthetic</h3>
 			<div class="data-value">
 				<?php echo $element->anaesthetic_type->name?>

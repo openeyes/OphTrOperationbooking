@@ -25,6 +25,7 @@
  * @property integer $event_id
  * @property integer $eye_id
  * @property integer $consultant_required
+ * @property integer $any_grade_of_doctor
  * @property integer $anaesthetic_type_id
  * @property integer $overnight_stay
  * @property integer $site_id
@@ -96,13 +97,13 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 	public function rules()
 	{
 		return array(
-			array('eye_id, consultant_required, senior_fellow_to_do, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, fast_track, fast_track_discussed_with_patient, comments,comments_rtt, anaesthetist_required, anaesthetist_preop_assessment, anaesthetic_choice_id, stop_medication, stop_medication_details, total_duration, status_id, operation_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id, latest_booking_id, referral_id, special_equipment, special_equipment_details, organising_admission_user_id', 'safe'),
+			array('eye_id, consultant_required, senior_fellow_to_do, any_grade_of_doctor, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, fast_track, fast_track_discussed_with_patient, comments,comments_rtt, anaesthetist_required, anaesthetist_preop_assessment, anaesthetic_choice_id, stop_medication, stop_medication_details, total_duration, status_id, operation_cancellation_date, cancellation_reason_id, cancellation_comment, cancellation_user_id, latest_booking_id, referral_id, special_equipment, special_equipment_details, organising_admission_user_id', 'safe'),
 			array('cancellation_comment', 'length', 'max' => 200),
 			array('procedures', 'required', 'message' => 'At least one procedure must be entered'),
 			array('referral_id', 'validateReferral'),
 			array('decision_date', 'OEDateValidatorNotFuture'),
 			array('eye_id, consultant_required, anaesthetic_type_id, overnight_stay, site_id, priority_id, decision_date, total_duration', 'required'),
-			array('senior_fellow_to_do, anaesthetist_preop_assessment, anaesthetic_choice_id, stop_medication', 'required', 'on' => 'insert'),
+			array('senior_fellow_to_do, anaesthetist_preop_assessment, anaesthetic_choice_id, stop_medication, any_grade_of_doctor', 'required', 'on' => 'insert'),
 			array('stop_medication_details', 'RequiredIfFieldValidator', 'field' => 'stop_medication', 'value' => true),
 			array('fast_track', 'required', 'on' => 'insert'),
 			array('fast_track_discussed_with_patient', 'RequiredIfFieldValidator', 'field' => 'fast_track', 'value' => true),
@@ -162,6 +163,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			'eye_id' => 'Eyes',
 			'procedures' => 'Operations',
 			'consultant_required' => 'Consultant required',
+			'any_grade_of_doctor' => 'Any other doctor to do',
 			'anaesthetic_type_id' => 'Anaesthetic type',
 			'anaesthetist_preop_assessment' => 'Does the patient require pre-op assessment by an anaesthetist',
 			'anaesthetic_choice_id' => 'Anaesthetic choice is',
@@ -200,6 +202,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 		$criteria->compare('eye_id', $this->eye_id);
 		$criteria->compare('procedures', $this->procedures);
 		$criteria->compare('consultant_required', $this->consultant_required);
+		$criteria->compare('any_grade_of_doctor', $this->any_grade_of_doctor);
 		$criteria->compare('anaesthetic_type_id', $this->anaesthetic_type_id);
 		$criteria->compare('overnight_stay', $this->overnight_stay);
 		$criteria->compare('site_id', $this->site_id);

@@ -121,6 +121,13 @@
 	</tr>
 
 	<tr>
+		<th>Any other doctor to do:</th>
+		<td><?php echo (empty($operation->any_grade_of_doctor)) ? 'No' : 'Yes'?></td>
+		<th></th>
+		<td></td>
+	</tr>
+
+	<tr>
 		<th>Intended procedure(s):</th>
 		<td><?php echo CHtml::encode($operation->proceduresCommaSeparated)?></td>
 		<?php if ($operation->booking) {?>
