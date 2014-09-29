@@ -11,15 +11,15 @@ class m140929_125515_named_consultant extends CDbMigration
 		$this->addColumn('et_ophtroperationbooking_operation_version','named_consultant_id','int(10) unsigned');
 
 		$this->addForeignKey('named_consultant_fk','et_ophtroperationbooking_operation','named_consultant_id','user','id');
-
 	}
 
 	public function down()
 	{
-			$this->dropColumn('et_ophtroperationbooking_operation','named_consultant');
-			$this->dropForeignKey('named_consultant_fk','et_ophtroperationbooking_operation');
-			$this->dropColumn('et_ophtroperationbooking_operation','named_consultant_id');
+		$this->dropColumn('et_ophtroperationbooking_operation','named_consultant');
+		$this->dropForeignKey('named_consultant_fk','et_ophtroperationbooking_operation');
+		$this->dropColumn('et_ophtroperationbooking_operation','named_consultant_id');
+
+		$this->dropColumn('et_ophtroperationbooking_operation_version','named_consultant');
+		$this->dropColumn('et_ophtroperationbooking_operation_version','named_consultant_id');
 	}
-
-
 }
