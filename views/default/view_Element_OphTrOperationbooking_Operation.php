@@ -299,6 +299,10 @@ if ($element->isEditable()) {
 				$print_letter_options['disabled'] = true;
 			}
 			$this->event_actions[] = EventAction::button("Print ".$element->letterType." letter", 'print-letter', $print_letter_options, array('id' => 'btn_print-letter', 'class'=>'button small'));
+
+			if ($element->letterType == 'Invitation') {
+				$this->event_actions[] = EventAction::button("Print Admission form", 'print_admission_form', null, array('class' => 'small button'));
+			}
 		}
 		if ($this->checkScheduleAccess()) {
 			$this->event_actions[] = EventAction::link("Schedule now",
