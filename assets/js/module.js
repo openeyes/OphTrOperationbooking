@@ -126,7 +126,6 @@
 		}
 
 		setDependentField('stop_medication', '#div_Element_OphTrOperationbooking_Operation_stop_medication_details');
-		setDependentField('fast_track', '#Element_OphTrOperationbooking_Operation_fast_track_discussed_with_patient');
 		setDependentField('special_equipment', '#div_Element_OphTrOperationbooking_Operation_special_equipment_details');
 
 		$('.remove_organising_admission_user').live('click',function(e) {

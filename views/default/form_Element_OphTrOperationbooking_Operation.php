@@ -78,7 +78,7 @@
 
 	<?php echo $form->datePicker($element, 'decision_date', array('maxDate' => 'today'), array(), array_merge($form->layoutColumns, array('field' => 2)))?>
 	<?php $form->radioBoolean($element, 'fast_track') ?>
-	<?php $form->radioButtons($element, 'fast_track_discussed_with_patient', array(1 => 'Yes', 0 => 'No'), null, false, true) ?>
+	<?php $form->radioButtons($element, 'fast_track_discussed_with_patient', array(1 => 'Yes', 0 => 'No'), null, false)?>
 	<?php $form->radioBoolean($element, 'special_equipment') ?>
 	<?php $form->textArea($element, 'special_equipment_details', array(), true, array(), array_merge($form->layoutColumns, array('field' => 4))) ?>
 	<?php echo $form->textArea($element, 'comments', array('rows' => 4), false, array(), array_merge($form->layoutColumns, array('field' => 4)))?>

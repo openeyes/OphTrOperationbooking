@@ -174,7 +174,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			'priority_id' => 'Priority',
 			'decision_date' => 'Decision date',
 			'fast_track' => 'Suitable for high volume (fast track)',
-			'fast_track_discussed_with_patient' => 'Discussed with patient',
+			'fast_track_discussed_with_patient' => 'Admission discussed with patient',
 			'special_equipment' => 'Special equipment required',
 			'special_equipment_details' => 'Please specify',
 			'comments' => 'Add comments',

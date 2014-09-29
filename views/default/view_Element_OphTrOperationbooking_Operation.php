@@ -97,7 +97,7 @@
 			<?php endif ?>
 		</div>
 		<div class="large-6 column">
-			<?php if ($element->fast_track): ?>
+			<?php if (!is_null($element->fast_track_discussed_with_patient)): ?>
 				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('fast_track_discussed_with_patient')) ?></h3>
 				<div class="data-value"><?php echo $element->fast_track_discussed_with_patient ? 'Yes' : 'No'?></div>
 			<?php endif ?>
@@ -114,10 +114,10 @@
 			</div>
 		</div>
 		<div class="large-6 column">
-			<?php if (!empty($element->comments)) { ?>
+			<?php if (!empty($element->comments)) {?>
 				<h3 class="data-title">Operation Comments</h3>
 				<div class="data-value panel comments"><?php echo $element->textWithLineBreaks('comments')?></div>
-			<?php } ?>
+			<?php }?>
 		</div>
 	</div>
 	<div class="row">
@@ -142,20 +142,20 @@
 		?>
 			<div class="large-6 column">
 				<h3 class="data-title">Referral</h3>
-				<div class="data-value"><?php if ($element->referral) { echo $element->referral->getDescription(); } else { echo "No Referral Set"; } ?></div>
+				<div class="data-value"><?php if ($element->referral) { echo $element->referral->getDescription(); } else { echo "No Referral Set"; }?></div>
 				<?php if ($rtt = $element->getRTT()) {?>
 					<div class="rtt-info">Clock Start - <?= Helper::convertDate2NHS($rtt->clock_start) ?> Breach: <?= Helper::convertDate2NHS($rtt->breach) ?></div>
-				<?php } ?>
+				<?php }?>
 			</div>
 
 		<?php
 		}
 		?>
 		<div class="large-6 column">
-			<?php if (!empty($element->comments_rtt)) { ?>
+			<?php if (!empty($element->comments_rtt)) {?>
 				<h3 class="data-title">Operation RTT Comments</h3>
 				<div class="data-value panel comments"><?php echo $element->textWithLineBreaks('comments_rtt')?></div>
-			<?php } ?>
+			<?php }?>
 		</div>
 	</div>
 	<div class="row">
@@ -178,13 +178,13 @@
 					<div class="data-value">
 						<?php $session = $element->booking->session ?>
 						<?php echo $session->NHSDate('date') . ' ' . $session->TimeSlot . ', '.$session->FirmName; ?>
-						<?php if ($warnings = $session->getWarnings()) { ?>
+						<?php if ($warnings = $session->getWarnings()) {?>
 							<div class="alert-box alert with-icon">Please note:<ul>
 							<?php foreach ($warnings as $warning) {
 								echo "<li>" . $warning . "</li>";
 							}?>
 							</ul></div>
-						<?php } ?>
+						<?php }?>
 					</div>
 				</div>
 				<div class="large-6 column">
@@ -237,14 +237,14 @@
 			</div>
 		</div>
 	</div>
-<?php } ?>
+<?php }?>
 
-<?php if (count($element->cancelledBookings)) { ?>
+<?php if (count($element->cancelledBookings)) {?>
 	<section class="element">
 		<h3 class="element-title highlight">Cancelled Bookings</h3>
 		<div class="element-data">
 			<ul class="cancelled-bookings">
-				<?php foreach ($element->cancelledBookings as $booking) { ?>
+				<?php foreach ($element->cancelledBookings as $booking) {?>
 					<li>
 						Originally scheduled for <strong><?php echo $booking->NHSDate('session_date'); ?>,
 						<?php echo date('H:i',strtotime($booking->session_start_time)); ?> -
@@ -255,7 +255,7 @@
 						due to <?php echo CHtml::encode($booking->cancellationReasonWithComment)?>
 						<?php if ($booking->erod) {?>
 							<br /><span class="erod">EROD was <?= $booking->erod->getDescription() ?></span>
-						<?php } ?>
+						<?php }?>
 					</li>
 				<?php }?>
 			</ul>
@@ -289,8 +289,8 @@
 				</div>
 			</div>
 		</section>
-	<?php } ?>
-<?php } ?>
+	<?php }?>
+<?php }?>
 
 <?php
 if ($element->isEditable()) {
