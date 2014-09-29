@@ -30,24 +30,20 @@
 	<div class="row">
 		<div class="large-6 column">
 			<h3 class="data-title">Consultant required?</h3>
-			<div class="data-value"><?php echo $element->consultant_required ? 'Yes Consultant' : 'No Consultant'?></div>
+			<?php
+			if($element->consultant) {
+				$consultant_name = $element->consultant->ReversedFullName;
+			}
+			else {
+				$consultant_name = 'Yes Consultant';
+			}
+			?>
+			<div class="data-value"><?php echo $element->consultant_required ? "Yes, $consultant_name" : 'No Consultant'?></div>
 		</div>
 		<?php if (!is_null($element->senior_fellow_to_do)): ?>
 			<div class="large-6 column">
 				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('senior_fellow_to_do')) ?></h3>
 				<div class="data-value"><?= $element->senior_fellow_to_do ? 'Yes' : 'No' ?></div>
-			</div>
-		<?php endif; ?>
-	</div>
-	<div class="row">
-		<div class="large-6 column">
-			<h3 class="data-title">Named Consultant?</h3>
-			<div class="data-value"><?php echo $element->named_consultant ? 'Yes' : 'No'?></div>
-		</div>
-		<?php if ($element->named_consultant): ?>
-			<div class="large-6 column">
-				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('named_consultant')) ?></h3>
-				<div class="data-value"><?= $element->consultant->ReversedFullName ?></div>
 			</div>
 		<?php endif; ?>
 	</div>
