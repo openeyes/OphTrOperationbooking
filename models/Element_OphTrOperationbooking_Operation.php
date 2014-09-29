@@ -178,7 +178,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			'special_equipment' => 'Special equipment required',
 			'special_equipment_details' => 'Please specify',
 			'comments' => 'Add comments',
-			'comments_rtt' => 'Add RTT comments',
+			'comments_rtt' => 'Add RTT comments (Scheduling guidance for admissions team)',
 			'referral_id' => 'Referral',
 			'rtt_id' => 'RTT',
 			'organising_admission_user_id' => 'Doctor organising admission',
