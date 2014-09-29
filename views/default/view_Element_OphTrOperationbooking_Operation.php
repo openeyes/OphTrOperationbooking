@@ -97,10 +97,8 @@
 			<?php endif ?>
 		</div>
 		<div class="large-6 column">
-			<?php if (!is_null($element->fast_track_discussed_with_patient)): ?>
-				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('fast_track_discussed_with_patient')) ?></h3>
-				<div class="data-value"><?php echo $element->fast_track_discussed_with_patient ? 'Yes' : 'No'?></div>
-			<?php endif ?>
+			<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('fast_track_discussed_with_patient')) ?></h3>
+			<div class="data-value"><?php echo is_null($element->fast_track_discussed_with_patient) ? 'Not recorded' : ($element->fast_track_discussed_with_patient ? 'Yes' : 'No')?></div>
 		</div>
 	</div>
 
