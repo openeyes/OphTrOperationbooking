@@ -182,6 +182,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			'referral_id' => 'Referral',
 			'rtt_id' => 'RTT',
 			'organising_admission_user_id' => 'Doctor organising admission',
+			'senior_fellow_to_do' => 'Senior fellow to do'
 		);
 	}
 
