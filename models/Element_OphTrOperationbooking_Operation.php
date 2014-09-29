@@ -177,7 +177,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			'fast_track_discussed_with_patient' => 'Discussed with patient',
 			'special_equipment' => 'Special equipment required',
 			'special_equipment_details' => 'Please specify',
-			'comments' => 'Add comments',
+			'comments' => 'Add comments (Scheduling guidance for admissions team)',
 			'comments_rtt' => 'Add RTT comments',
 			'referral_id' => 'Referral',
 			'rtt_id' => 'RTT',
