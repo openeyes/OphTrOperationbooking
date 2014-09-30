@@ -127,16 +127,6 @@ $criteria->compare('schedule_options_id', $this->schedule_options_id);
 	}
 
 	/**
-	 * Set default values for forms on create
-	 */
-	public function setDefaultOptions()
-	{
-		if (Yii::app()->getController()->getAction()->id == 'create') {
-			$this->schedule_options_id = 1;
-		}
-	}
-
-	/**
 	 * Get the operation booking for the event
 	 *
 	 * @return OphTrOperationbooking_Operation_Booking

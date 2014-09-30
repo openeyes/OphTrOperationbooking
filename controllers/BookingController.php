@@ -20,8 +20,8 @@
 class BookingController extends OphTrOperationbookingEventController
 {
 	static protected $action_types = array(
-		'schedule' => self::ACTION_TYPE_EDIT,
-		'reschedule' => self::ACTION_TYPE_EDIT,
+		'schedule' => self::ACTION_TYPE_SCHEDULE,
+		'reschedule' => self::ACTION_TYPE_SCHEDULE,
 		'rescheduleLater' => self::ACTION_TYPE_EDIT,
 	);
 
@@ -190,6 +190,7 @@ class BookingController extends OphTrOperationbookingEventController
 		$this->render('schedule', array(
 			'event' => $this->event,
 			'operation' => $operation,
+			'schedule_options' => $schedule_options,
 			'firm' => $firm,
 			'firmList' => Firm::model()->listWithSpecialties,
 			'date' => $date,

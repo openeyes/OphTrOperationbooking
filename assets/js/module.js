@@ -111,6 +111,48 @@
 			}
 		});
 
+		function setDependentField(field, dependent_field_selector) {
+			var input_selector = 'input[name=Element_OphTrOperationbooking_Operation\\[' + field + '\\]]';
 
+			function showHide() {
+				var div = $(dependent_field_selector);
+				var option = $(input_selector + ':checked');
+
+				div[parseInt(option.val(), 10) ? 'show' : 'hide']();
+			}
+
+			$(document).on('click', input_selector, showHide);
+			showHide();
+		}
+
+		setDependentField('stop_medication', '#div_Element_OphTrOperationbooking_Operation_stop_medication_details');
+		setDependentField('special_equipment', '#div_Element_OphTrOperationbooking_Operation_special_equipment_details');
+
+		$('.remove_organising_admission_user').live('click',function(e) {
+			e.preventDefault();
+
+			$('#Element_OphTrOperationbooking_Operation_organising_admission_user_id').val('');
+			$(this).parent().html('None');
+		});
+
+		handleButton($('#et_print_admission_form'),function() {
+			printIFrameUrl(baseUrl + '/OphTrOperationbooking/default/admissionForm/' + OE_event_id);
+		});
+
+		$('input[name="Element_OphTrOperationbooking_Operation[priority_id]"]').click(function(e) {
+			var priority_id = $(this).val();
+
+			if (!priority_canschedule[priority_id]) {
+				$('#et_save').show();
+				$('#et_save_and_schedule_later').hide();
+				$('#et_save_and_schedule').hide();
+			} else {
+				if ($('#et_save_and_schedule_later').length >0) {
+					$('#et_save').hide();
+					$('#et_save_and_schedule_later').show();
+					$('#et_save_and_schedule').show();
+				}
+			}
+		});
 	});
 }());

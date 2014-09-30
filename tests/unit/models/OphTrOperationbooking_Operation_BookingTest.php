@@ -36,8 +36,12 @@ class OphTrOperationbooking_Operation_BookingTest  extends CDbTestCase
 	{
 		$test = $this->getMockBuilder('OphTrOperationbooking_Operation_Booking')
 				->disableOriginalConstructor()
-				->setMethods(array('calculateDefaultDisplayOrder'))
+				->setMethods(array('calculateDefaultDisplayOrder','getIsNewRecord'))
 				->getMock();
+
+		$test->expects($this->once())
+			->method('getIsNewRecord')
+			->will($this->returnValue(true));
 
 		$test->expects($this->once())
 			->method('calculateDefaultDisplayOrder')
