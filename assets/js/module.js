@@ -127,6 +127,7 @@
 
 		setDependentField('stop_medication', '#div_Element_OphTrOperationbooking_Operation_stop_medication_details');
 		setDependentField('special_equipment', '#div_Element_OphTrOperationbooking_Operation_special_equipment_details');
+		setDependentField('consultant_required', '#div_Element_OphTrOperationbooking_Operation_named_consultant_id');
 
 		$('.remove_organising_admission_user').live('click',function(e) {
 			e.preventDefault();

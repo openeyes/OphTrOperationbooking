@@ -23,6 +23,8 @@
 		'durations' => true,
 	))?>
 	<?php echo $form->radioBoolean($element, 'consultant_required')?>
+	<?php
+	echo $form->dropDownList($element, 'named_consultant_id',CHtml::listData(User::model()->findAll(array('condition' => 'is_consultant = 1','order' => 'last_name, first_name')),'id','reversedFullName'),array('empty'=>'- Please select -'),false,array('field'=>3));?>
 	<?php echo $form->radioBoolean($element, 'senior_fellow_to_do')?>
 	<?php echo $form->radioBoolean($element, 'any_grade_of_doctor')?>
 	<?php echo $form->radioButtons($element, 'anaesthetic_type_id', 'AnaestheticType')?>

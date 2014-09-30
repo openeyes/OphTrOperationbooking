@@ -35,7 +35,7 @@
 				$consultant_name = $element->consultant->ReversedFullName;
 			}
 			else {
-				$consultant_name = 'Consultant';
+				$consultant_name = 'Yes Consultant';
 			}
 			?>
 			<div class="data-value"><?php echo $element->consultant_required ? "Yes, $consultant_name" : 'No Consultant'?></div>
