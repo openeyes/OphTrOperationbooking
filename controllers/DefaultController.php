@@ -98,6 +98,7 @@ class DefaultController extends OphTrOperationbookingEventController
 
 			$element->site_id = Yii::app()->session['selected_site_id'];
 		}
+
 	}
 
 	/**

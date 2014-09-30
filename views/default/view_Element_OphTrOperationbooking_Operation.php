@@ -49,6 +49,18 @@
 	</div>
 	<div class="row">
 		<div class="large-6 column">
+			<h3 class="data-title">Named Consultant?</h3>
+			<div class="data-value"><?php echo $element->named_consultant ? 'Yes' : 'No'?></div>
+		</div>
+		<?php if ($element->named_consultant): ?>
+			<div class="large-6 column">
+				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('named_consultant')) ?></h3>
+				<div class="data-value"><?= $element->consultant->ReversedFullName ?></div>
+			</div>
+		<?php endif; ?>
+	</div>
+	<div class="row">
+		<div class="large-6 column">
 			<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('any_grade_of_doctor')) ?>?</h3>
 			<div class="data-value"><?php echo $element->any_grade_of_doctor ? 'Yes' : 'No'?></div>
 		</div>
