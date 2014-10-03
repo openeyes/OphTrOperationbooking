@@ -303,6 +303,10 @@ class OphTrOperationbooking_API extends BaseAPI
 					$new_session->date = $date;
 					$new_session->sequence_id = $sequence->id;
 					$new_session->firm_id = $sequence->firm_id;
+
+					if (Yii::app()->params['sessions_unavailable_past_date'] && $date >= Yii::app()->params['sessions_unavailable_past_date']) {
+						$new_session->available = 0;
+					}
 					$new_session->save();
 				}
 				$output .= "Sequence ID {$sequence->id}: Created " . count($dateList) . " session(s).\n";
