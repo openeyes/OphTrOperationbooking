@@ -1572,26 +1572,28 @@ class AdminController extends ModuleAdminController
 
 	public function actionOperationPriorities()
 	{
-		$this->render('//admin/generic_admin',array(
-			'title' => 'Operation priorities',
-			'model' => 'OphTrOperationbooking_Operation_Priority',
-			'extra_fields' => array(
-				array(
-					'field' => 'schedule_authitem',
-					'type' => 'authitem_roles',
-					'authitem_type' => 'operations',
-					'empty' => '- Edit rights -',
+		$this->genericAdmin(
+			'Operation priorities',
+			'OphTrOperationbooking_Operation_Priority',
+			array(
+				'extra_fields' => array(
+					array(
+						'field' => 'schedule_authitem',
+						'type' => 'authitem_roles',
+						'authitem_type' => 'operations',
+						'empty' => '- Edit rights -',
+					),
 				),
-			),
-		));
+			)
+		);
 	}
 
 	public function actionScheduleOptions()
 	{
-		$this->render('//admin/generic_admin',array(
-			'title' => 'Operation scheduling options',
-			'model' => 'OphTrOperationbooking_ScheduleOperation_Options',
-		));
+		$this->genericAdmin(
+			'Operation scheduling options',
+			'OphTrOperationbooking_ScheduleOperation_Options'
+		);
 	}
 
 	/**
@@ -1691,7 +1693,7 @@ class AdminController extends ModuleAdminController
 	public function actionSwitchEnabledPatientUnavailableReason()
 	{
 		if (!$reason = OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason::model()->findByPk(@$_POST['id'])) {
-			throw new Exception("Patient Unavailable Reason not found: $id");
+			throw new Exception("Patient Unavailable Reason not found: " . @$_POST['id']);
 		}
 
 		if ($reason->enabled) {
@@ -1835,7 +1837,7 @@ class AdminController extends ModuleAdminController
 	public function actionSwitchEnabledSessionUnavailableReason()
 	{
 		if (!$reason = OphTrOperationbooking_Operation_Session_UnavailableReason::model()->findByPk(@$_POST['id'])) {
-			throw new Exception("Session Unavailable Reason not found: $id");
+			throw new Exception("Session Unavailable Reason not found: " . @$_POST['id']);
 		}
 
 		if ($reason->enabled) {
