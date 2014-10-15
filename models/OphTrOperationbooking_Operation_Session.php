@@ -308,6 +308,10 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 			return false;
 		}
 
+		if (!Yii::app()->user->checkAccess('Super schedule operation') && Yii::app()->params['future_scheduling_limit'] && $this->date > date('Y-m-d',strtotime('+'.Yii::app()->params['future_scheduling_limit']))) {
+			return false;
+		}
+
 		return true;
 	}
 
@@ -350,6 +354,10 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 
 		if ($this->date < date('Y-m-d')) {
 			return "This session is in the past and so cannot be booked into.";
+		}
+
+		if (!Yii::app()->user->checkAccess('Super schedule operation') && Yii::app()->params['future_scheduling_limit'] && $this->date > date('Y-m-d',strtotime('+'.Yii::app()->params['future_scheduling_limit']))) {
+			return "This session is outside the allowed booking window of ".Yii::app()->params['future_scheduling_limit']." and so cannot be booked into.";
 		}
 	}
 

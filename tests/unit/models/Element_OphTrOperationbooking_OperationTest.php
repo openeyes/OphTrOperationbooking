@@ -385,13 +385,21 @@ class Element_OphTrOperationbooking_OperationTest extends CDbTestCase
 		$referral = $this->referrals('referral1');
 
 		$op = new Element_OphTrOperationbooking_Operation;
+		$op->event_id = $this->event('event1')->id;
+
 		$op->attributes = array(
-			'event_id' => $this->event('event1')->id,
 			'status_id' => 1,
 			'anaesthetic_type_id' => 1,
 			'referral_id' => $referral->id,
 			'decision_date' => date('Y-m-d', strtotime('previous week')),
 			'total_duration' => 1,
+			'senior_fellow_to_do' => 1,
+			'anaesthetist_preop_assessment' => 1,
+			'anaesthetic_choice_id' => 1,
+			'stop_medication' => 0,
+			'fast_track' => 0,
+			'special_equipment' => 0,
+			'organising_admission_user_id' => 0,
 		);
 
 		$op->procedures = array(ComponentStubGenerator::generate('Procedure'));

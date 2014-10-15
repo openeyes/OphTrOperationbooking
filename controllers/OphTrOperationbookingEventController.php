@@ -19,6 +19,8 @@
 
 class OphTrOperationbookingEventController extends BaseEventTypeController
 {
+	const ACTION_TYPE_SCHEDULE = 'Schedule';
+
 	/**
 	 * Return the open referral choices for the patient
 	 *
@@ -46,5 +48,26 @@ class OphTrOperationbookingEventController extends BaseEventTypeController
 		Yii::app()->clientScript->registerScriptFile($this->assetPath.'/js/module.js');
 
 		return parent::beforeAction($action);
+	}
+
+	public function checkScheduleAccess($priority=false)
+	{
+		if ($this->event && !$this->event->isNewRecord && !$this->checkEditAccess()) return false;
+
+		if (!$priority) {
+			if ($eo = $this->getOpenElementByClassName('Element_OphTrOperationbooking_Operation')) {
+				$priority = $eo->priority;
+			}
+		}
+
+		if ($priority && $priority->schedule_authitem) {
+			return $this->checkAccess($priority->schedule_authitem);
+		}
+
+		if ($this->event && $this->event->id) {
+			return $this->checkEditAccess();
+		}
+
+		return $this->checkAccess('Edit');
 	}
 }

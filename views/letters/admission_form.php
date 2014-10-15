@@ -115,9 +115,23 @@
 
 	<tr>
 		<th>Consultant to be present:</th>
-		<td><?php echo (empty($operation->consultant_required)) ? 'No' : 'Yes'?></td>
+		<td>
+			<?php
+			echo (empty($operation->consultant_required)) ? 'No' : 'Yes';
+			if($operation->consultant_required && $operation->consultant) {
+				echo ', '.$operation->consultant->ReversedFullName;
+			}
+			?>
+		</td>
 		<th>Total theatre time (mins):</th>
 		<td><?php echo CHtml::encode($operation->total_duration)?></td>
+	</tr>
+
+	<tr>
+		<th>Any other doctor to do:</th>
+		<td><?php echo (empty($operation->any_grade_of_doctor)) ? 'No' : 'Yes'?></td>
+		<th></th>
+		<td></td>
 	</tr>
 
 	<tr>

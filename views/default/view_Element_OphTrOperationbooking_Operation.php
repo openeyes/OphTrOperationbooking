@@ -29,14 +29,59 @@
 <section class="element element-data">
 	<div class="row">
 		<div class="large-6 column">
+			<h3 class="data-title">Consultant required?</h3>
+			<?php
+			if($element->consultant) {
+				$consultant_name = $element->consultant->ReversedFullName;
+			}
+			else {
+				$consultant_name = 'Consultant';
+			}
+			?>
+			<div class="data-value"><?php echo $element->consultant_required ? "Yes, $consultant_name" : 'No Consultant'?></div>
+		</div>
+		<?php if (!is_null($element->senior_fellow_to_do)): ?>
+			<div class="large-6 column">
+				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('senior_fellow_to_do')) ?></h3>
+				<div class="data-value"><?= $element->senior_fellow_to_do ? 'Yes' : 'No' ?></div>
+			</div>
+		<?php endif; ?>
+	</div>
+	<div class="row">
+		<div class="large-6 column">
+			<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('any_grade_of_doctor')) ?>?</h3>
+			<div class="data-value"><?php echo $element->any_grade_of_doctor ? 'Yes' : 'No'?></div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="large-6 column">
 			<h3 class="data-title">Anaesthetic</h3>
 			<div class="data-value">
 				<?php echo $element->anaesthetic_type->name?>
 			</div>
 		</div>
 		<div class="large-6 column">
-			<h3 class="data-title">Consultant required?</h3>
-			<div class="data-value"><?php echo $element->consultant_required ? 'Yes Consultant' : 'No Consultant'?></div>
+			<?php if (!is_null($element->anaesthetist_preop_assessment)): ?>
+				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('anaesthetist_preop_assessment')) ?></h3>
+				<div class="data-value"><?= $element->anaesthetist_preop_assessment ? 'Yes' : 'No' ?></div>
+			<?php endif ?>
+		</div>
+	</div>
+	<div class="row">
+		<div class="large-6 column">
+			<?php if ($element->anaesthetic_choice): ?>
+				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('anaesthetic_choice_id')) ?></h3>
+				<div class="data-value"><?= $element->anaesthetic_choice->name ?></div>
+			<?php endif ?>
+		</div>
+		<div class="large-6 column">
+			<?php if (!is_null($element->stop_medication)): ?>
+				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('stop_medication')) ?></h3>
+				<div class="data-value"><?= $element->stop_medication ? 'Yes' : 'No' ?></div>
+				<?php if ($element->stop_medication): ?>
+					<div class="data-value panel comments"><?= Yii::app()->format->nText($element->stop_medication_details) ?></div>
+				<?php endif ?>
+			<?php endif ?>
 		</div>
 	</div>
 </section>
@@ -52,6 +97,19 @@
 			<div class="data-value"><?php echo $element->NHSDate('decision_date') ?></div>
 		</div>
 	</div>
+	<div class="row">
+		<div class="large-6 column">
+			<?php if (!is_null($element->fast_track)): ?>
+				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('fast_track')) ?></h3>
+				<div class="data-value"><?php echo $element->fast_track ? 'Yes' : 'No'?></div>
+			<?php endif ?>
+		</div>
+		<div class="large-6 column">
+			<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('fast_track_discussed_with_patient')) ?></h3>
+			<div class="data-value"><?php echo is_null($element->fast_track_discussed_with_patient) ? 'Not recorded' : ($element->fast_track_discussed_with_patient ? 'Yes' : 'No')?></div>
+		</div>
+	</div>
+
 </section>
 
 <section class="element element-data">
@@ -62,10 +120,21 @@
 			</div>
 		</div>
 		<div class="large-6 column">
-			<?php if (!empty($element->comments)) { ?>
+			<?php if (!empty($element->comments)) {?>
 				<h3 class="data-title">Operation Comments</h3>
 				<div class="data-value panel comments"><?php echo $element->textWithLineBreaks('comments')?></div>
-			<?php } ?>
+			<?php }?>
+		</div>
+	</div>
+	<div class="row">
+		<div class="large-6 column end">
+			<?php if (!is_null($element->special_equipment)): ?>
+				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('special_equipment')) ?></h3>
+				<div class="data-value"><?= $element->special_equipment ? 'Yes' : 'No' ?></div>
+				<?php if ($element->special_equipment): ?>
+					<div class="data-value panel comments"><?= Yii::app()->format->nText($element->special_equipment_details) ?></div>
+				<?php endif ?>
+			<?php endif ?>
 		</div>
 	</div>
 </section>
@@ -79,20 +148,28 @@
 		?>
 			<div class="large-6 column">
 				<h3 class="data-title">Referral</h3>
-				<div class="data-value"><?php if ($element->referral) { echo $element->referral->getDescription(); } else { echo "No Referral Set"; } ?></div>
+				<div class="data-value"><?php if ($element->referral) { echo $element->referral->getDescription(); } else { echo "No Referral Set"; }?></div>
 				<?php if ($rtt = $element->getRTT()) {?>
 					<div class="rtt-info">Clock Start - <?= Helper::convertDate2NHS($rtt->clock_start) ?> Breach: <?= Helper::convertDate2NHS($rtt->breach) ?></div>
-				<?php } ?>
+				<?php }?>
 			</div>
 
 		<?php
 		}
 		?>
 		<div class="large-6 column">
-			<?php if (!empty($element->comments_rtt)) { ?>
+			<?php if (!empty($element->comments_rtt)) {?>
 				<h3 class="data-title">Operation RTT Comments</h3>
 				<div class="data-value panel comments"><?php echo $element->textWithLineBreaks('comments_rtt')?></div>
-			<?php } ?>
+			<?php }?>
+		</div>
+	</div>
+	<div class="row">
+		<div class="large-6 column">
+			<?php if ($element->organising_admission_user): ?>
+				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('organising_admission_user_id')) ?></h3>
+				<div class="data-value"><?= $element->organising_admission_user->getReversedFullName() ?></div>
+			<?php endif ?>
 		</div>
 	</div>
 </section>
@@ -107,13 +184,13 @@
 					<div class="data-value">
 						<?php $session = $element->booking->session ?>
 						<?php echo $session->NHSDate('date') . ' ' . $session->TimeSlot . ', '.$session->FirmName; ?>
-						<?php if ($warnings = $session->getWarnings()) { ?>
+						<?php if ($warnings = $session->getWarnings()) {?>
 							<div class="alert-box alert with-icon">Please note:<ul>
 							<?php foreach ($warnings as $warning) {
 								echo "<li>" . $warning . "</li>";
 							}?>
 							</ul></div>
-						<?php } ?>
+						<?php }?>
 					</div>
 				</div>
 				<div class="large-6 column">
@@ -166,14 +243,14 @@
 			</div>
 		</div>
 	</div>
-<?php } ?>
+<?php }?>
 
-<?php if (count($element->cancelledBookings)) { ?>
+<?php if (count($element->cancelledBookings)) {?>
 	<section class="element">
 		<h3 class="element-title highlight">Cancelled Bookings</h3>
 		<div class="element-data">
 			<ul class="cancelled-bookings">
-				<?php foreach ($element->cancelledBookings as $booking) { ?>
+				<?php foreach ($element->cancelledBookings as $booking) {?>
 					<li>
 						Originally scheduled for <strong><?php echo $booking->NHSDate('session_date'); ?>,
 						<?php echo date('H:i',strtotime($booking->session_start_time)); ?> -
@@ -184,7 +261,7 @@
 						due to <?php echo CHtml::encode($booking->cancellationReasonWithComment)?>
 						<?php if ($booking->erod) {?>
 							<br /><span class="erod">EROD was <?= $booking->erod->getDescription() ?></span>
-						<?php } ?>
+						<?php }?>
 					</li>
 				<?php }?>
 			</ul>
@@ -218,11 +295,11 @@
 				</div>
 			</div>
 		</section>
-	<?php } ?>
-<?php } ?>
+	<?php }?>
+<?php }?>
 
 <?php
-if ($element->status->name != 'Cancelled' && $this->checkEditAccess()) {
+if ($element->isEditable()) {
 	if (empty($element->booking)) {
 		if ($element->letterType && $this->checkPrintAccess()) {
 			$print_letter_options = null;
@@ -230,11 +307,17 @@ if ($element->status->name != 'Cancelled' && $this->checkEditAccess()) {
 				$print_letter_options['disabled'] = true;
 			}
 			$this->event_actions[] = EventAction::button("Print ".$element->letterType." letter", 'print-letter', $print_letter_options, array('id' => 'btn_print-letter', 'class'=>'button small'));
+
+			if ($element->letterType == 'Invitation') {
+				$this->event_actions[] = EventAction::button("Print Admission form", 'print_admission_form', null, array('class' => 'small button'));
+			}
 		}
-		$this->event_actions[] = EventAction::link("Schedule now",
-			Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/schedule/'.$element->event_id),
-			array('level'=>'secondary'),
-			array('id' => 'btn_schedule-now', 'class'=>'button small'));
+		if ($this->checkScheduleAccess()) {
+			$this->event_actions[] = EventAction::link("Schedule now",
+				Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/schedule/'.$element->event_id),
+				array('level'=>'secondary'),
+				array('id' => 'btn_schedule-now', 'class'=>'button small'));
+		}
 	} else {
 		if ($this->checkPrintAccess()) {
 			$print_letter_options = null;
@@ -242,20 +325,22 @@ if ($element->status->name != 'Cancelled' && $this->checkEditAccess()) {
 				$print_letter_options['disabled'] = true;
 			}
 			$this->event_actions[] = EventAction::button("Print letter", 'print-letter', $print_letter_options, array('id' => 'btn_print-admissionletter','class'=>'small button'));
-
+			$this->event_actions[] = EventAction::button("Print admission form", 'print_admission_form', null, array('class' => 'small button'));
 		}
-		if ($element->status->name != 'Completed' && !$this->event->isLocked()) {
+		if ($this->checkScheduleAccess()) {
 			$this->event_actions[] = EventAction::link("Reschedule now",
 				Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/reschedule/'.$element->event_id),
 				array('level' => 'secondary'),
 				array('id' => 'btn_reschedule-now','class' => 'button small'));
+		}
+		if ($this->checkEditAccess()) {
 			$this->event_actions[] = EventAction::link("Reschedule later",
 				Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/rescheduleLater/'.$element->event_id),
 				array('level' => 'secondary'),
 				array('id' => 'btn_reschedule-later','class' => 'button small'));
 		}
 	}
-	if ($element->status->name != 'Completed' && !$this->event->isLocked()) {
+	if ($this->checkEditAccess()) {
 		$this->event_actions[] = EventAction::link("Cancel operation",
 			Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/default/cancel/'.$element->event_id),
 			array(),

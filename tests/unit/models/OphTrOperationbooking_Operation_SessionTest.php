@@ -117,6 +117,38 @@ class OphTrOperationbooking_Operation_SessionTest extends CDbTestCase
 		$this->assertEquals($test->unbookableReason($op), OphTrOperationbooking_Operation_Session::$DEFAULT_UNAVAILABLE_REASON . ": " . $reason->name);
 	}
 
+	public function testUnbookableReason_FutureScheduleLimit()
+	{
+		Yii::app()->params['future_scheduling_limit'] = '3 months';
+
+		$s = $this->getMockBuilder('OphTrOperationbooking_Operation_Session')
+			->disableOriginalConstructor()
+			->setMethods(array('getHelper'))
+			->getMock();
+
+		$s->available = 1;
+		$s->date = date('Y-m-d',strtotime('+3 months 1 day'));
+
+		$h = $this->getMockBuilder('OphTrOperationbooking_BookingHelper')
+			->disableOriginalConstructor()
+			->setMethods(array('checkSessionCompatibleWithOperation'))
+			->getMock();
+
+		$h->expects($this->once())
+			->method('checkSessionCompatibleWithOperation')
+			->will($this->returnValue(array()));
+
+		$op = $this->getMockBuilder('Element_OphTrOperationbooking_Operation')
+			->disableOriginalConstructor()
+			->getMock();
+
+		$s->expects($this->once())
+			->method('getHelper')
+			->will($this->returnValue($h));
+
+		$this->assertEquals("This session is outside the allowed booking window of 3 months and so cannot be booked into.", $s->unbookableReason($op));
+	}
+
 	public function testCurrentProcedureCount()
 	{
 		$total_proc = 0;
@@ -248,6 +280,88 @@ class OphTrOperationbooking_Operation_SessionTest extends CDbTestCase
 		$test->max_procedures = 7;
 		$test->available = true;
 		$test->date = date('Y-m-d');
+
+		$this->assertTrue($test->operationBookable($op));
+	}
+
+	public function testOperationBookable_FutureSchedulingLimit_PastLimit()
+	{
+		$op = $this->getMockBuilder('Element_OphTrOperationbooking_Operation')
+				->disableOriginalConstructor()
+				->setMethods(array('getProcedureCount'))
+				->getMock();
+
+		$op->expects($this->once())
+				->method('getProcedureCount')
+				->will($this->returnValue(5));
+
+		$helper = $this->getMockBuilder('OphTrOperationbooking_BookingHelper')
+				->disableOriginalConstructor()
+				->setMethods(array('checkSessionCompatibleWithOperation'))
+				->getMock();
+		$helper->expects($this->once())
+			->method('checkSessionCompatibleWithOperation')
+			->will($this->returnValue(array()));
+
+		$test = $this->getMockBuilder('OphTrOperationbooking_Operation_Session')
+				->disableOriginalConstructor()
+				->setMethods(array('getBookedProcedureCount', 'getHelper'))
+				->getMock();
+
+		$test->expects($this->once())
+				->method('getBookedProcedureCount')
+				->will($this->returnValue(0));
+
+		$test->expects($this->once())
+			->method('getHelper')
+			->will($this->returnValue($helper));
+
+		Yii::app()->params['future_scheduling_limit'] = '3 months';
+
+		$test->max_procedures = 7;
+		$test->available = true;
+		$test->date = date('Y-m-d',strtotime('+3 months 1 day'));
+
+		$this->assertFalse($test->operationBookable($op));
+	}
+
+	public function testOperationBookable_FutureSchedulingLimit_WithinLimit()
+	{
+		$op = $this->getMockBuilder('Element_OphTrOperationbooking_Operation')
+				->disableOriginalConstructor()
+				->setMethods(array('getProcedureCount'))
+				->getMock();
+		
+		$op->expects($this->once())
+				->method('getProcedureCount')
+				->will($this->returnValue(5));
+		
+		$helper = $this->getMockBuilder('OphTrOperationbooking_BookingHelper')
+				->disableOriginalConstructor()
+				->setMethods(array('checkSessionCompatibleWithOperation'))
+				->getMock();
+		$helper->expects($this->once())
+			->method('checkSessionCompatibleWithOperation')
+			->will($this->returnValue(array()));
+		
+		$test = $this->getMockBuilder('OphTrOperationbooking_Operation_Session')
+				->disableOriginalConstructor()
+				->setMethods(array('getBookedProcedureCount', 'getHelper'))
+				->getMock();
+
+		$test->expects($this->once())
+				->method('getBookedProcedureCount')
+				->will($this->returnValue(0));
+
+		$test->expects($this->once())
+			->method('getHelper')
+			->will($this->returnValue($helper));
+
+		Yii::app()->params['future_scheduling_limit'] = date('Y-m-d',strtotime('+4 months'));
+
+		$test->max_procedures = 7;
+		$test->available = true;
+		$test->date = date('Y-m-d',strtotime('+3 months 1 day'));
 
 		$this->assertTrue($test->operationBookable($op));
 	}
