@@ -17,30 +17,30 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-<div class="booking-letter">
-	<header>
-		<?php $this->renderPartial("../default/letter_start", array(
-			'toAddress' => $toAddress,
-			'patient' => $patient,
-			'date' => date('Y-m-d'),
-			'site' => $site,
-		))?>
-	</header>
-
-	<?php echo $this->renderPartial('../letters/letter_introduction', array(
-			'to' => $to,
-			'accessible' => true,
-			'patient' => $patient,
-	))?>
-
-	<p class="accessible">
-		I recently invited you to telephone to arrange a date for your admission for surgery under the care of
-		<?php echo CHtml::encode($consultantName)?>.
-	</p>
-
-	<p class="accessible">
-		Despite a reminder letter, I have not heard from you. I am therefore referring you back to your GP and have removed you from our waiting list.
-	</p>
-
-	<?php echo $this->renderPartial('../letters/letter_end', array('accessible' => true)); ?>
+<div class="banner clearfix">
+	<div class="seal">
+		<img src="<?php echo Yii::app()->assetManager->createUrl('img/_print/letterhead_seal.jpg')?>" alt="letterhead_seal" />
+	</div>
+	<div class="logo">
+		<img src="<?php echo Yii::app()->assetManager->createUrl('img/_print/letterhead_Moorfields_NHS.jpg')?>" alt="letterhead_Moorfields_NHS" />
+	</div>
 </div>
+<div class="from-address">
+	<?php
+	echo $site->getLetterAddress(array(
+		'include_name' => true,
+		'delimiter' => '<br />',
+		'include_telephone' => true,
+		'include_fax' => true,
+	))?>
+	<div class="date"><?php echo date(Helper::NHS_DATE_FORMAT,strtotime($date))?></div>
+</div>
+<div class="to-address">
+	<div class="to-address-header">
+		To:
+	</div>
+	<div class="to-address-address">
+		<?php echo str_replace("\n","<br/>",CHtml::encode($toAddress))?>
+	</div>
+</div>
+<br/><br/>
