@@ -444,7 +444,7 @@ class DefaultController extends OphTrOperationbookingEventController
 	 */
 	public function actionAdmissionLetter()
 	{
-		$this->layout = '//layouts/pdf';
+		$this->layout = '//layouts/print';
 
 		if ($this->patient->date_of_death) {
 			// no admission for dead patients
@@ -464,34 +464,54 @@ class DefaultController extends OphTrOperationbookingEventController
 		}
 		$emergency_list = false;
 
-		$pdf_print = new OEPDFPrint('Openeyes', 'Booking letters', 'Booking letters');
+		$operation->event->lock();
 
-		$body = $this->render('../letters/admission_letter', array(
-			'site' => $site,
-			'patient' => $this->event->episode->patient,
-			'firm' => $firm,
-			'emergencyList' => $emergency_list,
-			'operation' => $operation,
-		), true);
+		if (!$operation->event->hasPDF('admission_letter') || @$_GET['html']) {
+			ob_start();
 
-		$oeletter = new OELetter(
-			$this->event->episode->patient->getLetterAddress(array(
-				'include_name' => true,
-				'delimiter' => "\n",
-			)),
-			$site->getLetterAddress(array(
-				'include_name' => true,
-				'include_telephone' => true,
-				'include_fax' => true,
-				'delimiter' => "\n",
-			))
-		);
+			$this->render('../letters/admission_letter', array(
+				'site' => $site,
+				'patient' => $this->event->episode->patient,
+				'firm' => $firm,
+				'emergencyList' => $emergency_list,
+				'operation' => $operation,
+				'to_address' => $this->event->episode->patient->getLetterAddress(array(
+					'include_name' => true,
+					'delimiter' => "\n",
+				)),
+				'from_address' => $site->getLetterAddress(array(
+					'include_name' => true,
+					'include_telephone' => true,
+					'include_fax' => true,
+					'delimiter' => "\n",
+				))
+			));
 
-		$oeletter->setBarcode('E:'.$operation->event_id);
-		$oeletter->addBody($body);
+			$html = ob_get_contents();
+			ob_end_clean();
 
-		$pdf_print->addLetter($oeletter);
-		$pdf_print->output();
+			$wk = new WKHtmlToPDF;
+
+			$wk->setDocuments(1);
+			$wk->setDocref($operation->event->docref);
+			$wk->setPatient($operation->event->episode->patient);
+			$wk->setBarcode($operation->event->barcodeHTML);
+
+			$wk->generatePDF($operation->event->imageDirectory, "event", "admission_letter", $html, (boolean)@$_GET['html']);
+		}
+
+		$operation->event->unlock();
+
+		if (@$_GET['html']) {
+			return Yii::app()->end();
+		}
+
+		$pdf = $operation->event->getPDF("admission_letter");
+
+		header('Content-Type: application/pdf');
+		header('Content-Length: '.filesize($pdf));
+
+		readfile($pdf);
 	}
 
 	protected function initActionAdmissionForm()

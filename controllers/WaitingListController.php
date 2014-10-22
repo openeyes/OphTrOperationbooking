@@ -272,7 +272,6 @@ class WaitingListController extends BaseModuleController
 
 		$this->layout = '//layouts/print';
 
-
 		$cmd = Yii::app()->db->createCommand('SELECT GET_LOCK(?, 1)');
 
 		while (!$cmd->queryScalar(array("waitingListPrint"))) { }
