@@ -287,8 +287,7 @@ class WaitingListController extends BaseModuleController
 
 		Yii::app()->db->createCommand('SELECT RELEASE_LOCK(?)')->execute(array("waitingListPrint"));
 
-		ob_start();
-
+		$html = '';
 		$docrefs = array();
 		$barcodes = array();
 		$patients = array();
@@ -302,7 +301,7 @@ class WaitingListController extends BaseModuleController
 			}
 
 			set_time_limit(3);
-			$this->printLetter($operation, $auto_confirm);
+			$html .= $this->printLetter($operation, $auto_confirm);
 
 			$docrefs[] = "E:{$operation->event->id}/".strtoupper(base_convert(time().sprintf('%04d', Yii::app()->user->getId()), 10, 32)).'/{{PAGE}}';
 			$barcodes[] = $operation->event->barcodeHTML;
@@ -321,9 +320,6 @@ class WaitingListController extends BaseModuleController
 		}
 
 		set_time_limit(10);
-
-		$html = ob_get_contents();
-		ob_end_clean();
 
 		$wk = new WKHtmlToPDF;
 		$wk->setDocuments($documents);
@@ -373,11 +369,13 @@ class WaitingListController extends BaseModuleController
 			if ($letter_status != Element_OphTrOperationbooking_Operation::LETTER_GP || ($patient->practice && $patient->practice->contact->address)) {
 				Yii::log("Printing letter: ".$letter_template, 'trace');
 
-				call_user_func(array($this, 'print_'.$letter_template), $operation);
+				$html = call_user_func(array($this, 'print_'.$letter_template), $operation);
 
 				if ($auto_confirm) {
 					$operation->confirmLetterPrinted();
 				}
+
+				return $html;
 			} else {
 				Yii::log("Patient has no practice address, printing letter supressed: ".$patient->id, 'trace');
 			}
@@ -416,7 +414,7 @@ class WaitingListController extends BaseModuleController
 			'include_name' => true,
 			'delimiter' => "\n",
 		));
-		$this->render('../letters/invitation_letter', array(
+		return $this->render('../letters/invitation_letter', array(
 			'to' => $patient->salutationname,
 			'consultantName' => $operation->event->episode->firm->consultant->fullName,
 			'overnightStay' => $operation->overnight_stay,
@@ -424,7 +422,7 @@ class WaitingListController extends BaseModuleController
 			'changeContact' => $operation->waitingListContact,
 			'toAddress' => $to_address,
 			'site' => $operation->site,
-		));
+		),true);
 	}
 
 	/**
@@ -437,7 +435,7 @@ class WaitingListController extends BaseModuleController
 			'include_name' => true,
 			'delimiter' => "\n",
 		));
-		$this->render('../letters/reminder_letter', array(
+		return $this->render('../letters/reminder_letter', array(
 				'to' => $patient->salutationname,
 				'consultantName' => $operation->event->episode->firm->consultant->fullName,
 				'overnightStay' => $operation->overnight_stay,
@@ -445,7 +443,7 @@ class WaitingListController extends BaseModuleController
 				'changeContact' => $operation->waitingListContact,
 				'toAddress' => $to_address,
 				'site' => $operation->site,
-		));
+		),true);
 	}
 
 	/**
@@ -476,26 +474,24 @@ class WaitingListController extends BaseModuleController
 
 		$to_address = $to_name . "\n" . $to_address;
 
-		$this->render('../letters/gp_letter', array(
+		$html = $this->render('../letters/gp_letter', array(
 				'to' => $to_name,
 				'patient' => $patient,
 				'consultantName' => $operation->event->episode->firm->consultant->fullName,
 				'toAddress' => $to_address,
 				'site' => $operation->site,
-		));
+		),true);
 
-		// Patient letter
-		$to_address = $patient->getLetterAddress(array(
-			'include_name' => true,
-			'delimiter' => "\n",
-		));
-		$this->render('../letters/gp_letter_patient', array(
+		return $html . $this->render('../letters/gp_letter_patient', array(
 				'to' => $patient->salutationname,
 				'patient' => $patient,
 				'consultantName' => $operation->event->episode->firm->consultant->fullName,
-				'toAddress' => $to_address,
+				'toAddress' => $patient->getLetterAddress(array(
+					'include_name' => true,
+					'delimiter' => "\n",
+				)),
 				'site' => $operation->site,
-		));
+		),true);
 	}
 
 	/**
