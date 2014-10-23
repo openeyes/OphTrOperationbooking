@@ -451,62 +451,37 @@ class DefaultController extends OphTrOperationbookingEventController
 			return false;
 		}
 
-		$operation = $this->operation;
+		$site = $this->operation->booking->session->theatre->site;
+		if (!$firm = $this->operation->booking->session->firm) {
+			$firm = $this->operation->event->episode->firm;
+			$emergency_list = true;
+		}
+		$emergency_list = false;
 
 		$this->event->audit('admission letter','print',false);
 
 		$this->logActivity('printed admission letter');
 
-		$site = $operation->booking->session->theatre->site;
-		if (!$firm = $operation->booking->session->firm) {
-			$firm = $operation->event->episode->firm;
-			$emergency_list = true;
-		}
-		$emergency_list = false;
+		$this->pdf_print_suffix = 'admission_letter';
+		$this->pdf_print_html = $this->render('../letters/admission_letter', array(
+			'site' => $site,
+			'patient' => $this->event->episode->patient,
+			'firm' => $firm,
+			'emergencyList' => $emergency_list,
+			'operation' => $this->operation,
+			'to_address' => $this->event->episode->patient->getLetterAddress(array(
+				'include_name' => true,
+				'delimiter' => "\n",
+			)),
+			'from_address' => $site->getLetterAddress(array(
+				'include_name' => true,
+				'include_telephone' => true,
+				'include_fax' => true,
+				'delimiter' => "\n",
+			))
+		), true);
 
-		$operation->event->lock();
-
-		if (!$operation->event->hasPDF('admission_letter') || @$_GET['html']) {
-			$html = $this->render('../letters/admission_letter', array(
-				'site' => $site,
-				'patient' => $this->event->episode->patient,
-				'firm' => $firm,
-				'emergencyList' => $emergency_list,
-				'operation' => $operation,
-				'to_address' => $this->event->episode->patient->getLetterAddress(array(
-					'include_name' => true,
-					'delimiter' => "\n",
-				)),
-				'from_address' => $site->getLetterAddress(array(
-					'include_name' => true,
-					'include_telephone' => true,
-					'include_fax' => true,
-					'delimiter' => "\n",
-				))
-			),true);
-
-			$wk = new WKHtmlToPDF;
-
-			$wk->setDocuments(1);
-			$wk->setDocref($operation->event->docref);
-			$wk->setPatient($operation->event->episode->patient);
-			$wk->setBarcode($operation->event->barcodeHTML);
-
-			$wk->generatePDF($operation->event->imageDirectory, "event", "admission_letter", $html, (boolean)@$_GET['html']);
-		}
-
-		$operation->event->unlock();
-
-		if (@$_GET['html']) {
-			return Yii::app()->end();
-		}
-
-		$pdf = $operation->event->getPDF("admission_letter");
-
-		header('Content-Type: application/pdf');
-		header('Content-Length: '.filesize($pdf));
-
-		readfile($pdf);
+		return $this->actionPDFPrint($this->operation->event->id);
 	}
 
 	protected function initActionAdmissionForm()
@@ -519,41 +494,18 @@ class DefaultController extends OphTrOperationbookingEventController
 	{
 		$this->layout = '//layouts/print';
 
-		$this->operation->event->lock();
+		$this->pdf_print_suffix = 'admission_form';
+		$this->pdf_print_html = $this->render('../letters/admission_form',
+			array(
+				'operation' => $this->operation,
+				'site' => $this->operation->site,
+				'patient' => $this->patient,
+				'firm' => $this->episode->firm,
+				'emergencyList' => false,
+			),
+			true
+		);
 
-		if (!$this->operation->event->hasPDF('admission_form') || @$_GET['html']) {
-			$html = $this->render('../letters/admission_form',
-				array(
-					'operation' => $this->operation,
-					'site' => $this->operation->site,
-					'patient' => $this->patient,
-					'firm' => $this->episode->firm,
-					'emergencyList' => false,
-				),
-				true
-			);
-
-			$wk = new WKHtmlToPDF;
-
-			$wk->setDocuments(1);
-			$wk->setDocref($this->operation->event->docref);
-			$wk->setPatient($this->operation->event->episode->patient);
-			$wk->setBarcode($this->operation->event->barcodeHTML);
-
-			$wk->generatePDF($this->operation->event->imageDirectory, "event", "admission_form", $html, (boolean)@$_GET['html']);
-		}
-
-		$this->operation->event->lock();
-
-		if (@$_GET['html']) {
-			return Yii::app()->end();
-		}
-
-		$pdf = $this->operation->event->getPDF("admission_form");
-
-		header('Content-Type: application/pdf');
-		header('Content-Length: '.filesize($pdf));
-
-		readfile($pdf);
+		return $this->actionPDFPrint($this->operation->event->id);
 	}
 }
