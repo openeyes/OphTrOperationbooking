@@ -18,7 +18,7 @@
  */
 ?>
 
-<p<?php if (@$accessible) { ?> class="accessible"<?php } ?> nobr="true">
+<p<?php if (@$accessible) {?> class="accessible"<?php }?> nobr="true" style="margin-bottom: 0;">
 	Yours sincerely,
 	<br/><br/><br/>
 	Admissions Officer

@@ -1,7 +1,11 @@
 
 .booking-letter {
-	padding: 40px;
+	padding: 40px 40px 0px 40px;
 	page-break-after: always;
+}
+
+.booking-admission-form {
+	padding: 40px;
 }
 
 .banner .seal {
@@ -23,7 +27,7 @@
 .from-address {
 	float: right;
 	text-align: right;
-	margin-top: 2em;
+	margin-top: 1.4em;
 }
 
 .to-address {
@@ -47,12 +51,13 @@
 }
 
 table {
-	padding: 10px;
+	margin: 10px 0;
+	width: 100%;
 }
 
-tr,td,th {
-	padding: 3px !important;
-	margin: 0 !important;
+td, th {
+	border: 2px #ccc solid;
+	padding: 5px !important;
 }
 
 li {

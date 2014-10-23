@@ -467,9 +467,7 @@ class DefaultController extends OphTrOperationbookingEventController
 		$operation->event->lock();
 
 		if (!$operation->event->hasPDF('admission_letter') || @$_GET['html']) {
-			ob_start();
-
-			$this->render('../letters/admission_letter', array(
+			$html = $this->render('../letters/admission_letter', array(
 				'site' => $site,
 				'patient' => $this->event->episode->patient,
 				'firm' => $firm,
@@ -485,10 +483,7 @@ class DefaultController extends OphTrOperationbookingEventController
 					'include_fax' => true,
 					'delimiter' => "\n",
 				))
-			));
-
-			$html = ob_get_contents();
-			ob_end_clean();
+			),true);
 
 			$wk = new WKHtmlToPDF;
 
@@ -522,15 +517,12 @@ class DefaultController extends OphTrOperationbookingEventController
 
 	public function actionAdmissionForm()
 	{
-		$this->layout = '//layouts/pdf';
+		$this->layout = '//layouts/print';
 
-		$pdf = new OEPDFPrint('Openeyes', 'Admission form', 'Admission form');
+		$this->operation->event->lock();
 
-		$letter = new OELetter;
-		$letter->setBarcode('E:' . $this->operation->event_id);
-		$letter->setFont('helvetica', '10');
-		$letter->addBody(
-			$this->render('../letters/admission_form',
+		if (!$this->operation->event->hasPDF('admission_form') || @$_GET['html']) {
+			$html = $this->render('../letters/admission_form',
 				array(
 					'operation' => $this->operation,
 					'site' => $this->operation->site,
@@ -539,10 +531,29 @@ class DefaultController extends OphTrOperationbookingEventController
 					'emergencyList' => false,
 				),
 				true
-			)
-		);
+			);
 
-		$pdf->addLetterRender($letter);
-		$pdf->output();
+			$wk = new WKHtmlToPDF;
+
+			$wk->setDocuments(1);
+			$wk->setDocref($this->operation->event->docref);
+			$wk->setPatient($this->operation->event->episode->patient);
+			$wk->setBarcode($this->operation->event->barcodeHTML);
+
+			$wk->generatePDF($this->operation->event->imageDirectory, "event", "admission_form", $html, (boolean)@$_GET['html']);
+		}
+
+		$this->operation->event->lock();
+
+		if (@$_GET['html']) {
+			return Yii::app()->end();
+		}
+
+		$pdf = $this->operation->event->getPDF("admission_form");
+
+		header('Content-Type: application/pdf');
+		header('Content-Length: '.filesize($pdf));
+
+		readfile($pdf);
 	}
 }
