@@ -1572,9 +1572,7 @@ class AdminController extends ModuleAdminController
 
 	public function actionOperationPriorities()
 	{
-		$this->render('//admin/generic_admin',array(
-			'title' => 'Operation priorities',
-			'model' => 'OphTrOperationbooking_Operation_Priority',
+		$this->genericAdmin('Operation priorities','OphTrOperationbooking_Operation_Priority',array(
 			'extra_fields' => array(
 				array(
 					'field' => 'schedule_authitem',
@@ -1588,10 +1586,7 @@ class AdminController extends ModuleAdminController
 
 	public function actionScheduleOptions()
 	{
-		$this->render('//admin/generic_admin',array(
-			'title' => 'Operation scheduling options',
-			'model' => 'OphTrOperationbooking_ScheduleOperation_Options',
-		));
+		$this->genericAdmin('Operation scheduling options','OphTrOperationbooking_ScheduleOperation_Options');
 	}
 
 	/**
