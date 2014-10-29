@@ -500,24 +500,31 @@ class TheatreDiaryController extends BaseModuleController
 				// this is an array [] because it's theoretically possible for bad data to occur where there are multiple bookings with the same display_order
 				$original_bookings[$booking_data['original_display_order']][] = $booking_data['booking_id'];
 			}
-			ksort($original_bookings);
-
 			$original_booking_ids = array();
-			foreach ($original_bookings as $original_display_order => $booking_ids) {
+			ksort($original_bookings);
+			foreach ($original_bookings as $booking_ids) {
+				sort($booking_ids);
 				foreach ($booking_ids as $booking_id) {
 					$original_booking_ids[] = $booking_id;
 				}
 			}
 
-			$previous_display_order = -1;
+			$previous_booking_display_order = -1;
+			$previous_booking_booking_id = 0;
 			foreach ($bookings as $new_position => $booking_data) {
 
-				// Check if relative position of booking has changed and adjust display_order as required
-				if($booking_data['booking_id'] != $original_booking_ids[$new_position]) {
-					$booking_data['booking']->display_order = $previous_display_order +1;
+				// Check if relative position of booking has changed or if the display_order or booking id are lower
+				// than the previous booking. If so update display order. This is necessary for cases where there are duplicate
+				// display_orders and booking_id is used as a tie breaker
+				if($booking_data['booking_id'] != $original_booking_ids[$new_position]
+					|| $booking_data['booking']->display_order < $previous_booking_display_order
+					|| ($booking_data['booking']->display_order == $previous_booking_display_order
+						&& $booking_data['booking_id'] < $previous_booking_booking_id)) {
+					$booking_data['booking']->display_order = $previous_booking_display_order + 1;
 					$booking_data['changed'] = true;
 				}
-				$previous_display_order = $booking_data['booking']->display_order;
+				$previous_booking_display_order = $booking_data['booking']->display_order;
+				$previous_booking_booking_id = $booking_data['booking_id'];
 
 				// Save booking if it has changed
 				if ($booking_data['changed']) {

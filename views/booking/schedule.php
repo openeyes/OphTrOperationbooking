@@ -129,6 +129,10 @@
 			if ($initial_erod || $erod) { ?>
 				<div class="eventDetail">
 					<div class="row field-row">
+						<div class="large-2 column label"><strong><?= CHtml::encode($schedule_options->getAttributeLabel('schedule_options_id')) ?>:</strong></div>
+						<div class="large-5 column end data"><?= CHtml::encode($schedule_options->schedule_options->name) ?></div>
+					</div>
+					<div class="row field-row">
 						<div class="large-2 column label"><strong>EROD:</strong></div>
 						<div class="large-5 column end data"><?php if ($erod) { echo $erod->getDescription(); } else { echo "N/A"; } if ($initial_erod) { echo ' <span class="initial-erod">Initially: ' . $initial_erod->getDescription();  } ?></div>
 					</div>
