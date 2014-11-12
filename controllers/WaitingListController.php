@@ -270,18 +270,71 @@ class WaitingListController extends BaseModuleController
 			$operations = Element_OphTrOperationbooking_Operation::model()->findAllByPk($operation_ids);
 		}
 
-		// Print letter(s) for each operation
-		$this->layout = '//layouts/pdf';
-		$pdf_print = new OEPDFPrint('Openeyes', 'Waiting list letters', 'Waiting list letters');
-		// for large number of letters we manipulate the the time limit on the script
-		// to prevent timeouts.
+		$this->layout = '//layouts/print';
+
+		$cmd = Yii::app()->db->createCommand('SELECT GET_LOCK(?, 1)');
+
+		while (!$cmd->queryScalar(array("waitingListPrint"))) { }
+
+		$n = time();
+
+		$directory = Yii::app()->assetManager->basePath."/waitingList/".Yii::app()->user->id."_".$n;
+
+		while (file_exists($directory)) {
+			$n++;
+			$directory = Yii::app()->assetManager->basePath."/waitingList/".Yii::app()->user->id."_".$n;
+		}
+
+		Yii::app()->db->createCommand('SELECT RELEASE_LOCK(?)')->execute(array("waitingListPrint"));
+
+		$html = '';
+		$docrefs = array();
+		$barcodes = array();
+		$patients = array();
+		$documents = 0;
+
 		// FIXME: provide a means by which progress can be reported back to the user, possibly via session and parallel polling?
 		foreach ($operations as $operation) {
+			$letter_status = $operation->getDueLetter();
+			if ($letter_status === null && $operation->getLastLetter() == Element_OphTrOperationbooking_Operation::LETTER_GP) {
+				$letter_status = Element_OphTrOperationbooking_Operation::LETTER_GP;
+			}
+
 			set_time_limit(3);
-			$this->printLetter($pdf_print, $operation, $auto_confirm);
+			$html .= $this->printLetter($operation, $auto_confirm);
+
+			$docrefs[] = "E:{$operation->event->id}/".strtoupper(base_convert(time().sprintf('%04d', Yii::app()->user->getId()), 10, 32)).'/{{PAGE}}';
+			$barcodes[] = $operation->event->barcodeHTML;
+			$patients[] = $operation->event->episode->patient;
+
+			$documents++;
+
+			if ($letter_status == Element_OphTrOperationbooking_Operation::LETTER_GP) {
+				// Patient letter is another document
+				$docrefs[] = "E:{$operation->event->id}/".strtoupper(base_convert(time().sprintf('%04d', Yii::app()->user->getId()), 10, 32)).'/{{PAGE}}';
+				$barcodes[] = $operation->event->barcodeHTML;
+				$patients[] = $operation->event->episode->patient;
+
+				$documents++;
+			}
 		}
+
 		set_time_limit(10);
-		$pdf_print->output();
+
+		$wk = new WKHtmlToPDF;
+		$wk->setDocuments($documents);
+		$wk->setDocrefs($docrefs);
+		$wk->setBarcodes($barcodes);
+		$wk->setPatients($patients);
+		$wk->generatePDF($directory, "waitingList", "", $html);
+
+		$pdf = $directory."/waitingList.pdf";
+
+		header('Content-Type: application/pdf');
+		header('Content-Length: '.filesize($pdf));
+
+		readfile($pdf);
+		@unlink($pdf);
 	}
 
 	/**
@@ -291,7 +344,7 @@ class WaitingListController extends BaseModuleController
 	 * @param Boolean $auto_confirm
 	 * @throws CException
 	 */
-	protected function printLetter($pdf_print, $operation, $auto_confirm = false)
+	protected function printLetter($operation, $auto_confirm = false)
 	{
 		$patient = $operation->event->episode->patient;
 		$letter_status = $operation->getDueLetter();
@@ -316,11 +369,13 @@ class WaitingListController extends BaseModuleController
 			if ($letter_status != Element_OphTrOperationbooking_Operation::LETTER_GP || ($patient->practice && $patient->practice->contact->address)) {
 				Yii::log("Printing letter: ".$letter_template, 'trace');
 
-				call_user_func(array($this, 'print_'.$letter_template), $pdf_print, $operation);
+				$html = call_user_func(array($this, 'print_'.$letter_template), $operation);
 
 				if ($auto_confirm) {
 					$operation->confirmLetterPrinted();
 				}
+
+				return $html;
 			} else {
 				Yii::log("Patient has no practice address, printing letter supressed: ".$patient->id, 'trace');
 			}
@@ -350,58 +405,53 @@ class WaitingListController extends BaseModuleController
 	}
 
 	/**
-	 * @param OEPDFPrint $pdf
 	 * @param Element_OphTrOperationbooking_Operation $operation
 	 */
-	protected function print_invitation_letter($pdf, $operation)
+	protected function print_invitation_letter($operation)
 	{
 		$patient = $operation->event->episode->patient;
 		$to_address = $patient->getLetterAddress(array(
 			'include_name' => true,
 			'delimiter' => "\n",
 		));
-		$body = $this->render('../letters/invitation_letter', array(
-				'to' => $patient->salutationname,
-				'consultantName' => $operation->event->episode->firm->consultant->fullName,
-				'overnightStay' => $operation->overnight_stay,
-				'patient' => $patient,
-				'changeContact' => $operation->waitingListContact,
-		), true);
-		$letter = new OELetter($to_address, $this->getFromAddress($operation), $body);
-		$letter->setBarcode('E:'.$operation->event_id);
-		$pdf->addLetterRender($letter);
+		return $this->render('../letters/invitation_letter', array(
+			'to' => $patient->salutationname,
+			'consultantName' => $operation->event->episode->firm->consultant->fullName,
+			'overnightStay' => $operation->overnight_stay,
+			'patient' => $patient,
+			'changeContact' => $operation->waitingListContact,
+			'toAddress' => $to_address,
+			'site' => $operation->site,
+		),true);
 	}
 
 	/**
-	 * @param OEPDFPrint $pdf
 	 * @param Element_OphTrOperationbooking_Operation $operation
 	 */
-	protected function print_reminder_letter($pdf, $operation)
+	protected function print_reminder_letter($operation)
 	{
 		$patient = $operation->event->episode->patient;
 		$to_address = $patient->getLetterAddress(array(
 			'include_name' => true,
 			'delimiter' => "\n",
 		));
-		$body = $this->render('../letters/reminder_letter', array(
+		return $this->render('../letters/reminder_letter', array(
 				'to' => $patient->salutationname,
 				'consultantName' => $operation->event->episode->firm->consultant->fullName,
 				'overnightStay' => $operation->overnight_stay,
 				'patient' => $patient,
 				'changeContact' => $operation->waitingListContact,
-		), true);
-		$letter = new OELetter($to_address, $this->getFromAddress($operation), $body);
-		$letter->setBarcode('E:'.$operation->event_id);
-		$pdf->addLetterRender($letter);
+				'toAddress' => $to_address,
+				'site' => $operation->site,
+		),true);
 	}
 
 	/**
-	 * @param OEPDFPrint $pdf
 	 * @param Element_OphTrOperationbooking_Operation $operation
 	 *
 	 * @throws CException
 	 */
-	protected function print_gp_letter($pdf, $operation)
+	protected function print_gp_letter($operation)
 	{
 		$patient = $operation->event->episode->patient;
 
@@ -424,29 +474,24 @@ class WaitingListController extends BaseModuleController
 
 		$to_address = $to_name . "\n" . $to_address;
 
-		$body = $this->render('../letters/gp_letter', array(
+		$html = $this->render('../letters/gp_letter', array(
 				'to' => $to_name,
 				'patient' => $patient,
 				'consultantName' => $operation->event->episode->firm->consultant->fullName,
-		), true);
-		$letter = new OELetter($to_address, $this->getFromAddress($operation), $body);
-		$letter->setBarcode('E:'.$operation->event_id);
-		$pdf->addLetterRender($letter);
+				'toAddress' => $to_address,
+				'site' => $operation->site,
+		),true);
 
-		// Patient letter
-		$to_address = $patient->getLetterAddress(array(
-			'include_name' => true,
-			'delimiter' => "\n",
-		));
-		$body = $this->render('../letters/gp_letter_patient', array(
+		return $html . $this->render('../letters/gp_letter_patient', array(
 				'to' => $patient->salutationname,
 				'patient' => $patient,
 				'consultantName' => $operation->event->episode->firm->consultant->fullName,
-		), true);
-		$letter = new OELetter($to_address, $this->getFromAddress($operation), $body);
-		$letter->setBarcode('E:'.$operation->event_id);
-		$pdf->addLetterRender($letter);
-
+				'toAddress' => $patient->getLetterAddress(array(
+					'include_name' => true,
+					'delimiter' => "\n",
+				)),
+				'site' => $operation->site,
+		),true);
 	}
 
 	/**

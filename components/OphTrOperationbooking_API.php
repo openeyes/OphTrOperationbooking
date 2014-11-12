@@ -19,29 +19,32 @@
 
 class OphTrOperationbooking_API extends BaseAPI
 {
-
 	/**
-	 * Gets latest booking diagnosis from operation booking or defaults to episode diagnosis
+	 * Gets latest booking diagnosis from completed operation booking or defaults to episode diagnosis
 	 * @return string
 	 */
-	public function getLatestOperationBookingDiagnosis($patient)
+	public function getLatestCompletedOperationBookingDiagnosis($patient)
 	{
-		//get latest compelted operation note booking_event_id
-		$api = Yii::app()->moduleAPI->get('OphTrOperationnote');
-		$booking_id = $api -> getLetterProceduresBookingEventID($patient);
+		$completed = OphTrOperationbooking_Operation_Status::model()->find('name=?',array('Completed'));
 
-		if(!$booking_id) return $patient->getEpd(); //default to episode diagnosis
-
-		//use this to find the matching operation booking event  id
 		$criteria = new CDbCriteria;
-		$criteria->condition ='id ='.$booking_id ;
-		$event=Event::model()->find($criteria); // get latest op booking event for episode
+		$criteria->addCondition('episode.patient_id = :patient_id');
+		$criteria->params[':patient_id'] = $patient->id;
+		$criteria->order = 'event.created_date desc';
+		$criteria->addCondition('t.status_id = :status_id');
+		$criteria->params[':status_id'] = $completed->id;
 
-		//get the diagnosis from the operation booking
-		$diagnosis =	Element_OphTrOperationbooking_Diagnosis::model()->find('event_id=?',array($event->id));
+		if ($operation = Element_OphTrOperationbooking_Operation::model()->with(array(
+				'event' => array(
+					'with' => 'episode'
+				)
+			))
+			->find($criteria)) {
 
-		//return diagnosis string
-		return $diagnosis->disorder->term;
+			return Element_OphTrOperationbooking_Diagnosis::model()->find('event_id=?',array($operation->event_id))->disorder->term;
+		}
+
+		return $patient->epd;
 	}
 
 	public function getBookingsForEpisode($episode_id)
@@ -62,6 +65,22 @@ class OphTrOperationbooking_API extends BaseAPI
 			->findAll($criteria);
 	}
 
+	public function getOperationsForEpisode($episode_id)
+	{
+		$criteria = new CDbCriteria;
+		$criteria->order = 't.created_date asc';
+		$criteria->compare('episode_id',$episode_id);
+
+		return Element_OphTrOperationbooking_Operation::model()
+			->with(array(
+				'booking' => array(
+					'with' => 'session'
+				),
+				'event'
+			))
+			->findAll($criteria);
+	}
+
 	/**
 	 *	Gets 'open' bookings for the specified episode
 	 * A booking is deemed open if it has no operation note linked to it
@@ -73,7 +92,7 @@ class OphTrOperationbooking_API extends BaseAPI
 	{
 		$criteria = new CDbCriteria;
 		$criteria->order = 'event.created_date asc';
-		$criteria->addCondition('episode_id',$episode_id);
+		$criteria->compare('episode_id',$episode_id);
 		$criteria->addCondition('`t`.booking_cancellation_date is null');
 
 		$status_scheduled = OphTrOperationbooking_Operation_Status::model()->find('name=?',array('Scheduled'));
@@ -148,11 +167,10 @@ class OphTrOperationbooking_API extends BaseAPI
 	/**
 	 * Get the most recent booking for the patient in the given episode
 	 *
-	 * @param Patient $patient
 	 * @param Episode $episode
 	 * @return OphTrOperationbooking_Operation_Booking
 	 */
-	public function getMostRecentBookingForEpisode($patient, $episode)
+	public function getMostRecentBookingForEpisode($episode)
 	{
 		$criteria = new CDbCriteria;
 		$criteria->compare('episode_id', $episode->id);
@@ -179,7 +197,7 @@ class OphTrOperationbooking_API extends BaseAPI
 		if ($episode = $patient->getEpisodeForCurrentSubspecialty()) {
 			$return = '';
 
-			if ($operation = $this->getElementForLatestEventInEpisode($patient, $episode, 'Element_OphTrOperationbooking_Operation')) {
+			if ($operation = $this->getElementForLatestEventInEpisode($episode, 'Element_OphTrOperationbooking_Operation')) {
 				foreach ($operation->procedures as $i => $procedure) {
 					if ($i) $return .= ', ';
 					$return .= $operation->eye->adjective.' '.$procedure->term;
@@ -193,7 +211,7 @@ class OphTrOperationbooking_API extends BaseAPI
 	public function getAdmissionDate($patient)
 	{
 		if ($episode = $patient->getEpisodeForCurrentSubspecialty()) {
-			if ($booking = $this->getMostRecentBookingForEpisode($patient, $episode)) {
+			if ($booking = $this->getMostRecentBookingForEpisode($episode)) {
 				return $booking->session->NHSDate('date');
 			}
 		}

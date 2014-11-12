@@ -18,23 +18,34 @@
  */
 ?>
 
-<?php echo $this->renderPartial('../letters/letter_start', array(
-		'to' => $to,
-		'accessible' => false,
-		'patient' => $patient,
-		'patient_ref' => true,
-))?>
+<div class="booking-letter">
+	<header>
+		<?php $this->renderPartial("../default/letter_start", array(
+			'toAddress' => $toAddress,
+			'patient' => $patient,
+			'date' => date('Y-m-d'),
+			'site' => $site,
+		))?>
+	</header>
 
-<p>
-	This patient was recently referred to this hospital and a decision was made that surgery was appropriate under the care of <?php echo CHtml::encode($consultantName) ?>.
-</p>
+	<?php echo $this->renderPartial('../letters/letter_introduction', array(
+			'to' => $to,
+			'accessible' => false,
+			'patient' => $patient,
+			'patient_ref' => true,
+	))?>
 
-<p>
-	In accordance with the National requirements our admission system provides patients with the opportunity to agree the date for their operation. We have written twice to ask the patient to contact us to discuss and agree a date but we have had no response.
-</p>
+	<p>
+		This patient was recently referred to this hospital and a decision was made that surgery was appropriate under the care of <?php echo CHtml::encode($consultantName) ?>.
+	</p>
 
-<p>
-	Therefore we have removed this patient from our waiting list and we are referring them back to you.
-</p>
+	<p>
+		In accordance with the National requirements our admission system provides patients with the opportunity to agree the date for their operation. We have written twice to ask the patient to contact us to discuss and agree a date but we have had no response.
+	</p>
 
-<?php echo $this->renderPartial('../letters/letter_end'); ?>
+	<p>
+		Therefore we have removed this patient from our waiting list and we are referring them back to you.
+	</p>
+
+	<?php echo $this->renderPartial('../letters/letter_end'); ?>
+</div>
