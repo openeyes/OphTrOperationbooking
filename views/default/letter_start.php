@@ -17,9 +17,30 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-
-<p<?php if (@$accessible) {?> class="accessible"<?php }?> nobr="true" style="margin-bottom: 0;">
-	Yours sincerely,
-	<br/><br/><br/>
-	Admissions Officer
-</p>
+<div class="banner clearfix">
+	<div class="seal">
+		<img src="<?php echo Yii::app()->assetManager->createUrl('img/_print/letterhead_seal.jpg')?>" alt="letterhead_seal" />
+	</div>
+	<div class="logo">
+		<img src="<?php echo Yii::app()->assetManager->createUrl('img/_print/letterhead_Moorfields_NHS.jpg')?>" alt="letterhead_Moorfields_NHS" />
+	</div>
+</div>
+<div class="from-address">
+	<?php
+	echo $site->getLetterAddress(array(
+		'include_name' => true,
+		'delimiter' => '<br />',
+		'include_telephone' => true,
+		'include_fax' => true,
+	))?>
+	<div class="date"><?php echo date(Helper::NHS_DATE_FORMAT,strtotime($date))?></div>
+</div>
+<div class="to-address">
+	<div class="to-address-header">
+		To:
+	</div>
+	<div class="to-address-address">
+		<?php echo str_replace("\n","<br/>",CHtml::encode($toAddress))?>
+	</div>
+</div>
+<br/><br/>

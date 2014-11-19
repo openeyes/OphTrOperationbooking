@@ -23,5 +23,17 @@ return array(
 		'proc_id' => 1,
 		'created_date' => date('Y-m-d 00:00:00'),
 		'last_modified_date' => date('Y-m-d 00:00:00'),
+	),
+	'opp2' => array(
+		'element_id' => 12,
+		'proc_id' => 1,
+		'created_date' => date('Y-m-d 00:00:00'),
+		'last_modified_date' => date('Y-m-d 00:00:00'),
+	),
+	'opp3' => array(
+		'element_id' => 12,
+		'proc_id' => 2,
+		'created_date' => date('Y-m-d 00:00:00'),
+		'last_modified_date' => date('Y-m-d 00:00:00'),
 	)
 );

@@ -17,20 +17,30 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
+<div class="booking-letter">
+	<header>
+		<?php $this->renderPartial("../default/letter_start", array(
+			'toAddress' => $toAddress,
+			'patient' => $patient,
+			'date' => date('Y-m-d'),
+			'site' => $site,
+		))?>
+	</header>
 
-<?php echo $this->renderPartial('../letters/letter_start', array(
-		'to' => $to,
-		'accessible' => true,
-		'patient' => $patient,
-))?>
+	<?php echo $this->renderPartial('../letters/letter_introduction', array(
+			'to' => $to,
+			'accessible' => true,
+			'patient' => $patient,
+	))?>
 
-<p class="accessible">
-	I recently invited you to telephone to arrange a date for your admission for surgery under the care of
-	<?php echo CHtml::encode($consultantName)?>.
-</p>
+	<p class="accessible">
+		I recently invited you to telephone to arrange a date for your admission for surgery under the care of
+		<?php echo CHtml::encode($consultantName)?>.
+	</p>
 
-<p class="accessible">
-	Despite a reminder letter, I have not heard from you. I am therefore referring you back to your GP and have removed you from our waiting list.
-</p>
+	<p class="accessible">
+		Despite a reminder letter, I have not heard from you. I am therefore referring you back to your GP and have removed you from our waiting list.
+	</p>
 
-<?php echo $this->renderPartial('../letters/letter_end', array('accessible' => true)); ?>
+	<?php echo $this->renderPartial('../letters/letter_end', array('accessible' => true)); ?>
+</div>
