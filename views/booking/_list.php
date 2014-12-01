@@ -149,7 +149,7 @@ if (!$reschedule) {
 					<?php echo CHtml::label('<strong>Reschedule Comments:</strong> ', 'cancellation_comment'); ?>
 				</div>
 				<div class="large-5 column end">
-					<textarea name="cancellation_comment" rows=3 cols=50><?php echo CHtml::encode($_POST['cancellation_comment'])?></textarea>
+					<textarea name="cancellation_comment" rows=3 cols=50><?php echo CHtml::encode(@$_POST['cancellation_comment'])?></textarea>
 				</div>
 			</div>
 		</div>
