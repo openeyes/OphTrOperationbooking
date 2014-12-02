@@ -99,7 +99,7 @@
 	</div>
 	<div class="row">
 		<div class="large-6 column">
-			<h3 class="data-title">Site</h3>
+			<h3 class="data-title"><?php echo CHtml::encode($element->getAttributeLabel('site_id'))?></h3>
 			<div class="data-value"><?php echo $element->site->name?></div>
 		</div>
 	</div>
