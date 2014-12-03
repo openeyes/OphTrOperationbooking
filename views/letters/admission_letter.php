@@ -139,9 +139,13 @@
 		</ul>
 
 		<?php if ($patient->isChild()) {?>
+			<?php if ($operation->booking->showWarning('Child health advice')) { ?>
 			<p>
-				If there has been any change in your child's general health, such as a cough or cold, any infectious disease, or any other condition which might affect their fitness for operation, please telephone <?php /* FIXME: this should not be hard coded */?> 020 7566 2595 and ask to speak to a nurse for advice.
+				If there has been any change in your child's general health, such as a cough or cold, any infectious
+				disease, or any other condition which might affect their fitness for operation,
+				<?= $operation->booking->getWarningHTML('Child health advice') ?>.
 			</p>
+			<?php } ?>
 			<p>
 				If you do not speak English, please arrange for an English speaking adult to stay with you until you reach the ward and have been seen by a doctor and anaesthetist.
 			</p>
