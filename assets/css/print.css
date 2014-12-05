@@ -45,6 +45,22 @@
 	font-size: 16pt;
 }
 
+.accessible p,
+.accessible li,
+.accessible td,
+.accessible th {
+	font-size: 16pt;
+}
+
+/* Prevents text clipping */
+p, li {
+	margin-right: 0.5em;
+}
+
+li {
+	margin-left: 0.5em;
+}
+
 table {
 	margin: 10px 0;
 	width: 100%;
@@ -53,12 +69,6 @@ table {
 td, th {
 	border: 2px #ccc solid;
 	padding: 5px !important;
-}
-
-li {
-	margin: 0 !important;
-	padding: 0 !important;
-	line-height: 1;
 }
 
 .date {
