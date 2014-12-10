@@ -1572,28 +1572,21 @@ class AdminController extends ModuleAdminController
 
 	public function actionOperationPriorities()
 	{
-		$this->genericAdmin(
-			'Operation priorities',
-			'OphTrOperationbooking_Operation_Priority',
-			array(
-				'extra_fields' => array(
-					array(
-						'field' => 'schedule_authitem',
-						'type' => 'authitem_roles',
-						'authitem_type' => 'operations',
-						'empty' => '- Edit rights -',
-					),
+		$this->genericAdmin('Operation priorities','OphTrOperationbooking_Operation_Priority',array(
+			'extra_fields' => array(
+				array(
+					'field' => 'schedule_authitem',
+					'type' => 'authitem_roles',
+					'authitem_type' => 'operations',
+					'empty' => '- Edit rights -',
 				),
 			)
-		);
+		));
 	}
 
 	public function actionScheduleOptions()
 	{
-		$this->genericAdmin(
-			'Operation scheduling options',
-			'OphTrOperationbooking_ScheduleOperation_Options'
-		);
+		$this->genericAdmin('Operation scheduling options','OphTrOperationbooking_ScheduleOperation_Options');
 	}
 
 	/**

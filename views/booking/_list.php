@@ -94,7 +94,7 @@ if (!$reschedule) {
 				<label for="Booking_admission_time"><strong>Admission Time:</strong></label>
 			</div>
 			<div class="large-2 column end">
-				<input type="text" id="Booking_admission_time" name="Booking[admission_time]" value="<?php echo CHtml::encode($_POST['Booking']['admission_time'])?>" size="6" />
+				<input type="text" id="Booking_admission_time" name="Booking[admission_time]" autocomplete="<?php echo Yii::app()->params['html_autocomplete']?>" value="<?php echo CHtml::encode($_POST['Booking']['admission_time'])?>" size="6" />
 				<span id="Booking_admission_time_error"></span>
 			</div>
 		</div>
@@ -149,7 +149,7 @@ if (!$reschedule) {
 					<?php echo CHtml::label('<strong>Reschedule Comments:</strong> ', 'cancellation_comment'); ?>
 				</div>
 				<div class="large-5 column end">
-					<textarea name="cancellation_comment" rows=3 cols=50></textarea>
+					<textarea name="cancellation_comment" rows=3 cols=50><?php echo CHtml::encode(@$_POST['cancellation_comment'])?></textarea>
 				</div>
 			</div>
 		</div>

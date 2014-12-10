@@ -75,7 +75,7 @@ $sessions = $sessions['data'];
 					<label class="align" for="sequence_id">Seq:</label>
 				</div>
 				<div class="large-9 column">
-					<?php echo CHtml::textField('sequence_id',@$_GET['sequence_id'],array('size'=>10))?>
+					<?php echo CHtml::textField('sequence_id',@$_GET['sequence_id'],array('autocomplete' => Yii::app()->params['html_autocomplete'], 'size'=>10))?>
 				</div>
 			</div>
 		</div>
@@ -225,7 +225,7 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 	<div class="large-2 column">
 		<label for="">Start time:</label>
 	</div>
-	<div class="large-2 column end"><?php echo CHtml::textField('inline_start_time','',array('size'=>10))?>
+	<div class="large-2 column end"><?php echo CHtml::textField('inline_start_time','',array('autocomplete' => Yii::app()->params['html_autocomplete'], 'size'=>10))?>
 		<span class="error"></span>
 	</div>
 </div>
@@ -233,7 +233,7 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 	<div class="large-2 column">
 		<label for="">End time:</label>
 	</div>
-	<div class="large-2 column end"><?php echo CHtml::textField('inline_end_time','',array('size'=>10))?>
+	<div class="large-2 column end"><?php echo CHtml::textField('inline_end_time','',array('autocomplete' => Yii::app()->params['html_autocomplete'], 'size'=>10))?>
 		<span class="error"></span>
 	</div>
 </div>
