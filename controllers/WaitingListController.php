@@ -276,14 +276,7 @@ class WaitingListController extends BaseModuleController
 
 		while (!$cmd->queryScalar(array("waitingListPrint"))) { }
 
-		$n = time();
-
-		$directory = Yii::app()->assetManager->basePath."/waitingList/".Yii::app()->user->id."_".$n;
-
-		while (file_exists($directory)) {
-			$n++;
-			$directory = Yii::app()->assetManager->basePath."/waitingList/".Yii::app()->user->id."_".$n;
-		}
+		$directory = Yii::app()->assetManager->basePath."/waitingList";
 
 		Yii::app()->db->createCommand('SELECT RELEASE_LOCK(?)')->execute(array("waitingListPrint"));
 
