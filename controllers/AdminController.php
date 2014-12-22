@@ -1580,7 +1580,7 @@ class AdminController extends ModuleAdminController
 					'authitem_type' => 'operations',
 					'empty' => '- Edit rights -',
 				),
-			),
+			)
 		));
 	}
 
@@ -1686,7 +1686,7 @@ class AdminController extends ModuleAdminController
 	public function actionSwitchEnabledPatientUnavailableReason()
 	{
 		if (!$reason = OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason::model()->findByPk(@$_POST['id'])) {
-			throw new Exception("Patient Unavailable Reason not found: $id");
+			throw new Exception("Patient Unavailable Reason not found: " . @$_POST['id']);
 		}
 
 		if ($reason->enabled) {
@@ -1830,7 +1830,7 @@ class AdminController extends ModuleAdminController
 	public function actionSwitchEnabledSessionUnavailableReason()
 	{
 		if (!$reason = OphTrOperationbooking_Operation_Session_UnavailableReason::model()->findByPk(@$_POST['id'])) {
-			throw new Exception("Session Unavailable Reason not found: $id");
+			throw new Exception("Session Unavailable Reason not found: " . @$_POST['id']);
 		}
 
 		if ($reason->enabled) {

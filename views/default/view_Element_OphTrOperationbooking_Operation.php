@@ -99,6 +99,12 @@
 	</div>
 	<div class="row">
 		<div class="large-6 column">
+			<h3 class="data-title"><?php echo CHtml::encode($element->getAttributeLabel('site_id'))?></h3>
+			<div class="data-value"><?php echo $element->site->name?></div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="large-6 column">
 			<?php if (!is_null($element->fast_track)): ?>
 				<h3 class="data-title"><?= CHtml::encode($element->getAttributeLabel('fast_track')) ?></h3>
 				<div class="data-value"><?php echo $element->fast_track ? 'Yes' : 'No'?></div>
