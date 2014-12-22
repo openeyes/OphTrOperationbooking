@@ -276,14 +276,7 @@ class WaitingListController extends BaseModuleController
 
 		while (!$cmd->queryScalar(array("waitingListPrint"))) { }
 
-		$n = time();
-
-		$directory = Yii::app()->assetManager->basePath."/waitingList/".Yii::app()->user->id."_".$n;
-
-		while (file_exists($directory)) {
-			$n++;
-			$directory = Yii::app()->assetManager->basePath."/waitingList/".Yii::app()->user->id."_".$n;
-		}
+		$directory = Yii::app()->assetManager->basePath."/waitingList";
 
 		Yii::app()->db->createCommand('SELECT RELEASE_LOCK(?)')->execute(array("waitingListPrint"));
 
@@ -321,14 +314,16 @@ class WaitingListController extends BaseModuleController
 
 		set_time_limit(10);
 
+		$pdf_suffix = "waitingList_".Yii::app()->user->id."_".rand();
+
 		$wk = new WKHtmlToPDF;
 		$wk->setDocuments($documents);
 		$wk->setDocrefs($docrefs);
 		$wk->setBarcodes($barcodes);
 		$wk->setPatients($patients);
-		$wk->generatePDF($directory, "waitingList", "", $html);
+		$wk->generatePDF($directory, $pdf_suffix, "", $html);
 
-		$pdf = $directory."/waitingList.pdf";
+		$pdf = $directory."/$pdf_suffix.pdf";
 
 		header('Content-Type: application/pdf');
 		header('Content-Length: '.filesize($pdf));
