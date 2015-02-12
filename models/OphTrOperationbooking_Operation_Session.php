@@ -415,7 +415,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 			array(':session_id' => $this->id)
 		);
 
-		Ophtroperationbooking_Operation_EROD::model()->updateAll(
+		OphTrOperationbooking_Operation_EROD::model()->updateAll(
 			array('session_id' => null),
 			'session_id = :session_id',
 			array(':session_id' => $this->id)
