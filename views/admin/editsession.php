@@ -48,6 +48,7 @@
 	<?php } else {?>
 		<?php echo $form->datePicker($session,'date',array(),array(),array('field'=>2))?>
 	<?php }?>
+	<?php echo $form->textField($session,'default_admission_time',array(),array(),array('field'=>2))?>
 	<?php echo $form->textField($session,'start_time',array(),array(),array('field'=>2))?>
 	<?php echo $form->textField($session,'end_time',array(),array(),array('field'=>2))?>
 	<?php echo $form->textField($session, 'max_procedures', array(), array(), array('field'=>2)); ?>
