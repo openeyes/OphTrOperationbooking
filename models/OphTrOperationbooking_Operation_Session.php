@@ -403,6 +403,8 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 			$this->date = date('Y-m-d',strtotime($this->date));
 		}
 
+		$this->default_admission_time = $this->setDefaultAdmissionTime($this->default_admission_time, $this->start_time);
+
 		return parent::beforeSave();
 	}
 
