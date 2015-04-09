@@ -464,7 +464,7 @@ function getDiary() {
 				if (data['status'] == 'success') {
 					theatreList.html(data['data']);
 				} else {
-					theatreList.html('<h3>'+data['message']+'</h3>');
+                    theatreList.html('<div class="large-12 column"><div class="alert-box"><strong>'+data['message']+'</strong></div></div>');
 				}
 				enableButtons();
 				return false;

@@ -176,17 +176,16 @@ class TheatreDiaryController extends BaseModuleController
 			$startDate = $data['date-start'];
 			$endDate = $data['date-end'];
 
-			if (preg_match('/^([0-9]{1,2})\/([0-9]{1,2})\/([0-9]{2})$/',$startDate,$m)) {
-				$m[1] = str_pad($m[1],2,0,STR_PAD_LEFT);
-				$m[2] = str_pad($m[2],2,0,STR_PAD_LEFT);
-				$startDate = "20{$m[3]}-{$m[2]}-{$m[1]}";
-			}
+            if(!CDateTimeParser::parse($startDate,'yyyy-mm-dd')){
+                echo json_encode(array('status'=>'error','message'=>'Invalid start date.'));
+                Yii::app()->end();
+            }
 
-			if (preg_match('/^([0-9]{1,2})\/([0-9]{1,2})\/([0-9]{2})$/',$endDate,$m)) {
-				$m[1] = str_pad($m[1],2,0,STR_PAD_LEFT);
-				$m[2] = str_pad($m[2],2,0,STR_PAD_LEFT);
-				$endDate = "20{$m[3]}-{$m[2]}-{$m[1]}";
-			}
+
+            if(!CDateTimeParser::parse($endDate,'yyyy-mm-dd')){
+                echo json_encode(array('status'=>'error','message'=>'Invalid end date.'));
+                Yii::app()->end();
+            }
 
 			if (!strtotime($startDate) || !strtotime($endDate)) {
 				echo json_encode(array('status'=>'error','message'=>'Invalid start and end dates.'));
