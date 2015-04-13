@@ -170,32 +170,24 @@ class TheatreDiaryController extends BaseModuleController
 		$data['date-start'] = Helper::convertNHS2MySQL(@$data['date-start']);
 		$data['date-end'] = Helper::convertNHS2MySQL(@$data['date-end']);
 
-		if (empty($data['date-start']) || empty($data['date-end'])) {
-			$startDate = $endDate = $this->getNextSessionDate($firmId);
-		} else {
-			$startDate = $data['date-start'];
-			$endDate = $data['date-end'];
 
-            if(!CDateTimeParser::parse($startDate,'yyyy-mm-dd')){
-                echo json_encode(array('status'=>'error','message'=>'Invalid start date.'));
-                Yii::app()->end();
-            }
+		$startDate = $data['date-start'];
+		$endDate = $data['date-end'];
 
-
-            if(!CDateTimeParser::parse($endDate,'yyyy-mm-dd')){
-                echo json_encode(array('status'=>'error','message'=>'Invalid end date.'));
-                Yii::app()->end();
-            }
-
-			if (!strtotime($startDate) || !strtotime($endDate)) {
-				echo json_encode(array('status'=>'error','message'=>'Invalid start and end dates.'));
-				Yii::app()->end();
-			}
-
-			if (strtotime($endDate) < strtotime($startDate)) {
-				list($startDate,$endDate) = array($endDate,$startDate);
-			}
+		if(!CDateTimeParser::parse($startDate,'yyyy-mm-dd') || !strtotime($startDate)){
+			echo json_encode(array('status'=>'error','message'=>'Invalid start date.'));
+			Yii::app()->end();
 		}
+
+	    if(!CDateTimeParser::parse($endDate,'yyyy-mm-dd') || !strtotime($endDate)){
+			echo json_encode(array('status'=>'error','message'=>'Invalid end date.'));
+			Yii::app()->end();
+		}
+
+	    if (strtotime($endDate) < strtotime($startDate)) {
+			list($startDate,$endDate) = array($endDate,$startDate);
+		}
+
 
 		$criteria = new CDbCriteria;
 
