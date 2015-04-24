@@ -86,6 +86,8 @@ CREATE PROCEDURE cancel_patient_bookings(IN patientToCancel INT)
       WHERE id = booking_id
             AND cancellation_reason_id IS NULL;
 
+      INSERT INTO audit (action_id, type_id, patient_id, episode_id, event_id) VALUES (@audit_action_id, @audit_type_id, patientToCancel, episode_id, event_id);
+
     END LOOP;
 
     CLOSE cur1;
