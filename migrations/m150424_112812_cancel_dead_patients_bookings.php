@@ -19,15 +19,16 @@ CREATE PROCEDURE cancel_patient_bookings(IN patientToCancel INT)
                               JOIN event ON episode.id = event.episode_id
                               JOIN et_ophtroperationbooking_operation
                                 ON event.id = et_ophtroperationbooking_operation.event_id
-                              JOIN ophtroperationbooking_operation_booking ON et_ophtroperationbooking_operation.id =
+                              LEFT JOIN ophtroperationbooking_operation_booking ON et_ophtroperationbooking_operation.id =
                                                                               ophtroperationbooking_operation_booking.element_id
-                              JOIN ophtroperationbooking_operation_session
+                              LEFT JOIN ophtroperationbooking_operation_session
                                 ON ophtroperationbooking_operation_session.id =
                                    ophtroperationbooking_operation_booking.session_id
                             WHERE episode.patient_id = patientToCancel
                                   AND event.event_type_id = @booking_type
                                   AND concat_ws(' ', ophtroperationbooking_operation_session.date,
-                                                ophtroperationbooking_operation_session.start_time) > NOW();
+                                                ophtroperationbooking_operation_session.start_time) > NOW() ||
+                                                ophtroperationbooking_operation_session.date IS NULL;
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
     SET @cancel_comment = 'Automatically cancelled by system';
 
@@ -55,6 +56,16 @@ CREATE PROCEDURE cancel_patient_bookings(IN patientToCancel INT)
     INTO @admin_user
     FROM user
     WHERE `username` = 'admin';
+
+    SELECT id
+    INTO @audit_action_id
+    FROM audit_action
+    WHERE `name` = 'cancel';
+
+    SELECT id
+    INTO @audit_type_id
+    FROM audit_type
+    WHERE `name` = 'booking';
 
     OPEN cur1;
 
