@@ -32,6 +32,19 @@ class DefaultController extends OphTrOperationbookingEventController
 	protected $operation = null;
 
 	/**
+	 * Set flash message for patient risks
+	 */
+	protected function showRiskWarning()
+	{
+		if ($this->patient->no_risks_date) {
+			Yii::app()->user->setFlash('info.prescription_risk', $this->patient->getRisksString());
+		}
+		else {
+			Yii::app()->user->setFlash('warning.prescription_risk', $this->patient->getRisksString());
+		}
+	}
+
+	/**
 	 * setup the various js scripts for this controller
 	 *
 	 * @param CAction $action
@@ -126,6 +139,7 @@ class DefaultController extends OphTrOperationbookingEventController
 	{
 		$this->jsVars['OE_confirmProcedures'] = Yii::app()->params['OphTrOperationbooking_duplicate_proc_warn'];
 		$this->jsVars['OE_patientId'] = $this->patient->id;
+		$this->showRiskWarning();
 	}
 
 	/**
