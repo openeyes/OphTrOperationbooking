@@ -84,6 +84,8 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 			array('unavailablereason_id', 'validateRequiredIfAttrMatches', 'match_attr' => 'available', 'match_val' => false, 'message' => 'unavailable reason required if session unavailable.'),
 			array('max_procedures', 'numerical', 'integerOnly' => true, 'min' => 1),
 			array('comments, available, unavailablereason_id, consultant, paediatric, anaesthetist, general_anaesthetic, firm_id, theatre_id, start_time, end_time, deleted, default_admission_time', 'safe'),
+			array('date', 'CDateValidator', 'format' => array('yyyy-mm-dd', 'd MMM yyyy')),
+			array('start_time, end_time, default_admission_time', 'CDateValidator', 'format' => array('h:m:s', 'h:m')),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, sequence_id, theatre_id, date, start_time, end_time, comments, available, firm_id, site_id, weekday, consultant, paediatric, anaesthetist, general_anaesthetic', 'safe', 'on'=>'search'),
@@ -400,6 +402,8 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 		if ($this->date && !preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$this->date)) {
 			$this->date = date('Y-m-d',strtotime($this->date));
 		}
+
+		$this->default_admission_time = $this->setDefaultAdmissionTime($this->default_admission_time, $this->start_time);
 
 		return parent::beforeSave();
 	}

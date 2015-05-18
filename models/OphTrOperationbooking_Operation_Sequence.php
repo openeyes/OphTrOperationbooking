@@ -22,10 +22,11 @@
  * The followings are the available columns in table:
  * @property integer $id
  * @property integer $theatre_id
- * @property date $start_date
- * @property time $start_time
- * @property time $end_time
- * @property date $end_date
+ * @property string $start_date
+ * @property string $start_time
+ * @property string $end_time
+ * @property string $end_date
+ * @property string $default_admission_time
  *
  * The followings are the available model relations:
  *
@@ -369,6 +370,8 @@ class OphTrOperationbooking_Operation_Sequence extends BaseActiveRecordVersioned
 		if ($this->end_date && !preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$this->end_date)) {
 			$this->end_date = date('Y-m-d',strtotime($this->end_date));
 		}
+
+		$this->default_admission_time = $this->setDefaultAdmissionTime($this->default_admission_time, $this->start_time);
 
 		return parent::beforeSave();
 	}

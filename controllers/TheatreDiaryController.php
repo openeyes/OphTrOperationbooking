@@ -166,37 +166,45 @@ class TheatreDiaryController extends BaseModuleController
 	public function getDiaryTheatres($data)
 	{
 		$firmId = Yii::app()->session['selected_firm_id'];
+		$error = false;
+		$errorMessage = '';
 
 		$data['date-start'] = Helper::convertNHS2MySQL(@$data['date-start']);
 		$data['date-end'] = Helper::convertNHS2MySQL(@$data['date-end']);
 
-		if (empty($data['date-start']) || empty($data['date-end'])) {
-			$startDate = $endDate = $this->getNextSessionDate($firmId);
-		} else {
-			$startDate = $data['date-start'];
-			$endDate = $data['date-end'];
 
-			if (preg_match('/^([0-9]{1,2})\/([0-9]{1,2})\/([0-9]{2})$/',$startDate,$m)) {
-				$m[1] = str_pad($m[1],2,0,STR_PAD_LEFT);
-				$m[2] = str_pad($m[2],2,0,STR_PAD_LEFT);
-				$startDate = "20{$m[3]}-{$m[2]}-{$m[1]}";
-			}
+		$startDate = $data['date-start'];
+		$endDate = $data['date-end'];
 
-			if (preg_match('/^([0-9]{1,2})\/([0-9]{1,2})\/([0-9]{2})$/',$endDate,$m)) {
-				$m[1] = str_pad($m[1],2,0,STR_PAD_LEFT);
-				$m[2] = str_pad($m[2],2,0,STR_PAD_LEFT);
-				$endDate = "20{$m[3]}-{$m[2]}-{$m[1]}";
-			}
-
-			if (!strtotime($startDate) || !strtotime($endDate)) {
-				echo json_encode(array('status'=>'error','message'=>'Invalid start and end dates.'));
-				Yii::app()->end();
-			}
-
-			if (strtotime($endDate) < strtotime($startDate)) {
-				list($startDate,$endDate) = array($endDate,$startDate);
+		if(trim($startDate) == ''){
+			$error = true;
+			$errorMessage.= 'Empty start date <br>';
+		} else{
+			if(!CDateTimeParser::parse($startDate,'yyyy-mm-dd')){
+				$error = true;
+				$errorMessage.= 'Invalid start date <br>';
 			}
 		}
+
+		if(trim($endDate) == ''){
+			$error = true;
+			$errorMessage.= 'Empty end date <br>';
+		} else {
+			if(!CDateTimeParser::parse($endDate,'yyyy-mm-dd')){
+				$error = true;
+				$errorMessage.= 'Invalid end date <br>';
+			}
+		}
+
+		if($error){
+			echo json_encode(array('status'=>'error','message'=>$errorMessage));
+			Yii::app()->end();
+		}
+
+	    if (strtotime($endDate) < strtotime($startDate)) {
+			list($startDate,$endDate) = array($endDate,$startDate);
+		}
+
 
 		$criteria = new CDbCriteria;
 
