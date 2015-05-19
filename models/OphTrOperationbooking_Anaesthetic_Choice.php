@@ -15,4 +15,11 @@
 
 class OphTrOperationbooking_Anaesthetic_Choice extends BaseActiveRecord
 {
+	/**
+	 * @return string the associated database table name
+	 */
+	public function tableName()
+	{
+		return 'ophtroperationbooking_anaesthetic_choice';
+	}
 }
