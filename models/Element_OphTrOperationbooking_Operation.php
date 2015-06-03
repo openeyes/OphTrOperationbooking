@@ -101,7 +101,7 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			array('named_consultant_id', 'RequiredIfFieldValidator', 'field' => 'consultant_required', 'value' => true, 'on' => 'insert'),
 			array('cancellation_comment', 'length', 'max' => 200),
 			array('procedures', 'required', 'message' => 'At least one procedure must be entered'),
-			array('total_duration', 'required'),
+			array('total_duration', 'validateDuration'),
 			array('referral_id', 'validateReferral'),
 			array('decision_date', 'OEDateValidatorNotFuture'),
 			array('eye_id, consultant_required', 'required'),
@@ -1485,6 +1485,23 @@ class Element_OphTrOperationbooking_Operation extends BaseEventTypeElement
 			if ($referral->patient_id != $this->getPatient()->id) {
 				$this->addError($attribute, "Referral must be for the patient of the event");
 			}
+		}
+	}
+
+	/**
+	 * Validate a duration only if a procedure exists so we don't have messages for non existent elements
+	 *
+	 * @param $attribute
+	 * @return bool
+	 */
+	public function validateDuration($attribute)
+	{
+		if(!$this->getProcedureCount()){
+			return true;
+		}
+
+		if(!$this->total_duration){
+			$this->addError($attribute, 'Total Duration cannot be blank');
 		}
 	}
 
