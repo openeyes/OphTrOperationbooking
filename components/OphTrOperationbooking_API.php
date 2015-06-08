@@ -69,6 +69,7 @@ class OphTrOperationbooking_API extends BaseAPI
 	{
 		$criteria = new CDbCriteria;
 		$criteria->order = 't.created_date asc';
+		$criteria->condition = 't.status_id != 5';
 		$criteria->compare('episode_id',$episode_id);
 
 		return Element_OphTrOperationbooking_Operation::model()
