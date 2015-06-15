@@ -39,7 +39,6 @@
 		</div>
 		<div class="large-5 column end">
 			<?php echo $this->actionGetWardOptions($theatre->site_id, $theatre->ward_id);
-		//	$form->dropDownList($theatre,'ward_id','OphTrOperationbooking_Operation_Ward',array('empty'=>'- None -'))
 		?></div>
 	</div>
 	<?php echo $form->formActions();?>

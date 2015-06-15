@@ -1432,7 +1432,6 @@ class AdminController extends ModuleAdminController
 		}else {
 			$optionValues = array();
 		}
-		//var_dump($optionValues);
 		echo CHtml::dropDownList(
 			"OphTrOperationbooking_Operation_Theatre[ward_id]",
 			$wardId,
