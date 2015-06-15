@@ -34,7 +34,14 @@
 	<?php echo $form->dropDownList($theatre,'site_id',Site::model()->getListForCurrentInstitution(),array('empty'=>'- Site -'))?>
 	<?php echo $form->textField($theatre,'name')?>
 	<?php echo $form->textField($theatre,'code',array('size'=>10))?>
-	<?php echo $form->dropDownList($theatre,'ward_id','OphTrOperationbooking_Operation_Ward',array('empty'=>'- None -'))?>
+	<div id="div_OphTrOperationbooking_Operation_Theatre_ward_id" class="row field-row">
+		<div class="large-2 column"><label for="OphTrOperationbooking_Operation_Theatre_ward_id">Ward:</label>
+		</div>
+		<div class="large-5 column end">
+			<?php echo $this->actionGetWardOptions($theatre->site_id, $theatre->ward_id);
+		//	$form->dropDownList($theatre,'ward_id','OphTrOperationbooking_Operation_Ward',array('empty'=>'- None -'))
+		?></div>
+	</div>
 	<?php echo $form->formActions();?>
 	<?php echo $form->errorSummary($theatre); ?>
 	<?php $this->endWidget()?>
