@@ -22,4 +22,5 @@ class OphTrOperationbooking_Anaesthetic_Choice extends BaseActiveRecord
 	{
 		return 'ophtroperationbooking_anaesthetic_choice';
 	}
+
 }
