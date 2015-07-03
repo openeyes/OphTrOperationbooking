@@ -69,7 +69,7 @@ class OphTrOperationbooking_API_Test extends CDbTestCase
 
 		$this->assertCount(1, $operations);
 		$this->assertInstanceOf('Element_OphTrOperationbooking_Operation',$operations[0]);
-		$this->assertEquals(1,$operations[0]->id);
+		$this->assertEquals(13,$operations[0]->id);
 	}
 
 	public function testGetOpenBookingsForEpisode()
@@ -81,10 +81,10 @@ class OphTrOperationbooking_API_Test extends CDbTestCase
 		$this->assertCount(2,$bookings);
 
 		$this->assertInstanceOf('OphTrOperationbooking_Operation_Booking',$bookings[0]);
-		$this->assertEquals(3,$bookings[0]->id);
+		$this->assertEquals(5,$bookings[0]->id);
 
 		$this->assertInstanceOf('OphTrOperationbooking_Operation_Booking',$bookings[1]);
-		$this->assertEquals(5,$bookings[1]->id);
+		$this->assertEquals(8,$bookings[1]->id);
 	}
 
 	public function testGetOperationProcedures()
@@ -97,14 +97,7 @@ class OphTrOperationbooking_API_Test extends CDbTestCase
 		$this->assertEquals(1,$procs[0]->id);
 	}
 
-	public function testGetOperationForEvent()
-	{
-		$api = Yii::app()->moduleAPI->get('OphTrOperationbooking');
 
-		foreach ($this->el_o as $eo) {
-			$this->assertEquals($eo['id'], $api->getOperationForEvent($eo['event_id'])->id);
-		}
-	}
 
 	public function testSetOperationStatus()
 	{
@@ -194,7 +187,7 @@ class OphTrOperationbooking_API_Test extends CDbTestCase
 
 		Yii::app()->session['selected_firm_id'] = 2;
 
-		$this->assertEquals('1 Jun 2013',$api->getAdmissionDate($this->patients('patient6')));
+		$this->assertEquals('17 Jun 2015',$api->getAdmissionDate($this->patients('patient6')));
 	}
 
 	public function testFindSiteForBookingEvent()

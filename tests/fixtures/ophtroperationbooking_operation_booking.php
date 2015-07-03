@@ -32,7 +32,7 @@ return array(
 	),
 	'b2' => array(
 		'element_id' => 7,
-		'session_id' => 5,
+		'session_id' => 3,
 		'display_order' => 1,
 		'admission_time' => '08:00:00',
 		'confirmed' => 1,
@@ -80,7 +80,7 @@ return array(
 	),
 	'b6' => array(
 		'element_id' => 11,
-		'session_id' => 1,
+		'session_id' => 2,
 		'display_order' => 1,
 		'admission_time' => '08:00:00',
 		'confirmed' => 1,
@@ -102,5 +102,17 @@ return array(
 		'session_theatre_id' => 1,
 		'ward_id' => 1,
 		'booking_cancellation_date' => '2014-01-01 13:13:00',
+	),
+	'b8' => array(
+		'element_id' => 14,
+		'session_id' => 2,
+		'display_order' => 1,
+		'admission_time' => '08:00:00',
+		'confirmed' => 1,
+		'session_date' => '2012-01-02',
+		'session_start_time' => '08:00:00',
+		'session_end_time' => '13:00:00',
+		'session_theatre_id' => 1,
+		'ward_id' => 1,
 	),
 );
