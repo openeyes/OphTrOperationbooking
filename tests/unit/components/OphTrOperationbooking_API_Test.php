@@ -183,12 +183,11 @@ class OphTrOperationbooking_API_Test extends CDbTestCase
 
 	public function testGetAdmissionDate()
 	{
-		$this->markTestIncomplete('This test can pass on one run and fail on the next so marking incomplete');
 		$api = Yii::app()->moduleAPI->get('OphTrOperationbooking');
 
 		Yii::app()->session['selected_firm_id'] = 2;
 
-		$this->assertEquals('19 Jun 2015',$api->getAdmissionDate($this->patients('patient6')));
+		$this->assertEquals('26 Jun 2015',$api->getAdmissionDate($this->patients('patient6')));
 	}
 
 	public function testFindSiteForBookingEvent()
