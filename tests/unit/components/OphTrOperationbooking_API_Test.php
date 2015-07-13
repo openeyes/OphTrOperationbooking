@@ -187,7 +187,7 @@ class OphTrOperationbooking_API_Test extends CDbTestCase
 
 		Yii::app()->session['selected_firm_id'] = 2;
 
-		$this->assertEquals('26 Jun 2015',$api->getAdmissionDate($this->patients('patient6')));
+		$this->assertEquals('29 Jun 2015',$api->getAdmissionDate($this->patients('patient6')));
 	}
 
 	public function testFindSiteForBookingEvent()
