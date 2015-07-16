@@ -15,71 +15,69 @@
 
 class OphTrOperationbooking_ScheduleOperation_PatientUnavailableTest extends CDbTestCase
 {
+    public $fixtures = array(
+            'reasons' => 'OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason',
+    );
 
-	public $fixtures = array(
-			'reasons' => 'OphTrOperationbooking_ScheduleOperation_PatientUnavailableReason',
-	);
+    public static function setUpBeforeClass()
+    {
+        date_default_timezone_set('UTC');
+    }
 
-	public static function setUpBeforeClass()
-	{
-		date_default_timezone_set('UTC');
-	}
+    public function testStartDateAfterEndDate()
+    {
+        $test = new OphTrOperationbooking_ScheduleOperation_PatientUnavailable();
+        $test->start_date = '2014-05-03';
+        $test->end_date = '2014-04-03';
+        $test->reason_id = 1;
+        $this->assertFalse($test->validate());
+    }
 
-	public function testStartDateAfterEndDate()
-	{
-		$test = new OphTrOperationbooking_ScheduleOperation_PatientUnavailable();
-		$test->start_date = '2014-05-03';
-		$test->end_date = '2014-04-03';
-		$test->reason_id = 1;
-		$this->assertFalse($test->validate());
-	}
+    public function testStartDateEqualEndDate()
+    {
+        $test = new OphTrOperationbooking_ScheduleOperation_PatientUnavailable();
+        $test->start_date = '2014-04-03';
+        $test->end_date = '2014-04-03';
+        $test->reason_id = 1;
+        $this->assertTrue($test->validate());
+    }
 
-	public function testStartDateEqualEndDate()
-	{
-		$test = new OphTrOperationbooking_ScheduleOperation_PatientUnavailable();
-		$test->start_date = '2014-04-03';
-		$test->end_date = '2014-04-03';
-		$test->reason_id = 1;
-		$this->assertTrue($test->validate());
-	}
+    public function testStartDateBeforeEndDate()
+    {
+        $test = new OphTrOperationbooking_ScheduleOperation_PatientUnavailable();
+        $test->start_date = '2014-03-03';
+        $test->end_date = '2014-04-03';
+        $test->reason_id = 1;
+        $this->assertTrue($test->validate());
+    }
 
-	public function testStartDateBeforeEndDate()
-	{
-		$test = new OphTrOperationbooking_ScheduleOperation_PatientUnavailable();
-		$test->start_date = '2014-03-03';
-		$test->end_date = '2014-04-03';
-		$test->reason_id = 1;
-		$this->assertTrue($test->validate());
-	}
+    public function testReasonRequired()
+    {
+        $test = new OphTrOperationbooking_ScheduleOperation_PatientUnavailable();
+        $test->start_date = '2014-04-03';
+        $test->end_date = '2014-04-03';
+        $this->assertFalse($test->validate());
+    }
 
-	public function testReasonRequired()
-	{
-		$test = new OphTrOperationbooking_ScheduleOperation_PatientUnavailable();
-		$test->start_date = '2014-04-03';
-		$test->end_date = '2014-04-03';
-		$this->assertFalse($test->validate());
-	}
+    public function testReasonMustBeActiveForNewRecord()
+    {
+        $test = new OphTrOperationbooking_ScheduleOperation_PatientUnavailable();
+        $test->start_date = '2014-04-03';
+        $test->end_date = '2014-04-03';
+        $test->reason_id = $this->reasons('inactive_reason')->id;
 
-	public function testReasonMustBeActiveForNewRecord()
-	{
-		$test = new OphTrOperationbooking_ScheduleOperation_PatientUnavailable();
-		$test->start_date = '2014-04-03';
-		$test->end_date = '2014-04-03';
-		$test->reason_id = $this->reasons('inactive_reason')->id;
+        $this->assertFalse($test->validate());
+    }
 
-		$this->assertFalse($test->validate());
-	}
+    public function testReasonInactiveForRecordUpdate()
+    {
+        $test = new OphTrOperationbooking_ScheduleOperation_PatientUnavailable();
+        $test->start_date = '2014-04-03';
+        $test->end_date = '2014-04-03';
+        $test->reason_id = $this->reasons('inactive_reason')->id;
+        // force the scenario as means we don't have to actually save anything in the db for this test
+        $test->scenario = 'update';
 
-	public function testReasonInactiveForRecordUpdate()
-	{
-		$test = new OphTrOperationbooking_ScheduleOperation_PatientUnavailable();
-		$test->start_date = '2014-04-03';
-		$test->end_date = '2014-04-03';
-		$test->reason_id = $this->reasons('inactive_reason')->id;
-		// force the scenario as means we don't have to actually save anything in the db for this test
-		$test->scenario = 'update';
-
-		$this->assertTrue($test->validate());
-	}
-
+        $this->assertTrue($test->validate());
+    }
 }

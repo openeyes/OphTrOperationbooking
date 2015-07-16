@@ -18,12 +18,14 @@
  */
 
 if (!$reschedule) {
-	echo CHtml::form(Yii::app()->createUrl('/OphTrOperationbooking/booking/schedule/'.$operation->event->id.'?firm_id='.$_GET['firm_id'].'&date='.$_GET['date'].'&day='.$_GET['day'].'&session_id='.$_GET['session_id']), 'post', array('id' => 'bookingForm'));
+    echo CHtml::form(Yii::app()->createUrl('/OphTrOperationbooking/booking/schedule/'.$operation->event->id.'?firm_id='.$_GET['firm_id'].'&date='.$_GET['date'].'&day='.$_GET['day'].'&session_id='.$_GET['session_id']), 'post', array('id' => 'bookingForm'));
 } else {
-	echo CHtml::form(Yii::app()->createUrl('/OphTrOperationbooking/booking/reschedule/'.$operation->event->id.'?firm_id='.$_GET['firm_id'].'&date='.$_GET['date'].'&day='.$_GET['day'].'&session_id='.$_GET['session_id']), 'post', array('id' => 'bookingForm'));
+    echo CHtml::form(Yii::app()->createUrl('/OphTrOperationbooking/booking/reschedule/'.$operation->event->id.'?firm_id='.$_GET['firm_id'].'&date='.$_GET['date'].'&day='.$_GET['day'].'&session_id='.$_GET['session_id']), 'post', array('id' => 'bookingForm'));
 }
 ?>
-	<h4>Other operations in this session: (<?php echo abs($session->availableMinutes) . " min {$session->minuteStatus}"; ?><?php if ($session->max_procedures) { echo ", " . $session->getAvailableProcedureCount() . "/" . $session->max_procedures . " procedures left" ?><?php }?>)</h4>
+	<h4>Other operations in this session: (<?php echo abs($session->availableMinutes) . " min {$session->minuteStatus}"; ?><?php if ($session->max_procedures) {
+    echo ", " . $session->getAvailableProcedureCount() . "/" . $session->max_procedures . " procedures left" ?><?php 
+}?>)</h4>
 	<div class="theatre-sessions">
 	<table id="appointment_list" class="grid">
 		<thead>
@@ -32,7 +34,7 @@ if (!$reschedule) {
 				<th>Date: <?php echo Helper::convertDate2NHS($session['date']); ?></th>
 				<th>Anaesthetic type</th>
 				<th>Session time: <?php echo substr($session['start_time'], 0, 5) . ' - '
-				. substr($session['end_time'], 0, 5); ?></th>
+                . substr($session['end_time'], 0, 5); ?></th>
 				<th>Admission time</th>
 				<th>Comments</th>
 			</tr>
@@ -40,33 +42,35 @@ if (!$reschedule) {
 		<tbody>
 
 <?php
-	$counter = 1;
-	foreach ($bookings as $booking) {?>
+    $counter = 1;
+    foreach ($bookings as $booking) {
+        ?>
 		<tr>
 			<td><?php echo $counter?>. <?php echo $booking->operation->event->episode->patient->getDisplayName()?></td>
 			<td><?php echo $booking->operation->getProceduresCommaSeparated()?></td>
 			<td><?php echo $booking->operation->anaesthetic_type->name?></td>
-			<td><?php echo "{$booking->operation->total_duration} minutes"; ?></td>
+			<td><?php echo "{$booking->operation->total_duration} minutes";
+        ?></td>
 			<td><?php echo $booking->admission_time?></td>
 			<td><?php echo CHtml::encode($booking->operation->comments)?></td>
 		</tr>
 <?php
-		$counter++;
-	} ?>
+        $counter++;
+    } ?>
 	</tbody>
 		<tfoot>
 			<tr>
 				<th colspan="6">
-					<?php echo ($counter - 1) . ' booking';
-					if (($counter - 1) != 1) {
-						echo 's';
-					}
-					if ($bookable) {
-						echo ' currently scheduled';
-					} else {
-						echo ' were scheduled';
-					}
-					?>
+					<?php echo($counter - 1) . ' booking';
+                    if (($counter - 1) != 1) {
+                        echo 's';
+                    }
+                    if ($bookable) {
+                        echo ' currently scheduled';
+                    } else {
+                        echo ' were scheduled';
+                    }
+                    ?>
 				</th>
 			</tr>
 		</tfoot>
@@ -75,14 +79,15 @@ if (!$reschedule) {
 
 <a id="book"></a>
 
-<?php if ($bookable) {?>
+<?php if ($bookable) {
+    ?>
 	<div class="eventDetail clearfix">
 		<div class="row field-row">
 			<div class="large-2 column">
 				<label for="Booking_admission_time"><strong>Ward:</strong></label>
 			</div>
 			<div class="large-2 column end">
-				<?php echo CHtml::dropDownList('Booking[ward_id]',@$_POST['Booking']['ward_id'],$operation->getWardOptions($session))?>
+				<?php echo CHtml::dropDownList('Booking[ward_id]', @$_POST['Booking']['ward_id'], $operation->getWardOptions($session))?>
 				<span id="Booking_ward_id_error"></span>
 			</div>
 		</div>
@@ -115,50 +120,58 @@ if (!$reschedule) {
 	</div>
 
 	<?php
-	if ($reschedule) {
-		echo CHtml::hiddenField('booking_id', $operation->booking->id);
-	}
-	echo CHtml::hiddenField('Booking[element_id]', $operation->id);
-	echo CHtml::hiddenField('Booking[session_id]', $session['id']);
-	if ($operation->canChangeReferral()) {
-		echo CHtml::hiddenField('Operation[referral_id]', $operation->referral_id);
-	}
-	?>
+    if ($reschedule) {
+        echo CHtml::hiddenField('booking_id', $operation->booking->id);
+    }
+    echo CHtml::hiddenField('Booking[element_id]', $operation->id);
+    echo CHtml::hiddenField('Booking[session_id]', $session['id']);
+    if ($operation->canChangeReferral()) {
+        echo CHtml::hiddenField('Operation[referral_id]', $operation->referral_id);
+    }
+    ?>
 
-	<?php if ($reschedule) { ?>
+	<?php if ($reschedule) {
+    ?>
 		<h3>Reason for Reschedule</h3>
 		<div class="eventDetail">
 			<div class="row field-row">
 				<div class="large-2 column">
-					<?php echo CHtml::label('<strong>Reschedule Reason:</strong> ', 'cancellation_reason'); ?>
+					<?php echo CHtml::label('<strong>Reschedule Reason:</strong> ', 'cancellation_reason');
+    ?>
 				</div>
 				<div class="large-5 column end">
 					<?php if (date('Y-m-d') == date('Y-m-d', strtotime($operation->booking->session->date))) {
-						$listIndex = 3;
-					} else {
-						$listIndex = 2;
-					} ?>
+    $listIndex = 3;
+} else {
+    $listIndex = 2;
+}
+    ?>
 					<?php echo CHtml::dropDownList('cancellation_reason', '',
-						OphTrOperationbooking_Operation_Cancellation_Reason::getReasonsByListNumber($listIndex),
-						array('empty' => 'Select a reason')
-					); ?>
+                        OphTrOperationbooking_Operation_Cancellation_Reason::getReasonsByListNumber($listIndex),
+                        array('empty' => 'Select a reason')
+                    );
+    ?>
 				</div>
 			</div>
 			<div class="row field-row">
 				<div class="large-2 column">
-					<?php echo CHtml::label('<strong>Reschedule Comments:</strong> ', 'cancellation_comment'); ?>
+					<?php echo CHtml::label('<strong>Reschedule Comments:</strong> ', 'cancellation_comment');
+    ?>
 				</div>
 				<div class="large-5 column end">
 					<textarea name="cancellation_comment" rows=3 cols=50><?php echo CHtml::encode(@$_POST['cancellation_comment'])?></textarea>
 				</div>
 			</div>
 		</div>
-	<?php }?>
+	<?php 
+}
+    ?>
 
 	<div class="eventDetail">
 		<div class="row field-row">
 			<div class="large-2 column">
-				<?php echo CHtml::label('<strong>Operation Comments:</strong>', 'operation_comments'); ?>
+				<?php echo CHtml::label('<strong>Operation Comments:</strong>', 'operation_comments');
+    ?>
 			</div>
 			<div class="large-5 column end">
 				<textarea id="operation_comments" name="Operation[comments]" rows=3 cols=50><?php echo CHtml::encode($_POST['Operation']['comments'])?></textarea>
@@ -169,7 +182,8 @@ if (!$reschedule) {
 	<div class="eventDetail">
 		<div class="row field-row">
 			<div class="large-2 column">
-				<?php echo CHtml::label('<strong>RTT Comments:</strong>', 'rtt_comments'); ?>
+				<?php echo CHtml::label('<strong>RTT Comments:</strong>', 'rtt_comments');
+    ?>
 			</div>
 			<div class="large-5 column end">
 				<textarea id="operation_comments" name="Operation[comments_rtt]" rows=3 cols=50><?php echo CHtml::encode($_POST['Operation']['comments_rtt'])?></textarea>
@@ -178,15 +192,19 @@ if (!$reschedule) {
 	</div>
 
 	<div class="field-row" style="margin-top: 1em">
-		<span id="dateSelected">Date/Time currently selected: <span class="highlighted"><?php echo Helper::convertDate2NHS($session['date']); ?>, <?php echo substr($session['start_time'], 0, 5) . ' - ' . substr($session['end_time'], 0, 5); ?></span></span>
+		<span id="dateSelected">Date/Time currently selected: <span class="highlighted"><?php echo Helper::convertDate2NHS($session['date']);
+    ?>, <?php echo substr($session['start_time'], 0, 5) . ' - ' . substr($session['end_time'], 0, 5);
+    ?></span></span>
 	</div>
 
 	<div class="field-row">
 		<button type="submit" class="secondary" id="confirm_slot">Confirm slot</button>
-		<button type="button" class="warning" id="cancel_scheduling"><?php echo 'Cancel '.($reschedule ? 're-' : '').'scheduling';?></button>
+		<button type="button" class="warning" id="cancel_scheduling"><?php echo 'Cancel '.($reschedule ? 're-' : '').'scheduling';
+    ?></button>
 	</div>
 
 	<?php
-	echo CHtml::endForm();
-	?>
-<?php }?>
+    echo CHtml::endForm();
+    ?>
+<?php 
+}?>

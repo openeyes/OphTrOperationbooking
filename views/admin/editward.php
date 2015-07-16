@@ -21,25 +21,25 @@
 <div class="box admin">
 	<h2><?php echo $ward->id ? 'Edit' : 'Add'?> ward</h2>
 	<?php
-	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-			'id'=>'adminform',
-			'enableAjaxValidation'=>false,
-			'focus'=>'#username',
-			'layoutColumns' => array(
-				'label' => 2,
-				'field' => 5
-			)
-		))?>
+    $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
+            'id'=>'adminform',
+            'enableAjaxValidation'=>false,
+            'focus'=>'#username',
+            'layoutColumns' => array(
+                'label' => 2,
+                'field' => 5
+            )
+        ))?>
 	<?php echo $form->errorSummary($ward); ?>
-	<?php echo $form->dropDownList($ward,'site_id',Site::model()->getListForCurrentInstitution(),array('empty'=>'- Site -'))?>
-	<?php echo $form->textField($ward,'name')?>
-	<?php echo $form->textField($ward,'long_name')?>
-	<?php echo $form->textField($ward,'code',array('size'=>10))?>
-	<?php echo $form->radioBoolean($ward,'restriction_male')?>
-	<?php echo $form->radioBoolean($ward,'restriction_female')?>
-	<?php echo $form->radioBoolean($ward,'restriction_child')?>
-	<?php echo $form->radioBoolean($ward,'restriction_adult')?>
-	<?php echo $form->radioBoolean($ward,'restriction_observation')?>
+	<?php echo $form->dropDownList($ward, 'site_id', Site::model()->getListForCurrentInstitution(), array('empty'=>'- Site -'))?>
+	<?php echo $form->textField($ward, 'name')?>
+	<?php echo $form->textField($ward, 'long_name')?>
+	<?php echo $form->textField($ward, 'code', array('size'=>10))?>
+	<?php echo $form->radioBoolean($ward, 'restriction_male')?>
+	<?php echo $form->radioBoolean($ward, 'restriction_female')?>
+	<?php echo $form->radioBoolean($ward, 'restriction_child')?>
+	<?php echo $form->radioBoolean($ward, 'restriction_adult')?>
+	<?php echo $form->radioBoolean($ward, 'restriction_observation')?>
 	<?php echo $form->formActions();?>
 	<?php $this->endWidget()?>
 	<?php echo $form->errorSummary($ward); ?>

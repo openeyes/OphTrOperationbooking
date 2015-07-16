@@ -26,10 +26,10 @@ $sessions = $sessions['data'];
 <form id="admin_sessions_filters" class="panel">
 	<div class="row field-row">
 		<div class="large-2 column">
-			<?php echo CHtml::dropDownList('firm_id',@$_GET['firm_id'],Firm::model()->getListWithSpecialtiesAndEmergency(),array('empty'=>'- Firm -'))?>
+			<?php echo CHtml::dropDownList('firm_id', @$_GET['firm_id'], Firm::model()->getListWithSpecialtiesAndEmergency(), array('empty'=>'- Firm -'))?>
 		</div>
 		<div class="large-2 column">
-			<?php echo CHtml::dropDownList('theatre_id',@$_GET['theatre_id'],CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->active()->findAll(),'id','name'),array('empty'=>'- Theatre -'))?>
+			<?php echo CHtml::dropDownList('theatre_id', @$_GET['theatre_id'], CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->active()->findAll(), 'id', 'name'), array('empty'=>'- Theatre -'))?>
 		</div>
 		<div class="large-3 column">
 			<div class="row">
@@ -38,15 +38,15 @@ $sessions = $sessions['data'];
 				</div>
 				<div class="large-9 column">
 					<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-							'name'=>'date_from',
-							'id'=>'date_from',
-							// additional javascript options for the date picker plugin
-							'options'=>array(
-								'showAnim'=>'fold',
-								'dateFormat'=>Helper::NHS_DATE_FORMAT_JS,
-							),
-							'value'=>@$_GET['date_from'],
-						))?>
+                            'name'=>'date_from',
+                            'id'=>'date_from',
+                            // additional javascript options for the date picker plugin
+                            'options'=>array(
+                                'showAnim'=>'fold',
+                                'dateFormat'=>Helper::NHS_DATE_FORMAT_JS,
+                            ),
+                            'value'=>@$_GET['date_from'],
+                        ))?>
 				</div>
 			</div>
 		</div>
@@ -57,15 +57,15 @@ $sessions = $sessions['data'];
 				</div>
 				<div class="large-10 column">
 					<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-							'name'=>'date_to',
-							'id'=>'date_to',
-							// additional javascript options for the date picker plugin
-							'options'=>array(
-								'showAnim'=>'fold',
-								'dateFormat'=>Helper::NHS_DATE_FORMAT_JS,
-							),
-							'value'=>@$_GET['date_to'],
-						))?>
+                            'name'=>'date_to',
+                            'id'=>'date_to',
+                            // additional javascript options for the date picker plugin
+                            'options'=>array(
+                                'showAnim'=>'fold',
+                                'dateFormat'=>Helper::NHS_DATE_FORMAT_JS,
+                            ),
+                            'value'=>@$_GET['date_to'],
+                        ))?>
 				</div>
 			</div>
 		</div>
@@ -75,29 +75,29 @@ $sessions = $sessions['data'];
 					<label class="align" for="sequence_id">Seq:</label>
 				</div>
 				<div class="large-9 column">
-					<?php echo CHtml::textField('sequence_id',@$_GET['sequence_id'],array('autocomplete' => Yii::app()->params['html_autocomplete'], 'size'=>10))?>
+					<?php echo CHtml::textField('sequence_id', @$_GET['sequence_id'], array('autocomplete' => Yii::app()->params['html_autocomplete'], 'size'=>10))?>
 				</div>
 			</div>
 		</div>
 	</div>
 	<div class="row field-row">
 		<div class="large-2 column">
-			<?php echo CHtml::dropDownList('weekday',@$_GET['weekday'],array(1=>'Monday',2=>'Tuesday',3=>'Wednesday',4=>'Thursday',5=>'Friday',6=>'Saturday',7=>'Sunday'),array('empty'=>'- Weekday '))?>
+			<?php echo CHtml::dropDownList('weekday', @$_GET['weekday'], array(1=>'Monday', 2=>'Tuesday', 3=>'Wednesday', 4=>'Thursday', 5=>'Friday', 6=>'Saturday', 7=>'Sunday'), array('empty'=>'- Weekday '))?>
 		</div>
 		<div class="large-2 column">
-			<?php echo CHtml::dropDownList('consultant',@$_GET['consultant'],array(1=>'Yes',0=>'No'),array('empty'=>'- Consultant -'))?>
+			<?php echo CHtml::dropDownList('consultant', @$_GET['consultant'], array(1=>'Yes', 0=>'No'), array('empty'=>'- Consultant -'))?>
 		</div>
 		<div class="large-2 column">
-			<?php echo CHtml::dropDownList('paediatric',@$_GET['paediatric'],array(1=>'Yes',0=>'No'),array('empty'=>'- Paediatric -'))?>
+			<?php echo CHtml::dropDownList('paediatric', @$_GET['paediatric'], array(1=>'Yes', 0=>'No'), array('empty'=>'- Paediatric -'))?>
 		</div>
 		<div class="large-2 column">
-			<?php echo CHtml::dropDownList('anaesthetist',@$_GET['anaesthetist'],array(1=>'Yes',0=>'No'),array('empty'=>'- Anaesthetist -'))?>
+			<?php echo CHtml::dropDownList('anaesthetist', @$_GET['anaesthetist'], array(1=>'Yes', 0=>'No'), array('empty'=>'- Anaesthetist -'))?>
 		</div>
 		<div class="large-2 column">
-			<?php echo CHtml::dropDownList('general_anaesthetic',@$_GET['general_anaesthetic'],array(1=>'Yes',0=>'No'),array('empty'=>'- General anaesthetic -'))?>
+			<?php echo CHtml::dropDownList('general_anaesthetic', @$_GET['general_anaesthetic'], array(1=>'Yes', 0=>'No'), array('empty'=>'- General anaesthetic -'))?>
 		</div>
 		<div class="large-2 column">
-			<?php echo CHtml::dropDownList('available',@$_GET['available'],array(1=>'Yes',0=>'No'),array('empty'=>'- Available -'))?>
+			<?php echo CHtml::dropDownList('available', @$_GET['available'], array(1=>'Yes', 0=>'No'), array('empty'=>'- Available -'))?>
 		</div>
 	</div>
 	<div class="field-row">
@@ -106,36 +106,43 @@ $sessions = $sessions['data'];
 	</div>
 </form>
 
-<h2>Sessions<?php if (@$_GET['sequence_id']!='') {?> for sequence <?php echo CHtml::encode($_GET['sequence_id'])?><?php }?></h2>
+<h2>Sessions<?php if (@$_GET['sequence_id']!='') {
+    ?> for sequence <?php echo CHtml::encode($_GET['sequence_id'])?><?php 
+}?></h2>
 <form id="admin_sessions">
 
-	<?php if ($pagination->getCurrentPage() !== $pagination->getPageCount()) {?>
+	<?php if ($pagination->getCurrentPage() !== $pagination->getPageCount()) {
+    ?>
 		<div class="alert-box checkall_message" style="display: none;">
 			<span class="column_checkall_message">
 				All <?php echo count($sessions)?> sessions on this page are selected.
 				<a href="#" id="select_all_items">
-					Select all <?php echo $pagination->getItemCount();?> sessions that match the current search criteria
+					Select all <?php echo $pagination->getItemCount();
+    ?> sessions that match the current search criteria
 				</a>
 			</span>
 		</div>
-	<?php }?>
-	<?php if (count($sessions) <1) {?>
+	<?php 
+}?>
+	<?php if (count($sessions) <1) {
+    ?>
 		<div class="alert-box alert with-icon no_results">
 			<span class="column_no_results">
 				No items matched your search criteria.
 			</span>
 		</div>
-	<?php }?>
+	<?php 
+}?>
 
 	<table class="grid">
 		<thead>
 		<tr>
 			<th><input type="checkbox" id="checkall" class="sessions" /></th>
-			<th><?php echo CHtml::link('Firm',$this->getUri(array('sortby'=>'firm')))?></th>
-			<th><?php echo CHtml::link('Theatre',$this->getUri(array('sortby'=>'theatre')))?></th>
-			<th><?php echo CHtml::link('Date',$this->getUri(array('sortby'=>'dates')))?></th>
-			<th><?php echo CHtml::link('Time',$this->getUri(array('sortby'=>'time')))?></th>
-			<th><?php echo CHtml::link('Weekday',$this->getUri(array('sortby'=>'weekday')))?></th>
+			<th><?php echo CHtml::link('Firm', $this->getUri(array('sortby'=>'firm')))?></th>
+			<th><?php echo CHtml::link('Theatre', $this->getUri(array('sortby'=>'theatre')))?></th>
+			<th><?php echo CHtml::link('Date', $this->getUri(array('sortby'=>'dates')))?></th>
+			<th><?php echo CHtml::link('Time', $this->getUri(array('sortby'=>'time')))?></th>
+			<th><?php echo CHtml::link('Weekday', $this->getUri(array('sortby'=>'weekday')))?></th>
 			<th>Available</th>
 			<th>Attributes</th>
 			<input type="hidden" id="select_all" value="0" />
@@ -143,7 +150,8 @@ $sessions = $sessions['data'];
 		</thead>
 		<tbody>
 		<?php
-		foreach ($sessions as $i => $session) {?>
+        foreach ($sessions as $i => $session) {
+            ?>
 			<tr class="clickable sortable" data-id="<?php echo $session->id?>" data-uri="OphTrOperationbooking/admin/editSession/<?php echo $session->id?>">
 				<td><input type="checkbox" name="session[]" value="<?php echo $session->id?>" class="sessions" /></td>
 				<td><?php echo $session->firm ? $session->firm->nameAndSubspecialtyCode: 'Emergency'?></td>
@@ -159,14 +167,15 @@ $sessions = $sessions['data'];
 					<span class="<?php echo $session->general_anaesthetic ? 'set' : 'notset'?>">GA</span>
 				</td>
 			</tr>
-		<?php }?>
+		<?php 
+        }?>
 		</tbody>
 		<tfoot class="pagination-container">
 			<tr>
 				<td colspan="8">
-					<?php echo $this->renderPartial('//admin/_pagination',array(
-						'pagination' => $pagination
-					))?>
+					<?php echo $this->renderPartial('//admin/_pagination', array(
+                        'pagination' => $pagination
+                    ))?>
 					<?php echo EventAction::button('Add', 'add_session', null, array('class' => 'small'))->toHtml()?>
 					<?php echo EventAction::button('Delete', 'delete_session', null, array('class' => 'small'))->toHtml()?>
 					<img class="loader" src="<?php echo Yii::app()->assetManager->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
@@ -181,16 +190,16 @@ $sessions = $sessions['data'];
 </div>
 <?php
 $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-		'id'=>'inline_edit',
-		'enableAjaxValidation'=>false,
-		'htmlOptions' => array('style'=>'display: none;', 'class' => 'panel'),
-	))?>
+        'id'=>'inline_edit',
+        'enableAjaxValidation'=>false,
+        'htmlOptions' => array('style'=>'display: none;', 'class' => 'panel'),
+    ))?>
 <div class="row field-row">
 	<div class="large-2 column">
 		<label for="">Firm:</label>
 	</div>
 	<div class="large-5 column end">
-		<?php echo CHtml::dropDownList('inline_firm_id','',Firm::model()->getListWithSpecialties(),array('empty'=>'- Don\'t change -'))?>
+		<?php echo CHtml::dropDownList('inline_firm_id', '', Firm::model()->getListWithSpecialties(), array('empty'=>'- Don\'t change -'))?>
 		<span class="error"></span>
 	</div>
 </div>
@@ -198,7 +207,7 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 	<div class="large-2 column">
 		<label for="">Theatre:</label>
 	</div>
-	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_theatre_id','',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->active()->findAll(),'id','name'),array('empty'=>'- Don\'t change -'))?>
+	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_theatre_id', '', CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->active()->findAll(), 'id', 'name'), array('empty'=>'- Don\'t change -'))?>
 		<span class="error"></span>
 	</div>
 </div>
@@ -208,16 +217,16 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 	</div>
 	<div class="large-2 column end">
 		<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-				'name'=>'inline_date',
-				'id'=>'inline_date',
-				// additional javascript options for the date picker plugin
-				'options'=>array(
-					'showAnim'=>'fold',
-					'dateFormat'=>Helper::NHS_DATE_FORMAT_JS,
-				),
-				'value'=>'',
-				'htmlOptions'=>array('style'=>'width: 110px;')
-			))?>
+                'name'=>'inline_date',
+                'id'=>'inline_date',
+                // additional javascript options for the date picker plugin
+                'options'=>array(
+                    'showAnim'=>'fold',
+                    'dateFormat'=>Helper::NHS_DATE_FORMAT_JS,
+                ),
+                'value'=>'',
+                'htmlOptions'=>array('style'=>'width: 110px;')
+            ))?>
 		<span class="error"></span>
 	</div>
 </div>
@@ -225,7 +234,7 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 	<div class="large-2 column">
 		<label for="">Start time:</label>
 	</div>
-	<div class="large-2 column end"><?php echo CHtml::textField('inline_start_time','',array('autocomplete' => Yii::app()->params['html_autocomplete'], 'size'=>10))?>
+	<div class="large-2 column end"><?php echo CHtml::textField('inline_start_time', '', array('autocomplete' => Yii::app()->params['html_autocomplete'], 'size'=>10))?>
 		<span class="error"></span>
 	</div>
 </div>
@@ -233,7 +242,7 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 	<div class="large-2 column">
 		<label for="">End time:</label>
 	</div>
-	<div class="large-2 column end"><?php echo CHtml::textField('inline_end_time','',array('autocomplete' => Yii::app()->params['html_autocomplete'], 'size'=>10))?>
+	<div class="large-2 column end"><?php echo CHtml::textField('inline_end_time', '', array('autocomplete' => Yii::app()->params['html_autocomplete'], 'size'=>10))?>
 		<span class="error"></span>
 	</div>
 </div>
@@ -241,7 +250,7 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 	<div class="large-2 column">
 		<label for="">Consultant:</label>
 	</div>
-	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_consultant','',array(1=>'Yes',0=>'No'),array('empty'=>'- Don\'t change -'))?>
+	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_consultant', '', array(1=>'Yes', 0=>'No'), array('empty'=>'- Don\'t change -'))?>
 		<span class="error"></span>
 	</div>
 </div>
@@ -249,7 +258,7 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 	<div class="large-2 column">
 		<label for="">Paediatric:</label>
 	</div>
-	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_paediatric','',array(1=>'Yes',0=>'No'),array('empty'=>'- Don\'t change -'))?>
+	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_paediatric', '', array(1=>'Yes', 0=>'No'), array('empty'=>'- Don\'t change -'))?>
 		<span class="error"></span>
 	</div>
 </div>
@@ -257,7 +266,7 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 	<div class="large-2 column">
 		<label for="">Anaesthetist:</label>
 	</div>
-	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_anaesthetist','',array(1=>'Yes',0=>'No'),array('empty'=>'- Don\'t change -'))?>
+	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_anaesthetist', '', array(1=>'Yes', 0=>'No'), array('empty'=>'- Don\'t change -'))?>
 		<span class="error"></span>
 	</div>
 </div>
@@ -265,7 +274,7 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 	<div class="large-2 column">
 		<label for="">General anaesthetic:</label>
 	</div>
-	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_general_anaesthetic','',array(1=>'Yes',0=>'No'),array('empty'=>'- Don\'t change -'))?>
+	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_general_anaesthetic', '', array(1=>'Yes', 0=>'No'), array('empty'=>'- Don\'t change -'))?>
 		<span class="error"></span>
 	</div>
 </div>
@@ -273,7 +282,7 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 	<div class="large-2 column">
 		<label for="">Available:</label>
 	</div>
-	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_available','',array(1=>'Yes',0=>'No'),array('empty'=>'- Don\'t change -'))?>
+	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_available', '', array(1=>'Yes', 0=>'No'), array('empty'=>'- Don\'t change -'))?>
 		<span class="error"></span>
 	</div>
 </div>
@@ -281,13 +290,13 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 	<div class="large-2 column">
 		<label for="">Comments:</label>
 	</div>
-	<div class="large-5 column end"><?php echo CHtml::textArea('inline_comments','',array('rows'=>5,'cols'=>60))?>
+	<div class="large-5 column end"><?php echo CHtml::textArea('inline_comments', '', array('rows'=>5, 'cols'=>60))?>
 		<span class="error"></span>
 	</div>
 </div>
 <div class="row field-row">
 	<div class="large-10 large-offset-2 column">
-		<?php echo EventAction::button('Update','update_inline',null,array('class'=>'small'))->toHtml()?>
+		<?php echo EventAction::button('Update', 'update_inline', null, array('class'=>'small'))->toHtml()?>
 		<img class="loader" src="<?php echo Yii::app()->assetManager->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 		<span class="timeWarning" style="display: none;">Please be patient, it may take some time to process all the sessions ...</span>
 	</div>

@@ -21,19 +21,19 @@
 <div class="booking-letter">
 	<header>
 		<?php $this->renderPartial("../default/letter_start", array(
-			'toAddress' => $toAddress,
-			'patient' => $patient,
-			'date' => date('Y-m-d'),
-			'site' => $site,
-		))?>
+            'toAddress' => $toAddress,
+            'patient' => $patient,
+            'date' => date('Y-m-d'),
+            'site' => $site,
+        ))?>
 	</header>
 
 	<?php echo $this->renderPartial('../letters/letter_introduction', array(
-			'to' => $to,
-			'accessible' => false,
-			'patient' => $patient,
-			'patient_ref' => true,
-	))?>
+            'to' => $to,
+            'accessible' => false,
+            'patient' => $patient,
+            'patient_ref' => true,
+    ))?>
 
 	<p>
 		This patient was recently referred to this hospital and a decision was made that surgery was appropriate under the care of <?php echo CHtml::encode($consultantName) ?>.

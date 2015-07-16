@@ -34,28 +34,28 @@
 									From:
 								</label>
 								<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-									'name' => 'transport_date_from',
-									'id' => 'transport_date_from',
-									'options' => array(
-										'showAnim'=>'fold',
-										'dateFormat'=>Helper::NHS_DATE_FORMAT_JS
-									),
-									'value' => @$_GET['date_from'],
-									'htmlOptions' => array('class' => "inline fixed-width"),
-								))?>
+                                    'name' => 'transport_date_from',
+                                    'id' => 'transport_date_from',
+                                    'options' => array(
+                                        'showAnim'=>'fold',
+                                        'dateFormat'=>Helper::NHS_DATE_FORMAT_JS
+                                    ),
+                                    'value' => @$_GET['date_from'],
+                                    'htmlOptions' => array('class' => "inline fixed-width"),
+                                ))?>
 								<label for="transport_date_to" class="inline align">
 									To:
 								</label>
 								<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-									'name' => 'transport_date_to',
-									'id' => 'transport_date_to',
-									'options' => array(
-										'showAnim'=>'fold',
-										'dateFormat'=>Helper::NHS_DATE_FORMAT_JS
-									),
-									'value' => @$_GET['date_to'],
-									'htmlOptions' => array('class' => 'inline fixed-width'),
-								))?>
+                                    'name' => 'transport_date_to',
+                                    'id' => 'transport_date_to',
+                                    'options' => array(
+                                        'showAnim'=>'fold',
+                                        'dateFormat'=>Helper::NHS_DATE_FORMAT_JS
+                                    ),
+                                    'value' => @$_GET['date_to'],
+                                    'htmlOptions' => array('class' => 'inline fixed-width'),
+                                ))?>
 								<button type="submit" class="small btn_transport_filter">
 									Filter
 								</button>
@@ -70,19 +70,27 @@
 										Include:
 									</legend>
 									<label class="inline">
-										<input type="checkbox" name="include_bookings" id="include_bookings" class="filter" value="1"<?php if (@$_GET['include_bookings']) {?> checked="checked"<?php }?> />
+										<input type="checkbox" name="include_bookings" id="include_bookings" class="filter" value="1"<?php if (@$_GET['include_bookings']) {
+    ?> checked="checked"<?php 
+}?> />
 										Bookings
 									</label>
 									<label class="inline">
-										<input type="checkbox" name="include_reschedules" id="include_reschedules" class="filter" value="1"<?php if (@$_GET['include_reschedules']) {?> checked="checked"<?php }?> />
+										<input type="checkbox" name="include_reschedules" id="include_reschedules" class="filter" value="1"<?php if (@$_GET['include_reschedules']) {
+    ?> checked="checked"<?php 
+}?> />
 										Reschedules
 									</label>
 									<label class="inline">
-										<input type="checkbox" name="include_cancellations" id="include_cancellations" class="filter" value="1"<?php if (@$_GET['include_cancellations']) {?> checked="checked"<?php }?> />
+										<input type="checkbox" name="include_cancellations" id="include_cancellations" class="filter" value="1"<?php if (@$_GET['include_cancellations']) {
+    ?> checked="checked"<?php 
+}?> />
 										Cancellations
 									</label>
 									<label class="inline">
-										<input type="checkbox" name="include_completed" id="include_completed" class="filter" value="1"<?php if (@$_GET['include_completed']) {?> checked="checked"<?php }?> />
+										<input type="checkbox" name="include_completed" id="include_completed" class="filter" value="1"<?php if (@$_GET['include_completed']) {
+    ?> checked="checked"<?php 
+}?> />
 										Completed
 									</label>
 								</fieldset>
@@ -99,10 +107,10 @@
 						<input type="hidden" name="YII_CSRF_TOKEN" value="<?php echo Yii::app()->request->csrfToken; ?>" />
 						<input type="hidden" name="date_from" value="<?php echo CHtml::encode(@$_GET['date_from'])?>" />
 						<input type="hidden" name="date_to" value="<?php echo CHtml::encode(@$_GET['date_to'])?>" />
-						<input type="hidden" name="include_bookings" value="<?php echo (@$_GET['include_bookings'] ? 1 : 0)?>" />
-						<input type="hidden" name="include_reschedules" value="<?php echo (@$_GET['include_reschedules'] ? 1 : 0)?>" />
-						<input type="hidden" name="include_cancellations" value="<?php echo (@$_GET['include_cancellations'] ? 1 : 0)?>" />
-						<input type="hidden" name="include_completed" value="<?php echo (@$_GET['include_completed'] ? 1 : 0)?>" />
+						<input type="hidden" name="include_bookings" value="<?php echo(@$_GET['include_bookings'] ? 1 : 0)?>" />
+						<input type="hidden" name="include_reschedules" value="<?php echo(@$_GET['include_reschedules'] ? 1 : 0)?>" />
+						<input type="hidden" name="include_cancellations" value="<?php echo(@$_GET['include_cancellations'] ? 1 : 0)?>" />
+						<input type="hidden" name="include_completed" value="<?php echo(@$_GET['include_completed'] ? 1 : 0)?>" />
 					</form>
 					<div id="transport_data">
 						<?php echo $this->renderPartial('/transport/_list_header')?>

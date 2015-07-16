@@ -27,27 +27,30 @@
 			</div>
 			<div class="button-bar">
 
-				<?php if ($this->checkAccess('OprnPrint')) {?>
+				<?php if ($this->checkAccess('OprnPrint')) {
+    ?>
 					<button id="btn_print_all" class="small">Print all</button>
 					<button id="btn_print" class="small">Print selected</button>
-				<?php }?>
-				<?php if (Yii::app()->user->checkAccess('admin')) {?>
+				<?php 
+}?>
+				<?php if (Yii::app()->user->checkAccess('admin')) {
+    ?>
 					<div class="panel admin">
 						<label for="adminconfirmdate">Set latest letter sent to be:</label>
 						<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-								'name'=>'adminconfirmdate',
-								'id'=>'adminconfirmdate',
-								// additional javascript options for the date picker plugin
-								'options'=>array(
-									'showAnim'=>'fold',
-									'dateFormat'=>Helper::NHS_DATE_FORMAT_JS,
-									'maxDate'=>'today'
-								),
-								'value' => date("j M Y"),
-								'htmlOptions'=>array(
-									'class' => 'small fixed-width'
-								)
-							))?>
+                                'name'=>'adminconfirmdate',
+                                'id'=>'adminconfirmdate',
+                                // additional javascript options for the date picker plugin
+                                'options'=>array(
+                                    'showAnim'=>'fold',
+                                    'dateFormat'=>Helper::NHS_DATE_FORMAT_JS,
+                                    'maxDate'=>'today'
+                                ),
+                                'value' => date("j M Y"),
+                                'htmlOptions'=>array(
+                                    'class' => 'small fixed-width'
+                                )
+                            ))?>
 					</div>
 					<div class="panel admin">
 						<select name="adminconfirmto" id="adminconfirmto">
@@ -59,12 +62,15 @@
 							<option value="3">GP letter</option>
 						</select>
 					</div>
-				<?php }?>
-				<?php if ($this->checkAccess('OprnConfirmBookingLetterPrinted')) { ?>
+				<?php 
+}?>
+				<?php if ($this->checkAccess('OprnConfirmBookingLetterPrinted')) {
+    ?>
 					<button type="submit" class="small secondary" id="btn_confirm_selected">
 						Confirm selected
 					</button>
-				<?php }?>
+				<?php 
+}?>
 			</div>
 		</div>
 	</div>
@@ -94,11 +100,11 @@
 					<tr>
 						<td>
 							<?php echo CHtml::dropDownList('subspecialty-id', @$_POST['subspecialty-id'], Subspecialty::model()->getList(),
-								array('empty'=>'All specialties', 'ajax'=>array(
-									'type'=>'POST',
-									'data'=>array('subspecialty_id'=>'js:this.value','YII_CSRF_TOKEN'=>Yii::app()->request->csrfToken),
-									'url'=>Yii::app()->createUrl('/OphTrOperationbooking/waitingList/filterFirms'),
-									'success'=>"js:function(data) {
+                                array('empty'=>'All specialties', 'ajax'=>array(
+                                    'type'=>'POST',
+                                    'data'=>array('subspecialty_id'=>'js:this.value', 'YII_CSRF_TOKEN'=>Yii::app()->request->csrfToken),
+                                    'url'=>Yii::app()->createUrl('/OphTrOperationbooking/waitingList/filterFirms'),
+                                    'success'=>"js:function(data) {
 											if ($('#subspecialty-id').val() != '') {
 												$('#firm-id').attr('disabled', false);
 												$('#firm-id').html(data);
@@ -107,7 +113,7 @@
 												$('#firm-id').html(data);
 											}
 										}",
-								)))?>
+                                )))?>
 						</td>
 						<td>
 							<?php echo CHtml::dropDownList('firm-id', @$_POST['firm-id'], $this->getFilteredFirms(@$_POST['subspecialty-id']), array('empty'=>'All firms', 'disabled'=>!@$_POST['firm-id']))?>
@@ -116,11 +122,13 @@
 							<?php echo CHtml::dropDownList('status', @$_POST['status'], Element_OphTrOperationbooking_Operation::getLetterOptions())?>
 						</td>
 						<td>
-							<?php echo CHtml::dropDownList('site_id',@$_POST['site_id'],Site::model()->getListForCurrentInstitution(),array('empty'=>'All sites'))?>
+							<?php echo CHtml::dropDownList('site_id', @$_POST['site_id'], Site::model()->getListForCurrentInstitution(), array('empty'=>'All sites'))?>
 						</td>
 						<td>
-							<?php echo CHtml::textField('hos_num',@$_POST['hos_num'],array('autocomplete' => Yii::app()->params['html_autocomplete'], 'size' => 12))?>
-							<span id="hos_num_error" class="red"<?php if (!@$_POST['hos_num'] || ctype_digit($_POST['hos_num'])) {?> style="display: none;"<?php }?>>Invalid hospital number</span>
+							<?php echo CHtml::textField('hos_num', @$_POST['hos_num'], array('autocomplete' => Yii::app()->params['html_autocomplete'], 'size' => 12))?>
+							<span id="hos_num_error" class="red"<?php if (!@$_POST['hos_num'] || ctype_digit($_POST['hos_num'])) {
+    ?> style="display: none;"<?php 
+}?>>Invalid hospital number</span>
 						</td>
 						<td class="text-right">
 							<img class="loader" src="<?php echo Yii::app()->assetManager->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />

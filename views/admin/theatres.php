@@ -32,9 +32,10 @@
 			</thead>
 			<tbody>
 			<?php
-			$criteria = new CDbCriteria;
-			$criteria->order = "display_order asc";
-			foreach (OphTrOperationbooking_Operation_Theatre::model()->active()->findAll() as $i => $theatre) {?>
+            $criteria = new CDbCriteria;
+            $criteria->order = "display_order asc";
+            foreach (OphTrOperationbooking_Operation_Theatre::model()->active()->findAll() as $i => $theatre) {
+                ?>
 				<tr class="clickable sortable" data-attr-id="<?php echo $theatre->id?>" data-uri="OphTrOperationbooking/admin/editTheatre/<?php echo $theatre->id?>">
 					<td><input type="checkbox" name="theatre[]" value="<?php echo $theatre->id?>" class="theatres" /></td>
 					<td><?php echo $theatre->site->name?></td>
@@ -42,13 +43,14 @@
 					<td><?php echo $theatre->code?></td>
 					<td><?php echo $theatre->ward ? $theatre->ward->name : 'None'?></td>
 				</tr>
-			<?php }?>
+			<?php 
+            }?>
 			</tbody>
 			<tfoot>
 				<tr>
 					<td colspan="5">
-						<?php echo EventAction::button('Add', 'add_theatre', null,array('class'=>'button small'))->toHtml()?>
-						<?php echo EventAction::button('Delete', 'delete_theatre', null,array('class'=>'button small'))->toHtml()?>
+						<?php echo EventAction::button('Add', 'add_theatre', null, array('class'=>'button small'))->toHtml()?>
+						<?php echo EventAction::button('Delete', 'delete_theatre', null, array('class'=>'button small'))->toHtml()?>
 					</td>
 				</tr>
 			</tfoot>

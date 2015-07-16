@@ -21,18 +21,18 @@
 <div class="box admin">
 	<h2><?php echo $rule->id ? 'Edit' : 'Add'?> operation name rule</h2>
 	<?php
-	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-		'id'=>'adminform',
-		'enableAjaxValidation'=>false,
-		'focus'=>'#username',
-		'layoutColumns' => array(
-			'label' => 2,
-			'field' => 5
-		)
-	))?>
+    $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
+        'id'=>'adminform',
+        'enableAjaxValidation'=>false,
+        'focus'=>'#username',
+        'layoutColumns' => array(
+            'label' => 2,
+            'field' => 5
+        )
+    ))?>
 	<?php echo $form->errorSummary($rule); ?>
-	<?php echo $form->dropDownList($rule,'theatre_id','OphTrOperationbooking_Operation_Theatre',array('style'=>'margin-bottom:6px;','empty'=>'- Theatre -'))?>
-	<?php echo $form->textField($rule,'name')?>
+	<?php echo $form->dropDownList($rule, 'theatre_id', 'OphTrOperationbooking_Operation_Theatre', array('style'=>'margin-bottom:6px;', 'empty'=>'- Theatre -'))?>
+	<?php echo $form->textField($rule, 'name')?>
 	<?php echo $form->errorSummary($rule); ?>
 	<?php echo $form->formActions();?>
 	<?php $this->endWidget()?>

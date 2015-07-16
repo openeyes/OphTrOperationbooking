@@ -28,12 +28,14 @@
 			<div class="label">
 				Use the filters below to view Theatre schedules:
 			</div>
-			<?php if ($this->checkAccess('OprnPrint')) {?>
+			<?php if ($this->checkAccess('OprnPrint')) {
+    ?>
 				<div class="button-bar">
 					<button id="btn_print_diary" class="small">Print</button>
 					<button id="btn_print_diary_list" class="small">Print list</button>
 				</div>
-			<?php }?>
+			<?php 
+}?>
 		</div>
 	</div>
 
@@ -44,12 +46,12 @@
 	</div>
 	<div class="search-filters theatre-diaries">
 		<?php $this->beginWidget('CActiveForm', array(
-			'id'=>'theatre-filter',
-			'htmlOptions'=>array(
-				'class' => 'row'
-			),
-			'enableAjaxValidation'=>false
-		))?>
+            'id'=>'theatre-filter',
+            'htmlOptions'=>array(
+                'class' => 'row'
+            ),
+            'enableAjaxValidation'=>false
+        ))?>
 			<div class="large-12 column">
 				<div class="panel">
 					<div class="row">
@@ -78,11 +80,15 @@
 										<?php echo CHtml::dropDownList('subspecialty-id', @$_POST['subspecialty-id'], Subspecialty::model()->getList(), array('empty'=>'All specialties', 'disabled' => (@$_POST['emergency_list']==1 ? 'disabled' : '')))?>
 									</td>
 									<td>
-										<?php if (!@$_POST['subspecialty-id']) {?>
+										<?php if (!@$_POST['subspecialty-id']) {
+    ?>
 											<?php echo CHtml::dropDownList('firm-id', '', array(), array('empty'=>'All firms', 'disabled' => 'disabled'))?>
-										<?php } else {?>
+										<?php 
+} else {
+    ?>
 											<?php echo CHtml::dropDownList('firm-id', @$_POST['firm-id'], Firm::model()->getList(@$_POST['subspecialty-id']), array('empty'=>'All firms', 'disabled' => (@$_POST['emergency_list']==1 ? 'disabled' : '')))?>
-										<?php }?>
+										<?php 
+}?>
 									</td>
 									<td>
 										<?php echo CHtml::dropDownList('ward-id', @$_POST['ward-id'], $wards, array('empty'=>'All wards', 'disabled' => (@$_POST['emergency_list']==1 ? 'disabled' : '')))?>
@@ -101,43 +107,51 @@
 
 							<div class="search-filters-extra clearfix">
 								<label class="inline highlight">
-									<input type="radio" name="date-filter" id="date-filter_0" value="today"<?php if (@$_POST['date-filter'] == 'today') {?> checked="checked"<?php }?>>
+									<input type="radio" name="date-filter" id="date-filter_0" value="today"<?php if (@$_POST['date-filter'] == 'today') {
+    ?> checked="checked"<?php 
+}?>>
 									Today
 								</label>
 								<label class="inline highlight">
-									<input type="radio" name="date-filter" id="date-filter_1" value="week"<?php if (@$_POST['date-filter'] == 'week') {?> checked="checked"<?php }?>>
+									<input type="radio" name="date-filter" id="date-filter_1" value="week"<?php if (@$_POST['date-filter'] == 'week') {
+    ?> checked="checked"<?php 
+}?>>
 									Next 7 days
 								</label>
 								<label class="inline highlight">
-									<input type="radio" name="date-filter" id="date-filter_2" value="month"<?php if (@$_POST['date-filter'] == 'month') {?> checked="checked"<?php }?>>
+									<input type="radio" name="date-filter" id="date-filter_2" value="month"<?php if (@$_POST['date-filter'] == 'month') {
+    ?> checked="checked"<?php 
+}?>>
 									Next 30 days
 								</label>
 								<fieldset class="inline highlight">
 									<label>
-										<input type="radio" name="date-filter" id="date-filter_3" value="custom"<?php if (@$_POST['date-filter'] == 'custom') {?> checked="checked"<?php }?>>
+										<input type="radio" name="date-filter" id="date-filter_3" value="custom"<?php if (@$_POST['date-filter'] == 'custom') {
+    ?> checked="checked"<?php 
+}?>>
 										or select date range:
 									</label>
 									<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-											'name'=>'date-start',
-											'id'=>'date-start',
-											'options'=>array(
-												'showAnim'=>'fold',
-												'dateFormat'=>Helper::NHS_DATE_FORMAT_JS
-											),
-											'value' => @$_POST['date-start'],
-											'htmlOptions'=>array('class'=>'small fixed-width')
-										))?>
+                                            'name'=>'date-start',
+                                            'id'=>'date-start',
+                                            'options'=>array(
+                                                'showAnim'=>'fold',
+                                                'dateFormat'=>Helper::NHS_DATE_FORMAT_JS
+                                            ),
+                                            'value' => @$_POST['date-start'],
+                                            'htmlOptions'=>array('class'=>'small fixed-width')
+                                        ))?>
 									<span class="to">to</span>
 									<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-											'name'=>'date-end',
-											'id'=>'date-end',
-											'options'=>array(
-												'showAnim'=>'fold',
-												'dateFormat'=>Helper::NHS_DATE_FORMAT_JS
-											),
-											'value' => @$_POST['date-end'],
-											'htmlOptions'=>array('class'=>'small fixed-width')
-										))?>
+                                            'name'=>'date-end',
+                                            'id'=>'date-end',
+                                            'options'=>array(
+                                                'showAnim'=>'fold',
+                                                'dateFormat'=>Helper::NHS_DATE_FORMAT_JS
+                                            ),
+                                            'value' => @$_POST['date-end'],
+                                            'htmlOptions'=>array('class'=>'small fixed-width')
+                                        ))?>
 									<ul class="button-group small">
 										<li><a href="#" id="last_week" class="small button">Last week</a></li>
 										<li><a href="#" id="next_week" class="small button">Next week</a></li>

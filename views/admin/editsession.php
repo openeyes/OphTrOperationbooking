@@ -21,22 +21,25 @@
 <div class="box admin">
 	<h2><?php echo $session->id ? 'Edit' : 'Add'?> session</h2>
 	<?php
-	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-		'id'=>'adminform',
-		'enableAjaxValidation'=>false,
-		'focus'=>'#username',
-		'layoutColumns' => array(
-			'label' => 2,
-			'field' => 5
-		)
-	))?>
+    $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
+        'id'=>'adminform',
+        'enableAjaxValidation'=>false,
+        'focus'=>'#username',
+        'layoutColumns' => array(
+            'label' => 2,
+            'field' => 5
+        )
+    ))?>
 	<?php echo $form->errorSummary($session); ?>
-	<?php if (!$session->id) {?>
-		<?php echo $form->textField($session,'sequence_id',array(),array(),array('field'=>2))?>
-	<?php }?>
-	<?php echo $form->dropDownList($session,'firm_id',Firm::model()->getListWithSpecialties(),array('empty'=>'- Emergency -'))?>
-	<?php echo $form->dropDownList($session,'theatre_id','OphTrOperationbooking_Operation_Theatre',array('empty'=>'- None -'))?>
-	<?php if ($session->id) {?>
+	<?php if (!$session->id) {
+    ?>
+		<?php echo $form->textField($session, 'sequence_id', array(), array(), array('field'=>2))?>
+	<?php 
+}?>
+	<?php echo $form->dropDownList($session, 'firm_id', Firm::model()->getListWithSpecialties(), array('empty'=>'- Emergency -'))?>
+	<?php echo $form->dropDownList($session, 'theatre_id', 'OphTrOperationbooking_Operation_Theatre', array('empty'=>'- None -'))?>
+	<?php if ($session->id) {
+    ?>
 		<div id="div_OphTrOperationbooking_Operation_Session_date" class="row field-row">
 			<div class="large-2 column">
 				<div class="field-label">Date:</div>
@@ -45,15 +48,22 @@
 				<div class="field-value"><?php echo $session->NHSDate('date')?></div>
 			</div>
 		</div>
-	<?php } else {?>
-		<?php echo $form->datePicker($session,'date',array(),array(),array('field'=>2))?>
-	<?php }?>
-	<?php echo $form->textField($session,'start_time',array(),array(),array('field'=>2))?>
-	<?php echo $form->textField($session,'end_time',array(),array(),array('field'=>2))?>
-	<?php echo $form->textField($session,'default_admission_time',array(),array(),array('field'=>2))?>
+	<?php 
+} else {
+    ?>
+		<?php echo $form->datePicker($session, 'date', array(), array(), array('field'=>2))?>
+	<?php 
+}?>
+	<?php echo $form->textField($session, 'start_time', array(), array(), array('field'=>2))?>
+	<?php echo $form->textField($session, 'end_time', array(), array(), array('field'=>2))?>
+	<?php echo $form->textField($session, 'default_admission_time', array(), array(), array('field'=>2))?>
 	<?php echo $form->textField($session, 'max_procedures', array(), array(), array('field'=>2)); ?>
-	<?php if ($current = $session->getBookedProcedureCount()) { ?>
-		<fieldset id="procedure_count_wrapper" class="row field-row<?php if ($session->max_procedures && $current > $session->max_procedures) { echo " warn"; }?>">
+	<?php if ($current = $session->getBookedProcedureCount()) {
+    ?>
+		<fieldset id="procedure_count_wrapper" class="row field-row<?php if ($session->max_procedures && $current > $session->max_procedures) {
+    echo " warn";
+}
+    ?>">
 			<div class="large-2 column">
 				<div class="field-label">Current Booked Procedures:</div>
 			</div>
@@ -61,13 +71,16 @@
 				<div class="field-value" id="current-proc-count"><?php echo $current ?></div>
 			</div>
 		</fieldset>
-	<?php } ?>
-	<?php echo $form->radioBoolean($session,'consultant')?>
-	<?php echo $form->radioBoolean($session,'paediatric')?>
-	<?php echo $form->radioBoolean($session,'anaesthetist')?>
-	<?php echo $form->radioBoolean($session,'general_anaesthetic')?>
-	<?php echo $form->radioBoolean($session,'available')?>
-	<fieldset id="unavailablereason_id_wrapper" class="row field-row"<?php if ($session->available) {?> style="display: none;"<?php } ?>>
+	<?php 
+} ?>
+	<?php echo $form->radioBoolean($session, 'consultant')?>
+	<?php echo $form->radioBoolean($session, 'paediatric')?>
+	<?php echo $form->radioBoolean($session, 'anaesthetist')?>
+	<?php echo $form->radioBoolean($session, 'general_anaesthetic')?>
+	<?php echo $form->radioBoolean($session, 'available')?>
+	<fieldset id="unavailablereason_id_wrapper" class="row field-row"<?php if ($session->available) {
+    ?> style="display: none;"<?php 
+} ?>>
 		<div class="large-2 column">
 			<label for="OphTrOperationbooking_Operation_Session_unavailablereason_id"><?php echo $session->getAttributeLabel('unavailablereason_id'); ?>:</label>
 		</div>
@@ -77,8 +90,8 @@
 	</fieldset>
 	<?php echo $form->errorSummary($session); ?>
 	<?php echo $form->formActions(array(
-		'delete' => $session->id ? 'Delete' : false
-	));?>
+        'delete' => $session->id ? 'Delete' : false
+    ));?>
 	<?php $this->endWidget()?>
 </div>
 

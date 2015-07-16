@@ -19,21 +19,32 @@
 
 class OphTrOperationbookingObserver
 {
-	/**
-	 * Reset search forms when site / firm changes
-	 * @param array $params
-	 */
-	public function resetSearch($params)
-	{
-		$so = Yii::app()->session['theatre_searchoptions'];
-		if(isset($so['firm-id'])) unset($so['firm-id']);
-		if(isset($so['specialty-id'])) unset($so['specialty-id']);
-		if(isset($so['site-id'])) unset($so['site-id']);
-		if(isset($so['date-filter'])) unset($so['date-filter']);
-		if(isset($so['date-start'])) unset($so['date-start']);
-		if(isset($so['date-end'])) unset($so['date-end']);
-		Yii::app()->session['theatre_searchoptions'] = $so;
-		Yii::app()->session['waitinglist_searchoptions'] = null;
-	}
-
+    /**
+     * Reset search forms when site / firm changes
+     * @param array $params
+     */
+    public function resetSearch($params)
+    {
+        $so = Yii::app()->session['theatre_searchoptions'];
+        if (isset($so['firm-id'])) {
+            unset($so['firm-id']);
+        }
+        if (isset($so['specialty-id'])) {
+            unset($so['specialty-id']);
+        }
+        if (isset($so['site-id'])) {
+            unset($so['site-id']);
+        }
+        if (isset($so['date-filter'])) {
+            unset($so['date-filter']);
+        }
+        if (isset($so['date-start'])) {
+            unset($so['date-start']);
+        }
+        if (isset($so['date-end'])) {
+            unset($so['date-end']);
+        }
+        Yii::app()->session['theatre_searchoptions'] = $so;
+        Yii::app()->session['waitinglist_searchoptions'] = null;
+    }
 }

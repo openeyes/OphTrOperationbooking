@@ -20,23 +20,23 @@
 <?php $this->beginContent('//patient/event_container'); ?>
 
 	<?php
-	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-			'id'=>'clinical-create',
-			'enableAjaxValidation'=>false,
-	));
+    $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
+            'id'=>'clinical-create',
+            'enableAjaxValidation'=>false,
+    ));
 
-	// Event actions
+    // Event actions
 
-	$this->event_actions[] = EventAction::button('Save', '#', null, array('name'=> 'scheduleLater', 'id' => 'et_save', 'class' => 'button small', 'form'=>'clinical-create', 'style' => $this->checkScheduleAccess() ? 'display: none;' : ''));
-	$this->event_actions[] = EventAction::button('Save and Schedule later', '#', null, array('name'=> 'scheduleLater', 'id' => 'et_save_and_schedule_later', 'class' => 'button small', 'form'=>'clinical-create', 'style' => $this->checkScheduleAccess() ? '' : 'display: none;'));
-	$this->event_actions[] = EventAction::button('Save and Schedule now', '#', array('level'=>'secondary'),  array('name'=> 'scheduleNow','id' => 'et_save_and_schedule', 'class' => 'button small', 'form' => 'clinical-create', 'style' => $this->checkScheduleAccess() ? '' : 'display: none;'));
-	?>
+    $this->event_actions[] = EventAction::button('Save', '#', null, array('name'=> 'scheduleLater', 'id' => 'et_save', 'class' => 'button small', 'form'=>'clinical-create', 'style' => $this->checkScheduleAccess() ? 'display: none;' : ''));
+    $this->event_actions[] = EventAction::button('Save and Schedule later', '#', null, array('name'=> 'scheduleLater', 'id' => 'et_save_and_schedule_later', 'class' => 'button small', 'form'=>'clinical-create', 'style' => $this->checkScheduleAccess() ? '' : 'display: none;'));
+    $this->event_actions[] = EventAction::button('Save and Schedule now', '#', array('level'=>'secondary'),  array('name'=> 'scheduleNow', 'id' => 'et_save_and_schedule', 'class' => 'button small', 'form' => 'clinical-create', 'style' => $this->checkScheduleAccess() ? '' : 'display: none;'));
+    ?>
 	<input type="hidden" name="schedule_now" id="schedule_now" value="0" />
 	<?php
-	$this->displayErrors($errors);
-	$this->renderOpenElements($this->action->id, $form);
-	$this->renderOptionalElements($this->action->id, $form);
-	$this->displayErrors($errors, true);
-	$this->endWidget()?>
+    $this->displayErrors($errors);
+    $this->renderOpenElements($this->action->id, $form);
+    $this->renderOptionalElements($this->action->id, $form);
+    $this->displayErrors($errors, true);
+    $this->endWidget()?>
 
 <?php $this->endContent() ;?>

@@ -21,48 +21,52 @@
 <div class="box admin">
 	<h2><?php echo $rule->id ? 'Edit' : 'Add'?> letter contact rule</h2>
 	<?php
-	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-			'id'=>'adminform',
-			'enableAjaxValidation'=>false,
-			'focus'=>'#contactname',
-			'layoutColumns' => array(
-				'label' => 2,
-				'field' => 5
-			)
-		))?>
+    $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
+            'id'=>'adminform',
+            'enableAjaxValidation'=>false,
+            'focus'=>'#contactname',
+            'layoutColumns' => array(
+                'label' => 2,
+                'field' => 5
+            )
+        ))?>
 	<?php echo $form->errorSummary($rule); ?>
-	<?php echo $form->dropDownList($rule,'parent_rule_id',CHtml::listData(OphTrOperationbooking_Letter_Contact_Rule::model()->getListAsTree(),'id','treeName'),array('empty'=>'- None -'))?>
-	<?php echo $form->textField($rule,'rule_order',array(),array(),array('field'=>2))?>
-	<?php echo $form->dropDownList($rule,'site_id',Site::model()->getListForCurrentInstitution('name'),array('empty'=>'- Not set -'))?>
-	<?php echo $form->dropDownList($rule,'firm_id',Firm::model()->getListWithSpecialties(),array('empty'=>'- Not set -'))?>
-	<?php echo $form->dropDownList($rule,'subspecialty_id',CHtml::listData(Subspecialty::model()->findAllByCurrentSpecialty(),'id','name'),array('empty'=>'- Not set -'))?>
-	<?php echo $form->dropDownList($rule,'theatre_id','OphTrOperationbooking_Operation_Theatre',array('empty'=>'- Not set -'))?>
-	<?php echo $form->textField($rule,'refuse_telephone',array('size'=>20))?>
-	<?php echo $form->textField($rule,'refuse_title',array('size'=>90))?>
-	<?php echo $form->textField($rule,'health_telephone',array('size'=>90))?>
-	<?php if ($rule->children) {?>
+	<?php echo $form->dropDownList($rule, 'parent_rule_id', CHtml::listData(OphTrOperationbooking_Letter_Contact_Rule::model()->getListAsTree(), 'id', 'treeName'), array('empty'=>'- None -'))?>
+	<?php echo $form->textField($rule, 'rule_order', array(), array(), array('field'=>2))?>
+	<?php echo $form->dropDownList($rule, 'site_id', Site::model()->getListForCurrentInstitution('name'), array('empty'=>'- Not set -'))?>
+	<?php echo $form->dropDownList($rule, 'firm_id', Firm::model()->getListWithSpecialties(), array('empty'=>'- Not set -'))?>
+	<?php echo $form->dropDownList($rule, 'subspecialty_id', CHtml::listData(Subspecialty::model()->findAllByCurrentSpecialty(), 'id', 'name'), array('empty'=>'- Not set -'))?>
+	<?php echo $form->dropDownList($rule, 'theatre_id', 'OphTrOperationbooking_Operation_Theatre', array('empty'=>'- Not set -'))?>
+	<?php echo $form->textField($rule, 'refuse_telephone', array('size'=>20))?>
+	<?php echo $form->textField($rule, 'refuse_title', array('size'=>90))?>
+	<?php echo $form->textField($rule, 'health_telephone', array('size'=>90))?>
+	<?php if ($rule->children) {
+    ?>
 		<div class="row field-row">
-			<div class="large-<?php echo $form->layoutColumns['label'];?> column">
+			<div class="large-<?php echo $form->layoutColumns['label'];
+    ?> column">
 				<div class="field-label">
 					Descendants:
 				</div>
 			</div>
-			<div class="large-<?php echo (12 - $form->layoutColumns['label']);?> column">
+			<div class="large-<?php echo(12 - $form->layoutColumns['label']);
+    ?> column">
 				<div class="panel" style="margin:0">
 					<?php
-						$this->widget('CTreeView',array(
-							'data' => OphTrOperationbooking_Letter_Contact_Rule::model()->findAllAsTree($rule,true,'textPlain'),
-						));
-					?>
+                        $this->widget('CTreeView', array(
+                            'data' => OphTrOperationbooking_Letter_Contact_Rule::model()->findAllAsTree($rule, true, 'textPlain'),
+                        ));
+    ?>
 				</div>
 			</div>
 		</div>
-	<?php }?>
+	<?php 
+}?>
 
 	<?php echo $form->errorSummary($rule); ?>
 	<?php echo $form->formActions(array(
-		'delete' => $rule->id ? 'Delete' : false
-	));?>
+        'delete' => $rule->id ? 'Delete' : false
+    ));?>
 	<?php $this->endWidget()?>
 </div>
 

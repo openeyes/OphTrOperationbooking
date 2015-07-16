@@ -51,53 +51,70 @@
 		</tr>
 		</thead>
 		<tbody>
-		<?php if (empty($operations)) {?>
+		<?php if (empty($operations)) {
+    ?>
 			<tr>
 				<td>
 					There are no patients who match the specified criteria.
 				</td>
 			</tr>
-		<?php } else {?>
+		<?php 
+} else {
+    ?>
 			<?php
-			$i = 0;
-			foreach ($operations as $eo) {
-				$patient = $eo->event->episode->patient;
-				$contact = $patient->contact;
-				if (isset($_POST['status']) and $_POST['status'] != '') {
-					if ($eo->getNextLetter() != $_POST['status']) {
-						continue;
-					}
-				}?>
+            $i = 0;
+    foreach ($operations as $eo) {
+        $patient = $eo->event->episode->patient;
+        $contact = $patient->contact;
+        if (isset($_POST['status']) and $_POST['status'] != '') {
+            if ($eo->getNextLetter() != $_POST['status']) {
+                continue;
+            }
+        }
+        ?>
 
 				<?php if ($eo->getWaitingListStatus() == Element_OphTrOperationbooking_Operation::STATUS_PURPLE) {
-					$letterStatusClass = "send-invitation-letter";
-				} elseif ($eo->getWaitingListStatus() == Element_OphTrOperationbooking_Operation::STATUS_GREEN1) {
-					$letterStatusClass = "send-another-reminder";
-				} elseif ($eo->getWaitingListStatus() == Element_OphTrOperationbooking_Operation::STATUS_GREEN2) {
-					$letterStatusClass = "send-another-reminder";
-				} elseif ($eo->getWaitingListStatus() == Element_OphTrOperationbooking_Operation::STATUS_ORANGE) {
-					$letterStatusClass = "send-gp-removal-letter";
-				} elseif ($eo->getWaitingListStatus() == Element_OphTrOperationbooking_Operation::STATUS_RED) {
-					$letterStatusClass = "patient-due-removed";
-				} else {
-					$letterStatusClass = "";
-				}?>
+    $letterStatusClass = "send-invitation-letter";
+} elseif ($eo->getWaitingListStatus() == Element_OphTrOperationbooking_Operation::STATUS_GREEN1) {
+    $letterStatusClass = "send-another-reminder";
+} elseif ($eo->getWaitingListStatus() == Element_OphTrOperationbooking_Operation::STATUS_GREEN2) {
+    $letterStatusClass = "send-another-reminder";
+} elseif ($eo->getWaitingListStatus() == Element_OphTrOperationbooking_Operation::STATUS_ORANGE) {
+    $letterStatusClass = "send-gp-removal-letter";
+} elseif ($eo->getWaitingListStatus() == Element_OphTrOperationbooking_Operation::STATUS_RED) {
+    $letterStatusClass = "patient-due-removed";
+} else {
+    $letterStatusClass = "";
+}
+        ?>
 
 				<tr>
 					<?php //FIXME: waiting list color needs adding to style for below to work ?>
 					<td class="letter-status <?php echo $letterStatusClass ?>">
-						<?php if ($eo->sentInvitation()) {?>
+						<?php if ($eo->sentInvitation()) {
+    ?>
 							<img src="<?php echo $assetPath?>/img/letterIcons/invitation.png" alt="Invitation" width="17" height="17" />
-						<?php }?>
-						<?php if ($eo->sent1stReminder()) {?>
+						<?php 
+}
+        ?>
+						<?php if ($eo->sent1stReminder()) {
+    ?>
 							<img src="<?php echo $assetPath?>/img/letterIcons/letter1.png" alt="1st reminder" width="17" height="17" />
-						<?php }?>
-						<?php if ($eo->sent2ndReminder()) {?>
+						<?php 
+}
+        ?>
+						<?php if ($eo->sent2ndReminder()) {
+    ?>
 							<img src="<?php echo $assetPath?>/img/letterIcons/letter2.png" alt="2nd reminder" width="17" height="17" />
-						<?php }?>
-						<?php if ($eo->sentGPLetter()) {?>
+						<?php 
+}
+        ?>
+						<?php if ($eo->sentGPLetter()) {
+    ?>
 							<img src="<?php echo $assetPath?>/img/letterIcons/GP.png" alt="GP" width="17" height="17" />
-						<?php }?>
+						<?php 
+}
+        ?>
 					</td>
 					<td class="patient">
 						<?php echo CHtml::link("<strong>" . trim(strtoupper($contact->last_name)) . '</strong>, ' . $contact->first_name, Yii::app()->createUrl('/OphTrOperationbooking/default/view/'.$eo->event_id))?>
@@ -109,48 +126,67 @@
 					<td><?php echo $eo->event->episode->firm->name ?> (<?php echo $eo->event->episode->firm->serviceSubspecialtyAssignment->subspecialty->name?>)</td>
 					<td><?php echo $eo->NHSDate('decision_date') ?></td>
 					<td><?php echo $eo->priority->name?></td>
-					<td><?php echo ucfirst(preg_replace('/^Requires /','',$eo->status->name)) ?></td>
-					<td<?php if ($letterStatusClass == '' && Yii::app()->user->checkAccess('admin')) { ?> class="admin-td"<?php } ?>>
+					<td><?php echo ucfirst(preg_replace('/^Requires /', '', $eo->status->name)) ?></td>
+					<td<?php if ($letterStatusClass == '' && Yii::app()->user->checkAccess('admin')) {
+    ?> class="admin-td"<?php 
+}
+        ?>>
 
 						<?php if (($patient && $patient->contact->correspondAddress)
-							&& $eo->id
-							&& ($eo->getDueLetter() != Element_OphTrOperationbooking_Operation::LETTER_GP
-								|| ($eo->getDueLetter() == Element_OphTrOperationbooking_Operation::LETTER_GP && $patient->practice && $patient->practice->contact->address)
-							)) {?>
+                            && $eo->id
+                            && ($eo->getDueLetter() != Element_OphTrOperationbooking_Operation::LETTER_GP
+                                || ($eo->getDueLetter() == Element_OphTrOperationbooking_Operation::LETTER_GP && $patient->practice && $patient->practice->contact->address)
+                            )) {
+    ?>
 							<div>
-								<input<?php if ($letterStatusClass == '' && !Yii::app()->user->checkAccess('admin')) { ?> disabled="disabled"<?php } ?> type="checkbox" id="operation<?php echo $eo->id ?>" value="1" />
+								<input<?php if ($letterStatusClass == '' && !Yii::app()->user->checkAccess('admin')) {
+    ?> disabled="disabled"<?php 
+}
+    ?> type="checkbox" id="operation<?php echo $eo->id ?>" value="1" />
 							</div>
-						<?php }?>
+						<?php 
+}
+        ?>
 
-						<?php if (!$patient->practice || !$patient->practice->contact->address) { ?>
+						<?php if (!$patient->practice || !$patient->practice->contact->address) {
+    ?>
 							<script type="text/javascript">
 								$('#pas_warnings').show();
 								$('#pas_warnings .no_gp').show();
 							</script>
 							<span class="no-gp error">No GP</span>
-						<?php }?>
+						<?php 
+}
+        ?>
 
-						<?php if ($patient && !$patient->contact->correspondAddress) { ?>
+						<?php if ($patient && !$patient->contact->correspondAddress) {
+    ?>
 							<script type="text/javascript">
 								$('#pas_warnings').show();
 								$('#pas_warnings .no_address').show();
 							</script>
 							<span class="no-address error">No Address</span>
-						<?php }?>
+						<?php 
+}
+        ?>
 					</td>
 				</tr>
 				<?php
-				$i++;
-			}
+                $i++;
+    }
 
-			if ($i == 0) {?>
+    if ($i == 0) {
+        ?>
 				<tr>
 					<td colspan="7">
 						There are no patients who match the specified criteria.
 					</td>
 				</tr>
-			<?php }?>
-		<?php }?>
+			<?php 
+    }
+    ?>
+		<?php 
+}?>
 		</tbody>
 		<tfoot>
 		<tr>

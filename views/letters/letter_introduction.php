@@ -17,15 +17,24 @@
 * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
 */
 ?>
-<p<?php if (@$accessible) {?> class="accessible"<?php }?>>Dear <?php echo $to; ?>,</p>
-<p<?php if (@$accessible) {?> class="accessible"<?php }?>>
+<p<?php if (@$accessible) {
+    ?> class="accessible"<?php 
+}?>>Dear <?php echo $to; ?>,</p>
+<p<?php if (@$accessible) {
+    ?> class="accessible"<?php 
+}?>>
 	<?php if (@$patient_ref) {
-		echo $patient->fullname . ', ';
-	}?>
+    echo $patient->fullname . ', ';
+}?>
 	<strong>Hospital Reference Number: <?php echo $patient->hos_num; ?>
-	<?php if ($patient->nhsnum) {?><br/> NHS Number: <?php echo $patient->nhsnum; }?>
-	<?php if (@$patient_ref) {?>
+	<?php if ($patient->nhsnum) {
+    ?><br/> NHS Number: <?php echo $patient->nhsnum;
+}?>
+	<?php if (@$patient_ref) {
+    ?>
 	<br /><?php echo $patient->getLetterAddress(array('delimiter' => ', '))?>
-	<br />DOB: <?php echo $patient->NHSDate('dob') ?>, <?php echo ($patient->gender == 'M') ? 'Male' : 'Female'; ?>
-	<?php }?></strong>
+	<br />DOB: <?php echo $patient->NHSDate('dob') ?>, <?php echo ($patient->gender == 'M') ? 'Male' : 'Female';
+    ?>
+	<?php 
+}?></strong>
 </p>

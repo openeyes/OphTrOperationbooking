@@ -37,121 +37,121 @@
 
 class Element_OphTrOperationbooking_Diagnosis extends BaseEventTypeElement
 {
-	public $service;
+    public $service;
 
-	/**
-	 * Returns the static model of the specified AR class.
-	 * @return the static model class
-	 */
-	public static function model($className = __CLASS__)
-	{
-		return parent::model($className);
-	}
+    /**
+     * Returns the static model of the specified AR class.
+     * @return the static model class
+     */
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
+    }
 
-	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return 'et_ophtroperationbooking_diagnosis';
-	}
+    /**
+     * @return string the associated database table name
+     */
+    public function tableName()
+    {
+        return 'et_ophtroperationbooking_diagnosis';
+    }
 
-	/**
-	 * @return array validation rules for model attributes.
-	 */
-	public function rules()
-	{
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
-		return array(
-			array('event_id, eye_id, disorder_id, ', 'safe'),
-			array('eye_id, disorder_id, ', 'required'),
-			// The following rule is used by search().
-			// Please remove those attributes that should not be searched.
-			array('id, event_id, eye_id, disorder_id, ', 'safe', 'on' => 'search'),
-		);
-	}
+    /**
+     * @return array validation rules for model attributes.
+     */
+    public function rules()
+    {
+        // NOTE: you should only define rules for those attributes that
+        // will receive user inputs.
+        return array(
+            array('event_id, eye_id, disorder_id, ', 'safe'),
+            array('eye_id, disorder_id, ', 'required'),
+            // The following rule is used by search().
+            // Please remove those attributes that should not be searched.
+            array('id, event_id, eye_id, disorder_id, ', 'safe', 'on' => 'search'),
+        );
+    }
 
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-			'element_type' => array(self::HAS_ONE, 'ElementType', 'id','on' => "element_type.class_name='".get_class($this)."'"),
-			'eventType' => array(self::BELONGS_TO, 'EventType', 'event_type_id'),
-			'event' => array(self::BELONGS_TO, 'Event', 'event_id'),
-			'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
-			'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
-			'eye' => array(self::BELONGS_TO, 'Eye', 'eye_id'),
-			'disorder' => array(self::BELONGS_TO, 'Disorder', 'disorder_id'),
-		);
-	}
+    /**
+     * @return array relational rules.
+     */
+    public function relations()
+    {
+        // NOTE: you may need to adjust the relation name and the related
+        // class name for the relations automatically generated below.
+        return array(
+            'element_type' => array(self::HAS_ONE, 'ElementType', 'id','on' => "element_type.class_name='".get_class($this)."'"),
+            'eventType' => array(self::BELONGS_TO, 'EventType', 'event_type_id'),
+            'event' => array(self::BELONGS_TO, 'Event', 'event_id'),
+            'user' => array(self::BELONGS_TO, 'User', 'created_user_id'),
+            'usermodified' => array(self::BELONGS_TO, 'User', 'last_modified_user_id'),
+            'eye' => array(self::BELONGS_TO, 'Eye', 'eye_id'),
+            'disorder' => array(self::BELONGS_TO, 'Disorder', 'disorder_id'),
+        );
+    }
 
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'id' => 'ID',
-			'event_id' => 'Event',
-			'eye_id' => 'Eyes',
-			'disorder_id' => 'Diagnosis',
-		);
-	}
+    /**
+     * @return array customized attribute labels (name=>label)
+     */
+    public function attributeLabels()
+    {
+        return array(
+            'id' => 'ID',
+            'event_id' => 'Event',
+            'eye_id' => 'Eyes',
+            'disorder_id' => 'Diagnosis',
+        );
+    }
 
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
+    /**
+     * Retrieves a list of models based on the current search/filter conditions.
+     * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
+     */
+    public function search()
+    {
+        // Warning: Please modify the following code to remove attributes that
+        // should not be searched.
 
-		$criteria = new CDbCriteria;
+        $criteria = new CDbCriteria;
 
-		$criteria->compare('id', $this->id, true);
-		$criteria->compare('event_id', $this->event_id, true);
-		$criteria->compare('eye_id', $this->eye_id);
-		$criteria->compare('disorder_id', $this->disorder_id);
+        $criteria->compare('id', $this->id, true);
+        $criteria->compare('event_id', $this->event_id, true);
+        $criteria->compare('eye_id', $this->eye_id);
+        $criteria->compare('disorder_id', $this->disorder_id);
 
-		return new CActiveDataProvider(get_class($this), array(
-				'criteria' => $criteria,
-		));
-	}
+        return new CActiveDataProvider(get_class($this), array(
+                'criteria' => $criteria,
+        ));
+    }
 
-	/**
-	 * Reset diagnosis data on the event based on the diagnosis set on this element
-	 */
-	protected function afterSave()
-	{
-		if (!$this->event->episode->eye && !$this->event->episode->disorder_id) {
-			$this->event->episode->setPrincipalDiagnosis($this->disorder_id, $this->eye_id);
+    /**
+     * Reset diagnosis data on the event based on the diagnosis set on this element
+     */
+    protected function afterSave()
+    {
+        if (!$this->event->episode->eye && !$this->event->episode->disorder_id) {
+            $this->event->episode->setPrincipalDiagnosis($this->disorder_id, $this->eye_id);
 
-			if ($sd = SecondaryDiagnosis::model()->find('patient_id=? and disorder_id=? and eye_id = ?',array($this->event->episode->patient_id,$this->disorder_id,3))) {
-				$this->event->episode->patient->removeDiagnosis($sd->id);
+            if ($sd = SecondaryDiagnosis::model()->find('patient_id=? and disorder_id=? and eye_id = ?', array($this->event->episode->patient_id, $this->disorder_id, 3))) {
+                $this->event->episode->patient->removeDiagnosis($sd->id);
 
-				if (in_array($this->eye_id,array(1,2))) {
-					$this->event->episode->patient->addDiagnosis($this->disorder_id, $this->eye_id == 1 ? 2 : 1);
-				}
-			}
-		} else {
-			if (!SecondaryDiagnosis::model()->find('patient_id=? and disorder_id=? and eye_id in ('.$this->eye_id.',3)',array($this->event->episode->patient_id,$this->disorder_id))) {
-				if (!Episode::model()->find('patient_id=? and disorder_id=? and eye_id in ('.$this->eye_id.',3)',array($this->event->episode->patient_id,$this->disorder_id))) {
-					$this->event->episode->patient->addDiagnosis($this->disorder_id, $this->eye_id);
-				}
-			}
-		}
+                if (in_array($this->eye_id, array(1, 2))) {
+                    $this->event->episode->patient->addDiagnosis($this->disorder_id, $this->eye_id == 1 ? 2 : 1);
+                }
+            }
+        } else {
+            if (!SecondaryDiagnosis::model()->find('patient_id=? and disorder_id=? and eye_id in ('.$this->eye_id.',3)', array($this->event->episode->patient_id, $this->disorder_id))) {
+                if (!Episode::model()->find('patient_id=? and disorder_id=? and eye_id in ('.$this->eye_id.',3)', array($this->event->episode->patient_id, $this->disorder_id))) {
+                    $this->event->episode->patient->addDiagnosis($this->disorder_id, $this->eye_id);
+                }
+            }
+        }
 
-		return parent::afterSave();
-	}
+        return parent::afterSave();
+    }
 
-	public function getContainer_view_view()
-	{
-		return false;
-	}
+    public function getContainer_view_view()
+    {
+        return false;
+    }
 }

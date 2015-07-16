@@ -33,7 +33,8 @@
 			<th>Subspecialty</th>
 		</tr>
 		<?php foreach ($bookings as $booking) {
-			if ($booking->operation->event) { ?>
+    if ($booking->operation->event) {
+        ?>
 				<tr>
 					<td><?php echo $booking->operation->event->episode->patient->hos_num?></td>
 					<td><strong><?php echo strtoupper($booking->operation->event->episode->patient->last_name) ?></strong>, <?php echo $booking->operation->event->episode->patient->first_name?></td>
@@ -45,7 +46,8 @@
 					<td><?php echo $booking->session->firm->pas_code?></td>
 					<td><?php echo $booking->session->firm->serviceSubspecialtyAssignment->subspecialty->name?></td>
 				</tr>
-			<?php }
-		} ?>
+			<?php 
+    }
+} ?>
 	</table>
 </div>

@@ -15,48 +15,48 @@
 
 class OphTrOperationbooking_Operation_SequenceTest extends CDbTestCase
 {
-	public $fixtures = array(
-		'wards' => 'OphTrOperationbooking_Operation_Ward',
-		'theatres' =>  'OphTrOperationbooking_Operation_Theatre'
-	);
+    public $fixtures = array(
+        'wards' => 'OphTrOperationbooking_Operation_Ward',
+        'theatres' =>  'OphTrOperationbooking_Operation_Theatre'
+    );
 
-	public static function setUpBeforeClass()
-	{
-		date_default_timezone_set('UTC');
-	}
+    public static function setUpBeforeClass()
+    {
+        date_default_timezone_set('UTC');
+    }
 
-	public function setUp()
-	{
-		$this->operationSequence = new OphTrOperationbooking_Operation_Sequence();
-		parent::setUp();
-	}
+    public function setUp()
+    {
+        $this->operationSequence = new OphTrOperationbooking_Operation_Sequence();
+        parent::setUp();
+    }
 
-	public function testCompareStartdateWithWeekday()
-	{
-		$att = array (
-			'consultant' => '1', 'paediatric' => '0', 'anaesthetist' => '0',
-			'general_anaesthetic' => '0', 'last_generate_date' => '1901-01-01 00:00:00',
-			'last_modified_user_id' => '1', 'last_modified_date' => '1901-01-01 00:00:00',
-			'created_user_id' => '1',	'created_date' => '1901-01-01 00:00:00',
-			'deleted' => 0,	'firm_id' => '','theatre_id' => '1',
-			'start_date' => '20 Mar 2014',	'end_date' => NULL,	'weekday' => '3',
-			'start_time' => '01:00',	'end_time' => '02:00',	'default_admission_time' => '',
-			'interval_id' => '2', 'week_selection' => NULL,	'id' => NULL,
-		);
-		$this->operationSequence->attributes = $att;
+    public function testCompareStartdateWithWeekday()
+    {
+        $att = array(
+            'consultant' => '1', 'paediatric' => '0', 'anaesthetist' => '0',
+            'general_anaesthetic' => '0', 'last_generate_date' => '1901-01-01 00:00:00',
+            'last_modified_user_id' => '1', 'last_modified_date' => '1901-01-01 00:00:00',
+            'created_user_id' => '1',    'created_date' => '1901-01-01 00:00:00',
+            'deleted' => 0,    'firm_id' => '','theatre_id' => '1',
+            'start_date' => '20 Mar 2014',    'end_date' => null,    'weekday' => '3',
+            'start_time' => '01:00',    'end_time' => '02:00',    'default_admission_time' => '',
+            'interval_id' => '2', 'week_selection' => null,    'id' => null,
+        );
+        $this->operationSequence->attributes = $att;
 
-		$this->operationSequence->save();
-		$errors = $this->operationSequence->getErrors();
-		$this->assertGreaterThan(0,count($errors));
-		$this->assertTrue(array_key_exists('start_date' , $errors));
-		$this->assertGreaterThan(0,$errors['start_date']);
-		$this->assertEquals($errors['start_date'][0] , "Start date and weekday must be on the same day of the week");
+        $this->operationSequence->save();
+        $errors = $this->operationSequence->getErrors();
+        $this->assertGreaterThan(0, count($errors));
+        $this->assertTrue(array_key_exists('start_date', $errors));
+        $this->assertGreaterThan(0, $errors['start_date']);
+        $this->assertEquals($errors['start_date'][0], "Start date and weekday must be on the same day of the week");
 
-		$opSequence = new OphTrOperationbooking_Operation_Sequence();
-		$att['start_date'] = '19 Mar 2014';
-		$opSequence->attributes = $att;
-		$opSequence->save();
-		$errors = $opSequence->getErrors();
-		$this->assertFalse(array_key_exists('start_date' , $errors));
-	}
+        $opSequence = new OphTrOperationbooking_Operation_Sequence();
+        $att['start_date'] = '19 Mar 2014';
+        $opSequence->attributes = $att;
+        $opSequence->save();
+        $errors = $opSequence->getErrors();
+        $this->assertFalse(array_key_exists('start_date', $errors));
+    }
 }

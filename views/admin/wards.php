@@ -32,23 +32,30 @@
 			</thead>
 			<tbody class="sortable" data-sort-uri="/OphTrOperationbooking/admin/sortwards">
 				<?php
-				$criteria = new CDbCriteria;
-				$criteria->order = "display_order asc";
-				foreach (OphTrOperationbooking_Operation_Ward::model()->active()->findAll() as $i => $ward) {?>
-					<tr class="clickable <?php if ($i%2 == 0) {?>even<?php } else {?>odd<?php }?>" data-attr-id="<?php echo $ward->id?>" data-uri="OphTrOperationbooking/admin/editWard/<?php echo $ward->id?>">
+                $criteria = new CDbCriteria;
+                $criteria->order = "display_order asc";
+                foreach (OphTrOperationbooking_Operation_Ward::model()->active()->findAll() as $i => $ward) {
+                    ?>
+					<tr class="clickable <?php if ($i%2 == 0) {
+    ?>even<?php 
+} else {
+    ?>odd<?php 
+}
+                    ?>" data-attr-id="<?php echo $ward->id?>" data-uri="OphTrOperationbooking/admin/editWard/<?php echo $ward->id?>">
 						<td><input type="checkbox" name="ward[]" value="<?php echo $ward->id?>" class="wards" /></td>
 						<td><?php echo $ward->site->name?></td>
 						<td><?php echo $ward->name?></td>
 						<td><?php echo $ward->code?>&nbsp;</td>
 						<td><?php echo $ward->restrictionText?></td>
 					</tr>
-				<?php }?>
+				<?php 
+                }?>
 			</tbody>
 			<tfoot>
 				<tr>
 					<td colspan="5">
 						<?php echo EventAction::link('Add', '#', null, array('class' => 'small button', 'id'=>'et_add_ward'))->toHtml()?>
-						<?php echo EventAction::link('Delete', '#', null, array('class' => 'small button','id'=>'et_delete_ward'))->toHtml()?>
+						<?php echo EventAction::link('Delete', '#', null, array('class' => 'small button', 'id'=>'et_delete_ward'))->toHtml()?>
 					</td>
 				</tr>
 			</tfoot>

@@ -22,8 +22,8 @@ $this->beginContent('//patient/event_container'); ?>
 	<?php $this->title = 'Cancel operation' ?>
 
 	<?php
-	echo CHtml::form(Yii::app()->createUrl('/'.$operation->event->eventType->class_name.'/default/cancel'), 'post', array('id' => 'cancelForm', 'class' => 'edit cancel'));
-	echo CHtml::hiddenField('operation_id', $operation->id); ?>
+    echo CHtml::form(Yii::app()->createUrl('/'.$operation->event->eventType->class_name.'/default/cancel'), 'post', array('id' => 'cancelForm', 'class' => 'edit cancel'));
+    echo CHtml::hiddenField('operation_id', $operation->id); ?>
 
 	<div class="alert-box alert with-icon hide">
 		<p>Please fix the following input errors:</p>
@@ -48,13 +48,13 @@ $this->beginContent('//patient/event_container'); ?>
 			</div>
 			<div class="large-5 column end">
 				<?php if (!empty($operation->booking) && (strtotime($operation->booking->session->date) <= strtotime('now'))) {
-					$listIndex = 3;
-				} else {
-					$listIndex = 2;
-				} ?>
+    $listIndex = 3;
+} else {
+    $listIndex = 2;
+} ?>
 				<?php echo CHtml::dropDownList('cancellation_reason', '', OphTrOperationbooking_Operation_Cancellation_Reason::getReasonsByListNumber($listIndex),
-					array('empty'=>'Select a reason')
-				); ?>
+                    array('empty'=>'Select a reason')
+                ); ?>
 			</div>
 		</div>
 		<div class="row field-row">

@@ -15,39 +15,39 @@
 
 class OphTrOperationbookingObserverTest extends CTestCase
 {
-	static public function setupBeforeClass()
-	{
-		Yii::import('application.modules.OphTrOperationbooking.components.*');
-	}
+    public static function setupBeforeClass()
+    {
+        Yii::import('application.modules.OphTrOperationbooking.components.*');
+    }
 
-	private $observer;
-	private $op;
+    private $observer;
+    private $op;
 
-	public function setUp()
-	{
-		$this->observer = new OphTrOperationbookingObserver;
-	}
+    public function setUp()
+    {
+        $this->observer = new OphTrOperationbookingObserver;
+    }
 
-	public function testResetSearch()
-	{
-		Yii::app()->session['theatre_searchoptions'] = array(
-			'firm-id' => 1,
-			'specialty-id' => 1,
-			'site-id' => 1,
-			'date-filter' => 1,
-			'date-start' => '2012-01-01',
-			'date-end' => '2012-12-31',
-		);
+    public function testResetSearch()
+    {
+        Yii::app()->session['theatre_searchoptions'] = array(
+            'firm-id' => 1,
+            'specialty-id' => 1,
+            'site-id' => 1,
+            'date-filter' => 1,
+            'date-start' => '2012-01-01',
+            'date-end' => '2012-12-31',
+        );
 
-		$this->observer->resetSearch(null);
+        $this->observer->resetSearch(null);
 
-		$so = Yii::app()->session['theatre_searchoptions'];
+        $so = Yii::app()->session['theatre_searchoptions'];
 
-		$this->assertEquals(null, @$so['firm-id']);
-		$this->assertEquals(null, @$so['specialty-id']);
-		$this->assertEquals(null, @$so['site-id']);
-		$this->assertEquals(null, @$so['date-filter']);
-		$this->assertEquals(null, @$so['date-start']);
-		$this->assertEquals(null, @$so['date-end']);
-	}
+        $this->assertEquals(null, @$so['firm-id']);
+        $this->assertEquals(null, @$so['specialty-id']);
+        $this->assertEquals(null, @$so['site-id']);
+        $this->assertEquals(null, @$so['date-filter']);
+        $this->assertEquals(null, @$so['date-start']);
+        $this->assertEquals(null, @$so['date-end']);
+    }
 }

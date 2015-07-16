@@ -29,19 +29,24 @@
 			</thead>
 			<tbody class="sortable" data-sort-uri="/OphTrOperationbooking/admin/sortsessionunavailablereasons">
 			<?php
-			$criteria = new CDbCriteria;
-			$criteria->order = "display_order asc";
-			foreach (OphTrOperationbooking_Operation_Session_UnavailableReason::model()->findAll() as $i => $sessionunavailablereason) {?>
+            $criteria = new CDbCriteria;
+            $criteria->order = "display_order asc";
+            foreach (OphTrOperationbooking_Operation_Session_UnavailableReason::model()->findAll() as $i => $sessionunavailablereason) {
+                ?>
 				<tr class="clickable" data-attr-id="<?php echo $sessionunavailablereason->id?>" data-uri="OphTrOperationbooking/admin/editsessionunavailablereason/<?php echo $sessionunavailablereason->id?>">
-					<td><input type="checkbox" name="sessionunavailablereason[]" value="<?php echo $sessionunavailablereason->id?>" class="sessionunavailablereasons-enabled" <?php if ($sessionunavailablereason->enabled) { echo "checked"; } ?> /></td>
+					<td><input type="checkbox" name="sessionunavailablereason[]" value="<?php echo $sessionunavailablereason->id?>" class="sessionunavailablereasons-enabled" <?php if ($sessionunavailablereason->enabled) {
+    echo "checked";
+}
+                ?> /></td>
 					<td><?php echo $sessionunavailablereason->name?></td>
 				</tr>
-			<?php }?>
+			<?php 
+            }?>
 			</tbody>
 			<tfoot>
 			<tr>
 				<td colspan="2">
-					<?php echo EventAction::button('Add', 'add', null,array('class'=>'button small', 'data-uri' => '/OphTrOperationbooking/admin/Addsessionunavailablereason'))->toHtml()?>
+					<?php echo EventAction::button('Add', 'add', null, array('class'=>'button small', 'data-uri' => '/OphTrOperationbooking/admin/Addsessionunavailablereason'))->toHtml()?>
 				</td>
 			</tr>
 			</tfoot>

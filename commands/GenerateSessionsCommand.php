@@ -19,23 +19,23 @@
 
 class GenerateSessionsCommand extends CConsoleCommand
 {
-	public function getName()
-	{
-		return 'Generate Session Data Command.';
-	}
+    public function getName()
+    {
+        return 'Generate Session Data Command.';
+    }
 
-	public function getHelp()
-	{
-		return "A script to generate session data based on sequences in the database for future dates.\n
+    public function getHelp()
+    {
+        return "A script to generate session data based on sequences in the database for future dates.\n
 			Optional parameters to 1) specify the end date for the script, 2) specify whether output should be returned rather than displayed.\n";
-	}
+    }
 
-	public function run($args)
-	{
-		Yii::import('application.modules.OphTrOperationbooking.components.*');
-		Yii::import('application.modules.OphTrOperationbooking.helpers.*');
+    public function run($args)
+    {
+        Yii::import('application.modules.OphTrOperationbooking.components.*');
+        Yii::import('application.modules.OphTrOperationbooking.helpers.*');
 
-		$api = new OphTrOperationbooking_API;
-		return $api->generateSessions($args);
-	}
+        $api = new OphTrOperationbooking_API;
+        return $api->generateSessions($args);
+    }
 }

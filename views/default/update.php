@@ -20,29 +20,31 @@
 <?php $this->beginContent('//patient/event_container'); ?>
 
 	<?php
-		$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-			'id'=>'clinical-create',
-			'enableAjaxValidation'=>false,
-			'focus'=>'#procedure_id',
-			'layoutColumns' => array(
-				'label' => 2,
-				'field' => 10
-			)
-		));
-		// Event actions
-		$this->event_actions[] = EventAction::button('Save', 'save',
-			array(
-				'id' => 'et_save',
-				'level'=>'save'
-			),
-			array(
-				'form'=>'clinical-create'
-			)
-		);
-		?>
-		<?php if (Yii::app()->params['OphTrOperationbooking_duplicate_proc_warn']) {?>
+        $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
+            'id'=>'clinical-create',
+            'enableAjaxValidation'=>false,
+            'focus'=>'#procedure_id',
+            'layoutColumns' => array(
+                'label' => 2,
+                'field' => 10
+            )
+        ));
+        // Event actions
+        $this->event_actions[] = EventAction::button('Save', 'save',
+            array(
+                'id' => 'et_save',
+                'level'=>'save'
+            ),
+            array(
+                'form'=>'clinical-create'
+            )
+        );
+        ?>
+		<?php if (Yii::app()->params['OphTrOperationbooking_duplicate_proc_warn']) {
+    ?>
 			<input type="hidden" name="event_id" value="<?= $this->event->id ?>" />
-		<?php } ?>
+		<?php 
+} ?>
 		<?php  $this->displayErrors($errors)?>
 		<?php  $this->renderOpenElements($this->action->id, $form); ?>
 		<?php  $this->renderOptionalElements($this->action->id, $form); ?>

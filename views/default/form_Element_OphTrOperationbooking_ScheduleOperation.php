@@ -34,18 +34,18 @@
 					</thead>
 					<tbody class="unavailables">
 					<?php
-					if ($element->patient_unavailables) {
-						foreach ($element->patient_unavailables as $key => $unavailable) {
-							$this->renderPartial('form_OphTrOperationbooking_ScheduleOperation_PatientUnavailable', array(
-											'key' => $key,
-											'unavailable' => $unavailable,
-											'form' => $form,
-											'element_name' => get_class($element)
-									));
-							$key++;
-						}
-					}
-					?>
+                    if ($element->patient_unavailables) {
+                        foreach ($element->patient_unavailables as $key => $unavailable) {
+                            $this->renderPartial('form_OphTrOperationbooking_ScheduleOperation_PatientUnavailable', array(
+                                            'key' => $key,
+                                            'unavailable' => $unavailable,
+                                            'form' => $form,
+                                            'element_name' => get_class($element)
+                                    ));
+                            $key++;
+                        }
+                    }
+                    ?>
 					</tbody>
 					<tfoot>
 					<tr>
@@ -57,18 +57,18 @@
 		</div>
 	</fieldset>
 <?php
-	$template_unavailable = new OphTrOperationbooking_ScheduleOperation_PatientUnavailable();
-	$template_unavailable->setDefaultOptions();
+    $template_unavailable = new OphTrOperationbooking_ScheduleOperation_PatientUnavailable();
+    $template_unavailable->setDefaultOptions();
 ?>
 <script id="intraocularpressure_reading_template" type="text/html">
 	<?php
-	$this->renderPartial('form_OphTrOperationbooking_ScheduleOperation_PatientUnavailable', array(
-			'key' => '{{key}}',
-			'unavailable' => $template_unavailable,
-			'form' => $form,
-			'element_name' => get_class($element),
-			'dateFieldWidget' => 'TextField'
-	));
-	?>
+    $this->renderPartial('form_OphTrOperationbooking_ScheduleOperation_PatientUnavailable', array(
+            'key' => '{{key}}',
+            'unavailable' => $template_unavailable,
+            'form' => $form,
+            'element_name' => get_class($element),
+            'dateFieldWidget' => 'TextField'
+    ));
+    ?>
 </script>
 

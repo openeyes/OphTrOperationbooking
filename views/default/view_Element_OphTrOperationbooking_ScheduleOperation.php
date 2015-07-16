@@ -26,14 +26,20 @@
 			<h3 class="data-title"><?php echo $element->getAttributeLabel('patient_unavailables') ?></h3>
 			<div class="data-value">
 				<?php if ($element->patient_unavailables) {
-					foreach ($element->patient_unavailables as $unavailable) {?>
+    foreach ($element->patient_unavailables as $unavailable) {
+        ?>
 						<div class="data-row">
-							<?php echo Helper::convertDate2NHS($unavailable->start_date); ?> to <?php echo Helper::convertDate2NHS($unavailable->end_date); ?> (<?php echo $unavailable->reason->name ?>).
+							<?php echo Helper::convertDate2NHS($unavailable->start_date);
+        ?> to <?php echo Helper::convertDate2NHS($unavailable->end_date);
+        ?> (<?php echo $unavailable->reason->name ?>).
 						</div>
-					<?php }
-				} else { ?>
+					<?php 
+    }
+} else {
+    ?>
 					No known availability restrictions.
-				<?php } ?>
+				<?php 
+} ?>
 			</div>
 		</div>
 	</div>

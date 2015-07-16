@@ -17,16 +17,20 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 ?>
-<?php if ($this->checkAccess('OprnConfirmTransport')) { ?>
+<?php if ($this->checkAccess('OprnConfirmTransport')) {
+    ?>
 	<button type="submit" class="btn_transport_confirm">
 		Confirm
 	</button>
-<?php } ?>
-<?php if ($this->checkAccess('OprnPrint')) { ?>
+<?php 
+} ?>
+<?php if ($this->checkAccess('OprnPrint')) {
+    ?>
 	<button type="submit" class="btn_transport_print">
 		Print list
 	</button>
 	<button type="submit" class="btn_transport_download">
 		Download CSV
 	</button>
-<?php } ?>
+<?php 
+} ?>

@@ -19,41 +19,41 @@
  */
 class AdminControllerTest extends CTestCase
 {
-	static public function setupBeforeClass()
-	{
-		//Yii::import('application.modules.OphTrOperationbooking.components.*');
-	}
+    public static function setupBeforeClass()
+    {
+        //Yii::import('application.modules.OphTrOperationbooking.components.*');
+    }
 
-	private $controller;
-	private $audit;
+    private $controller;
+    private $audit;
 
-	public function setUp()
-	{
-		/*
-		$this->controller = $this->getMockBuilder('AdminController')
-			->disableOriginalConstructor()
-			->setMethods(array('render'))
-			->getMock();
+    public function setUp()
+    {
+        /*
+        $this->controller = $this->getMockBuilder('AdminController')
+            ->disableOriginalConstructor()
+            ->setMethods(array('render'))
+            ->getMock();
 
-		$this->audit = $this->getMock('Audit');
-		*/
-		//Yii::app()->setComponent('audit',$this->audit);
-	}
+        $this->audit = $this->getMock('Audit');
+        */
+        //Yii::app()->setComponent('audit',$this->audit);
+    }
 
-	public function tearDown()
-	{
-	}
+    public function tearDown()
+    {
+    }
 
-	public function testActionViewERODRules()
-	{
-		//$this->audit->expects($this->once())->method('log')->with('admin','list','null',false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_EROD_Rule'));
+    public function testActionViewERODRules()
+    {
+        //$this->audit->expects($this->once())->method('log')->with('admin','list','null',false,array('module'=>'OphTrOperationbooking','model'=>'OphTrOperationbooking_Operation_EROD_Rule'));
 
-		//$this->controller->expects($this->once())->method('render')->with('erodrules');
+        //$this->controller->expects($this->once())->method('render')->with('erodrules');
 
-		//$this->controller->actionViewERODRules();
-	}
+        //$this->controller->actionViewERODRules();
+    }
 
-	public function testActionEditERODRule()
-	{
-	}
+    public function testActionEditERODRule()
+    {
+    }
 }

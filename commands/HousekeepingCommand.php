@@ -19,56 +19,55 @@
 
 class HousekeepingCommand extends CConsoleCommand
 {
-	public function getName()
-	{
-		return 'Housekeeping Command.';
-	}
+    public function getName()
+    {
+        return 'Housekeeping Command.';
+    }
 
-	public function getHelp()
-	{
-		return "Cancels operations for deceased patients.\n";
-	}
+    public function getHelp()
+    {
+        return "Cancels operations for deceased patients.\n";
+    }
 
-	public function run($args)
-	{
-		$this->deceasedPatients();
-	}
+    public function run($args)
+    {
+        $this->deceasedPatients();
+    }
 
-	// Check for operations where patient is deceased and cancel them
-	protected function deceasedPatients()
-	{
-		echo "Cancelling operations for deceased patients: ";
+    // Check for operations where patient is deceased and cancel them
+    protected function deceasedPatients()
+    {
+        echo "Cancelling operations for deceased patients: ";
 
-		// TODO: This needs to be made more robust
-		$cancellation_reason = OphTrOperationbooking_Operation_Cancellation_Reason::model()->find("text = 'Patient has died'");
-		if (!$cancellation_reason) {
-			throw new CException('Cannot find cancellation code for "patient has died"');
-		}
+        // TODO: This needs to be made more robust
+        $cancellation_reason = OphTrOperationbooking_Operation_Cancellation_Reason::model()->find("text = 'Patient has died'");
+        if (!$cancellation_reason) {
+            throw new CException('Cannot find cancellation code for "patient has died"');
+        }
 
-		$criteria = new CDbCriteria;
-		$criteria->addInCondition('`t`.status_id',array(1,2,3,4));
-		$criteria->addCondition('date_of_death is not null and date_of_death < :dateNow and session_date > :dateNow');
-		$criteria->params[':dateNow'] = date('Y-m-d');
+        $criteria = new CDbCriteria;
+        $criteria->addInCondition('`t`.status_id', array(1, 2, 3, 4));
+        $criteria->addCondition('date_of_death is not null and date_of_death < :dateNow and session_date > :dateNow');
+        $criteria->params[':dateNow'] = date('Y-m-d');
 
-		foreach (Element_OphTrOperationbooking_Operation::model()
-			->with(array(
-				'event' => array(
-					'with' => array(
-						'episode' => array(
-							'with' => 'patient',
-						),
-					),
-				),
-				'booking',
-			))
-			->findAll($criteria) as $operation) {
+        foreach (Element_OphTrOperationbooking_Operation::model()
+            ->with(array(
+                'event' => array(
+                    'with' => array(
+                        'episode' => array(
+                            'with' => 'patient',
+                        ),
+                    ),
+                ),
+                'booking',
+            ))
+            ->findAll($criteria) as $operation) {
+            $operation = Element_OphTrOperationbooking_Operation::model()->findByPk($operation['id']);
+            $operation->cancel($cancellation_reason->id, 'Booking cancelled automatically', 1);
 
-			$operation = Element_OphTrOperationbooking_Operation::model()->findByPk($operation['id']);
-			$operation->cancel($cancellation_reason->id, 'Booking cancelled automatically',1);
+            echo ".";
+        }
 
-			echo ".";
-		}
-
-		echo "\n";
-	}
+        echo "\n";
+    }
 }

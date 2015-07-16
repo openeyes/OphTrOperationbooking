@@ -70,18 +70,26 @@
 	<table class="borders">
 		<tr>
 			<th>
-				<?php if ($operation->booking) {?>
+				<?php if ($operation->booking) {
+    ?>
 					Admitting Consultant:
-				<?php } else {?>
+				<?php 
+} else {
+    ?>
 					Consultant:
-				<?php }?>
+				<?php 
+}?>
 			</th>
 			<td>
-				<?php if ($emergencyList) {?>
+				<?php if ($emergencyList) {
+    ?>
 					Emergency List (<?php echo CHtml::encode($firm->consultantName)?>)
-				<?php } else {?>
+				<?php 
+} else {
+    ?>
 					<?php echo CHtml::encode($firm->consultantName)?>
-				<?php }?>
+				<?php 
+}?>
 			</td>
 			<th>
 				Decision to admit (or today's) date:
@@ -101,13 +109,17 @@
 		<tr>
 			<th>Site:</th>
 			<td><?php echo CHtml::encode($site->name)?></td>
-			<?php if ($operation->booking) {?>
+			<?php if ($operation->booking) {
+    ?>
 				<th>Person organising operation:</th>
 				<td><?php echo $operation->booking->user->getFullName()?></td>
-			<?php } else {?>
+			<?php 
+} else {
+    ?>
 				<th>Person organising admission:</th>
 				<td><?php echo $operation->event->user->getFullName()?></td>
-			<?php }?>
+			<?php 
+}?>
 		</tr>
 	</table>
 
@@ -126,11 +138,11 @@
 			<th>Consultant to be present:</th>
 			<td>
 				<?php
-				echo (empty($operation->consultant_required)) ? 'No' : 'Yes';
-				if($operation->consultant_required && $operation->consultant) {
-					echo ', '.$operation->consultant->ReversedFullName;
-				}
-				?>
+                echo (empty($operation->consultant_required)) ? 'No' : 'Yes';
+                if ($operation->consultant_required && $operation->consultant) {
+                    echo ', '.$operation->consultant->ReversedFullName;
+                }
+                ?>
 			</td>
 			<th>Total theatre time (mins):</th>
 			<td><?php echo CHtml::encode($operation->total_duration)?></td>
@@ -146,27 +158,33 @@
 		<tr>
 			<th>Intended procedure(s):</th>
 			<td><?php echo CHtml::encode($operation->proceduresCommaSeparated)?></td>
-			<?php if ($operation->booking) {?>
+			<?php if ($operation->booking) {
+    ?>
 				<th>Operation date:</th>
 				<td><?php echo $operation->booking->session->NHSDate('date')?></td>
-			<?php } else {?>
+			<?php 
+} else {
+    ?>
 				<th colspan="2" rowspan="4">Patient Added to partial bookings waiting List, admission Date to be arranged</th>
-			<?php }?>
+			<?php 
+}?>
 		</tr>
 
 		<tr>
 			<th>Eye:</th>
 			<td><?php echo $operation->eye->name?></td>
-			<?php if ($operation->booking) {?>
+			<?php if ($operation->booking) {
+    ?>
 				<th>Theatre session:</th>
-				<td><?php echo substr($operation->booking->session->start_time,0,5) . ' - ' . substr($operation->booking->session->end_time,0,5)?></td>
+				<td><?php echo substr($operation->booking->session->start_time, 0, 5) . ' - ' . substr($operation->booking->session->end_time, 0, 5)?></td>
 			</tr>
 			<tr>
 				<th>Theatre:</th>
 				<td><?php echo $operation->booking->session->TheatreName?></td>
 				<th>Ward:</th>
 				<td><?php echo $operation->booking->ward ? $operation->booking->ward->name : 'None'?></td>
-			<?php }?>
+			<?php 
+}?>
 		</tr>
 
 		<tr>
@@ -174,19 +192,23 @@
 			<td>
 				<?php echo $operation->diagnosis->eye->adjective. ' ' . CHtml::encode($operation->diagnosis->disorder->term)?>
 			</td>
-			<?php if ($operation->booking) {?>
+			<?php if ($operation->booking) {
+    ?>
 				<th>Admission time:</th>
-				<td><?php echo date('H:i',strtotime($operation->booking->admission_time))?></td>
-			<?php }?>
+				<td><?php echo date('H:i', strtotime($operation->booking->admission_time))?></td>
+			<?php 
+}?>
 		</tr>
 
 		<tr>
 			<th>Anaesthesia:</th>
 			<td><?php echo $operation->anaesthetic_type->name?></td>
-			<?php if ($operation->booking) {?>
+			<?php if ($operation->booking) {
+    ?>
 				<th>Proposed admission date:</th>
 				<td><?php echo $operation->booking->session->NHSDate('date')?></td>
-			<?php }?>
+			<?php 
+}?>
 		</tr>
 	</table>
 

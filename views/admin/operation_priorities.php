@@ -24,11 +24,11 @@
 		<thead>
 		<tr>
 			<th><input type="checkbox" id="checkall" class="sessions" /></th>
-			<th><?php echo CHtml::link('Firm',$this->getUri(array('sortby'=>'firm')))?></th>
-			<th><?php echo CHtml::link('Theatre',$this->getUri(array('sortby'=>'theatre')))?></th>
-			<th><?php echo CHtml::link('Date',$this->getUri(array('sortby'=>'dates')))?></th>
-			<th><?php echo CHtml::link('Time',$this->getUri(array('sortby'=>'time')))?></th>
-			<th><?php echo CHtml::link('Weekday',$this->getUri(array('sortby'=>'weekday')))?></th>
+			<th><?php echo CHtml::link('Firm', $this->getUri(array('sortby'=>'firm')))?></th>
+			<th><?php echo CHtml::link('Theatre', $this->getUri(array('sortby'=>'theatre')))?></th>
+			<th><?php echo CHtml::link('Date', $this->getUri(array('sortby'=>'dates')))?></th>
+			<th><?php echo CHtml::link('Time', $this->getUri(array('sortby'=>'time')))?></th>
+			<th><?php echo CHtml::link('Weekday', $this->getUri(array('sortby'=>'weekday')))?></th>
 			<th>Available</th>
 			<th>Attributes</th>
 			<input type="hidden" id="select_all" value="0" />
@@ -36,7 +36,8 @@
 		</thead>
 		<tbody>
 		<?php
-		foreach ($sessions as $i => $session) {?>
+        foreach ($sessions as $i => $session) {
+            ?>
 			<tr class="clickable sortable" data-id="<?php echo $session->id?>" data-uri="OphTrOperationbooking/admin/editSession/<?php echo $session->id?>">
 				<td><input type="checkbox" name="session[]" value="<?php echo $session->id?>" class="sessions" /></td>
 				<td><?php echo $session->firm ? $session->firm->nameAndSubspecialtyCode: 'Emergency'?></td>
@@ -52,14 +53,15 @@
 					<span class="<?php echo $session->general_anaesthetic ? 'set' : 'notset'?>">GA</span>
 				</td>
 			</tr>
-		<?php }?>
+		<?php 
+        }?>
 		</tbody>
 		<tfoot class="pagination-container">
 			<tr>
 				<td colspan="8">
-					<?php echo $this->renderPartial('//admin/_pagination',array(
-						'pagination' => $pagination
-					))?>
+					<?php echo $this->renderPartial('//admin/_pagination', array(
+                        'pagination' => $pagination
+                    ))?>
 					<?php echo EventAction::button('Add', 'add_session', null, array('class' => 'small'))->toHtml()?>
 					<?php echo EventAction::button('Delete', 'delete_session', null, array('class' => 'small'))->toHtml()?>
 					<img class="loader" src="<?php echo Yii::app()->assetManager->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
@@ -74,16 +76,16 @@
 </div>
 <?php
 $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-		'id'=>'inline_edit',
-		'enableAjaxValidation'=>false,
-		'htmlOptions' => array('style'=>'display: none;', 'class' => 'panel'),
-	))?>
+        'id'=>'inline_edit',
+        'enableAjaxValidation'=>false,
+        'htmlOptions' => array('style'=>'display: none;', 'class' => 'panel'),
+    ))?>
 <div class="row field-row">
 	<div class="large-2 column">
 		<label for="">Firm:</label>
 	</div>
 	<div class="large-5 column end">
-		<?php echo CHtml::dropDownList('inline_firm_id','',Firm::model()->getListWithSpecialties(),array('empty'=>'- Don\'t change -'))?>
+		<?php echo CHtml::dropDownList('inline_firm_id', '', Firm::model()->getListWithSpecialties(), array('empty'=>'- Don\'t change -'))?>
 		<span class="error"></span>
 	</div>
 </div>
@@ -91,7 +93,7 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 	<div class="large-2 column">
 		<label for="">Theatre:</label>
 	</div>
-	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_theatre_id','',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->active()->findAll(),'id','name'),array('empty'=>'- Don\'t change -'))?>
+	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_theatre_id', '', CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->active()->findAll(), 'id', 'name'), array('empty'=>'- Don\'t change -'))?>
 		<span class="error"></span>
 	</div>
 </div>
@@ -101,16 +103,16 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 	</div>
 	<div class="large-2 column end">
 		<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-				'name'=>'inline_date',
-				'id'=>'inline_date',
-				// additional javascript options for the date picker plugin
-				'options'=>array(
-					'showAnim'=>'fold',
-					'dateFormat'=>Helper::NHS_DATE_FORMAT_JS,
-				),
-				'value'=>'',
-				'htmlOptions'=>array('style'=>'width: 110px;')
-			))?>
+                'name'=>'inline_date',
+                'id'=>'inline_date',
+                // additional javascript options for the date picker plugin
+                'options'=>array(
+                    'showAnim'=>'fold',
+                    'dateFormat'=>Helper::NHS_DATE_FORMAT_JS,
+                ),
+                'value'=>'',
+                'htmlOptions'=>array('style'=>'width: 110px;')
+            ))?>
 		<span class="error"></span>
 	</div>
 </div>
@@ -118,7 +120,7 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 	<div class="large-2 column">
 		<label for="">Start time:</label>
 	</div>
-	<div class="large-2 column end"><?php echo CHtml::textField('inline_start_time','',array('size'=>10))?>
+	<div class="large-2 column end"><?php echo CHtml::textField('inline_start_time', '', array('size'=>10))?>
 		<span class="error"></span>
 	</div>
 </div>
@@ -126,7 +128,7 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 	<div class="large-2 column">
 		<label for="">End time:</label>
 	</div>
-	<div class="large-2 column end"><?php echo CHtml::textField('inline_end_time','',array('size'=>10))?>
+	<div class="large-2 column end"><?php echo CHtml::textField('inline_end_time', '', array('size'=>10))?>
 		<span class="error"></span>
 	</div>
 </div>
@@ -134,7 +136,7 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 	<div class="large-2 column">
 		<label for="">Consultant:</label>
 	</div>
-	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_consultant','',array(1=>'Yes',0=>'No'),array('empty'=>'- Don\'t change -'))?>
+	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_consultant', '', array(1=>'Yes', 0=>'No'), array('empty'=>'- Don\'t change -'))?>
 		<span class="error"></span>
 	</div>
 </div>
@@ -142,7 +144,7 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 	<div class="large-2 column">
 		<label for="">Paediatric:</label>
 	</div>
-	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_paediatric','',array(1=>'Yes',0=>'No'),array('empty'=>'- Don\'t change -'))?>
+	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_paediatric', '', array(1=>'Yes', 0=>'No'), array('empty'=>'- Don\'t change -'))?>
 		<span class="error"></span>
 	</div>
 </div>
@@ -150,7 +152,7 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 	<div class="large-2 column">
 		<label for="">Anaesthetist:</label>
 	</div>
-	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_anaesthetist','',array(1=>'Yes',0=>'No'),array('empty'=>'- Don\'t change -'))?>
+	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_anaesthetist', '', array(1=>'Yes', 0=>'No'), array('empty'=>'- Don\'t change -'))?>
 		<span class="error"></span>
 	</div>
 </div>
@@ -158,7 +160,7 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 	<div class="large-2 column">
 		<label for="">General anaesthetic:</label>
 	</div>
-	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_general_anaesthetic','',array(1=>'Yes',0=>'No'),array('empty'=>'- Don\'t change -'))?>
+	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_general_anaesthetic', '', array(1=>'Yes', 0=>'No'), array('empty'=>'- Don\'t change -'))?>
 		<span class="error"></span>
 	</div>
 </div>
@@ -166,7 +168,7 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 	<div class="large-2 column">
 		<label for="">Available:</label>
 	</div>
-	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_available','',array(1=>'Yes',0=>'No'),array('empty'=>'- Don\'t change -'))?>
+	<div class="large-5 column end"><?php echo CHtml::dropDownList('inline_available', '', array(1=>'Yes', 0=>'No'), array('empty'=>'- Don\'t change -'))?>
 		<span class="error"></span>
 	</div>
 </div>
@@ -174,13 +176,13 @@ $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
 	<div class="large-2 column">
 		<label for="">Comments:</label>
 	</div>
-	<div class="large-5 column end"><?php echo CHtml::textArea('inline_comments','',array('rows'=>5,'cols'=>60))?>
+	<div class="large-5 column end"><?php echo CHtml::textArea('inline_comments', '', array('rows'=>5, 'cols'=>60))?>
 		<span class="error"></span>
 	</div>
 </div>
 <div class="row field-row">
 	<div class="large-10 large-offset-2 column">
-		<?php echo EventAction::button('Update','update_inline',null,array('class'=>'small'))->toHtml()?>
+		<?php echo EventAction::button('Update', 'update_inline', null, array('class'=>'small'))->toHtml()?>
 		<img class="loader" src="<?php echo Yii::app()->assetManager->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 		<span class="timeWarning" style="display: none;">Please be patient, it may take some time to process all the sessions ...</span>
 	</div>

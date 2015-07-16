@@ -21,11 +21,11 @@
 <div class="box admin">
 	<h2>Delete letter contact rule</h2>
 	<?php
-	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-			'id'=>'lcr_deleteform',
-			'enableAjaxValidation'=>false,
-			'focus'=>'#contactname'
-		))?>
+    $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
+            'id'=>'lcr_deleteform',
+            'enableAjaxValidation'=>false,
+            'focus'=>'#contactname'
+        ))?>
 	<?php echo $form->errorSummary($rule); ?>
 	<input type="hidden" name="delete" value="1" />
 	<div class="panel">
@@ -96,17 +96,21 @@
 	</div>
 	<?php $this->endWidget()?>
 
-	<?php if ($rule->children) {?>
+	<?php if ($rule->children) {
+    ?>
 		<p><strong><span style="color: #f00;">WARNING:</span> this rule has one or more descendants, if you proceed these will all be deleted.</strong></p>
 		<div class="panel">
 			<?php
-			$this->widget('CTreeView',array(
-					'data' => OphTrOperationbooking_Letter_Contact_Rule::model()->findAllAsTree($rule,true,'textPlain'),
-				))?>
+            $this->widget('CTreeView', array(
+                    'data' => OphTrOperationbooking_Letter_Contact_Rule::model()->findAllAsTree($rule, true, 'textPlain'),
+                ))?>
 		</div>
-	<?php }?>
+	<?php 
+}?>
 
-	<p><strong><big>Are you sure you want to delete this rule<?php if ($rule->children) {?> and its descendants<?php }?>?</big></strong></p>
+	<p><strong><big>Are you sure you want to delete this rule<?php if ($rule->children) {
+    ?> and its descendants<?php 
+}?>?</big></strong></p>
 
 	<?php echo $form->errorSummary($rule); ?>
 	<div class="field-row">

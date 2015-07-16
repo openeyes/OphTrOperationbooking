@@ -21,35 +21,43 @@
 <?php $this->beginContent('//patient/event_container'); ?>
 
 	<?php
-	$this->moduleNameCssClass .= ' highlight-fields';
-	$this->title .= ' ('.Element_OphTrOperationbooking_Operation::model()->find('event_id=?',array($this->event->id))->status->name.')'?>
+    $this->moduleNameCssClass .= ' highlight-fields';
+    $this->title .= ' ('.Element_OphTrOperationbooking_Operation::model()->find('event_id=?', array($this->event->id))->status->name.')'?>
 
-	<?php if (!$operation->has_gp) {?>
+	<?php if (!$operation->has_gp) {
+    ?>
 		<div class="alert-box alert with-icon">
 			Patient has no GP practice address, please correct in PAS before printing GP letter.
 		</div>
-	<?php } ?>
-	<?php if (!$operation->has_address) { ?>
+	<?php 
+} ?>
+	<?php if (!$operation->has_address) {
+    ?>
 		<div class="alert-box alert with-icon">
 			Patient has no address, please correct in PAS before printing letter.
 		</div>
-	<?php } ?>
+	<?php 
+} ?>
 
-	<?php if ($operation->event->hasIssue()) {?>
+	<?php if ($operation->event->hasIssue()) {
+    ?>
 		<div class="alert-box issue with-icon">
 			<?php echo CHtml::encode($operation->event->getIssueText())?>
 		</div>
-	<?php }?>
+	<?php 
+}?>
 
-	<?php if ($this->event->delete_pending) {?>
+	<?php if ($this->event->delete_pending) {
+    ?>
 		<div class="alert-box alert with-icon">
 			This event is pending deletion and has been locked.
 		</div>
-	<?php }?>
+	<?php 
+}?>
 
 	<?php
-	$this->renderOpenElements($this->action->id);
-	$this->renderOptionalElements($this->action->id);
-	?>
+    $this->renderOpenElements($this->action->id);
+    $this->renderOptionalElements($this->action->id);
+    ?>
 
 <?php $this->endContent() ;?>

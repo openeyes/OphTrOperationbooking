@@ -18,9 +18,9 @@
  */
 
 return array(
-	'sequence1' => array(
-		'id' => 1,
-		'firm_id' => 1,
-		'theatre_id' => 1,
-	),
+    'sequence1' => array(
+        'id' => 1,
+        'firm_id' => 1,
+        'theatre_id' => 1,
+    ),
 );

@@ -26,10 +26,10 @@ $sequences = $sequences['data'];
 	<form id="admin_sequences_filters" class="panel">
 		<div class="row field-row">
 			<div class="large-3 column">
-				<?php echo CHtml::dropDownList('firm_id',@$_GET['firm_id'],Firm::model()->getListWithSpecialtiesAndEmergency(),array('empty'=>'- Firm -'))?>
+				<?php echo CHtml::dropDownList('firm_id', @$_GET['firm_id'], Firm::model()->getListWithSpecialtiesAndEmergency(), array('empty'=>'- Firm -'))?>
 			</div>
 			<div class="large-3 column">
-				<?php echo CHtml::dropDownList('theatre_id',@$_GET['theatre_id'],CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->active()->findAll(),'id','name'),array('empty'=>'- Theatre -'))?>
+				<?php echo CHtml::dropDownList('theatre_id', @$_GET['theatre_id'], CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->active()->findAll(), 'id', 'name'), array('empty'=>'- Theatre -'))?>
 			</div>
 			<div class="large-3 column">
 				<div class="row">
@@ -38,15 +38,15 @@ $sequences = $sequences['data'];
 					</div>
 					<div class="large-9 column">
 						<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-							'name'=>'date_from',
-							'id'=>'date_from',
-							// additional javascript options for the date picker plugin
-							'options'=>array(
-								'showAnim'=>'fold',
-								'dateFormat'=>Helper::NHS_DATE_FORMAT_JS,
-							),
-							'value'=>@$_GET['date_from']
-						))?>
+                            'name'=>'date_from',
+                            'id'=>'date_from',
+                            // additional javascript options for the date picker plugin
+                            'options'=>array(
+                                'showAnim'=>'fold',
+                                'dateFormat'=>Helper::NHS_DATE_FORMAT_JS,
+                            ),
+                            'value'=>@$_GET['date_from']
+                        ))?>
 					</div>
 				</div>
 			</div>
@@ -57,37 +57,37 @@ $sequences = $sequences['data'];
 					</div>
 					<div class="large-9 column end">
 						<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-							'name'=>'date_to',
-							'id'=>'date_to',
-							// additional javascript options for the date picker plugin
-							'options'=>array(
-								'showAnim'=>'fold',
-								'dateFormat'=>Helper::NHS_DATE_FORMAT_JS,
-							),
-							'value'=>@$_GET['date_to']
-						))?>
+                            'name'=>'date_to',
+                            'id'=>'date_to',
+                            // additional javascript options for the date picker plugin
+                            'options'=>array(
+                                'showAnim'=>'fold',
+                                'dateFormat'=>Helper::NHS_DATE_FORMAT_JS,
+                            ),
+                            'value'=>@$_GET['date_to']
+                        ))?>
 					</div>
 				</div>
 			</div>
 		</div>
 		<div class="row field-row">
 			<div class="large-2 column">
-				<?php echo CHtml::dropDownList('interval_id',@$_GET['interval_id'],CHtml::listData(OphTrOperationbooking_Operation_Sequence_Interval::model()->findAll(array()),'id','name'),array('empty'=>'- Interval -'))?>
+				<?php echo CHtml::dropDownList('interval_id', @$_GET['interval_id'], CHtml::listData(OphTrOperationbooking_Operation_Sequence_Interval::model()->findAll(array()), 'id', 'name'), array('empty'=>'- Interval -'))?>
 			</div>
 			<div class="large-2 column">
-				<?php echo CHtml::dropDownList('weekday',@$_GET['weekday'],array(1=>'Monday',2=>'Tuesday',3=>'Wednesday',4=>'Thursday',5=>'Friday',6=>'Saturday',7=>'Sunday'),array('empty'=>'- Weekday '))?>
+				<?php echo CHtml::dropDownList('weekday', @$_GET['weekday'], array(1=>'Monday', 2=>'Tuesday', 3=>'Wednesday', 4=>'Thursday', 5=>'Friday', 6=>'Saturday', 7=>'Sunday'), array('empty'=>'- Weekday '))?>
 			</div>
 			<div class="large-2 column">
-				<?php echo CHtml::dropDownList('consultant',@$_GET['consultant'],array(1=>'Yes',0=>'No'),array('empty'=>'- Consultant -'))?>
+				<?php echo CHtml::dropDownList('consultant', @$_GET['consultant'], array(1=>'Yes', 0=>'No'), array('empty'=>'- Consultant -'))?>
 			</div>
 			<div class="large-2 column">
-				<?php echo CHtml::dropDownList('paediatric',@$_GET['paediatric'],array(1=>'Yes',0=>'No'),array('empty'=>'- Paediatric -'))?>
+				<?php echo CHtml::dropDownList('paediatric', @$_GET['paediatric'], array(1=>'Yes', 0=>'No'), array('empty'=>'- Paediatric -'))?>
 			</div>
 			<div class="large-2 column">
-				<?php echo CHtml::dropDownList('anaesthetist',@$_GET['anaesthetist'],array(1=>'Yes',0=>'No'),array('empty'=>'- Anaesthetist -'))?>
+				<?php echo CHtml::dropDownList('anaesthetist', @$_GET['anaesthetist'], array(1=>'Yes', 0=>'No'), array('empty'=>'- Anaesthetist -'))?>
 			</div>
 			<div class="large-2 column">
-				<?php echo CHtml::dropDownList('general_anaesthetic',@$_GET['general_anaesthetic'],array(1=>'Yes',0=>'No'),array('empty'=>'- General anaesthetic -'))?>
+				<?php echo CHtml::dropDownList('general_anaesthetic', @$_GET['general_anaesthetic'], array(1=>'Yes', 0=>'No'), array('empty'=>'- General anaesthetic -'))?>
 			</div>
 		</div>
 		<div class="field-row">
@@ -101,37 +101,43 @@ $sequences = $sequences['data'];
 	<form id="admin_sequences">
 		<input type="hidden" id="select_all" value="0" />
 
-		<?php if ($pagination->getCurrentPage() !== $pagination->getPageCount()) {?>
+		<?php if ($pagination->getCurrentPage() !== $pagination->getPageCount()) {
+    ?>
 			<div class="alert-box checkall_message" style="display: none;">
 				<span class="column_checkall_message">
-					All <?php echo count($sequences)?> sequences on this page are selected. <a href="#" id="select_all_items">Select all <?php echo $pagination->getItemCount();?> sequences that match the current search criteria</a>
+					All <?php echo count($sequences)?> sequences on this page are selected. <a href="#" id="select_all_items">Select all <?php echo $pagination->getItemCount();
+    ?> sequences that match the current search criteria</a>
 				</span>
 			</div>
-		<?php }?>
-		<?php if (count($sequences) <1) {?>
+		<?php 
+}?>
+		<?php if (count($sequences) <1) {
+    ?>
 			<div class="alert-box alert with-icon no_results">
 				<span class="column_no_results">
 					No items matched your search criteria.
 				</span>
 			</div>
-		<?php }?>
+		<?php 
+}?>
 
 		<table class="grid">
 			<thead>
 				<tr>
 					<th><input type="checkbox" id="checkall" class="sequences" /></th>
-					<th><?php echo CHtml::link('Firm',$this->getUri(array('sortby'=>'firm')))?></th>
-					<th><?php echo CHtml::link('Theatre',$this->getUri(array('sortby'=>'theatre')))?></th>
-					<th><?php echo CHtml::link('Dates',$this->getUri(array('sortby'=>'dates')))?></th>
-					<th><?php echo CHtml::link('Time',$this->getUri(array('sortby'=>'time')))?></th>
-					<th><?php echo CHtml::link('Interval',$this->getUri(array('sortby'=>'interval')))?></th>
-					<th><?php echo CHtml::link('Weekday',$this->getUri(array('sortby'=>'weekday')))?></th>
+					<th><?php echo CHtml::link('Firm', $this->getUri(array('sortby'=>'firm')))?></th>
+					<th><?php echo CHtml::link('Theatre', $this->getUri(array('sortby'=>'theatre')))?></th>
+					<th><?php echo CHtml::link('Dates', $this->getUri(array('sortby'=>'dates')))?></th>
+					<th><?php echo CHtml::link('Time', $this->getUri(array('sortby'=>'time')))?></th>
+					<th><?php echo CHtml::link('Interval', $this->getUri(array('sortby'=>'interval')))?></th>
+					<th><?php echo CHtml::link('Weekday', $this->getUri(array('sortby'=>'weekday')))?></th>
 					<th>Attributes</th>
 				</tr>
 			</thead>
 			<tbody>
 				<?php
-				foreach ($sequences as $i => $sequence) {?>
+                foreach ($sequences as $i => $sequence) {
+                    ?>
 					<tr class="clickable" data-id="<?php echo $sequence->id?>" data-uri="OphTrOperationbooking/admin/editSequence/<?php echo $sequence->id?>">
 						<td><input type="checkbox" name="sequence[]" value="<?php echo $sequence->id?>" class="sequences" /></td>
 						<td><?php echo $sequence->firm ? $sequence->firm->nameAndSubspecialtyCode: 'Emergency'?></td>
@@ -147,7 +153,8 @@ $sequences = $sequences['data'];
 							<span class="<?php echo $sequence->general_anaesthetic ? 'set' : 'notset'?>">GA</span>
 						</td>
 					</tr>
-				<?php }?>
+				<?php 
+                }?>
 			</tbody>
 			<tfoot class="pagination-container">
 				<tr>
@@ -156,9 +163,9 @@ $sequences = $sequences['data'];
 						<?php echo EventAction::button('Delete', 'delete_sequence', null, array('class' => 'small'))->toHtml()?>
 						&nbsp;&nbsp;&nbsp;
 						<?php echo EventAction::button('Generate sessions', 'generate_sessions', null, array('class' => 'small'))->toHtml()?>
-						<?php echo $this->renderPartial('//admin/_pagination',array(
-							'pagination' => $pagination,
-						))?>
+						<?php echo $this->renderPartial('//admin/_pagination', array(
+                            'pagination' => $pagination,
+                        ))?>
 					</td>
 				</tr>
 			</tfoot>
@@ -172,17 +179,17 @@ $sequences = $sequences['data'];
 	</div>
 
 	<?php
-	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-		'id'=>'inline_edit',
-		'enableAjaxValidation'=>false,
-		'htmlOptions' => array('style'=>'display: none;', 'class' => 'panel'),
-	))?>
+    $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
+        'id'=>'inline_edit',
+        'enableAjaxValidation'=>false,
+        'htmlOptions' => array('style'=>'display: none;', 'class' => 'panel'),
+    ))?>
 		<div class="row field-row">
 			<div class="large-2 column">
 				<label for="">Firm:</label>
 			</div>
 			<div class="large-5 column end">
-				<?php echo CHtml::dropDownList('inline_firm_id','',Firm::model()->getListWithSpecialties(),array('empty'=>'- Don\'t change -'))?>
+				<?php echo CHtml::dropDownList('inline_firm_id', '', Firm::model()->getListWithSpecialties(), array('empty'=>'- Don\'t change -'))?>
 				<span class="error"></span>
 			</div>
 		</div>
@@ -191,7 +198,7 @@ $sequences = $sequences['data'];
 				<label for="">Theatre:</label>
 			</div>
 			<div class="large-5 column end">
-				<?php echo CHtml::dropDownList('inline_theatre_id','',CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->active()->findAll(),'id','name'),array('empty'=>'- Don\'t change -'))?>
+				<?php echo CHtml::dropDownList('inline_theatre_id', '', CHtml::listData(OphTrOperationbooking_Operation_Theatre::model()->active()->findAll(), 'id', 'name'), array('empty'=>'- Don\'t change -'))?>
 				<span class="error"></span>
 			</div>
 		</div>
@@ -201,15 +208,15 @@ $sequences = $sequences['data'];
 			</div>
 			<div class="large-2 column end">
 				<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-						'name'=>'inline_start_date',
-						'id'=>'inline_start_date',
-						// additional javascript options for the date picker plugin
-						'options'=>array(
-							'showAnim'=>'fold',
-							'dateFormat'=>Helper::NHS_DATE_FORMAT_JS,
-						),
-						'value'=>'',
-				))?>
+                        'name'=>'inline_start_date',
+                        'id'=>'inline_start_date',
+                        // additional javascript options for the date picker plugin
+                        'options'=>array(
+                            'showAnim'=>'fold',
+                            'dateFormat'=>Helper::NHS_DATE_FORMAT_JS,
+                        ),
+                        'value'=>'',
+                ))?>
 				<span class="error"></span>
 			</div>
 		</div>
@@ -219,15 +226,15 @@ $sequences = $sequences['data'];
 			</div>
 			<div class="large-2 column end">
 				<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-						'name'=>'inline_end_date',
-						'id'=>'inline_end_date',
-						// additional javascript options for the date picker plugin
-						'options'=>array(
-							'showAnim'=>'fold',
-							'dateFormat'=>Helper::NHS_DATE_FORMAT_JS,
-						),
-						'value'=>'',
-				))?>
+                        'name'=>'inline_end_date',
+                        'id'=>'inline_end_date',
+                        // additional javascript options for the date picker plugin
+                        'options'=>array(
+                            'showAnim'=>'fold',
+                            'dateFormat'=>Helper::NHS_DATE_FORMAT_JS,
+                        ),
+                        'value'=>'',
+                ))?>
 				<span class="error"></span>
 			</div>
 		</div>
@@ -236,7 +243,7 @@ $sequences = $sequences['data'];
 				<label for="">Start time:</label>
 			</div>
 			<div class="large-2 column end">
-				<?php echo CHtml::textField('inline_start_time','',array('autocomplete' => Yii::app()->params['html_autocomplete'], 'size'=>10))?>
+				<?php echo CHtml::textField('inline_start_time', '', array('autocomplete' => Yii::app()->params['html_autocomplete'], 'size'=>10))?>
 				<span class="error"></span>
 			</div>
 		</div>
@@ -245,7 +252,7 @@ $sequences = $sequences['data'];
 				<label>End time:</label>
 			</div>
 			<div class="large-2 column end">
-				<?php echo CHtml::textField('inline_end_time','',array('autocomplete' => Yii::app()->params['html_autocomplete'], 'size'=>10))?>
+				<?php echo CHtml::textField('inline_end_time', '', array('autocomplete' => Yii::app()->params['html_autocomplete'], 'size'=>10))?>
 				<span class="error"></span>
 			</div>
 		</div>
@@ -254,7 +261,7 @@ $sequences = $sequences['data'];
 				<label>Interval:</label>
 			</div>
 			<div class="large-5 column end">
-				<?php echo CHtml::dropDownList('inline_interval_id','',CHtml::listData(OphTrOperationbooking_Operation_Sequence_Interval::model()->findAll(array()),'id','name'),array('empty'=>'- Don\'t change -'))?>
+				<?php echo CHtml::dropDownList('inline_interval_id', '', CHtml::listData(OphTrOperationbooking_Operation_Sequence_Interval::model()->findAll(array()), 'id', 'name'), array('empty'=>'- Don\'t change -'))?>
 				<span class="error"></span>
 			</div>
 		</div>
@@ -263,7 +270,7 @@ $sequences = $sequences['data'];
 				<label>Weekday:</label>
 			</div>
 			<div class="large-5 column end">
-				<?php echo CHtml::dropDownList('inline_weekday','',array(1=>'Monday',2=>'Tuesday',3=>'Wednesday',4=>'Thursday',5=>'Friday',6=>'Saturday',7=>'Sunday'),array('empty'=>'- Don\'t change -'))?>
+				<?php echo CHtml::dropDownList('inline_weekday', '', array(1=>'Monday', 2=>'Tuesday', 3=>'Wednesday', 4=>'Thursday', 5=>'Friday', 6=>'Saturday', 7=>'Sunday'), array('empty'=>'- Don\'t change -'))?>
 				<span class="error"></span>
 			</div>
 		</div>
@@ -272,7 +279,7 @@ $sequences = $sequences['data'];
 				<label>Consultant:</label>
 			</div>
 			<div class="large-5 column end">
-				<?php echo CHtml::dropDownList('inline_consultant','',array(1=>'Yes',0=>'No'),array('empty'=>'- Don\'t change -'))?>
+				<?php echo CHtml::dropDownList('inline_consultant', '', array(1=>'Yes', 0=>'No'), array('empty'=>'- Don\'t change -'))?>
 				<span class="error"></span>
 			</div>
 		</div>
@@ -281,7 +288,7 @@ $sequences = $sequences['data'];
 				<label>Paediatric:</label>
 			</div>
 			<div class="large-5 column end">
-				<?php echo CHtml::dropDownList('inline_paediatric','',array(1=>'Yes',0=>'No'),array('empty'=>'- Don\'t change -'))?>
+				<?php echo CHtml::dropDownList('inline_paediatric', '', array(1=>'Yes', 0=>'No'), array('empty'=>'- Don\'t change -'))?>
 				<span class="error"></span>
 			</div>
 		</div>
@@ -290,7 +297,7 @@ $sequences = $sequences['data'];
 				<label>Anaesthetist:</label>
 			</div>
 			<div class="large-5 column end">
-				<?php echo CHtml::dropDownList('inline_anaesthetist','',array(1=>'Yes',0=>'No'),array('empty'=>'- Don\'t change -'))?>
+				<?php echo CHtml::dropDownList('inline_anaesthetist', '', array(1=>'Yes', 0=>'No'), array('empty'=>'- Don\'t change -'))?>
 				<span class="error"></span>
 			</div>
 		</div>
@@ -299,7 +306,7 @@ $sequences = $sequences['data'];
 				<label>General anaesthetic:</label>
 			</div>
 			<div class="large-5 column end">
-				<?php echo CHtml::dropDownList('inline_general_anaesthetic','',array(1=>'Yes',0=>'No'),array('empty'=>'- Don\'t change -'))?>
+				<?php echo CHtml::dropDownList('inline_general_anaesthetic', '', array(1=>'Yes', 0=>'No'), array('empty'=>'- Don\'t change -'))?>
 				<span class="error"></span>
 			</div>
 		</div>
@@ -309,7 +316,7 @@ $sequences = $sequences['data'];
 			</div>
 			<div class="large-5 column end">
 				<div class="field-row">
-					<?php echo CHtml::dropDownList('inline_update_weeks','',array(0=>'Don\'t change',1=>'Change'))?>
+					<?php echo CHtml::dropDownList('inline_update_weeks', '', array(0=>'Don\'t change', 1=>'Change'))?>
 					<span class="inline_weeks" style="display: none;">
 						&nbsp;&nbsp;
 					</span>
@@ -330,7 +337,7 @@ $sequences = $sequences['data'];
 		</div>
 		<div class="row field-row">
 			<div class="large-10 large-offset-2 column">
-				<?php echo EventAction::button('Update','update_inline',array('colour'=>'green'))->toHtml()?>
+				<?php echo EventAction::button('Update', 'update_inline', array('colour'=>'green'))->toHtml()?>
 				<img class="loader" src="<?php echo Yii::app()->assetManager->createUrl('img/ajax-loader.gif')?>" alt="loading..." style="display: none;" />
 			</div>
 		</div>

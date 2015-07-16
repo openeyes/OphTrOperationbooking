@@ -20,18 +20,18 @@
 <div class="booking-letter">
 	<header>
 		<?php $this->renderPartial("../default/letter_start", array(
-			'toAddress' => $toAddress,
-			'patient' => $patient,
-			'date' => date('Y-m-d'),
-			'site' => $site,
-		))?>
+            'toAddress' => $toAddress,
+            'patient' => $patient,
+            'date' => date('Y-m-d'),
+            'site' => $site,
+        ))?>
 	</header>
 
 	<?php echo $this->renderPartial('../letters/letter_introduction', array(
-			'to' => $to,
-			'accessible' => true,
-			'patient' => $patient,
-	))?>
+            'to' => $to,
+            'accessible' => true,
+            'patient' => $patient,
+    ))?>
 
 	<p class="accessible">
 		I recently invited you to telephone to arrange a date for your admission for surgery under the care of

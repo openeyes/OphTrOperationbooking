@@ -19,55 +19,57 @@
 
 class OphTrOperationbookingEventController extends BaseEventTypeController
 {
-	const ACTION_TYPE_SCHEDULE = 'Schedule';
+    const ACTION_TYPE_SCHEDULE = 'Schedule';
 
-	/**
-	 * Return the open referral choices for the patient
-	 *
-	 * @return Referral[]
-	 */
-	public function getReferralChoices($element = null)
-	{
-		$criteria = new CdbCriteria();
-		$criteria->addCondition('patient_id = :pid');
-		$criteria->addCondition('closed_date is null');
-		$criteria->params = array('pid' => $this->patient->id);
+    /**
+     * Return the open referral choices for the patient
+     *
+     * @return Referral[]
+     */
+    public function getReferralChoices($element = null)
+    {
+        $criteria = new CdbCriteria();
+        $criteria->addCondition('patient_id = :pid');
+        $criteria->addCondition('closed_date is null');
+        $criteria->params = array('pid' => $this->patient->id);
 
-		// if the referral has been closed but is the selected referral for the event, needs to be part of the list
-		if ($element && $element->referral_id) {
-			$criteria->addCondition('id = :crid', 'OR');
-			$criteria->params[':crid'] = $element->referral_id;
-		}
+        // if the referral has been closed but is the selected referral for the event, needs to be part of the list
+        if ($element && $element->referral_id) {
+            $criteria->addCondition('id = :crid', 'OR');
+            $criteria->params[':crid'] = $element->referral_id;
+        }
 
-		$criteria->order = 'received_date DESC';
-		return Referral::model()->findAll($criteria);
-	}
+        $criteria->order = 'received_date DESC';
+        return Referral::model()->findAll($criteria);
+    }
 
-	protected function beforeAction($action)
-	{
-		Yii::app()->clientScript->registerScriptFile($this->assetPath.'/js/module.js');
+    protected function beforeAction($action)
+    {
+        Yii::app()->clientScript->registerScriptFile($this->assetPath.'/js/module.js');
 
-		return parent::beforeAction($action);
-	}
+        return parent::beforeAction($action);
+    }
 
-	public function checkScheduleAccess($priority=false)
-	{
-		if ($this->event && !$this->event->isNewRecord && !$this->checkEditAccess()) return false;
+    public function checkScheduleAccess($priority=false)
+    {
+        if ($this->event && !$this->event->isNewRecord && !$this->checkEditAccess()) {
+            return false;
+        }
 
-		if (!$priority) {
-			if ($eo = $this->getOpenElementByClassName('Element_OphTrOperationbooking_Operation')) {
-				$priority = $eo->priority;
-			}
-		}
+        if (!$priority) {
+            if ($eo = $this->getOpenElementByClassName('Element_OphTrOperationbooking_Operation')) {
+                $priority = $eo->priority;
+            }
+        }
 
-		if ($priority && $priority->schedule_authitem) {
-			return $this->checkAccess($priority->schedule_authitem);
-		}
+        if ($priority && $priority->schedule_authitem) {
+            return $this->checkAccess($priority->schedule_authitem);
+        }
 
-		if ($this->event && $this->event->id) {
-			return $this->checkEditAccess();
-		}
+        if ($this->event && $this->event->id) {
+            return $this->checkEditAccess();
+        }
 
-		return $this->checkAccess('Edit');
-	}
+        return $this->checkAccess('Edit');
+    }
 }

@@ -27,20 +27,20 @@
 </div>
 <div class="from-address">
 	<?php
-	echo $site->getLetterAddress(array(
-		'include_name' => true,
-		'delimiter' => '<br />',
-		'include_telephone' => true,
-		'include_fax' => true,
-	))?>
-	<div class="date"><?php echo date(Helper::NHS_DATE_FORMAT,strtotime($date))?></div>
+    echo $site->getLetterAddress(array(
+        'include_name' => true,
+        'delimiter' => '<br />',
+        'include_telephone' => true,
+        'include_fax' => true,
+    ))?>
+	<div class="date"><?php echo date(Helper::NHS_DATE_FORMAT, strtotime($date))?></div>
 </div>
 <div class="to-address">
 	<div class="to-address-header">
 		To:
 	</div>
 	<div class="to-address-address">
-		<?php echo str_replace("\n","<br/>",CHtml::encode($toAddress))?>
+		<?php echo str_replace("\n", "<br/>", CHtml::encode($toAddress))?>
 	</div>
 </div>
 <br/><br/>

@@ -21,17 +21,17 @@
 <div class="box admin">
 	<h2><?php echo $erod->id ? 'Edit' : 'Add'?> EROD rule</h2>
 	<?php
-	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-			'id'=>'adminform',
-			'enableAjaxValidation'=>false,
-			'focus'=>'#username',
-			'layoutColumns' => array(
-				'label' => 2,
-				'field' => 5
-			)
-		))?>
+    $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
+            'id'=>'adminform',
+            'enableAjaxValidation'=>false,
+            'focus'=>'#username',
+            'layoutColumns' => array(
+                'label' => 2,
+                'field' => 5
+            )
+        ))?>
 	<?php echo $form->errorSummary($erod); ?>
-	<?php echo $form->dropDownList($erod,'subspecialty_id',CHtml::listData($erod->getSubspecialtyOptions(),'id','name'),array('style'=>'margin-bottom:6px;','empty'=>'- Subspecialty -'))?>
+	<?php echo $form->dropDownList($erod, 'subspecialty_id', CHtml::listData($erod->getSubspecialtyOptions(), 'id', 'name'), array('style'=>'margin-bottom:6px;', 'empty'=>'- Subspecialty -'))?>
 	<?php echo $form->multiSelectList($erod, 'Firms', 'firms', 'item_id', Firm::model()->getListWithSpecialties(), array(), array('empty' => '- Firms -', 'label' => 'Firms'))?>
 	<?php echo $form->formActions();?>
 	<?php $this->endWidget()?>

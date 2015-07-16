@@ -35,13 +35,14 @@
 			</tr>
 		</thead>
 		<tbody>
-			<?php foreach ($operations as $operation) {?>
+			<?php foreach ($operations as $operation) {
+    ?>
 				<tr>
 					<td style="width: 53px;"><?php echo $operation->event->episode->patient->hos_num?></td>
 					<td>
 						<?php echo "<strong>" . trim(strtoupper($operation->event->episode->patient->last_name)) . '</strong>, ' . trim($operation->event->episode->patient->first_name)?>
 					</td>
-					<td style="width: 83px;"><?php echo date('j-M-Y',strtotime($operation->latestBooking->session_date))?></td>
+					<td style="width: 83px;"><?php echo date('j-M-Y', strtotime($operation->latestBooking->session_date))?></td>
 					<td style="width: 73px;"><?php echo $operation->latestBooking->session_start_time?></td>
 					<td style="width: 95px;"><?php echo $operation->latestBooking->theatre->site->shortName?></td>
 					<td style="width: 170px;"><?php echo $operation->latestBooking->ward->name?></td>
@@ -51,7 +52,8 @@
 					<td style="width: 80px;"><?php echo $operation->NHSDate('decision_date')?></td>
 					<td><?php echo $operation->priority->name?></td>
 				</tr>
-			<?php }?>
+			<?php 
+}?>
 		</tbody>
 	</table>
 </div>

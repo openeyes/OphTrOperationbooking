@@ -17,23 +17,26 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html The GNU General Public License V3.0
  */
 
-if (empty($diary)) {?>
+if (empty($diary)) {
+    ?>
 	<div class="row" id="theatre-search-no-results">
 		<div class="large-12 column">
 			<div class="alert-box"><strong>No theatre schedules match your search criteria.</strong></div>
 		</div>
 	</div>
-<?php } else {
-	foreach ($diary as $theatre) {?>
+<?php 
+} else {
+    foreach ($diary as $theatre) {
+        ?>
 		<div class="row">
 			<div class="large-12 column">
 				<h2><?php echo $theatre->name?> (<?php echo $theatre->site->name?>)</h2>
 			</div>
 		</div>
 		<?php foreach ($theatre->sessions as $session) {
-			$this->renderPartial('_session',array('session'=>$session, 'theatre'=>$theatre, 'assetPath'=>$assetPath, 'ward_id' => $ward_id));
-		}
-	}
+    $this->renderPartial('_session', array('session'=>$session, 'theatre'=>$theatre, 'assetPath'=>$assetPath, 'ward_id' => $ward_id));
+}
+    }
 }
 ?>
 <script type="text/javascript">

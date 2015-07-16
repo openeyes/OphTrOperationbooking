@@ -20,47 +20,51 @@
 ?>
 <div class="box admin">
 	<h2><?php echo $rule->id ? 'Edit' : 'Add'?> waiting list contact rule</h2>
-	<?php echo $this->renderPartial('//admin/_form_errors',array('errors'=>$errors))?>
+	<?php echo $this->renderPartial('//admin/_form_errors', array('errors'=>$errors))?>
 	<?php
-	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-		'id'=>'adminform',
-		'enableAjaxValidation'=>false,
-		'htmlOptions' => array('class'=>'sliding'),
-		'focus'=>'#contactname',
-		'layoutColumns' => array(
-			'label' => 2,
-			'field' => 5
-		)
-	))?>
+    $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
+        'id'=>'adminform',
+        'enableAjaxValidation'=>false,
+        'htmlOptions' => array('class'=>'sliding'),
+        'focus'=>'#contactname',
+        'layoutColumns' => array(
+            'label' => 2,
+            'field' => 5
+        )
+    ))?>
 	<?php echo $form->errorSummary($rule); ?>
-	<?php echo $form->dropDownList($rule,'parent_rule_id',CHtml::listData(OphTrOperationbooking_Waiting_List_Contact_Rule::model()->getListAsTree(),'id','treeName'),array('empty'=>'- None -'))?>
-	<?php echo $form->textField($rule,'rule_order',array(),array(),array('field'=>2))?>
-	<?php echo $form->dropDownList($rule,'site_id',Site::model()->getListForCurrentInstitution('name'),array('empty'=>'- Not set -'))?>
-	<?php echo $form->dropDownList($rule,'firm_id',Firm::model()->getListWithSpecialties(),array('empty'=>'- Not set -'))?>
-	<?php echo $form->dropDownList($rule,'service_id',CHtml::listData(Service::model()->findAll(array('order'=>'name')),'id','name'),array('empty'=>'- Not set -'))?>
-	<?php echo $form->textField($rule,'name')?>
-	<?php echo $form->textField($rule,'telephone',array(),array(),array('field'=>3))?>
-	<?php if ($rule->children) {?>
+	<?php echo $form->dropDownList($rule, 'parent_rule_id', CHtml::listData(OphTrOperationbooking_Waiting_List_Contact_Rule::model()->getListAsTree(), 'id', 'treeName'), array('empty'=>'- None -'))?>
+	<?php echo $form->textField($rule, 'rule_order', array(), array(), array('field'=>2))?>
+	<?php echo $form->dropDownList($rule, 'site_id', Site::model()->getListForCurrentInstitution('name'), array('empty'=>'- Not set -'))?>
+	<?php echo $form->dropDownList($rule, 'firm_id', Firm::model()->getListWithSpecialties(), array('empty'=>'- Not set -'))?>
+	<?php echo $form->dropDownList($rule, 'service_id', CHtml::listData(Service::model()->findAll(array('order'=>'name')), 'id', 'name'), array('empty'=>'- Not set -'))?>
+	<?php echo $form->textField($rule, 'name')?>
+	<?php echo $form->textField($rule, 'telephone', array(), array(), array('field'=>3))?>
+	<?php if ($rule->children) {
+    ?>
 		<div class="row field-row">
-			<div class="large-<?php echo $form->layoutColumns['label'];?> column">
+			<div class="large-<?php echo $form->layoutColumns['label'];
+    ?> column">
 				<div class="field-label">
 					Descendants:
 				</div>
 			</div>
-			<div class="large-<?php echo (12 - $form->layoutColumns['label']);?> column">
+			<div class="large-<?php echo(12 - $form->layoutColumns['label']);
+    ?> column">
 				<div class="panel" style="margin:0">
 					<?php
-					$this->widget('CTreeView',array(
-						'data' => OphTrOperationbooking_Waiting_List_Contact_Rule::model()->findAllAsTree($rule,true,'textPlain'),
-					))?>
+                    $this->widget('CTreeView', array(
+                        'data' => OphTrOperationbooking_Waiting_List_Contact_Rule::model()->findAllAsTree($rule, true, 'textPlain'),
+                    ))?>
 				</div>
 			</div>
 		</div>
-	<?php }?>
+	<?php 
+}?>
 	<?php echo $form->errorSummary($rule); ?>
 	<?php echo $form->formActions(array(
-		'delete' => $rule->id ? 'Delete' : false
-	));?>
+        'delete' => $rule->id ? 'Delete' : false
+    ));?>
 	<?php $this->endWidget()?>
 </div>
 

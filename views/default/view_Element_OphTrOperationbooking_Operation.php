@@ -18,11 +18,13 @@
 */
 ?>
 <section class="element element-data">
-	<h3 class="data-title">Procedure<?php if (count($element->procedures) != 1) echo 's'?></h3>
+	<h3 class="data-title">Procedure<?php if (count($element->procedures) != 1) {
+    echo 's';
+}?></h3>
 	<ul class="data-value highlight important">
 		<?php foreach ($element->procedures as $procedure) {
-			echo "<li>{$element->eye->adjective} {$procedure->term}</li>";
-		}?>
+    echo "<li>{$element->eye->adjective} {$procedure->term}</li>";
+}?>
 	</ul>
 </section>
 
@@ -31,13 +33,12 @@
 		<div class="large-6 column">
 			<h3 class="data-title">Consultant required?</h3>
 			<?php
-			if($element->consultant) {
-				$consultant_name = $element->consultant->ReversedFullName;
-			}
-			else {
-				$consultant_name = 'Consultant';
-			}
-			?>
+            if ($element->consultant) {
+                $consultant_name = $element->consultant->ReversedFullName;
+            } else {
+                $consultant_name = 'Consultant';
+            }
+            ?>
 			<div class="data-value"><?php echo $element->consultant_required ? "Yes, $consultant_name" : 'No Consultant'?></div>
 		</div>
 		<?php if (!is_null($element->senior_fellow_to_do)): ?>
@@ -126,10 +127,12 @@
 			</div>
 		</div>
 		<div class="large-6 column">
-			<?php if (!empty($element->comments)) {?>
+			<?php if (!empty($element->comments)) {
+    ?>
 				<h3 class="data-title">Operation Comments</h3>
 				<div class="data-value panel comments"><?php echo $element->textWithLineBreaks('comments')?></div>
-			<?php }?>
+			<?php 
+}?>
 		</div>
 	</div>
 	<div class="row">
@@ -150,24 +153,35 @@
 <section class="element element-data">
 	<div class="row">
 		<?php
-		if (Yii::app()->params['ophtroperationbooking_referral_link']) {
-		?>
+        if (Yii::app()->params['ophtroperationbooking_referral_link']) {
+            ?>
 			<div class="large-6 column">
 				<h3 class="data-title">Referral</h3>
-				<div class="data-value"><?php if ($element->referral) { echo $element->referral->getDescription(); } else { echo "No Referral Set"; }?></div>
-				<?php if ($rtt = $element->getRTT()) {?>
+				<div class="data-value"><?php if ($element->referral) {
+    echo $element->referral->getDescription();
+} else {
+    echo "No Referral Set";
+}
+            ?></div>
+				<?php if ($rtt = $element->getRTT()) {
+    ?>
 					<div class="rtt-info">Clock Start - <?= Helper::convertDate2NHS($rtt->clock_start) ?> Breach: <?= Helper::convertDate2NHS($rtt->breach) ?></div>
-				<?php }?>
+				<?php 
+}
+            ?>
 			</div>
 
 		<?php
-		}
-		?>
+
+        }
+        ?>
 		<div class="large-6 column">
-			<?php if (!empty($element->comments_rtt)) {?>
+			<?php if (!empty($element->comments_rtt)) {
+    ?>
 				<h3 class="data-title">Operation RTT Comments</h3>
 				<div class="data-value panel comments"><?php echo $element->textWithLineBreaks('comments_rtt')?></div>
-			<?php }?>
+			<?php 
+}?>
 		</div>
 	</div>
 	<div class="row">
@@ -180,7 +194,8 @@
 	</div>
 </section>
 
-<?php if ($element->booking) {?>
+<?php if ($element->booking) {
+    ?>
 	<section class="element">
 		<h3 class="element-title highlight">Booking Details</h3>
 		<div class="element-data">
@@ -189,14 +204,19 @@
 					<h3 class="data-title">List</h3>
 					<div class="data-value">
 						<?php $session = $element->booking->session ?>
-						<?php echo $session->NHSDate('date') . ' ' . $session->TimeSlot . ', '.$session->FirmName; ?>
-						<?php if ($warnings = $session->getWarnings()) {?>
+						<?php echo $session->NHSDate('date') . ' ' . $session->TimeSlot . ', '.$session->FirmName;
+    ?>
+						<?php if ($warnings = $session->getWarnings()) {
+    ?>
 							<div class="alert-box alert with-icon">Please note:<ul>
 							<?php foreach ($warnings as $warning) {
-								echo "<li>" . $warning . "</li>";
-							}?>
+    echo "<li>" . $warning . "</li>";
+}
+    ?>
 							</ul></div>
-						<?php }?>
+						<?php 
+}
+    ?>
 					</div>
 				</div>
 				<div class="large-6 column">
@@ -212,13 +232,14 @@
 			<div class="large-6 column">
 				<h3 class="data-title">Admission Time</h3>
 				<div class="data-value">
-					<?php echo substr($element->booking->admission_time,0,5) ?>
+					<?php echo substr($element->booking->admission_time, 0, 5) ?>
 				</div>
 			</div>
 		</div>
 	</section>
 
-	<?php if ($element->booking->erod) {?>
+	<?php if ($element->booking->erod) {
+    ?>
 		<section class="element">
 			<h3 class="element-title highlight">Earliest reasonable offer date</h3>
 			<div class="element-data">
@@ -231,7 +252,9 @@
 				</div>
 			</div>
 		</section>
-	<?php }?>
+	<?php 
+}
+    ?>
 
 
 	<div class="row">
@@ -249,33 +272,49 @@
 			</div>
 		</div>
 	</div>
-<?php }?>
+<?php 
+}?>
 
-<?php if (count($element->cancelledBookings)) {?>
+<?php if (count($element->cancelledBookings)) {
+    ?>
 	<section class="element">
 		<h3 class="element-title highlight">Cancelled Bookings</h3>
 		<div class="element-data">
 			<ul class="cancelled-bookings">
-				<?php foreach ($element->cancelledBookings as $booking) {?>
+				<?php foreach ($element->cancelledBookings as $booking) {
+    ?>
 					<li>
-						Originally scheduled for <strong><?php echo $booking->NHSDate('session_date'); ?>,
-						<?php echo date('H:i',strtotime($booking->session_start_time)); ?> -
-						<?php echo date('H:i',strtotime($booking->session_end_time)); ?></strong>,
-						in <strong><?php echo $booking->theatre->nameWithSite; ?></strong>.
-						Cancelled on <?php echo $booking->NHSDate('booking_cancellation_date'); ?>
-						by <strong><?php echo $booking->usercancelled->FullName; ?></strong>
+						Originally scheduled for <strong><?php echo $booking->NHSDate('session_date');
+    ?>,
+						<?php echo date('H:i', strtotime($booking->session_start_time));
+    ?> -
+						<?php echo date('H:i', strtotime($booking->session_end_time));
+    ?></strong>,
+						in <strong><?php echo $booking->theatre->nameWithSite;
+    ?></strong>.
+						Cancelled on <?php echo $booking->NHSDate('booking_cancellation_date');
+    ?>
+						by <strong><?php echo $booking->usercancelled->FullName;
+    ?></strong>
 						due to <?php echo CHtml::encode($booking->cancellationReasonWithComment)?>
-						<?php if ($booking->erod) {?>
+						<?php if ($booking->erod) {
+    ?>
 							<br /><span class="erod">EROD was <?= $booking->erod->getDescription() ?></span>
-						<?php }?>
+						<?php 
+}
+    ?>
 					</li>
-				<?php }?>
+				<?php 
+}
+    ?>
 			</ul>
 		</div>
 	</section>
-<?php }?>
+<?php 
+}?>
 
-<?php if ($element->status->name == 'Cancelled' && $element->operation_cancellation_date){?>
+<?php if ($element->status->name == 'Cancelled' && $element->operation_cancellation_date) {
+    ?>
 	<section class="element">
 		<h3 class="element-title highlight">Cancellation details</h3>
 		<div class="element-data">
@@ -290,7 +329,8 @@
 		</div>
 	</section>
 
-	<?php if ($element->cancellation_comment) {?>
+	<?php if ($element->cancellation_comment) {
+    ?>
 		<section class="element element-data">
 			<div class="row">
 				<div class="large-6 column">
@@ -301,56 +341,59 @@
 				</div>
 			</div>
 		</section>
-	<?php }?>
-<?php }?>
+	<?php 
+}
+    ?>
+<?php 
+}?>
 
 <?php
 if ($element->isEditable()) {
-	if (empty($element->booking)) {
-		if ($element->letterType && $this->checkPrintAccess()) {
-			$print_letter_options = null;
-			if (!$element->has_gp || !$element->has_address) {
-				$print_letter_options['disabled'] = true;
-			}
-			$this->event_actions[] = EventAction::button("Print ".$element->letterType." letter", 'print-letter', $print_letter_options, array('id' => 'btn_print-letter', 'class'=>'button small'));
+    if (empty($element->booking)) {
+        if ($element->letterType && $this->checkPrintAccess()) {
+            $print_letter_options = null;
+            if (!$element->has_gp || !$element->has_address) {
+                $print_letter_options['disabled'] = true;
+            }
+            $this->event_actions[] = EventAction::button("Print ".$element->letterType." letter", 'print-letter', $print_letter_options, array('id' => 'btn_print-letter', 'class'=>'button small'));
 
-			if ($element->letterType == 'Invitation') {
-				$this->event_actions[] = EventAction::button("Print Admission form", 'print_admission_form', null, array('class' => 'small button'));
-			}
-		}
-		if ($this->checkScheduleAccess()) {
-			$this->event_actions[] = EventAction::link("Schedule now",
-				Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/schedule/'.$element->event_id),
-				array('level'=>'secondary'),
-				array('id' => 'btn_schedule-now', 'class'=>'button small'));
-		}
-	} else {
-		if ($this->checkPrintAccess()) {
-			$print_letter_options = null;
-			if (!$element->has_address) {
-				$print_letter_options['disabled'] = true;
-			}
-			$this->event_actions[] = EventAction::button("Print letter", 'print-letter', $print_letter_options, array('id' => 'btn_print-admissionletter','class'=>'small button'));
-			$this->event_actions[] = EventAction::button("Print admission form", 'print_admission_form', null, array('class' => 'small button'));
-		}
-		if ($this->checkScheduleAccess()) {
-			$this->event_actions[] = EventAction::link("Reschedule now",
-				Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/reschedule/'.$element->event_id),
-				array('level' => 'secondary'),
-				array('id' => 'btn_reschedule-now','class' => 'button small'));
-		}
-		if ($this->checkEditAccess()) {
-			$this->event_actions[] = EventAction::link("Reschedule later",
-				Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/rescheduleLater/'.$element->event_id),
-				array('level' => 'secondary'),
-				array('id' => 'btn_reschedule-later','class' => 'button small'));
-		}
-	}
-	if ($this->checkEditAccess()) {
-		$this->event_actions[] = EventAction::link("Cancel operation",
-			Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/default/cancel/'.$element->event_id),
-			array(),
-			array('id' => 'btn_cancel-operation', 'class'=>'warning button small'));
-	}
+            if ($element->letterType == 'Invitation') {
+                $this->event_actions[] = EventAction::button("Print Admission form", 'print_admission_form', null, array('class' => 'small button'));
+            }
+        }
+        if ($this->checkScheduleAccess()) {
+            $this->event_actions[] = EventAction::link("Schedule now",
+                Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/schedule/'.$element->event_id),
+                array('level'=>'secondary'),
+                array('id' => 'btn_schedule-now', 'class'=>'button small'));
+        }
+    } else {
+        if ($this->checkPrintAccess()) {
+            $print_letter_options = null;
+            if (!$element->has_address) {
+                $print_letter_options['disabled'] = true;
+            }
+            $this->event_actions[] = EventAction::button("Print letter", 'print-letter', $print_letter_options, array('id' => 'btn_print-admissionletter', 'class'=>'small button'));
+            $this->event_actions[] = EventAction::button("Print admission form", 'print_admission_form', null, array('class' => 'small button'));
+        }
+        if ($this->checkScheduleAccess()) {
+            $this->event_actions[] = EventAction::link("Reschedule now",
+                Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/reschedule/'.$element->event_id),
+                array('level' => 'secondary'),
+                array('id' => 'btn_reschedule-now', 'class' => 'button small'));
+        }
+        if ($this->checkEditAccess()) {
+            $this->event_actions[] = EventAction::link("Reschedule later",
+                Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/booking/rescheduleLater/'.$element->event_id),
+                array('level' => 'secondary'),
+                array('id' => 'btn_reschedule-later', 'class' => 'button small'));
+        }
+    }
+    if ($this->checkEditAccess()) {
+        $this->event_actions[] = EventAction::link("Cancel operation",
+            Yii::app()->createUrl('/'.$element->event->eventType->class_name.'/default/cancel/'.$element->event_id),
+            array(),
+            array('id' => 'btn_cancel-operation', 'class'=>'warning button small'));
+    }
 }
 ?>

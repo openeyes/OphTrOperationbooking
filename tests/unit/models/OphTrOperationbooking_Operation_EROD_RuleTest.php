@@ -15,37 +15,35 @@
 
 class OphTrOperationbooking_Operation_EROD_RuleTest extends CDbTestCase
 {
-	public $fixtures = array(
-		'specialties' => 'Specialty',
-		'subspecialties' => 'Subspecialty',
-		'service_subspecialty_assignment' => 'ServiceSubspecialtyAssignment',
-		'firms' => 'Firm'
-	);
+    public $fixtures = array(
+        'specialties' => 'Specialty',
+        'subspecialties' => 'Subspecialty',
+        'service_subspecialty_assignment' => 'ServiceSubspecialtyAssignment',
+        'firms' => 'Firm'
+    );
 
-	public static function setUpBeforeClass()
-	{
-		date_default_timezone_set('UTC');
-	}
+    public static function setUpBeforeClass()
+    {
+        date_default_timezone_set('UTC');
+    }
 
-	public function testNoItemsRaisesError()
-	{
-		$test = new OphTrOperationbooking_Operation_EROD_Rule();
-		$test->subspecialty_id = $this->subspecialties('subspecialty1')->id;
-		$this->assertFalse($test->validate());
-		$errs = $test->getErrors();
-		$this->assertArrayHasKey('items', $errs);
-	}
+    public function testNoItemsRaisesError()
+    {
+        $test = new OphTrOperationbooking_Operation_EROD_Rule();
+        $test->subspecialty_id = $this->subspecialties('subspecialty1')->id;
+        $this->assertFalse($test->validate());
+        $errs = $test->getErrors();
+        $this->assertArrayHasKey('items', $errs);
+    }
 
-	public function testCanValidateWithItem()
-	{
-		$test = new OphTrOperationbooking_Operation_EROD_Rule();
-		$test->subspecialty_id = $this->subspecialties('subspecialty1')->id;
-		$item = new OphTrOperationbooking_Operation_EROD_Rule_Item();
-		$item->item_type = 'firm';
-		$item->item_id = $this->firms('firm1')->id;
-		$test->items = array($item);
-		$this->assertTrue($test->validate());
-
-	}
-
+    public function testCanValidateWithItem()
+    {
+        $test = new OphTrOperationbooking_Operation_EROD_Rule();
+        $test->subspecialty_id = $this->subspecialties('subspecialty1')->id;
+        $item = new OphTrOperationbooking_Operation_EROD_Rule_Item();
+        $item->item_type = 'firm';
+        $item->item_id = $this->firms('firm1')->id;
+        $test->items = array($item);
+        $this->assertTrue($test->validate());
+    }
 }

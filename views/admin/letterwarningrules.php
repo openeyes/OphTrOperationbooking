@@ -32,22 +32,22 @@
 			</legend>
 			<div class="row field-row">
 				<div class="large-2 column">
-					<?php echo CHtml::dropDownList('lcr_rule_type_id','',CHtml::listData(OphTrOperationbooking_Admission_Letter_Warning_Rule_Type::model()->findAll(),'id','name'),array('empty'=>'- Rule -'))?>
+					<?php echo CHtml::dropDownList('lcr_rule_type_id', '', CHtml::listData(OphTrOperationbooking_Admission_Letter_Warning_Rule_Type::model()->findAll(), 'id', 'name'), array('empty'=>'- Rule -'))?>
 				</div>
 				<div class="large-2 column">
-					<?php echo CHtml::dropDownList('lcr_site_id','',Site::model()->getListForCurrentInstitution('name'),array('empty'=>'- Site -'))?>
+					<?php echo CHtml::dropDownList('lcr_site_id', '', Site::model()->getListForCurrentInstitution('name'), array('empty'=>'- Site -'))?>
 				</div>
 				<div class="large-2 column">
-					<?php echo CHtml::dropDownList('lcr_subspecialty_id','',CHtml::listData(Subspecialty::model()->findAllByCurrentSpecialty(),'id','name'),array('empty'=>'- Subspecialty -'))?>
+					<?php echo CHtml::dropDownList('lcr_subspecialty_id', '', CHtml::listData(Subspecialty::model()->findAllByCurrentSpecialty(), 'id', 'name'), array('empty'=>'- Subspecialty -'))?>
 				</div>
 				<div class="large-2 column">
-					<?php echo CHtml::dropDownList('lcr_firm_id','',array(),array('empty'=>'- Firm -'))?>
+					<?php echo CHtml::dropDownList('lcr_firm_id', '', array(), array('empty'=>'- Firm -'))?>
 				</div>
 				<div class="large-2 column">
-					<?php echo CHtml::dropDownList('lcr_theatre_id','',array(),array('empty'=>'- Theatre -'))?>
+					<?php echo CHtml::dropDownList('lcr_theatre_id', '', array(), array('empty'=>'- Theatre -'))?>
 				</div>
 				<div class="large-2 column">
-					<?php echo CHtml::dropDownList('lcr_is_child','',array('' => '- Child/adult -','1' => 'Child','0' => 'Adult'))?>
+					<?php echo CHtml::dropDownList('lcr_is_child', '', array('' => '- Child/adult -', '1' => 'Child', '0' => 'Adult'))?>
 				</div>
 			</div>
 		</fieldset>
@@ -57,8 +57,8 @@
 
 	<form id="rules" class="panel">
 		<?php
-		$this->widget('CTreeView',array(
-				'data' => $data,
-			))?>
+        $this->widget('CTreeView', array(
+                'data' => $data,
+            ))?>
 	</form>
 </div>

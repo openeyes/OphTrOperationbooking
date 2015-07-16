@@ -21,25 +21,25 @@
 <div class="box admin">
 	<h2><?php echo $theatre->id ? 'Edit' : 'Add'?> theatre</h2>
 	<?php
-	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-			'id'=>'adminform',
-			'enableAjaxValidation'=>false,
-			'focus'=>'#username',
-			'layoutColumns' => array(
-				'label' => 2,
-				'field' => 5
-			)
-		))?>
+    $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
+            'id'=>'adminform',
+            'enableAjaxValidation'=>false,
+            'focus'=>'#username',
+            'layoutColumns' => array(
+                'label' => 2,
+                'field' => 5
+            )
+        ))?>
 	<?php echo $form->errorSummary($theatre); ?>
-	<?php echo $form->dropDownList($theatre,'site_id',Site::model()->getListForCurrentInstitution(),array('empty'=>'- Site -'))?>
-	<?php echo $form->textField($theatre,'name')?>
-	<?php echo $form->textField($theatre,'code',array('size'=>10))?>
+	<?php echo $form->dropDownList($theatre, 'site_id', Site::model()->getListForCurrentInstitution(), array('empty'=>'- Site -'))?>
+	<?php echo $form->textField($theatre, 'name')?>
+	<?php echo $form->textField($theatre, 'code', array('size'=>10))?>
 	<div id="div_OphTrOperationbooking_Operation_Theatre_ward_id" class="row field-row">
 		<div class="large-2 column"><label for="OphTrOperationbooking_Operation_Theatre_ward_id">Ward:</label>
 		</div>
 		<div class="large-5 column end">
 			<?php echo $this->actionGetWardOptions($theatre->site_id, $theatre->ward_id);
-		?></div>
+        ?></div>
 	</div>
 	<?php echo $form->formActions();?>
 	<?php echo $form->errorSummary($theatre); ?>

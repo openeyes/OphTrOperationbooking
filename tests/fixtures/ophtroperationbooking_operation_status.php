@@ -18,34 +18,34 @@
  */
 
 return array(
-	'requires_scheduling' => array(
-		'name' => 'Requires scheduling',
-		'created_date' => date('Y-m-d 00:00:00'),
-		'last_modified_date' => date('Y-m-d 00:00:00'),
-	),
-	'scheduled' => array(
-		'name' => 'Scheduled',
-		'created_date' => date('Y-m-d 00:00:00'),
-		'last_modified_date' => date('Y-m-d 00:00:00'),
-	),
-	'requires_scheduling2' => array(
-		'name' => 'Requires scheduling',
-		'created_date' => date('Y-m-d 00:00:00'),
-		'last_modified_date' => date('Y-m-d 00:00:00'),
-	),
-	'rescheduled' => array(
-		'name' => 'Rescheduled',
-		'created_date' => date('Y-m-d 00:00:00'),
-		'last_modified_date' => date('Y-m-d 00:00:00'),
-	),
-	'cancelled' => array(
-		'name' => 'Cancelled',
-		'created_date' => date('Y-m-d 00:00:00'),
-		'last_modified_date' => date('Y-m-d 00:00:00'),
-	),
-	'completed' => array(
-		'name' => 'Completed',
-		'created_date' => date('Y-m-d 00:00:00'),
-		'last_modified_date' => date('Y-m-d 00:00:00'),
-	),
+    'requires_scheduling' => array(
+        'name' => 'Requires scheduling',
+        'created_date' => date('Y-m-d 00:00:00'),
+        'last_modified_date' => date('Y-m-d 00:00:00'),
+    ),
+    'scheduled' => array(
+        'name' => 'Scheduled',
+        'created_date' => date('Y-m-d 00:00:00'),
+        'last_modified_date' => date('Y-m-d 00:00:00'),
+    ),
+    'requires_scheduling2' => array(
+        'name' => 'Requires scheduling',
+        'created_date' => date('Y-m-d 00:00:00'),
+        'last_modified_date' => date('Y-m-d 00:00:00'),
+    ),
+    'rescheduled' => array(
+        'name' => 'Rescheduled',
+        'created_date' => date('Y-m-d 00:00:00'),
+        'last_modified_date' => date('Y-m-d 00:00:00'),
+    ),
+    'cancelled' => array(
+        'name' => 'Cancelled',
+        'created_date' => date('Y-m-d 00:00:00'),
+        'last_modified_date' => date('Y-m-d 00:00:00'),
+    ),
+    'completed' => array(
+        'name' => 'Completed',
+        'created_date' => date('Y-m-d 00:00:00'),
+        'last_modified_date' => date('Y-m-d 00:00:00'),
+    ),
 );

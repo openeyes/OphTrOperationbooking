@@ -21,17 +21,17 @@
 <div class="box admin">
 	<h2><?php echo $reason->id ? 'Edit' : 'Add'?> Session Unavailable Reason</h2>
 	<?php
-	$form = $this->beginWidget('BaseEventTypeCActiveForm', array(
-					'id'=>'adminform',
-					'enableAjaxValidation'=>false,
-					'focus'=>'#OphTrOperationbooking_Operation_Session_UnavailableReason_name',
-					'layoutColumns' => array(
-							'label' => 2,
-							'field' => 5
-					)
-			))?>
+    $form = $this->beginWidget('BaseEventTypeCActiveForm', array(
+                    'id'=>'adminform',
+                    'enableAjaxValidation'=>false,
+                    'focus'=>'#OphTrOperationbooking_Operation_Session_UnavailableReason_name',
+                    'layoutColumns' => array(
+                            'label' => 2,
+                            'field' => 5
+                    )
+            ))?>
 	<?php echo $form->errorSummary($reason); ?>
-	<?php echo $form->textField($reason,'name')?>
+	<?php echo $form->textField($reason, 'name')?>
 	<?php echo $form->formActions();?>
 	<?php $this->endWidget()?>
 </div>
