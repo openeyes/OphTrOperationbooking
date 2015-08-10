@@ -1423,6 +1423,25 @@ class AdminController extends ModuleAdminController
 		));
 	}
 
+	public function actionGetWardOptions($siteId, $wardId=NULL){
+		if( $siteId >0 ) {
+			$optionValues = OphTrOperationbooking_Operation_Ward::model()->findAll(array(
+				'condition' => 'active=1 and site_id=' . $siteId,
+				'order' => 'name'
+			));
+		}else {
+			$optionValues = array();
+		}
+		echo CHtml::dropDownList(
+			"OphTrOperationbooking_Operation_Theatre[ward_id]",
+			$wardId,
+			CHtml::listData($optionValues, 'id', 'name'),
+			array(
+				'empty'=>'- None -')
+		);
+
+	}
+
 	public function actionVerifyDeleteTheatres()
 	{
 		$criteria = new CDbCriteria;

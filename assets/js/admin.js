@@ -33,6 +33,18 @@ $(document).ready(function() {
 		}
 	});
 
+    $('#OphTrOperationbooking_Operation_Theatre_site_id').change(function() {
+        var siteId = $(this).val();
+
+        $.ajax({
+            'url': baseUrl+'/OphTrOperationbooking/admin/getWardOptions?siteId='+siteId,
+            'type': 'GET',
+            'success': function(data) {
+                $('#OphTrOperationbooking_Operation_Theatre_ward_id').html(data);
+            }
+        });
+    });
+
 	$('#lcr_site_id').change(function() {
 		var siteId = $(this).val();
 

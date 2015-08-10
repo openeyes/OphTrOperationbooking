@@ -69,6 +69,7 @@ class OphTrOperationbooking_API extends BaseAPI
 	{
 		$criteria = new CDbCriteria;
 		$criteria->order = 't.created_date asc';
+		$criteria->condition = 't.status_id != 5';
 		$criteria->compare('episode_id',$episode_id);
 
 		return Element_OphTrOperationbooking_Operation::model()
@@ -341,6 +342,15 @@ class OphTrOperationbooking_API extends BaseAPI
 		if ($eo = Element_OphTrOperationbooking_Operation::model()->with('booking')->find('event_id=?',array($event->id))) {
 			if ($eo->booking) {
 				return $eo->booking->theatre->site;
+			}
+		}
+	}
+
+	public function findTheatreForBookingEvent($event)
+	{
+		if ($eo = Element_OphTrOperationbooking_Operation::model()->with('booking')->find('event_id=?',array($event->id))) {
+			if ($eo->booking) {
+				return $eo->booking->theatre;
 			}
 		}
 	}

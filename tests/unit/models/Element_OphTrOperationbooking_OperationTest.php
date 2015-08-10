@@ -400,6 +400,8 @@ class Element_OphTrOperationbooking_OperationTest extends CDbTestCase
 			'fast_track' => 0,
 			'special_equipment' => 0,
 			'organising_admission_user_id' => 0,
+			'any_grade_of_doctor' => 0,
+			'priority_id' => 1
 		);
 
 		$op->procedures = array(ComponentStubGenerator::generate('Procedure'));
