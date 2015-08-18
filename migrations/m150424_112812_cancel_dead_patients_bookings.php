@@ -35,22 +35,22 @@ CREATE PROCEDURE cancel_patient_bookings(IN patientToCancel INT)
     SELECT id
     INTO @cancel_status
     FROM ophtroperationbooking_operation_status
-    WHERE `name` = 'Cancelled';
+    WHERE `name` = 'Cancelled' ORDER BY id DESC LIMIT 1;
 
     SELECT id
     INTO @cancel_reason
     FROM ophtroperationbooking_operation_cancellation_reason
-    WHERE `text` = 'Patient has died';
+    WHERE `text` = 'Patient has died' AND active ORDER BY id DESC LIMIT 1;
 
     SELECT id
     INTO @booking_type
     FROM event_type
-    WHERE `name` = 'Operation booking';
+    WHERE `name` = 'Operation booking' ORDER BY id DESC LIMIT 1;
 
     SELECT id
     INTO @episode_status_id
     FROM episode_status
-    WHERE `name` = 'Discharged';
+    WHERE `name` = 'Discharged' ORDER BY id DESC LIMIT 1;
 
     SELECT id
     INTO @admin_user
