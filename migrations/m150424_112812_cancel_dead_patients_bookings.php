@@ -19,17 +19,17 @@ CREATE PROCEDURE cancel_patient_bookings(IN patientToCancel INT)
                               JOIN event ON episode.id = event.episode_id
                               JOIN et_ophtroperationbooking_operation
                                 ON event.id = et_ophtroperationbooking_operation.event_id
-                              JOIN ophtroperationbooking_operation_booking ON et_ophtroperationbooking_operation.id =
+                              LEFT JOIN ophtroperationbooking_operation_booking ON et_ophtroperationbooking_operation.id =
                                                                               ophtroperationbooking_operation_booking.element_id
-                              JOIN ophtroperationbooking_operation_session
+                              LEFT JOIN ophtroperationbooking_operation_session
                                 ON ophtroperationbooking_operation_session.id =
                                    ophtroperationbooking_operation_booking.session_id
                             WHERE episode.patient_id = patientToCancel
                                   AND event.event_type_id = (SELECT id FROM event_type WHERE name = 'Operation booking')
-                                  AND concat_ws(' ', ophtroperationbooking_operation_session.date,
+                                  AND (concat_ws(' ', ophtroperationbooking_operation_session.date,
                                                 ophtroperationbooking_operation_session.start_time) > NOW() ||
                                                 ophtroperationbooking_operation_session.date IS NULL ||
-                                                et_ophtroperationbooking_operation.status_id in (SELECT id FROM ophtroperationbooking_operation_status WHERE name = 'Requires rescheduling' || name='Requires scheduling');
+                                                et_ophtroperationbooking_operation.status_id in (SELECT id FROM ophtroperationbooking_operation_status WHERE name = 'Requires rescheduling' || name='Requires scheduling'));
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
     SET @cancel_comment = 'Automatically cancelled by system';
 
