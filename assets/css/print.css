@@ -24,6 +24,7 @@
 	text-align: right;
 	margin-top: 1.4em;
 	width: 20em;
+	line-height: 19px;
 }
 
 .to-address {
@@ -40,6 +41,7 @@
 .to-address-address {
 	width: 16em;
 	height: 8em;
+	line-height: 19px;
 }
 
 .accessible {
