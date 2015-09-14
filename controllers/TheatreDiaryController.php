@@ -180,7 +180,7 @@ class TheatreDiaryController extends BaseModuleController
 			$error = true;
 			$errorMessage.= 'Empty start date <br>';
 		} else{
-			if(!CDateTimeParser::parse($startDate,'yyyy-mm-dd')){
+			if(!CDateTimeParser::parse($startDate,'yyyy-MM-dd')){
 				$error = true;
 				$errorMessage.= 'Invalid start date <br>';
 			}
@@ -190,7 +190,7 @@ class TheatreDiaryController extends BaseModuleController
 			$error = true;
 			$errorMessage.= 'Empty end date <br>';
 		} else {
-			if(!CDateTimeParser::parse($endDate,'yyyy-mm-dd')){
+			if(!CDateTimeParser::parse($endDate,'yyyy-MM-dd')){
 				$error = true;
 				$errorMessage.= 'Invalid end date <br>';
 			}
