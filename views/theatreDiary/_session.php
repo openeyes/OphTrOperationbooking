@@ -218,7 +218,7 @@
 								<input type="checkbox" class="session-available" id="available_<?php echo $session->id?>" name="available_<?php echo $session->id?>" value="1"<?php if ($session->available) {?> checked="checked"<?php }?> />
 								Session available
 							</label>
-							<label <?php if ($session->available) { ?>style="display: none;"<?php } ?>>
+							<label <?php if ($session->available) { ?>style="display: none; color:#000;"<?php } ?>>
 								<?php echo CHtml::dropDownList("unavailablereason_id_" . $session->id, $session->unavailablereason_id, CHtml::listData($session->getUnavailableReasonList(), 'id', 'name'), array('empty' => '- Please Select -', 'class' => 'unavailable-reasons'))?>
 							</label>
 							<input style="display: inline-block;" type="text" autocomplete="<?php echo Yii::app()->params['html_autocomplete']?>" class="limited-width" id="max_procedures_<?php echo $session->id?>" maxlength="2" size="2" name="max_procedures_<?php echo $session->id?>" value="<?php echo $session->max_procedures; ?>" />
