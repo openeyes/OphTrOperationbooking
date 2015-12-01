@@ -122,6 +122,21 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 		);
 	}
 
+	/**
+	 * @param null
+	 * @return boolean
+	 */
+	private function isAdmin()
+	{
+		$user = Yii::app()->session['user'];
+
+		if($user->role == 'admin role')
+		{
+			return true;
+		}
+		return false;
+	}
+
 	public function getActiveBookingsForWard($ward_id = null)
 	{
 		$criteria = array(
@@ -183,8 +198,8 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 		$criteria->compare('name', $this->name, true);
 
 		return new CActiveDataProvider(get_class($this), array(
-				'criteria' => $criteria,
-			));
+			'criteria' => $criteria,
+		));
 	}
 
 	/**
@@ -306,7 +321,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 			return false;
 		}
 
-		if ($this->date < date('Y-m-d')) {
+		if (($this->date < date('Y-m-d')) && !($this->isAdmin())) {
 			return false;
 		}
 
@@ -354,7 +369,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 			}
 		}
 
-		if ($this->date < date('Y-m-d')) {
+		if (($this->date < date('Y-m-d')) && !($this->isAdmin())) {
 			return "This session is in the past and so cannot be booked into.";
 		}
 
@@ -461,7 +476,7 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 		$match_a = $params['match_attr'];
 		$match_v = $params['match_val'];
 
- 		if ($this->$match_a == $match_v) {
+		if ($this->$match_a == $match_v) {
 			unset($params['match_attr']);
 			unset($params['match_val']);
 			$v = CValidator::createValidator('required', $this, array($attribute), $params);
