@@ -134,8 +134,9 @@ class OphTrOperationbooking_Operation_Session extends BaseActiveRecordVersioned
 		{
 			return true;
 		}
-		return false;
-	}
+
+        return false;
+    }
 
 	public function getActiveBookingsForWard($ward_id = null)
 	{
