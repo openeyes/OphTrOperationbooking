@@ -63,7 +63,7 @@
 	ProcedureChecker.prototype.verifySubmit = function(form) {
 		disableButtons();
 		$.ajax({
-			url: this.options.procCheckURI + '?patient_id=' + OE_patientId,
+			url: baseUrl + this.options.procCheckURI + '?patient_id=' + OE_patientId,
 			data: $(form).serialize(),
 			type: 'POST',
 			dataType: 'JSON',
